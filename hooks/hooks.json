@@ -1,0 +1,60 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "once": true,
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "bkit Vibecoding Kit activated.\n\nCore PDCA Rules (always apply):\n- New feature request → Check docs/02-design/ first → Design before code\n- No guessing → Check docs → Ask user\n- SoR priority: Code > CLAUDE.md > docs/\n- After implementation → Suggest gap analysis\n\nCommands: /bkit:learn-claude-code, /bkit:pdca-plan, /bkit:init-starter\n\nFor Korean response, add to ~/.claude/settings.json: {\"language\": \"korean\"}",
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "PDCA validation:\n- docs/01-plan/* → ALLOW (Plan phase)\n- docs/02-design/* → ALLOW (Design phase)\n- docs/03-analysis/* → ALLOW (Check phase)\n- docs/04-report/* → ALLOW (Act phase)\n- src/* or app/* → Check if related design exists in docs/02-design/\n- Other paths → ALLOW\n\nRespond with: {\"decision\": \"approve\", \"reason\": \"brief explanation\"}",
+            "timeout": 10000
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash(git commit *)",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Commit completed. Consider:\n1) Update PDCA status if feature complete\n2) Run /bkit:pdca-analyze for gap analysis\n\nRespond with: {\"decision\": \"approve\", \"reason\": \"Commit done\"}",
+            "timeout": 10000
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Evaluate if Claude should stop working.\n\nCheck these criteria:\n- Todo list: All tasks completed?\n- Design-implementation: Aligned?\n- Tests: Written if needed?\n- Docs: Updated if needed?\n\nIf all complete, Claude can stop.\nIf not, list remaining items with line breaks."
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Evaluate if subagent task is complete.\n\nCheck:\n- Results sufficient?\n- Summary needed for main conversation?\n\nIf complete, subagent can stop.\nIf not, list remaining items with line breaks."
+          }
+        ]
+      }
+    ]
+  }
+}
