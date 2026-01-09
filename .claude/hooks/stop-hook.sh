@@ -14,14 +14,11 @@ transcript_path=$(echo "$input" | grep -o '"transcript_path":"[^"]*"' | cut -d'"
 decision="approve"
 reason="Task evaluation complete"
 
-# If transcript exists, check for incomplete todos
-if [ -n "$transcript_path" ] && [ -f "$transcript_path" ]; then
-    # Check if there are in_progress todos in the last few messages
-    if tail -100 "$transcript_path" 2>/dev/null | grep -q '"status":"in_progress"'; then
-        decision="block"
-        reason="There are still in-progress tasks in the todo list. Please complete them before stopping."
-    fi
-fi
+# TODO: Implement proper todo state tracking
+# For now, always approve to allow normal conversation flow
+# The transcript-based detection has false positives from explanatory text
+#
+# Future improvement: Use a dedicated state file instead of parsing transcript
 
 # Output JSON response
 echo "{\"decision\": \"$decision\", \"reason\": \"$reason\"}"
