@@ -88,7 +88,7 @@ cp -r bkit-claude-code/.claude your-project/
 
 ## Language Support
 
-bkit automatically detects your language and responds accordingly:
+bkit automatically detects your language from trigger keywords:
 
 | Language | Trigger Keywords |
 |----------|-----------------|
@@ -100,6 +100,25 @@ bkit automatically detects your language and responds accordingly:
 | French | site web statique, débutant |
 | German | statische Webseite, Anfänger |
 | Italian | sito web statico, principiante |
+
+### Setting Response Language
+
+To set Claude's **response language**, add to `~/.claude/settings.json`:
+
+```json
+{
+  "language": "korean"
+}
+```
+
+| Language | Setting Value |
+|----------|---------------|
+| Korean | `"language": "korean"` |
+| Japanese | `"language": "japanese"` |
+| Chinese | `"language": "chinese"` |
+| English | `"language": "english"` (default) |
+
+> **Note**: Trigger keywords work in any language. The `language` setting only affects Claude's response language.
 
 ---
 
