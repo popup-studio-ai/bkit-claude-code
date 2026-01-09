@@ -1,0 +1,33 @@
+bkit - Vibecoding Kit
+Copyright 2024-2026 POPUP STUDIO PTE. LTD.
+
+This product includes software developed by POPUP STUDIO PTE. LTD.
+(https://popupstudio.ai)
+
+================================================================================
+
+bkit is a Claude Code plugin that provides PDCA methodology and development
+pipeline automation for AI-native software development.
+
+Original Authors:
+- POPUP STUDIO PTE. LTD. (https://popupstudio.ai)
+
+Contributors:
+- See CONTRIBUTORS.md for the full list of contributors
+
+================================================================================
+
+Third-Party Notices:
+
+This software uses Claude Code by Anthropic, PBC.
+Claude Code is subject to Anthropic's terms of service.
+https://www.anthropic.com/terms
+
+================================================================================
+
+If you use this software, you must:
+1. Include this NOTICE file in any redistribution
+2. Retain all copyright and attribution notices
+3. Not use "bkit" trademark without permission from POPUP STUDIO PTE. LTD.
+
+For commercial licensing inquiries, contact: contact@popupstudio.ai
