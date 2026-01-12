@@ -4,6 +4,40 @@
 
 This document explains what AI-Native development means in the current market and how bkit realizes these principles to transform software development.
 
+### bkit AI-Native Development Flow
+
+```mermaid
+flowchart TB
+    subgraph MAIN["bkit AI-Native Development"]
+        direction TB
+
+        subgraph ROW1[" "]
+            direction LR
+            SPEC["**1. SPEC**<br/>Plan Doc<br/>Design Doc"]
+            CONTEXT["**2. CONTEXT**<br/>CLAUDE.md<br/>24 Skills"]
+            AGENT["**3. AI AGENT**<br/>11 Agents<br/>Autonomous Implementation"]
+        end
+
+        OVERSIGHT["**4. HUMAN OVERSIGHT**<br/>Gap Analysis<br/>Verification & Approval"]
+
+        subgraph IMPROVE["5. CONTINUOUS IMPROVEMENT"]
+            IMP_CONTENT["pdca-iterate (Evaluator-Optimizer) → iteration-report<br/>CLAUDE.md rule accumulation → Cross-session learning"]
+        end
+    end
+
+    SPEC --> CONTEXT
+    CONTEXT --> AGENT
+    AGENT --> OVERSIGHT
+    OVERSIGHT -->|"Feedback"| SPEC
+
+    style MAIN fill:#f5f5f5,stroke:#333,stroke-width:2px
+    style SPEC fill:#e3f2fd,stroke:#1976d2
+    style CONTEXT fill:#e8f5e9,stroke:#388e3c
+    style AGENT fill:#fff3e0,stroke:#f57c00
+    style OVERSIGHT fill:#fce4ec,stroke:#c2185b
+    style IMPROVE fill:#ede7f6,stroke:#7b1fa2
+```
+
 ---
 
 ## What is AI-Native Development?
