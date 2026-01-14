@@ -10,6 +10,28 @@
   },
   "plugins": [
     {
+      "name": "bkit-starter",
+      "description": "Korean learning guide for Claude Code beginners. No programming experience required. Includes 4 learning commands.",
+      "version": "1.0.0",
+      "author": {
+        "name": "POPUP STUDIO PTE. LTD.",
+        "email": "contact@popupstudio.ai"
+      },
+      "repository": "https://github.com/popup-studio-ai/bkit-starter",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/popup-studio-ai/bkit-starter.git"
+      },
+      "category": "learning",
+      "keywords": [
+        "beginner",
+        "korean",
+        "tutorial",
+        "starter",
+        "learning"
+      ]
+    },
+    {
       "name": "bkit",
       "description": "Vibecoding Kit - PDCA methodology + Claude Code mastery for AI-native development. Includes 18 commands, 11 agents, 24 skills, and 6 hooks for structured development workflows.",
       "version": "1.1.0",
