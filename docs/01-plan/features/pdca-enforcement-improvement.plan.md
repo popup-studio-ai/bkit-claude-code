@@ -330,7 +330,7 @@ flowchart TD
 
     Q -->|1. bkit Introduction| Intro[Full bkit feature intro]
     Q -->|2. Development Process| Pipeline[9-stage pipeline learning]
-    Q -->|3. Claude Code| Learn[/learn-claude-code]
+    Q -->|3. Claude Code| Learn["/learn-claude-code"]
     Q -->|4. Continue Work| Continue[Check PDCA status]
     Q -->|5. New Project| New[Level selection]
 
@@ -346,9 +346,9 @@ flowchart TD
     Status --> Resume[Guide next step]
 
     New --> Level{Which level?}
-    Level -->|Starter| InitS[/init-starter]
-    Level -->|Dynamic| InitD[/init-dynamic]
-    Level -->|Enterprise| InitE[/init-enterprise]
+    Level -->|Starter| InitS["/init-starter"]
+    Level -->|Dynamic| InitD["/init-dynamic"]
+    Level -->|Enterprise| InitE["/init-enterprise"]
 
     style PDCA fill:#FF6B6B,color:#fff
     style Q fill:#4a90d9,color:#fff
