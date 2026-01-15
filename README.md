@@ -38,7 +38,7 @@ bkit is a Claude Code plugin that transforms how you build software with AI. It 
 > - 첫 프로젝트 만들기 체험
 >
 > ```bash
-> /plugin install bkit-starter
+> /plugin enable bkit-starter
 > ```
 >
 > bkit은 bkit-starter를 마스터한 후 사용하는 고급 확장 버전입니다.
