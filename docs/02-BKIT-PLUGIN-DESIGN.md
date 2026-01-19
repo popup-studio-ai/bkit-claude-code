@@ -700,9 +700,9 @@ claude --plugin-dir ./bkit
 ---
 
 **Created**: 2026-01-09
-**Updated**: 2026-01-15 
+**Updated**: 2026-01-19
 **Author**: Claude (with Kay)
-**Version**: v1.1.3
+**Version**: v1.1.4
 **Status**: Design verified → Implementation complete
 
 ---
@@ -740,6 +740,17 @@ claude --plugin-dir ./bkit
 ---
 
 ## Changelog
+
+### v1.1.4 (2026-01-19)
+- 🔧 Simplify hooks system for stability (remove unstable prompt-type hooks)
+- 🗑️ Remove stop-hook.sh and subagent-stop-hook.sh (JSON format issues)
+- ⚡ Disable PreToolUse, PostToolUse, Stop, SubagentStop, PreCompact hooks
+- ✅ Keep only SessionStart hook for reliable onboarding
+- 🎯 Add Triggers keywords to bkit-rules skill (auto-activation for all dev tasks)
+- 🎯 Add Triggers keywords to bkit-templates skill (auto-activation for docs)
+- 🌐 Expand trigger keywords for starter-guide, bkend-expert, pipeline-guide agents
+- 🌐 Expand trigger keywords for starter, dynamic skills (multilingual support)
+- 📝 Add PDCA documentation: HOOKS-FIX-PLAN, HOOKS-REFACTOR-PLAN, hooks-simplification.design
 
 ### v1.1.2, v1.1.3 (2026-01-15)
 - 📝 Fix PreToolUse & PostToolUse (Write) and remove UserPromptSubmit
