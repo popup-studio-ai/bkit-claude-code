@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.2] - 2026-01-21
+
+### Changed
+- **Documentation Structure Reorganization**: Clear separation of docs/ and bkit-system/ roles
+  - `bkit-system/` = "What IS" (current implementation reference)
+  - `docs/pdca/` = "What WE DO" (active PDCA work)
+  - `docs/archive/` = "What WE DID" (completed documents)
+- **New Philosophy Section**: Added `bkit-system/philosophy/` with core documentation
+  - `core-mission.md`: Core mission & 3 philosophies
+  - `ai-native-principles.md`: AI-Native development & Language Tier System
+  - `pdca-methodology.md`: PDCA cycle & 9-stage pipeline relationship
+
+### Fixed
+- **Broken Wikilinks**: Fixed 30+ broken Obsidian wikilinks across bkit-system/ documentation
+  - Updated skill/agent links to point to actual source files
+  - Pattern: `[[../../skills/skill-name/SKILL|skill-name]]`
+
 ## [1.2.1] - 2026-01-20
 
 ### Added
