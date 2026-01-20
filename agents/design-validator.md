@@ -23,6 +23,7 @@ hooks:
       hooks:
         - type: command
           command: "${CLAUDE_PLUGIN_ROOT}/scripts/design-validator-pre.sh"
+          timeout: 5000
 model: opus
 tools:
   - Read

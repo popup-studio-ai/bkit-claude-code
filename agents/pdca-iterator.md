@@ -29,6 +29,12 @@ skills:
   - evaluator-optimizer
   - analysis-patterns
   - pdca-methodology
+hooks:
+  Stop:
+    - hooks:
+        - type: command
+          command: "${CLAUDE_PLUGIN_ROOT}/scripts/analysis-stop.sh"
+          timeout: 5000
 ---
 
 # PDCA Iterator Agent

@@ -1,8 +1,9 @@
 # Scripts Overview
 
-> 18 Shell Scripts used by bkit hooks (v1.2.0)
+> 18 Shell Scripts used by bkit hooks (v1.3.0)
 >
 > **Note**: task-classify.sh was removed and merged into pre-write.sh
+> **v1.3.0**: output_block() now exits with code 2 for proper blocking
 
 ## What are Scripts?
 
@@ -78,11 +79,11 @@ bkit-claude-code/
 
 ### Agent Scripts (3)
 
-| Script | Hook | Agent | Purpose |
-|--------|------|-------|---------|
+| Script | Hook | Agent(s) | Purpose |
+|--------|------|----------|---------|
 | design-validator-pre.sh | PreToolUse | design-validator | Design document checklist |
-| gap-detector-post.sh | PostToolUse | gap-detector | Post-analysis iteration guidance |
-| analysis-stop.sh | Stop | code-analyzer | Analysis completion guidance |
+| gap-detector-post.sh | PostToolUse | (legacy) | Post-analysis iteration guidance |
+| analysis-stop.sh | Stop | gap-detector, code-analyzer, pdca-iterator | Analysis completion guidance |
 
 ### Utility Scripts (3)
 
@@ -125,7 +126,7 @@ detect_level                                   # Starter/Dynamic/Enterprise
 
 # JSON Output
 output_allow "context message"                 # Allow with context
-output_block "block reason"                    # Block with reason
+output_block "block reason"                    # Block with reason (exits with code 2)
 output_empty                                   # Empty response {}
 ```
 

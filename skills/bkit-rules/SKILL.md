@@ -16,11 +16,13 @@ hooks:
       hooks:
         - type: command
           command: "${CLAUDE_PLUGIN_ROOT}/scripts/pre-write.sh"
+          timeout: 5000
   PostToolUse:
     - matcher: "Write"
       hooks:
         - type: command
           command: "${CLAUDE_PLUGIN_ROOT}/scripts/pdca-post-write.sh"
+          timeout: 5000
 ---
 
 # bkit Core Rules

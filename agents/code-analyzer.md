@@ -29,6 +29,11 @@ hooks:
       hooks:
         - type: command
           command: "echo '{\"decision\": \"block\", \"reason\": \"Code analyzer agent is read-only and cannot modify files\"}'"
+  Stop:
+    - hooks:
+        - type: command
+          command: "${CLAUDE_PLUGIN_ROOT}/scripts/analysis-stop.sh"
+          timeout: 5000
 ---
 
 # Code Analysis Agent

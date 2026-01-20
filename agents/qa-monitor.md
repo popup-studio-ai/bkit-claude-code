@@ -14,11 +14,28 @@ description: |
   or design document validation.
 permissionMode: acceptEdits
 hooks:
+  PreToolUse:
+    - matcher: "Bash"
+      hooks:
+        - type: command
+          command: "${CLAUDE_PLUGIN_ROOT}/scripts/qa-pre-bash.sh"
+          timeout: 5000
   PostToolUse:
     - matcher: "Write"
       hooks:
         - type: command
           command: "${CLAUDE_PLUGIN_ROOT}/scripts/qa-monitor-post.sh"
+          timeout: 5000
+    - matcher: "Bash"
+      hooks:
+        - type: command
+          command: "${CLAUDE_PLUGIN_ROOT}/scripts/qa-monitor-post.sh"
+          timeout: 5000
+  Stop:
+    - hooks:
+        - type: command
+          command: "${CLAUDE_PLUGIN_ROOT}/scripts/qa-stop.sh"
+          timeout: 5000
 model: haiku
 tools:
   - Bash

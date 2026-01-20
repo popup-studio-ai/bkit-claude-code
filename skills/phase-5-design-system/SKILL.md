@@ -15,6 +15,7 @@ hooks:
       hooks:
         - type: command
           command: "${CLAUDE_PLUGIN_ROOT}/scripts/phase5-design-post.sh"
+          timeout: 5000
 agent: pipeline-guide
 allowed-tools:
   - Read

@@ -27,11 +27,11 @@ skills:
   - bkit-templates
   - phase-2-convention
 hooks:
-  PostToolUse:
-    - matcher: "Write"
-      hooks:
+  Stop:
+    - hooks:
         - type: command
-          command: "${CLAUDE_PLUGIN_ROOT}/scripts/gap-detector-post.sh"
+          command: "${CLAUDE_PLUGIN_ROOT}/scripts/analysis-stop.sh"
+          timeout: 5000
 ---
 
 # Design-Implementation Gap Detection Agent

@@ -17,10 +17,12 @@ hooks:
       hooks:
         - type: command
           command: "${CLAUDE_PLUGIN_ROOT}/scripts/qa-pre-bash.sh"
+          timeout: 5000
   Stop:
     - hooks:
         - type: command
           command: "${CLAUDE_PLUGIN_ROOT}/scripts/qa-stop.sh"
+          timeout: 5000
 ---
 
 # Zero Script QA Expert Knowledge

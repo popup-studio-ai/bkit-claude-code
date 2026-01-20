@@ -91,12 +91,8 @@ fi
 # 2.5. Block if needed (with helpful guidance)
 # ------------------------------------------------------------
 if [ "$SHOULD_BLOCK" = true ]; then
-    # Escape for JSON
-    ESCAPED_REASON=$(echo -e "$BLOCK_REASON" | sed 's/"/\\"/g' | tr '\n' ' ')
-    cat << EOF
-{"decision": "block", "reason": "$ESCAPED_REASON"}
-EOF
-    exit 0
+    output_block "$BLOCK_REASON"
+    # Note: output_block() calls exit 2, so code below won't execute
 fi
 
 # ------------------------------------------------------------

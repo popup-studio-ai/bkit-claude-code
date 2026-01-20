@@ -324,8 +324,12 @@ output_allow() {
     local context="$1"
 
     if [ -n "$context" ]; then
+        # Escape special characters for JSON
+        local escaped_context
+        escaped_context=$(printf '%s' "$context" | sed 's/\\/\\\\/g; s/"/\\"/g' | tr '\n' ' ' | sed 's/  */ /g')
+
         cat << EOF
-{"decision": "allow", "hookSpecificOutput": {"additionalContext": "$context"}}
+{"decision": "allow", "hookSpecificOutput": {"additionalContext": "$escaped_context"}}
 EOF
     else
         echo '{}'
@@ -334,11 +338,18 @@ EOF
 
 # Output block decision with reason
 # Usage: output_block "Block reason"
+# Note: Exits with code 2 to signal block to Claude Code
+# For PreToolUse hooks only - PostToolUse hooks should use output_allow()
 output_block() {
     local reason="$1"
+    # Escape special characters for JSON
+    local escaped_reason
+    escaped_reason=$(printf '%s' "$reason" | sed 's/\\/\\\\/g; s/"/\\"/g' | tr '\n' ' ' | sed 's/  */ /g')
+
     cat << EOF
-{"decision": "block", "hookSpecificOutput": {"reason": "$reason"}}
+{"decision": "block", "reason": "$escaped_reason"}
 EOF
+    exit 2
 }
 
 # Output empty response (allow without context)
