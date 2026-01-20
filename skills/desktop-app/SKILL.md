@@ -32,24 +32,38 @@ Support Windows, macOS, and Linux simultaneously with a single codebase.
 
 ## Framework Selection Guide
 
-### Recommended Frameworks
+### Framework Selection by Tier (v1.3.0)
 
-| Framework | Recommended For | Advantages | Disadvantages |
-|-----------|----------------|------------|---------------|
-| **Electron** | Fast development, rich ecosystem | Easy start, many examples | Large bundle size (~150MB) |
-| **Tauri** | Lightweight apps, performance focus | Small bundle (~10MB), fast execution | Requires Rust, smaller ecosystem |
+| Framework | Tier | Recommendation | Use Case |
+|-----------|------|----------------|----------|
+| **Tauri** | Tier 2 | ⭐ Primary | Lightweight (3MB), Rust security |
+| **Electron** | Tier 3 | Supported | Mature ecosystem, VS Code-like apps |
+
+> **AI-Native Recommendation**: Tauri
+> - 35% YoY growth
+> - 20-40MB memory vs Electron's 200-400MB
+> - Mobile support (iOS/Android) via Tauri 2.0
+> - Rust backend = memory safety
+
+> **Ecosystem Recommendation**: Electron
+> - Mature tooling
+> - Node.js integration
+> - Proven at scale (VS Code, Slack)
 
 ### Level-wise Recommendations
 
 ```
-Starter → Electron + electron-vite
-  - Can start immediately with just web knowledge
+Starter → Tauri (v2) [Tier 2]
+  - Simpler setup than Electron
+  - Smaller output bundles (~3MB vs ~150MB)
 
-Dynamic → Electron + auto-update
+Dynamic → Tauri + auto-update [Tier 2]
   - Includes server integration, auto-update
+  - Lower memory footprint
 
-Enterprise → Tauri
-  - Apps where performance and security matter
+Enterprise → Tauri [Tier 2] or Electron [Tier 3]
+  - Tauri for performance and security
+  - Electron for complex Node.js integration
 ```
 
 ---

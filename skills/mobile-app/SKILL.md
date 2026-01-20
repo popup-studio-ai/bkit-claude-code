@@ -32,25 +32,38 @@ Develop for iOS and Android simultaneously using cross-platform frameworks.
 
 ## Framework Selection Guide
 
-### Recommended Frameworks
+### Framework Selection by Tier (v1.3.0)
 
-| Framework | Recommended For | Advantages | Disadvantages |
-|-----------|----------------|------------|---------------|
-| **Expo (React Native)** | Web developers, quick releases | Leverage React knowledge, fast development | Native module limitations |
-| **React Native CLI** | Complex apps, native integration | Full native access | Complex setup |
-| **Flutter** | High-performance UI, willing to learn new | Fast rendering, consistent UI | Need to learn Dart |
+| Framework | Tier | Recommendation | Use Case |
+|-----------|------|----------------|----------|
+| **React Native (Expo)** | Tier 1 | ⭐ Primary | TypeScript ecosystem, AI tools |
+| **React Native CLI** | Tier 1 | Recommended | Native module needs |
+| **Flutter** | Tier 2 | Supported | Multi-platform (6 OS), performance |
+
+> **AI-Native Recommendation**: React Native with TypeScript
+> - Full Copilot/Claude support
+> - Extensive npm ecosystem
+> - 20:1 developer availability vs Dart
+
+> **Performance Recommendation**: Flutter
+> - Impeller rendering engine
+> - Single codebase for 6 platforms
+> - Smaller bundles
 
 ### Level-wise Recommendations
 
 ```
-Starter → Expo (React Native)
+Starter → Expo (React Native) [Tier 1]
   - Simple setup, can leverage web knowledge
+  - Full AI tool support
 
-Dynamic → Expo + EAS Build
+Dynamic → Expo + EAS Build [Tier 1] or Flutter [Tier 2]
   - Includes server integration, production build support
+  - Choose Flutter for multi-platform needs
 
-Enterprise → React Native CLI or Flutter
+Enterprise → React Native CLI [Tier 1] or Flutter [Tier 2]
   - Complex native features, performance optimization needed
+  - Flutter for consistent cross-platform UI
 ```
 
 ---

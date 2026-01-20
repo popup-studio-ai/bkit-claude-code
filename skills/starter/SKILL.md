@@ -48,6 +48,18 @@ Tailwind CSS → Utility CSS
 TypeScript   → Type safety (optional)
 ```
 
+### Language Tier Guidance (v1.3.0)
+
+> **Recommended**: Tier 1 languages only (Python, TypeScript, JavaScript)
+>
+> Starter level focuses on AI-Native development with maximum AI tool support.
+
+| Tier | Allowed | Reason |
+|------|---------|--------|
+| Tier 1 | ✅ Yes | Full AI support, Vibe Coding optimized |
+| Tier 2 | ⚠️ Limited | Consider Dynamic level instead |
+| Tier 3-4 | ❌ No | Upgrade to Dynamic/Enterprise |
+
 ## Project Structure
 
 ### Option A: HTML/CSS/JS

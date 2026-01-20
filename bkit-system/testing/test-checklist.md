@@ -33,6 +33,31 @@
 | 1.1.10 | node_modules/pkg/index.js Write | 빈 출력 (exclude pattern) | [ ] |
 | 1.1.11 | __pycache__/module.py Write | 빈 출력 (exclude pattern) | [ ] |
 
+### 1.1.2 Language Tier Detection (v1.3.0)
+
+| # | 테스트 케이스 | 예상 결과 | Pass |
+|---|-------------|----------|------|
+| 1.1.12 | get_language_tier "test.py" | "1" (Tier 1 - AI-Native) | [ ] |
+| 1.1.13 | get_language_tier "test.ts" | "1" (Tier 1 - AI-Native) | [ ] |
+| 1.1.14 | get_language_tier "test.go" | "2" (Tier 2 - Mainstream) | [ ] |
+| 1.1.15 | get_language_tier "test.dart" | "2" (Tier 2 - Mainstream) | [ ] |
+| 1.1.16 | get_language_tier "test.astro" | "2" (Tier 2 - Mainstream) | [ ] |
+| 1.1.17 | get_language_tier "test.java" | "3" (Tier 3 - Domain) | [ ] |
+| 1.1.18 | get_language_tier "test.php" | "4" (Tier 4 - Legacy) | [ ] |
+| 1.1.19 | get_language_tier "test.mojo" | "experimental" | [ ] |
+| 1.1.20 | get_language_tier "test.unknown" | "unknown" | [ ] |
+
+### 1.1.3 New Extension Support (v1.3.0)
+
+| # | 테스트 케이스 | 예상 결과 | Pass |
+|---|-------------|----------|------|
+| 1.1.21 | is_code_file "app.dart" | true (Flutter/Dart) | [ ] |
+| 1.1.22 | is_code_file "page.astro" | true (Astro) | [ ] |
+| 1.1.23 | is_code_file "doc.mdx" | true (MDX) | [ ] |
+| 1.1.24 | is_code_file "ai.mojo" | true (Mojo) | [ ] |
+| 1.1.25 | is_code_file "sys.zig" | true (Zig) | [ ] |
+| 1.1.26 | is_ui_file "Hero.astro" | true (Astro UI) | [ ] |
+
 ### 1.2 Task Classification (integrated in pre-write.sh)
 
 > **Note**: Task classification is now integrated into `pre-write.sh` (v1.2.0)

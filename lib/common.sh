@@ -50,6 +50,45 @@ get_config_array() {
 # Configurable exclude patterns (can be overridden via environment)
 BKIT_EXCLUDE_PATTERNS="${BKIT_EXCLUDE_PATTERNS:-node_modules .git dist build .next __pycache__ .venv venv coverage .pytest_cache target .cargo vendor}"
 
+# ============================================================
+# Language Tier System (v1.3.0)
+# ============================================================
+# Tier classification based on:
+# - AI tool ecosystem compatibility (Copilot, Claude, Cursor)
+# - Vibe Coding optimization
+# - Market share (IEEE Spectrum 2025, Stack Overflow 2025)
+# - Training data availability
+# - Growth potential
+
+# Tier 1: AI-Native Essential
+# - AI tool ecosystem complete (Copilot, Claude, Cursor)
+# - Optimized for Vibe Coding
+# - Top market share + abundant training data
+TIER_1_EXTENSIONS="py pyx pyi ts tsx js jsx mjs cjs"
+
+# Tier 2: Mainstream Recommended
+# - Strong in specific domains (mobile, system, cloud)
+# - Good AI tool support
+# - Growing or stable market share
+TIER_2_EXTENSIONS="go rs dart astro vue svelte mdx"
+
+# Tier 3: Domain Specific
+# - Platform essential (iOS, Android, Enterprise)
+# - Moderate AI tool support
+TIER_3_EXTENSIONS="java kt kts swift c cpp cc h hpp sh bash"
+
+# Tier 4: Legacy/Niche
+# - Maintenance purpose
+# - Limited AI tool support
+# - Not recommended for new projects
+TIER_4_EXTENSIONS="php rb erb cs scala ex exs"
+
+# Experimental: Future Consideration
+TIER_EXPERIMENTAL_EXTENSIONS="mojo zig v"
+
+# All supported extensions (union of all tiers)
+ALL_CODE_EXTENSIONS="$TIER_1_EXTENSIONS $TIER_2_EXTENSIONS $TIER_3_EXTENSIONS $TIER_4_EXTENSIONS $TIER_EXPERIMENTAL_EXTENSIONS"
+
 # Check if path is a source code file
 # Strategy: Negative pattern (exclusion) + Extension-based detection
 # Supports: JavaScript, TypeScript, Python, Go, Rust, Ruby, Java, PHP, Swift, etc.
@@ -82,70 +121,34 @@ is_source_file() {
 }
 
 # Check if path is a code file by extension
-# Enhanced with broader multi-language support
+# Enhanced with Tier-based multi-language support (v1.3.0)
 # Usage: is_code_file "/path/to/file.ts"
 # Returns: 0 (true) or 1 (false)
 is_code_file() {
     local file_path="$1"
+    local ext="${file_path##*.}"
 
-    # JavaScript/TypeScript
-    [[ "$file_path" == *.ts ]] || \
-    [[ "$file_path" == *.tsx ]] || \
-    [[ "$file_path" == *.js ]] || \
-    [[ "$file_path" == *.jsx ]] || \
-    [[ "$file_path" == *.mjs ]] || \
-    [[ "$file_path" == *.cjs ]] || \
-    # Python
-    [[ "$file_path" == *.py ]] || \
-    [[ "$file_path" == *.pyx ]] || \
-    [[ "$file_path" == *.pyi ]] || \
-    # Go
-    [[ "$file_path" == *.go ]] || \
-    # Rust
-    [[ "$file_path" == *.rs ]] || \
-    # Java/Kotlin
-    [[ "$file_path" == *.java ]] || \
-    [[ "$file_path" == *.kt ]] || \
-    [[ "$file_path" == *.kts ]] || \
-    # Ruby
-    [[ "$file_path" == *.rb ]] || \
-    [[ "$file_path" == *.erb ]] || \
-    # PHP
-    [[ "$file_path" == *.php ]] || \
-    # Swift
-    [[ "$file_path" == *.swift ]] || \
-    # C/C++
-    [[ "$file_path" == *.c ]] || \
-    [[ "$file_path" == *.cpp ]] || \
-    [[ "$file_path" == *.cc ]] || \
-    [[ "$file_path" == *.h ]] || \
-    [[ "$file_path" == *.hpp ]] || \
-    # C#
-    [[ "$file_path" == *.cs ]] || \
-    # Scala
-    [[ "$file_path" == *.scala ]] || \
-    # Elixir
-    [[ "$file_path" == *.ex ]] || \
-    [[ "$file_path" == *.exs ]] || \
-    # Shell
-    [[ "$file_path" == *.sh ]] || \
-    [[ "$file_path" == *.bash ]] || \
-    # Vue/Svelte
-    [[ "$file_path" == *.vue ]] || \
-    [[ "$file_path" == *.svelte ]]
+    # Check against all supported extensions from Tier system
+    for e in $ALL_CODE_EXTENSIONS; do
+        [[ "$ext" == "$e" ]] && return 0
+    done
+
+    return 1
 }
 
 # Check if path is a UI component file
+# Supports: React, Vue, Svelte, Astro (v1.3.0)
 # Usage: is_ui_file "/path/to/Component.tsx"
 # Returns: 0 (true) or 1 (false)
 is_ui_file() {
     local file_path="$1"
 
-    # Check for common UI file patterns (framework-agnostic)
+    # UI component extensions (framework-agnostic)
     [[ "$file_path" == *.tsx ]] || \
     [[ "$file_path" == *.jsx ]] || \
     [[ "$file_path" == *.vue ]] || \
-    [[ "$file_path" == *.svelte ]]
+    [[ "$file_path" == *.svelte ]] || \
+    [[ "$file_path" == *.astro ]]
 }
 
 # Check if path is an environment file
@@ -154,6 +157,106 @@ is_ui_file() {
 is_env_file() {
     local file_path="$1"
     [[ "$file_path" == *.env* ]] || [[ "$file_path" == .env* ]]
+}
+
+# ============================================================
+# Tier Detection Functions (v1.3.0)
+# ============================================================
+
+# Get language tier for a file
+# Usage: get_language_tier "/path/to/file.ts"
+# Output: "1" | "2" | "3" | "4" | "experimental" | "unknown"
+get_language_tier() {
+    local file_path="$1"
+    local ext="${file_path##*.}"
+
+    # Check each tier
+    for e in $TIER_1_EXTENSIONS; do
+        [[ "$ext" == "$e" ]] && echo "1" && return 0
+    done
+
+    for e in $TIER_2_EXTENSIONS; do
+        [[ "$ext" == "$e" ]] && echo "2" && return 0
+    done
+
+    for e in $TIER_3_EXTENSIONS; do
+        [[ "$ext" == "$e" ]] && echo "3" && return 0
+    done
+
+    for e in $TIER_4_EXTENSIONS; do
+        [[ "$ext" == "$e" ]] && echo "4" && return 0
+    done
+
+    for e in $TIER_EXPERIMENTAL_EXTENSIONS; do
+        [[ "$ext" == "$e" ]] && echo "experimental" && return 0
+    done
+
+    echo "unknown"
+}
+
+# Get tier description
+# Usage: get_tier_description "1"
+# Output: "AI-Native Essential"
+get_tier_description() {
+    local tier="$1"
+
+    case "$tier" in
+        1) echo "AI-Native Essential" ;;
+        2) echo "Mainstream Recommended" ;;
+        3) echo "Domain Specific" ;;
+        4) echo "Legacy/Niche" ;;
+        experimental) echo "Experimental" ;;
+        *) echo "Unknown" ;;
+    esac
+}
+
+# Get PDCA recommendation based on tier
+# Usage: get_tier_pdca_guidance "1"
+get_tier_pdca_guidance() {
+    local tier="$1"
+
+    case "$tier" in
+        1)
+            echo "Tier 1 (AI-Native): Full PDCA support. Vibe coding optimized."
+            ;;
+        2)
+            echo "Tier 2 (Mainstream): PDCA recommended. Good AI tool compatibility."
+            ;;
+        3)
+            echo "Tier 3 (Domain): PDCA supported. Platform-specific considerations apply."
+            ;;
+        4)
+            echo "Tier 4 (Legacy): Basic PDCA. Consider migration to Tier 1-2."
+            ;;
+        experimental)
+            echo "Experimental: Limited PDCA support. Use with caution."
+            ;;
+        *)
+            echo ""
+            ;;
+    esac
+}
+
+# Check if file is in a specific tier
+# Usage: is_tier_1 "/path/to/file.ts"
+is_tier_1() {
+    [[ "$(get_language_tier "$1")" == "1" ]]
+}
+
+is_tier_2() {
+    [[ "$(get_language_tier "$1")" == "2" ]]
+}
+
+is_tier_3() {
+    [[ "$(get_language_tier "$1")" == "3" ]]
+}
+
+is_tier_4() {
+    [[ "$(get_language_tier "$1")" == "4" ]]
+}
+
+is_experimental_tier() {
+    [[ "$(get_language_tier "$1")" == "experimental" ]]
 }
 
 # ============================================================

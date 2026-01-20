@@ -138,24 +138,50 @@ BKIT_EXCLUDE_PATTERNS="node_modules .git dist build __pycache__ .venv target ven
 BKIT_FEATURE_PATTERNS="features modules packages apps services domains"
 ```
 
-### Supported Languages (is_code_file)
+### Supported Languages by Tier (v1.3.0)
 
-| Language | Extensions |
-|----------|------------|
-| JavaScript/TypeScript | `.ts`, `.tsx`, `.js`, `.jsx`, `.mjs`, `.cjs` |
-| Python | `.py`, `.pyx`, `.pyi` |
-| Go | `.go` |
-| Rust | `.rs` |
-| Java/Kotlin | `.java`, `.kt`, `.kts` |
-| Ruby | `.rb`, `.erb` |
-| PHP | `.php` |
-| Swift | `.swift` |
-| C/C++ | `.c`, `.cpp`, `.cc`, `.h`, `.hpp` |
-| C# | `.cs` |
-| Scala | `.scala` |
-| Elixir | `.ex`, `.exs` |
-| Shell | `.sh`, `.bash` |
-| Vue/Svelte | `.vue`, `.svelte` |
+#### Tier 1: AI-Native Essential
+| Language | Extensions | AI Compatibility |
+|----------|------------|------------------|
+| Python | `.py`, `.pyx`, `.pyi` | ⭐⭐⭐ Full |
+| TypeScript | `.ts`, `.tsx` | ⭐⭐⭐ Full |
+| JavaScript | `.js`, `.jsx`, `.mjs`, `.cjs` | ⭐⭐⭐ Full |
+
+#### Tier 2: Mainstream Recommended
+| Language/Framework | Extensions | AI Compatibility |
+|--------------------|------------|------------------|
+| Go | `.go` | ⭐⭐ Good |
+| Rust | `.rs` | ⭐⭐ Good |
+| Dart/Flutter | `.dart` | ⭐⭐ Good |
+| Vue | `.vue` | ⭐⭐ Good |
+| Svelte | `.svelte` | ⭐⭐ Good |
+| Astro | `.astro` | ⭐⭐ Good |
+| MDX | `.mdx` | ⭐⭐ Good |
+
+#### Tier 3: Domain Specific
+| Language | Extensions | AI Compatibility |
+|----------|------------|------------------|
+| Java | `.java` | ⭐ Moderate |
+| Kotlin | `.kt`, `.kts` | ⭐ Moderate |
+| Swift | `.swift` | ⭐ Moderate |
+| C/C++ | `.c`, `.cpp`, `.cc`, `.h`, `.hpp` | ⭐ Moderate |
+| Shell | `.sh`, `.bash` | ⭐ Moderate |
+
+#### Tier 4: Legacy/Niche
+| Language | Extensions | AI Compatibility |
+|----------|------------|------------------|
+| PHP | `.php` | Limited |
+| Ruby | `.rb`, `.erb` | Limited |
+| C# | `.cs` | Limited |
+| Scala | `.scala` | Limited |
+| Elixir | `.ex`, `.exs` | Limited |
+
+#### Experimental
+| Language | Extensions | Status |
+|----------|------------|--------|
+| Mojo | `.mojo` | Monitoring |
+| Zig | `.zig` | Monitoring |
+| V | `.v` | Monitoring |
 
 ## Script Input/Output
 

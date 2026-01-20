@@ -52,6 +52,23 @@ Deployment:
 - bkend.ai (backend)
 ```
 
+### Language Tier Guidance (v1.3.0)
+
+> **Recommended**: Tier 1-2 languages
+>
+> Dynamic level supports full-stack development with strong AI compatibility.
+
+| Tier | Allowed | Reason |
+|------|---------|--------|
+| Tier 1 | ✅ Primary | Full AI support |
+| Tier 2 | ✅ Yes | Mobile (Flutter/RN), Modern web (Vue, Astro) |
+| Tier 3 | ⚠️ Limited | Platform-specific needs only |
+| Tier 4 | ❌ No | Migration recommended |
+
+**Mobile Development**:
+- React Native (Tier 1 via TypeScript) - Recommended
+- Flutter (Tier 2 via Dart) - Supported
+
 ## Project Structure
 
 ```

@@ -59,6 +59,24 @@ CI/CD:
 - Docker
 ```
 
+### Language Tier Guidance (v1.3.0)
+
+> **Supported**: All Tiers
+>
+> Enterprise level handles complex requirements including legacy system integration.
+
+| Tier | Usage | Guidance |
+|------|-------|----------|
+| Tier 1 | Primary services | New development, core features |
+| Tier 2 | System/Cloud | Go (K8s), Rust (performance critical) |
+| Tier 3 | Platform native | iOS (Swift), Android (Kotlin), legacy Java |
+| Tier 4 | Legacy integration | Migration plan required |
+
+**Migration Path**:
+- PHP → TypeScript (Next.js API routes)
+- Ruby → Python (FastAPI)
+- Java → Kotlin or Go
+
 ## Project Structure
 
 ```

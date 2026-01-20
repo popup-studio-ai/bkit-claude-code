@@ -519,6 +519,46 @@ Skills are expert knowledge that Claude references. They auto-activate for relat
 
 ---
 
+## Language & Framework Support (v1.3.0)
+
+### Tier System
+
+bkit classifies languages and frameworks into 4 tiers based on AI-Native development optimization:
+
+| Tier | Focus | Extensions |
+|------|-------|------------|
+| **Tier 1** | AI-Native | `.py`, `.ts`, `.tsx`, `.js`, `.jsx` |
+| **Tier 2** | Mainstream | `.go`, `.rs`, `.dart`, `.vue`, `.svelte`, `.astro` |
+| **Tier 3** | Domain | `.java`, `.kt`, `.swift`, `.c`, `.cpp` |
+| **Tier 4** | Legacy | `.php`, `.rb`, `.cs`, `.scala` |
+
+### Full Extension List
+
+**Total: 30+ extensions supported**
+
+| Category | Extensions |
+|----------|------------|
+| Web Frontend | `.ts`, `.tsx`, `.js`, `.jsx`, `.vue`, `.svelte`, `.astro`, `.mdx` |
+| Backend | `.py`, `.go`, `.rs`, `.java`, `.kt`, `.rb`, `.php` |
+| Mobile | `.dart`, `.swift`, `.kt` |
+| System | `.c`, `.cpp`, `.rs`, `.zig` |
+| Experimental | `.mojo`, `.zig`, `.v` |
+
+### Framework Detection
+
+| Framework | Detection Method | Tier |
+|-----------|-----------------|------|
+| Next.js | `next.config.*`, `app/`, `pages/` | Tier 1 |
+| React | `.tsx`, `.jsx` files | Tier 1 |
+| Vue | `.vue` files, `nuxt.config.*` | Tier 2 |
+| Svelte | `.svelte` files, `svelte.config.*` | Tier 2 |
+| Astro | `.astro` files, `astro.config.*` | Tier 2 |
+| Flutter | `.dart` files, `pubspec.yaml` | Tier 2 |
+| Tauri | `tauri.conf.json` | Tier 2 |
+| Electron | `electron` in package.json | Tier 3 |
+
+---
+
 ## Real Usage Scenarios
 
 ### Scenario 1: First-time Developer

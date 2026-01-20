@@ -636,6 +636,48 @@ Add to ~/.claude/settings.json:
 | English | english (default) | static website, beginner... |
 ```
 
+### 8.4 Language Tier System (v1.3.0)
+
+bkit uses a 4-tier classification system for programming languages based on AI-Native development trends:
+
+| Tier | Category | Languages | Frameworks |
+|------|----------|-----------|------------|
+| **1** | AI-Native Essential | Python, TypeScript, JavaScript | React, Next.js, Svelte |
+| **2** | Mainstream Recommended | Go, Rust, Dart | Vue, Astro, Flutter, Tauri |
+| **3** | Domain Specific | Java, Kotlin, Swift, C/C++ | Angular, Electron |
+| **4** | Legacy/Niche | PHP, Ruby, C#, Scala, Elixir | - |
+
+**Experimental**: Mojo, Zig, V
+
+#### Selection Criteria
+
+- **AI Tool Ecosystem**: Copilot, Claude, Cursor support level
+- **Vibe Coding Optimization**: Natural language → code generation efficiency
+- **Market Share**: IEEE Spectrum 2025, Stack Overflow 2025
+- **Training Data**: LLM training data abundance
+
+#### Level × Tier Matrix
+
+| Level | Primary Tier | Secondary Tier | Notes |
+|-------|--------------|----------------|-------|
+| Starter | Tier 1 | - | AI-Native focus |
+| Dynamic | Tier 1 | Tier 2 | Fullstack + Mobile |
+| Enterprise | Tier 1-2 | Tier 3-4 | Legacy integration |
+
+#### Implementation
+
+Tier detection in `lib/common.sh`:
+
+```bash
+tier=$(get_language_tier "$file_path")
+case "$tier" in
+    1) echo "Full PDCA support" ;;
+    2) echo "PDCA recommended" ;;
+    3) echo "Platform-specific PDCA" ;;
+    4) echo "Migration recommended" ;;
+esac
+```
+
 ---
 
 ## 9. Limitations and Considerations
@@ -735,8 +777,8 @@ claude --plugin-dir ./bkit
 **Created**: 2026-01-09
 **Updated**: 2026-01-20
 **Author**: Claude (with Kay)
-**Version**: v1.2.0
-**Status**: Design verified → Implementation complete
+**Version**: v1.3.0
+**Status**: Design verified → Implementation complete → Language Tier System added
 
 ---
 
@@ -773,6 +815,18 @@ claude --plugin-dir ./bkit
 ---
 
 ## Changelog
+
+### v1.3.0 (2026-01-20)
+- 🌐 **Language Tier System**: 4-tier classification for AI-Native development
+  - Tier 1: AI-Native Essential (Python, TypeScript, JavaScript)
+  - Tier 2: Mainstream Recommended (Go, Rust, Dart, Vue, Astro, Flutter)
+  - Tier 3: Domain Specific (Java, Kotlin, Swift, C/C++)
+  - Tier 4: Legacy/Niche (PHP, Ruby, C#, Scala, Elixir)
+  - Experimental: Mojo, Zig, V
+- 🔧 **New Functions in lib/common.sh**: `get_language_tier()`, `get_tier_description()`, `get_tier_pdca_guidance()`, `is_tier_N()` helpers
+- 📝 **Updated Skills**: Tier guidance added to starter, dynamic, enterprise, mobile-app, desktop-app skills
+- 📄 **Template Updates**: `CLAUDE.template.md` now includes Tier context
+- 🔍 **New Extensions**: .dart, .astro, .mdx, .mojo, .zig, .v supported
 
 ### v1.2.0 (2026-01-20)
 - 🏗️ **Architecture Refactoring**: Remove `.claude/` from version control, use root-level as single source of truth

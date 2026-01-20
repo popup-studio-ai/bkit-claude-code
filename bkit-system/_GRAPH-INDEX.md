@@ -5,6 +5,8 @@
 > **v1.2.0 Refactoring**: Skills consolidated, .claude/ removed from repo, single source of truth at root level
 >
 > **v1.2.1 Multi-Language Support**: Extension-based file detection, 20+ language support, configurable patterns
+>
+> **v1.3.0 Language Tier System**: AI-Native 개발 및 Vibe Coding 트렌드 반영한 4단계 언어 분류 체계
 
 ## Skills (18)
 
@@ -133,15 +135,37 @@ Defined in `hooks/hooks.json`:
 ## Infrastructure
 
 ### Shared Library
-- `lib/common.sh` - Shared utility functions (v1.2.1 Multi-Language Support)
+- `lib/common.sh` - Shared utility functions (v1.3.0 Language Tier System)
   - `get_config()` - Read from bkit.config.json
-  - `is_source_file()` - Negative pattern + extension detection (20+ languages)
-  - `is_code_file()` - Check code file extensions (.ts, .py, .go, .rs, .rb, etc.)
-  - `is_ui_file()` - Check UI component files (.tsx, .jsx, .vue, .svelte)
-  - `extract_feature()` - Multi-language feature extraction (Next.js/Python/Go/Ruby/Monorepo)
+  - `is_source_file()` - Negative pattern + extension detection (30+ extensions)
+  - `is_code_file()` - Tier-based code file detection
+  - `is_ui_file()` - UI component files (.tsx, .jsx, .vue, .svelte, .astro)
+  - `get_language_tier()` - Get tier (1-4, experimental, unknown) for file
+  - `get_tier_description()` - Get tier description (AI-Native, Mainstream, etc.)
+  - `get_tier_pdca_guidance()` - Get PDCA guidance based on tier
+  - `is_tier_1()`, `is_tier_2()`, etc. - Tier check helpers
+  - `extract_feature()` - Multi-language feature extraction
   - `classify_task()` - Task size classification
   - `detect_level()` - Project level detection
   - `output_allow()`, `output_block()`, `output_empty()` - JSON output helpers
+
+### Language Tier System (v1.3.0)
+
+bkit supports languages and frameworks organized by tier:
+
+| Tier | Category | Languages/Frameworks |
+|------|----------|---------------------|
+| **Tier 1** | AI-Native Essential | Python, TypeScript, JavaScript, React/Next.js, Svelte |
+| **Tier 2** | Mainstream Recommended | Go, Rust, Dart, Vue, Astro, Flutter, Tauri |
+| **Tier 3** | Domain Specific | Java, Kotlin, Swift, C/C++, Angular, Electron |
+| **Tier 4** | Legacy/Niche | PHP, Ruby, C#, Scala, Elixir |
+| **Experimental** | Future Consideration | Mojo, Zig, V |
+
+**Tier Selection Criteria**:
+- AI tool ecosystem compatibility (Copilot, Claude, Cursor)
+- Vibe Coding optimization
+- Market share (IEEE Spectrum 2025)
+- Training data availability
 
 ### Configurable Patterns (v1.2.1)
 - `BKIT_EXCLUDE_PATTERNS` - Exclude directories (node_modules, __pycache__, .git, etc.)
