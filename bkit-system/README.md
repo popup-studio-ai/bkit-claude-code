@@ -1,20 +1,20 @@
 # bkit System Architecture
 
-> bkit 플러그인의 내부 구조와 트리거 시스템을 문서화한 아키텍처 가이드
+> Architecture guide documenting bkit plugin's internal structure and trigger system
 
-## 이 문서의 목적
+## Purpose of This Document
 
-1. **예측 가능성**: 사용자 행동에 따라 어떤 기능이 발동되는지 파악
-2. **테스트 가능성**: 시나리오별 예상 동작 검증
-3. **기여자 가이드**: 새 기능 추가 시 기존 시스템과의 관계 이해
+1. **Predictability**: Understand what features trigger based on user actions
+2. **Testability**: Verify expected behavior per scenario
+3. **Contributor Guide**: Understand relationships when adding new features
 
 ## Quick Links
 
-- [[_GRAPH-INDEX]] - 옵시디안 그래프 허브 (모든 관계 시각화)
-- [[triggers/trigger-matrix]] - 트리거 매트릭스 (핵심)
-- [[scenarios/scenario-write-code]] - 코드 작성 시 동작 흐름
+- [[_GRAPH-INDEX]] - Obsidian graph hub (visualize all relationships)
+- [[triggers/trigger-matrix]] - Trigger matrix (core reference)
+- [[scenarios/scenario-write-code]] - Code write flow
 
-## 시스템 개요
+## System Overview
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -23,7 +23,7 @@
 │                                                                 │
 │  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐      │
 │  │   Skills     │───▶│   Agents     │───▶│   Scripts    │      │
-│  │  (18개)      │    │  (11개)      │    │  (12개)      │      │
+│  │  (18)        │    │  (11)        │    │  (19)        │      │
 │  └──────────────┘    └──────────────┘    └──────────────┘      │
 │         │                   │                   │               │
 │         ▼                   ▼                   ▼               │
@@ -40,69 +40,71 @@
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## 컴포넌트 요약
+## Component Summary
 
-| 컴포넌트 | 개수 | 역할 | 상세 |
-|----------|------|------|------|
-| Skills | 18 | 도메인 지식 + 훅 정의 | [[components/skills/_skills-overview]] |
-| Agents | 11 | 전문 작업 수행 | [[components/agents/_agents-overview]] |
-| Hooks | 4종 | 이벤트 기반 트리거 | [[components/hooks/_hooks-overview]] |
-| Scripts | 12 | 실제 로직 실행 | [[components/scripts/_scripts-overview]] |
-| Lib | 1 | 공유 유틸리티 | `lib/common.sh` |
-| Config | 1 | 설정 외부화 | `bkit.config.json` |
-| Commands | 18 | 슬래시 명령어 | `/pdca-*`, `/init-*`, 등 |
-| Instructions | 7 | Soft Rules | Claude가 읽어서 적용 |
+| Component | Count | Role | Details |
+|-----------|-------|------|---------|
+| Skills | 18 | Domain knowledge | [[components/skills/_skills-overview]] |
+| Agents | 11 | Specialized task execution | [[components/agents/_agents-overview]] |
+| Commands | 18 | Slash commands | `/pdca-*`, `/init-*`, etc. |
+| Hooks | 3 events | Event-based triggers | [[components/hooks/_hooks-overview]] |
+| Scripts | 19 | Actual logic execution | [[components/scripts/_scripts-overview]] |
+| Lib | 1 | Shared utilities | `lib/common.sh` |
+| Config | 1 | Centralized settings | `bkit.config.json` |
+| Templates | 20 | Document templates | PDCA + Pipeline phases |
 
-## 트리거 레이어
+## Trigger Layers
 
-bkit은 6개 레이어에서 트리거가 발생합니다:
+bkit triggers occur across 5 layers:
 
 ```
-Layer 1: settings.json        → SessionStart hook
-Layer 2: Instructions         → Claude가 읽어서 적용하는 soft rules
-Layer 3: Skill Frontmatter    → hooks: PreToolUse, PostToolUse, Stop
-Layer 4: Agent Frontmatter    → hooks: PreToolUse, PostToolUse
-Layer 5: Description Triggers → "Triggers:" 키워드 매칭
-Layer 6: Scripts              → 실제 bash 로직 실행
+Layer 1: hooks.json          → SessionStart, PreToolUse, PostToolUse hooks
+Layer 2: Skill Frontmatter   → hooks: PreToolUse, PostToolUse, Stop
+Layer 3: Agent Frontmatter   → hooks: PreToolUse, PostToolUse
+Layer 4: Description Triggers → "Triggers:" keyword matching
+Layer 5: Scripts             → Actual bash logic execution
 ```
 
-자세한 내용: [[triggers/trigger-matrix]]
+Details: [[triggers/trigger-matrix]]
 
-## 주요 시나리오
+## Key Scenarios
 
-| 시나리오 | 발동되는 것들 | 상세 |
-|----------|--------------|------|
-| 코드 작성 (Write/Edit) | 3-4개 hooks | [[scenarios/scenario-write-code]] |
-| 새 기능 요청 | PDCA flow + agents | [[scenarios/scenario-new-feature]] |
-| QA 실행 | qa-monitor + scripts | [[scenarios/scenario-qa]] |
+| Scenario | Triggered Components | Details |
+|----------|---------------------|---------|
+| Code Write (Write/Edit) | 2-3 hooks + scripts | [[scenarios/scenario-write-code]] |
+| New Feature Request | PDCA flow + agents | [[scenarios/scenario-new-feature]] |
+| QA Execution | qa-monitor + scripts | [[scenarios/scenario-qa]] |
 
-## 폴더 구조
+## Folder Structure
 
 ```
 bkit-system/
-├── README.md                  # 이 파일
-├── _GRAPH-INDEX.md            # 옵시디안 그래프 허브
+├── README.md                  # This file
+├── _GRAPH-INDEX.md            # Obsidian graph hub
 ├── components/
-│   ├── skills/                # Skill 상세
-│   ├── agents/                # Agent 상세
-│   ├── hooks/                 # Hook 이벤트 정리
-│   └── scripts/               # Script 상세
+│   ├── skills/                # Skill details
+│   ├── agents/                # Agent details
+│   ├── hooks/                 # Hook event reference
+│   └── scripts/               # Script details
 ├── triggers/
-│   ├── trigger-matrix.md      # 트리거 매트릭스
-│   └── priority-rules.md      # 우선순위 규칙
-├── scenarios/                 # 사용자 시나리오별 동작
+│   ├── trigger-matrix.md      # Trigger matrix
+│   └── priority-rules.md      # Priority rules
+├── scenarios/                 # User scenario flows
 └── testing/
-    └── test-checklist.md      # 테스트 체크리스트
+    └── test-checklist.md      # Test checklist
 ```
 
-## 관련 소스 위치
+## Source Locations
 
-| 항목 | 경로 |
+| Item | Path |
 |------|------|
-| Skills | `.claude/skills/*/SKILL.md` |
-| Agents | `.claude/agents/*.md` |
-| Scripts | `.claude/scripts/*.sh` |
-| Commands | `.claude/commands/*.md` |
-| Instructions | `.claude/instructions/*.md` |
-| Templates | `.claude/templates/*.md` |
-| Settings | `.claude/settings.json` |
+| Skills | `skills/*/SKILL.md` |
+| Agents | `agents/*.md` |
+| Scripts | `scripts/*.sh` |
+| Commands | `commands/*.md` |
+| Templates | `templates/*.md` |
+| Hooks | `hooks/hooks.json` |
+| Lib | `lib/common.sh` |
+| Config | `bkit.config.json` |
+
+> **Note**: The `.claude/` folder is not in version control. All plugin elements are at root level.

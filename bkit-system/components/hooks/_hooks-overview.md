@@ -1,26 +1,76 @@
 # Hooks Overview
 
-> bkit에서 사용하는 4가지 Hook 이벤트 상세
+> Hook events triggered during Claude Code operations (v1.2.0)
 
-## Hooks란?
+## What are Hooks?
 
-Hooks는 **Claude Code의 특정 이벤트에 자동으로 실행되는 스크립트**입니다.
-- Skills와 Agents의 frontmatter에 정의
-- 이벤트 발생 시 shell script 실행
-- 결과로 allow/block 결정 및 추가 컨텍스트 제공
+Hooks are **scripts that automatically execute on specific Claude Code events**.
+- Defined in `hooks/hooks.json`
+- Execute shell scripts on event triggers
+- Return allow/block decisions with additional context
 
-## Hook 이벤트 종류
+## Hook Configuration
 
-### 1. PreToolUse
+All hooks are defined in `hooks/hooks.json`:
 
-**시점**: Claude가 도구를 사용하기 직전
+```json
+{
+  "hooks": [
+    {
+      "event": "SessionStart",
+      "hooks": [{
+        "type": "command",
+        "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh",
+        "timeout": 5000
+      }],
+      "once": true
+    },
+    {
+      "event": "PreToolUse",
+      "matcher": "Write|Edit",
+      "hooks": [{
+        "type": "command",
+        "command": "${CLAUDE_PLUGIN_ROOT}/scripts/pre-write.sh",
+        "timeout": 5000
+      }]
+    },
+    {
+      "event": "PostToolUse",
+      "matcher": "Write",
+      "hooks": [{
+        "type": "command",
+        "command": "${CLAUDE_PLUGIN_ROOT}/scripts/pdca-post-write.sh",
+        "timeout": 5000
+      }]
+    }
+  ]
+}
+```
 
-**용도**:
-- 위험한 작업 차단 (block)
-- 작업 전 가이드라인 제공 (additionalContext)
-- 조건부 허용
+## Hook Events (3 Active)
 
-**입력 (stdin JSON)**:
+### 1. SessionStart
+
+**Trigger**: Once when bkit plugin loads
+
+| Script | Purpose |
+|--------|---------|
+| `hooks/session-start.sh` | Initialize session, load bkit.config.json |
+
+**Usage**:
+- Initial environment setup
+- User greeting and options
+- Project level detection
+
+### 2. PreToolUse
+
+**Trigger**: Before Write/Edit tool operations
+
+| Matcher | Script | Purpose |
+|---------|--------|---------|
+| `Write\|Edit` | `scripts/pre-write.sh` | PDCA check, task classification, convention hints |
+
+**Input (stdin JSON)**:
 ```json
 {
   "tool_name": "Write",
@@ -31,200 +81,139 @@ Hooks는 **Claude Code의 특정 이벤트에 자동으로 실행되는 스크�
 }
 ```
 
-**출력 (stdout JSON)**:
+**Output (stdout JSON)**:
 ```json
 {
   "decision": "allow|block",
-  "reason": "차단 이유 (block 시)",
+  "reason": "Block reason (if blocked)",
   "hookSpecificOutput": {
-    "additionalContext": "Claude에게 전달할 컨텍스트"
+    "additionalContext": "Context passed to Claude"
   }
 }
 ```
 
-### 2. PostToolUse
+### 3. PostToolUse
 
-**시점**: Claude가 도구 사용을 완료한 직후
+**Trigger**: After Write tool operations complete
 
-**용도**:
-- 작업 결과에 따른 후속 안내
-- 다음 단계 제안
-- 이슈 감지 및 알림
+| Matcher | Script | Purpose |
+|---------|--------|---------|
+| `Write` | `scripts/pdca-post-write.sh` | Guide next steps after file write |
 
-**입력**: PreToolUse와 동일
+**Usage**:
+- Post-operation guidance
+- Next step suggestions
+- Issue detection and notification
 
-**출력**: PreToolUse와 동일 (보통 allow만 사용)
+## Hook Flow Diagram
 
-### 3. Stop
-
-**시점**: Skill/Session 종료 시
-
-**용도**:
-- 작업 완료 요약
-- 다음 단계 안내
-- 결과 저장
-
-**입력**: 없음 (또는 세션 컨텍스트)
-
-**출력**:
-```json
-{
-  "decision": "allow",
-  "hookSpecificOutput": {
-    "additionalContext": "종료 시 안내 메시지"
-  }
-}
+```
+SessionStart (once)
+    │
+    ▼
+┌─────────────────────────────────────────┐
+│            User Action                   │
+└─────────────────────────────────────────┘
+    │
+    ▼
+PreToolUse (Write|Edit)
+    ├─ pre-write.sh
+    │   ├─ Task classification (Quick Fix → Major Feature)
+    │   ├─ PDCA phase detection
+    │   └─ Convention hints
+    │
+    ▼
+┌─────────────────────────────────────────┐
+│         Tool Execution                   │
+│    (Write, Edit, Bash, etc.)            │
+└─────────────────────────────────────────┘
+    │
+    ▼
+PostToolUse (Write)
+    └─ pdca-post-write.sh
+        ├─ Extract feature name
+        └─ Suggest gap analysis
 ```
 
-### 4. SessionStart
+## Script Dependencies
 
-**시점**: Claude Code 세션 시작 시
+| Hook | Script | Dependencies |
+|------|--------|--------------|
+| SessionStart | `session-start.sh` | `lib/common.sh`, `bkit.config.json` |
+| PreToolUse | `pre-write.sh` | `lib/common.sh`, `bkit.config.json` |
+| PostToolUse | `pdca-post-write.sh` | `lib/common.sh` |
 
-**용도**:
-- 초기 환경 설정
-- 사용자 인사 및 옵션 제시
-- 프로젝트 레벨 감지
+## Additional Scripts (Not in hooks.json)
 
-**정의 위치**: `settings.json` (skill frontmatter 아님)
+These scripts are available for skill frontmatter hooks or manual use:
 
-```json
-{
-  "hooks": {
-    "SessionStart": [
-      {
-        "type": "command",
-        "command": ".claude/hooks/session-start.sh",
-        "once": true
-      }
-    ]
-  }
-}
-```
+### Phase Scripts
 
----
+| Script | Event | Purpose |
+|--------|-------|---------|
+| `phase2-convention-pre.sh` | PreToolUse | Convention check |
+| `phase4-api-stop.sh` | Stop | Zero Script QA guidance |
+| `phase5-design-post.sh` | PostToolUse | Design token verification |
+| `phase6-ui-post.sh` | PostToolUse | Layer separation check |
+| `phase8-review-stop.sh` | Stop | Review summary |
+| `phase9-deploy-pre.sh` | PreToolUse | Environment validation |
 
-## Hook 정의 위치
+### QA Scripts
 
-### Skill Frontmatter
+| Script | Event | Purpose |
+|--------|-------|---------|
+| `qa-pre-bash.sh` | PreToolUse | QA setup before Bash |
+| `qa-monitor-post.sh` | PostToolUse | QA completion guidance |
+| `qa-stop.sh` | Stop | QA session cleanup |
 
-```yaml
-# .claude/skills/bkit-rules/SKILL.md
----
-name: bkit-rules
-hooks:
-  PreToolUse:
-    - matcher: "Write|Edit"
-      script: "./scripts/pdca-pre-write.sh"
-  PostToolUse:
-    - matcher: "Write"
-      script: "./scripts/pdca-post-write.sh"
----
-```
+### Agent Scripts
 
-### Agent Frontmatter
+| Script | Event | Purpose |
+|--------|-------|---------|
+| `design-validator-pre.sh` | PreToolUse | Design document validation |
+| `gap-detector-post.sh` | PostToolUse | Gap analysis guidance |
+| `analysis-stop.sh` | Stop | Analysis completion |
 
-```yaml
-# .claude/agents/gap-detector.md
----
-name: gap-detector
-hooks:
-  PostToolUse:
-    - matcher: "Write"
-      script: "./scripts/gap-detector-post.sh"
----
-```
+## Hook Script Writing Rules
 
-### settings.json
-
-```json
-{
-  "hooks": {
-    "SessionStart": [...],
-    "PostToolUse": [...]
-  }
-}
-```
-
----
-
-## 이벤트별 매칭 현황 (v1.2.0 리팩토링 후)
-
-### PreToolUse
-
-| Matcher | Skill/Agent | Script | 비고 |
-|---------|-------------|--------|------|
-| `Write\|Edit` | bkit-rules | **pre-write.sh** | 통합 훅 (PDCA+분류+컨벤션) |
-| `Write` | design-validator | design-validator-pre.sh | |
-| `Bash` | zero-script-qa | qa-pre-bash.sh | |
-| `Bash` | phase-9-deployment | phase9-deploy-pre.sh | |
-
-**Note**: 기존 `task-classification`과 `phase-2-convention`의 PreToolUse 훅은 `bkit-rules`의 `pre-write.sh`로 통합되었습니다.
-
-### PostToolUse
-
-| Matcher | Skill/Agent | Script |
-|---------|-------------|--------|
-| `Write` | bkit-rules | pdca-post-write.sh |
-| `Write` | phase-5-design-system | phase5-design-post.sh |
-| `Write` | phase-6-ui-integration | phase6-ui-post.sh |
-| `Write` | gap-detector | gap-detector-post.sh |
-| `Write` | qa-monitor | qa-monitor-post.sh |
-
-### Stop
-
-| Skill | Script | 비고 |
-|-------|--------|------|
-| phase-4-api | phase4-api-stop.sh | |
-| phase-8-review | phase8-review-stop.sh | analysis-patterns 기능 통합 |
-| zero-script-qa | qa-stop.sh | |
-| development-pipeline | echo | |
-
-**Note**: `analysis-patterns` Stop hook 기능은 `phase-8-review`로 통합되었습니다.
-
-### SessionStart
-
-| Source | Script |
-|--------|--------|
-| settings.json | session-start.sh |
-
----
-
-## Hook Script 작성 규칙
-
-### 표준 구조
+### Standard Structure
 
 ```bash
 #!/bin/bash
 set -e
 
-# stdin에서 JSON 입력 읽기
+# Source common utilities
+source "${CLAUDE_PLUGIN_ROOT}/lib/common.sh"
+
+# Read JSON input from stdin
 INPUT=$(cat)
 FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // ""')
 
-# 조건 체크
-if [[ 조건 ]]; then
-    cat << EOF
-{"decision": "block", "reason": "차단 이유"}
-EOF
+# Condition check
+if [[ condition ]]; then
+    output_block "Block reason"
 else
-    cat << EOF
-{"decision": "allow", "hookSpecificOutput": {"additionalContext": "안내 메시지"}}
-EOF
+    output_allow "Guidance message"
 fi
 ```
 
-### 출력 규칙
+### Output Rules
 
-1. 반드시 **valid JSON** 출력
-2. `decision`: `"allow"` 또는 `"block"`
-3. `block` 시 `reason` 필수
-4. `additionalContext`는 Claude에게 전달됨
+1. Must output **valid JSON**
+2. `decision`: `"allow"` or `"block"`
+3. `reason` required when `block`
+4. `additionalContext` is passed to Claude
 
----
+### Helper Functions (lib/common.sh)
 
-## 관련 문서
+```bash
+output_allow "message"   # Allow with context
+output_block "reason"    # Block with reason
+output_empty            # Allow without context
+```
 
-- [[../scripts/_scripts-overview]] - Script 상세
-- [[../skills/_skills-overview]] - Skill 상세
-- [[../../triggers/trigger-matrix]] - 트리거 매트릭스
-- [[../../triggers/priority-rules]] - 우선순위 규칙
+## Related Documents
+
+- [[../scripts/_scripts-overview]] - Script details
+- [[../skills/_skills-overview]] - Skill details
+- [[../../triggers/trigger-matrix]] - Trigger matrix

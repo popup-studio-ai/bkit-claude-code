@@ -1,90 +1,82 @@
 # Skills Overview
 
-> bkit에 정의된 18개 Skills 목록과 각각의 역할 (v1.2.0 리팩토링 후)
+> 18 Skills defined in bkit (v1.2.0)
 
-## Skills란?
+## What are Skills?
 
-Skills는 **도메인별 전문 지식**을 제공하는 컴포넌트입니다.
-- Claude가 특정 작업 시 참조하는 컨텍스트
-- Frontmatter hooks로 자동화된 동작 정의
-- Description의 Triggers 키워드로 자동 활성화
+Skills are **domain-specific expert knowledge** components.
+- Context that Claude references during specific tasks
+- Automated behavior via frontmatter hooks
+- Auto-activation via "Triggers:" keywords in description
 
-## v1.2.0 리팩토링 변경사항
+## Skill List (18)
 
-기존 26개 Skills가 18개로 통합되었습니다:
+### Core Skills (2)
 
-| 삭제/통합된 Skill | 통합 위치 |
-|------------------|----------|
-| `task-classification` | → `bkit-rules` (통합) |
-| `level-detection` | → `bkit-rules` (통합) |
-| `pdca-methodology` | → 삭제 (CLAUDE.md로 이동) |
-| `document-standards` | → `bkit-templates` (통합) |
-| `evaluator-optimizer` | → 삭제 (agent 설명으로 이동) |
-| `analysis-patterns` | → `phase-8-review` (통합) |
-| `ai-native-development` | → `enterprise` (통합) |
-| `monorepo-architecture` | → `enterprise` (통합) |
+| Skill | Purpose | Hooks | Agent |
+|-------|---------|-------|-------|
+| [[bkit-rules]] | PDCA rules + auto-triggering + code quality standards | PreToolUse, PostToolUse | - |
+| [[bkit-templates]] | Template references + document standards | - | - |
 
-## 전체 목록 (18개)
+### Level Skills (3)
 
-### Core Skills (2개)
+| Skill | Target | Agent |
+|-------|--------|-------|
+| [[starter]] | Static web, beginners | [[../agents/starter-guide]] |
+| [[dynamic]] | BaaS fullstack | [[../agents/bkend-expert]] |
+| [[enterprise]] | MSA/K8s + AI Native | [[../agents/enterprise-expert]], [[../agents/infra-architect]] |
 
-| Skill | 역할 | Hooks | Agent 연결 |
-|-------|------|-------|-----------|
-| [[bkit-rules]] | PDCA 규칙 + 레벨감지 + 작업분류 | PreToolUse, PostToolUse | - |
-| [[bkit-templates]] | 템플릿 참조 + 문서 표준 | - | - |
+### Pipeline Phase Skills (10)
 
-**Note**: `bkit-rules`는 통합된 `pre-write.sh` 훅을 사용하여 PDCA, 작업분류, 컨벤션을 한번에 처리합니다.
+| Skill | Phase | Hooks | Content |
+|-------|-------|-------|---------|
+| [[development-pipeline]] | Overview | Stop | 9-stage pipeline overview |
+| [[phase-1-schema]] | 1 | - | Schema/terminology definition |
+| [[phase-2-convention]] | 2 | - | Coding conventions |
+| [[phase-3-mockup]] | 3 | - | Mockup development |
+| [[phase-4-api]] | 4 | Stop | API design/implementation |
+| [[phase-5-design-system]] | 5 | PostToolUse | Design system |
+| [[phase-6-ui-integration]] | 6 | PostToolUse | UI + API integration |
+| [[phase-7-seo-security]] | 7 | - | SEO/Security |
+| [[phase-8-review]] | 8 | Stop | Code review + gap analysis |
+| [[phase-9-deployment]] | 9 | PreToolUse | Deployment |
 
-### Level Skills (3개)
+### Specialized Skills (3)
 
-| Skill | 대상 | Agent 연결 |
-|-------|------|-----------|
-| [[starter]] | 정적 웹, 초보자 | [[../agents/starter-guide]] |
-| [[dynamic]] | BaaS 풀스택 | [[../agents/bkend-expert]] |
-| [[enterprise]] | MSA/K8s + AI Native + 모노레포 | [[../agents/enterprise-expert]], [[../agents/infra-architect]] |
+| Skill | Purpose | Hooks | Agent |
+|-------|---------|-------|-------|
+| [[zero-script-qa]] | Log-based QA | PreToolUse, Stop | [[../agents/qa-monitor]] |
+| [[mobile-app]] | Mobile app dev | - | [[../agents/pipeline-guide]] |
+| [[desktop-app]] | Desktop app dev | - | [[../agents/pipeline-guide]] |
 
-**Note**: `enterprise`는 ai-native-development와 monorepo-architecture 내용을 통합합니다.
+## Removed Skills (v1.2.0)
 
-### Pipeline Phase Skills (10개)
+The following skills were consolidated:
 
-| Skill | Phase | Hooks | 주요 내용 |
-|-------|-------|-------|----------|
-| [[development-pipeline]] | 전체 | Stop | 9단계 파이프라인 개요 |
-| [[phase-1-schema]] | 1 | - | 스키마/용어 정의 |
-| [[phase-2-convention]] | 2 | - | 코딩 컨벤션 (훅은 bkit-rules로 통합) |
-| [[phase-3-mockup]] | 3 | - | 목업 개발 |
-| [[phase-4-api]] | 4 | Stop | API 설계/구현 |
-| [[phase-5-design-system]] | 5 | PostToolUse | 디자인 시스템 |
-| [[phase-6-ui-integration]] | 6 | PostToolUse | UI + API 연동 |
-| [[phase-7-seo-security]] | 7 | - | SEO/보안 |
-| [[phase-8-review]] | 8 | Stop | 코드 리뷰 + 갭 분석 패턴 |
-| [[phase-9-deployment]] | 9 | PreToolUse | 배포 |
+| Removed Skill | Merged Into |
+|---------------|-------------|
+| `task-classification` | `lib/common.sh` |
+| `level-detection` | `lib/common.sh` |
+| `pdca-methodology` | `bkit-rules` |
+| `document-standards` | `bkit-templates` |
+| `evaluator-optimizer` | `/pdca-iterate` command |
+| `analysis-patterns` | `bkit-templates` |
+| `ai-native-development` | `enterprise` |
+| `monorepo-architecture` | `enterprise` |
 
-**Note**: `phase-8-review`는 analysis-patterns 내용을 통합합니다.
-
-### Specialized Skills (3개)
-
-| Skill | 역할 | Hooks | Agent 연결 |
-|-------|------|-------|-----------|
-| [[zero-script-qa]] | 로그 기반 QA | PreToolUse, Stop | [[../agents/qa-monitor]] |
-| [[mobile-app]] | 모바일 앱 | - | [[../agents/pipeline-guide]] |
-| [[desktop-app]] | 데스크톱 앱 | - | [[../agents/pipeline-guide]] |
-
----
-
-## Skill Frontmatter 구조
+## Skill Frontmatter Structure
 
 ```yaml
 ---
 name: skill-name
 description: |
-  Skill 설명.
+  Skill description.
 
   Use proactively when user...
 
-  Triggers: keyword1, keyword2, 한글키워드
+  Triggers: keyword1, keyword2, keyword3
 
-  Do NOT use for: 제외 조건
+  Do NOT use for: exclusion conditions
 agent: connected-agent-name
 allowed-tools:
   - Read
@@ -95,30 +87,26 @@ user-invocable: true|false
 hooks:
   PreToolUse:
     - matcher: "Write|Edit"
-      script: "./scripts/script-name.sh"
+      script: "${CLAUDE_PLUGIN_ROOT}/scripts/script-name.sh"
   PostToolUse:
     - matcher: "Write"
-      script: "./scripts/script-name.sh"
+      script: "${CLAUDE_PLUGIN_ROOT}/scripts/script-name.sh"
   Stop:
-    - script: "./scripts/script-name.sh"
+    - script: "${CLAUDE_PLUGIN_ROOT}/scripts/script-name.sh"
 ---
 ```
 
----
+## Hooks Definition
 
-## Hooks 정의 방식
-
-### PreToolUse (command 방식 - 권장)
+### PreToolUse (command type - recommended)
 ```yaml
 hooks:
   PreToolUse:
-    - matcher: "Write|Edit"   # 매칭할 도구
+    - matcher: "Write|Edit"
       hooks:
         - type: command
-          command: "$CLAUDE_PROJECT_DIR/scripts/pre-write.sh"
+          command: "${CLAUDE_PLUGIN_ROOT}/scripts/pre-write.sh"
 ```
-
-**Note**: v1.2.0부터 `command` 타입 사용을 권장합니다. 통합된 `pre-write.sh`는 PDCA, 작업분류, 컨벤션을 한번에 처리합니다.
 
 ### PostToolUse
 ```yaml
@@ -127,7 +115,7 @@ hooks:
     - matcher: "Write"
       hooks:
         - type: command
-          command: "$CLAUDE_PROJECT_DIR/scripts/pdca-post-write.sh"
+          command: "${CLAUDE_PLUGIN_ROOT}/scripts/pdca-post-write.sh"
 ```
 
 ### Stop
@@ -136,30 +124,39 @@ hooks:
   Stop:
     - hooks:
         - type: command
-          command: "$CLAUDE_PROJECT_DIR/scripts/qa-stop.sh"
+          command: "${CLAUDE_PLUGIN_ROOT}/scripts/qa-stop.sh"
 ```
 
----
+## Source Location
 
-## Skill 소스 위치
+Skills are at root level (not in .claude/):
 
 ```
-.claude/skills/
-├── bkit-rules/SKILL.md
-├── starter/SKILL.md
-├── dynamic/SKILL.md
-├── enterprise/SKILL.md
-├── phase-1-schema/SKILL.md
-├── phase-2-convention/SKILL.md
-├── ...
-└── zero-script-qa/SKILL.md
+bkit-claude-code/
+└── skills/
+    ├── bkit-rules/SKILL.md
+    ├── bkit-templates/SKILL.md
+    ├── starter/SKILL.md
+    ├── dynamic/SKILL.md
+    ├── enterprise/SKILL.md
+    ├── development-pipeline/SKILL.md
+    ├── phase-1-schema/SKILL.md
+    ├── phase-2-convention/SKILL.md
+    ├── phase-3-mockup/SKILL.md
+    ├── phase-4-api/SKILL.md
+    ├── phase-5-design-system/SKILL.md
+    ├── phase-6-ui-integration/SKILL.md
+    ├── phase-7-seo-security/SKILL.md
+    ├── phase-8-review/SKILL.md
+    ├── phase-9-deployment/SKILL.md
+    ├── zero-script-qa/SKILL.md
+    ├── mobile-app/SKILL.md
+    └── desktop-app/SKILL.md
 ```
 
----
+## Related Documents
 
-## 관련 문서
-
-- [[../hooks/_hooks-overview]] - Hook 이벤트 상세
-- [[../scripts/_scripts-overview]] - Script 상세
-- [[../agents/_agents-overview]] - Agent 상세
-- [[../../triggers/trigger-matrix]] - 트리거 매트릭스
+- [[../hooks/_hooks-overview]] - Hook event details
+- [[../scripts/_scripts-overview]] - Script details
+- [[../agents/_agents-overview]] - Agent details
+- [[../../triggers/trigger-matrix]] - Trigger matrix

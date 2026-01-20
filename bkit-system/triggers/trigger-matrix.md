@@ -1,162 +1,162 @@
 # Trigger Matrix
 
-> 이벤트별로 어떤 컴포넌트가 발동되는지 정리한 핵심 매트릭스 (v1.2.0 리팩토링 반영)
+> Core matrix showing which components trigger on each event (v1.2.0)
 
 ## Hook Event Matrix
 
-### PreToolUse (도구 사용 전)
+### hooks.json (Global Hooks)
 
-| Tool | Skill/Agent | Script | 동작 |
-|------|-------------|--------|------|
-| `Write\|Edit` | [[components/skills/bkit-rules]] | **`pre-write.sh`** | **통합 훅**: PDCA 체크 + 작업분류 + 컨벤션 힌트 |
-| `Write` | [[components/agents/design-validator]] | `design-validator-pre.sh` | 설계 문서 작성 시 체크리스트 |
-| `Write\|Edit` | [[components/agents/code-analyzer]] | (block) | 코드 분석 에이전트는 read-only |
-| `Bash` | [[components/skills/zero-script-qa]] | `qa-pre-bash.sh` | 파괴적 명령어 차단 |
-| `Bash` | [[components/skills/phase-9-deployment]] | `phase9-deploy-pre.sh` | 배포 전 환경 검증 |
+These hooks are defined in `hooks/hooks.json` and apply to all sessions:
 
-**Note**: 기존 `task-classification`과 `phase-2-convention`의 훅은 `bkit-rules`의 `pre-write.sh`로 통합되었습니다.
+| Event | Matcher | Script | Action |
+|-------|---------|--------|--------|
+| SessionStart | - | `session-start.sh` | Initialize session, greet user, detect level |
+| PreToolUse | `Write\|Edit` | `pre-write.sh` | PDCA check + task classification + convention hints |
+| PostToolUse | `Write` | `pdca-post-write.sh` | Suggest gap analysis |
 
-### PostToolUse (도구 사용 후)
+### Skill Frontmatter Hooks
 
-| Tool | Skill/Agent | Script | 동작 |
-|------|-------------|--------|------|
-| `Write` | [[components/skills/bkit-rules]] | `pdca-post-write.sh` | Gap Analysis 안내 |
-| `Write` | [[components/skills/phase-5-design-system]] | `phase5-design-post.sh` | 디자인 토큰 사용 검증 |
-| `Write` | [[components/skills/phase-6-ui-integration]] | `phase6-ui-post.sh` | UI 레이어 분리 검증 |
-| `Write` | [[components/agents/gap-detector]] | `gap-detector-post.sh` | 분석 완료 후 iterate 안내 |
-| `Write` | [[components/agents/qa-monitor]] | `qa-monitor-post.sh` | Critical 이슈 발견 시 알림 |
+These hooks are defined in skill YAML frontmatter:
 
-### Stop (세션/스킬 종료 시)
+#### PreToolUse
 
-| Skill | Script | 동작 |
-|-------|--------|------|
-| [[components/skills/phase-4-api]] | `phase4-api-stop.sh` | Zero Script QA 안내 |
-| [[components/skills/phase-8-review]] | `phase8-review-stop.sh` | 리뷰 완료 요약 + 갭 분석 안내 |
-| [[components/skills/zero-script-qa]] | `qa-stop.sh` | QA 세션 완료 안내 |
-| [[components/skills/development-pipeline]] | `echo` | 파이프라인 종료 |
+| Tool | Skill/Agent | Script | Action |
+|------|-------------|--------|--------|
+| `Write` | [[components/agents/design-validator]] | `design-validator-pre.sh` | Design document checklist |
+| `Write\|Edit` | [[components/agents/code-analyzer]] | (block) | Code analyzer is read-only |
+| `Bash` | [[components/skills/zero-script-qa]] | `qa-pre-bash.sh` | Block destructive commands |
+| `Bash` | [[components/skills/phase-9-deployment]] | `phase9-deploy-pre.sh` | Environment validation |
 
-**Note**: `analysis-patterns` Stop hook 기능은 `phase-8-review`로 통합되었습니다.
+#### PostToolUse
 
-### SessionStart (세션 시작 시)
+| Tool | Skill/Agent | Script | Action |
+|------|-------------|--------|--------|
+| `Write` | [[components/skills/phase-5-design-system]] | `phase5-design-post.sh` | Design token verification |
+| `Write` | [[components/skills/phase-6-ui-integration]] | `phase6-ui-post.sh` | UI layer separation check |
+| `Write` | [[components/agents/gap-detector]] | `gap-detector-post.sh` | Post-analysis iteration guidance |
+| `Write` | [[components/agents/qa-monitor]] | `qa-monitor-post.sh` | Critical issue notification |
 
-| Source | Script | 동작 |
-|--------|--------|------|
-| `settings.json` | `session-start.sh` | 초기 인사 + 레벨 감지 + 옵션 제시 |
+#### Stop
+
+| Skill | Script | Action |
+|-------|--------|--------|
+| [[components/skills/phase-4-api]] | `phase4-api-stop.sh` | Zero Script QA guidance |
+| [[components/skills/phase-8-review]] | `phase8-review-stop.sh` | Review summary + gap analysis |
+| [[components/skills/zero-script-qa]] | `qa-stop.sh` | QA session cleanup |
+| [[components/skills/development-pipeline]] | `echo` | Pipeline completion |
 
 ---
 
-## Write/Edit 시 발동 순서 (v1.2.0)
+## Write/Edit Flow (v1.2.0)
 
-사용자가 소스 코드 파일을 Write/Edit 할 때:
+When user writes/edits source code files:
 
 ```
-1. PreToolUse 단계
-   └── bkit-rules (pre-write.sh) ← 통합 훅
-       ├── 1. 작업 분류 (Quick Fix ~ Major Feature)
-       ├── 2. PDCA 문서 체크 (design doc 존재 여부)
-       └── 3. 컨벤션 힌트 (파일 타입별)
+1. PreToolUse Stage
+   └── hooks.json (pre-write.sh) ← Unified hook
+       ├── 1. Task classification (Quick Fix → Major Feature)
+       ├── 2. PDCA document check (design doc exists?)
+       └── 3. Convention hints (by file type)
 
-2. 실제 Write/Edit 실행
+2. Actual Write/Edit Execution
 
-3. PostToolUse 단계
-   ├── bkit-rules (pdca-post-write.sh)
-   │   └── Gap Analysis 안내 (design doc 있는 경우)
+3. PostToolUse Stage
+   ├── hooks.json (pdca-post-write.sh)
+   │   └── Suggest gap analysis (if design doc exists)
    ├── phase-5-design-system (phase5-design-post.sh)
-   │   └── 컴포넌트 파일인 경우 디자인 토큰 검증
+   │   └── Verify design tokens (if component file)
    └── phase-6-ui-integration (phase6-ui-post.sh)
-       └── UI 레이어 파일인 경우 레이어 분리 검증
+       └── Verify layer separation (if UI file)
 ```
 
-**v1.2.0 개선사항**: 기존 3개의 개별 PreToolUse 훅이 1개의 통합 훅으로 합쳐져 성능이 향상되었습니다.
+**v1.2.0 Improvement**: 3 separate PreToolUse hooks merged into 1 unified hook for better performance.
 
 ---
 
-## Skill Description Triggers (키워드 기반)
+## Skill Description Triggers (Keyword-Based)
 
-Skills와 Agents는 description의 "Triggers:" 키워드로도 활성화됩니다.
+Skills and Agents are activated by "Triggers:" keywords in their description.
 
 ### Level Skills
 
 | Skill | Trigger Keywords |
 |-------|------------------|
-| [[components/skills/starter]] | static website, portfolio, landing page, beginner, 정적 웹, 초보자, 静的サイト |
-| [[components/skills/dynamic]] | fullstack, BaaS, bkend, authentication, login, 풀스택, 인증, 로그인 |
-| [[components/skills/enterprise]] | microservices, kubernetes, terraform, k8s, AWS, 마이크로서비스 |
+| [[components/skills/starter]] | static website, portfolio, landing page, beginner, HTML CSS |
+| [[components/skills/dynamic]] | fullstack, BaaS, bkend, authentication, login, signup, database |
+| [[components/skills/enterprise]] | microservices, kubernetes, terraform, k8s, AWS, CTO, AI Native |
 
 ### Phase Skills
 
 | Skill | Trigger Keywords |
 |-------|------------------|
-| [[components/skills/phase-1-schema]] | schema, terminology, data model, 스키마, データモデル |
-| [[components/skills/phase-2-convention]] | convention, coding style, naming rules, 컨벤션, コンベンション |
-| [[components/skills/phase-3-mockup]] | mockup, prototype, wireframe, 목업, モックアップ |
-| [[components/skills/phase-4-api]] | API design, REST API, backend, endpoint, API 설계 |
+| [[components/skills/phase-1-schema]] | schema, terminology, data model, entity |
+| [[components/skills/phase-2-convention]] | convention, coding style, naming rules |
+| [[components/skills/phase-3-mockup]] | mockup, prototype, wireframe, UI design |
+| [[components/skills/phase-4-api]] | API design, REST API, backend, endpoint |
 | [[components/skills/phase-5-design-system]] | design system, component library, design tokens, shadcn |
 | [[components/skills/phase-6-ui-integration]] | UI implementation, API integration, state management |
-| [[components/skills/phase-7-seo-security]] | SEO, security, meta tags, XSS, CSRF, 보안 |
-| [[components/skills/phase-8-review]] | code review, architecture review, quality check, 코드 리뷰 |
-| [[components/skills/phase-9-deployment]] | deployment, CI/CD, production, Vercel, Kubernetes, 배포 |
+| [[components/skills/phase-7-seo-security]] | SEO, security, meta tags, XSS, CSRF |
+| [[components/skills/phase-8-review]] | code review, architecture review, quality check, refactoring |
+| [[components/skills/phase-9-deployment]] | deployment, CI/CD, production, Vercel, Kubernetes, Docker |
 
 ### Core/Specialized Skills
 
 | Skill | Trigger Keywords |
 |-------|------------------|
-| [[components/skills/bkit-rules]] | bkit, PDCA, develop, implement, feature, bug, code, 개발, 기능, 버그 |
-| [[components/skills/bkit-templates]] | template, document standards, 템플릿, 문서 표준 |
-| [[components/skills/zero-script-qa]] | zero script qa, log-based testing, docker logs, 제로 스크립트 QA |
-| [[components/skills/development-pipeline]] | development pipeline, phase, where to start, 뭐부터, 어디서부터 |
-| [[components/skills/mobile-app]] | mobile app, React Native, Flutter, Expo, 모바일 앱 |
-| [[components/skills/desktop-app]] | desktop app, Electron, Tauri, 데스크톱 앱 |
-
-**Note**: `evaluator-optimizer` skill은 삭제되었습니다. 해당 기능은 `pdca-iterator` agent 설명에 통합되었습니다.
+| [[components/skills/bkit-rules]] | bkit, PDCA, develop, implement, feature, bug, code, design |
+| [[components/skills/bkit-templates]] | template, plan document, design document, analysis document, report |
+| [[components/skills/zero-script-qa]] | zero script qa, log-based testing, docker logs, QA, testing |
+| [[components/skills/development-pipeline]] | development pipeline, phase, where to start, new project |
+| [[components/skills/mobile-app]] | mobile app, React Native, Flutter, Expo, iOS, Android |
+| [[components/skills/desktop-app]] | desktop app, Electron, Tauri, mac app, windows app |
 
 ---
 
-## Agent Auto-Trigger (키워드 기반)
+## Agent Auto-Trigger (Keyword-Based)
 
 | Agent | Trigger Keywords |
 |-------|------------------|
-| [[components/agents/starter-guide]] | beginner, first project, learn to code, 초보자, 입문, 처음 |
-| [[components/agents/bkend-expert]] | bkend, BaaS, login, signup, database, 인증, 로그인, 데이터베이스 |
-| [[components/agents/enterprise-expert]] | CTO, AI Native, microservices, architecture, 전략, 아키텍처 |
-| [[components/agents/infra-architect]] | AWS, Kubernetes, Terraform, CI/CD, 인프라, 클라우드 |
-| [[components/agents/pipeline-guide]] | development pipeline, phase, where to start, 개발 파이프라인 |
-| [[components/agents/gap-detector]] | gap analysis, design-implementation check, 갭 분석, 설계-구현 비교 |
-| [[components/agents/design-validator]] | design validation, document review, spec check, 설계 검증 |
-| [[components/agents/code-analyzer]] | code analysis, quality check, security scan, 코드 분석, 품질 검사 |
-| [[components/agents/qa-monitor]] | zero script qa, QA, testing, log analysis, 테스트, 로그 분석 |
-| [[components/agents/pdca-iterator]] | iterate, optimize, auto-fix, 반복 개선, 고쳐줘, 개선해줘 |
-| [[components/agents/report-generator]] | PDCA report, completion report, summary, PDCA 보고서, 완료 보고서 |
+| [[components/agents/starter-guide]] | beginner, first project, learn to code, simple website, portfolio |
+| [[components/agents/bkend-expert]] | bkend, BaaS, login, signup, database, fullstack, backend |
+| [[components/agents/enterprise-expert]] | CTO, AI Native, microservices, architecture decision |
+| [[components/agents/infra-architect]] | AWS, Kubernetes, Terraform, CI/CD, EKS, RDS, cloud |
+| [[components/agents/pipeline-guide]] | development pipeline, phase, where to start, how to begin |
+| [[components/agents/gap-detector]] | gap analysis, design-implementation check, compare design |
+| [[components/agents/design-validator]] | design validation, document review, spec check |
+| [[components/agents/code-analyzer]] | code analysis, quality check, security scan, code review |
+| [[components/agents/qa-monitor]] | zero script qa, QA, testing, log analysis, docker logs |
+| [[components/agents/pdca-iterator]] | iterate, optimize, auto-fix, automatically fix |
+| [[components/agents/report-generator]] | PDCA report, completion report, summary, progress report |
 
 ---
 
-## Skill → Agent 연결 (v1.2.0)
+## Skill → Agent Connections (v1.2.0)
 
-각 Skill은 특정 Agent와 연결되어 있습니다:
+Each Skill is connected to specific Agents:
 
-| Skill | Connected Agent | 비고 |
+| Skill | Connected Agent | Note |
 |-------|-----------------|------|
 | `starter` | [[components/agents/starter-guide]] | |
 | `dynamic` | [[components/agents/bkend-expert]] | |
-| `enterprise` | [[components/agents/enterprise-expert]] | AI Native, 모노레포 포함 |
+| `enterprise` | [[components/agents/enterprise-expert]] | Includes AI Native, monorepo |
 | `enterprise` | [[components/agents/infra-architect]] | |
 | `development-pipeline` | [[components/agents/pipeline-guide]] | |
 | `zero-script-qa` | [[components/agents/qa-monitor]] | |
-| `phase-8-review` | [[components/agents/code-analyzer]] | analysis-patterns 통합 |
-| `bkit-templates` | [[components/agents/design-validator]] | document-standards 통합 |
+| `phase-8-review` | [[components/agents/code-analyzer]] | analysis-patterns merged |
+| `bkit-templates` | [[components/agents/design-validator]] | document-standards merged |
 | `mobile-app` | [[components/agents/pipeline-guide]] | |
 | `desktop-app` | [[components/agents/pipeline-guide]] | |
 
-**삭제된 연결**:
-- `evaluator-optimizer` → 삭제 (pdca-iterator agent 설명에 통합)
-- `analysis-patterns` → phase-8-review로 통합
-- `pdca-methodology` → 삭제
-- `document-standards` → bkit-templates로 통합
+**Removed Connections (v1.2.0)**:
+- `evaluator-optimizer` → Removed (merged into pdca-iterator agent description)
+- `analysis-patterns` → Merged into phase-8-review
+- `pdca-methodology` → Removed (merged into bkit-rules)
+- `document-standards` → Merged into bkit-templates
 
 ---
 
-## 관련 문서
+## Related Documents
 
-- [[triggers/priority-rules]] - 충돌 시 우선순위
-- [[scenarios/scenario-write-code]] - Write/Edit 시나리오 상세
-- [[_GRAPH-INDEX]] - 전체 인덱스
+- [[triggers/priority-rules]] - Priority rules for conflicts
+- [[scenarios/scenario-write-code]] - Write/Edit scenario details
+- [[_GRAPH-INDEX]] - Full index
