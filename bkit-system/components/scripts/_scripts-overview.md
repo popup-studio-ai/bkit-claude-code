@@ -1,9 +1,9 @@
 # Scripts Overview
 
-> 18 Shell Scripts used by bkit hooks (v1.3.0)
+> 18 Shell Scripts used by bkit hooks (v1.2.1)
 >
 > **Note**: task-classify.sh was removed and merged into pre-write.sh
-> **v1.3.0**: output_block() now exits with code 2 for proper blocking
+> **v1.2.1**: output_block() now exits with code 2 for proper blocking
 
 ## What are Scripts?
 
@@ -138,7 +138,7 @@ BKIT_EXCLUDE_PATTERNS="node_modules .git dist build __pycache__ .venv target ven
 BKIT_FEATURE_PATTERNS="features modules packages apps services domains"
 ```
 
-### Supported Languages by Tier (v1.3.0)
+### Supported Languages by Tier (v1.2.1)
 
 #### Tier 1: AI-Native Essential
 | Language | Extensions | AI Compatibility |

@@ -406,7 +406,7 @@ validate_input()
 ```json
 // .claude/config/bkit.config.json
 {
-  "version": "1.3.0",
+  "version": "1.2.1",
   "paths": {
     "docs": "docs",
     "design": "02-design",

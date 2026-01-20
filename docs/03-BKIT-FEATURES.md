@@ -519,7 +519,7 @@ Skills are expert knowledge that Claude references. They auto-activate for relat
 
 ---
 
-## Language & Framework Support (v1.3.0)
+## Language & Framework Support (v1.2.1)
 
 ### Tier System
 

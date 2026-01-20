@@ -636,7 +636,7 @@ Add to ~/.claude/settings.json:
 | English | english (default) | static website, beginner... |
 ```
 
-### 8.4 Language Tier System (v1.3.0)
+### 8.4 Language Tier System (v1.2.1)
 
 bkit uses a 4-tier classification system for programming languages based on AI-Native development trends:
 
@@ -777,7 +777,7 @@ claude --plugin-dir ./bkit
 **Created**: 2026-01-09
 **Updated**: 2026-01-20
 **Author**: Claude (with Kay)
-**Version**: v1.3.0
+**Version**: v1.2.1
 **Status**: Design verified → Implementation complete → Language Tier System added
 
 ---
@@ -816,7 +816,7 @@ claude --plugin-dir ./bkit
 
 ## Changelog
 
-### v1.3.0 (2026-01-20)
+### v1.2.1 (2026-01-20)
 - 🌐 **Language Tier System**: 4-tier classification for AI-Native development
   - Tier 1: AI-Native Essential (Python, TypeScript, JavaScript)
   - Tier 2: Mainstream Recommended (Go, Rust, Dart, Vue, Astro, Flutter)

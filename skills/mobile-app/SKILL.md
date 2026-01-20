@@ -32,7 +32,7 @@ Develop for iOS and Android simultaneously using cross-platform frameworks.
 
 ## Framework Selection Guide
 
-### Framework Selection by Tier (v1.3.0)
+### Framework Selection by Tier (v1.2.1)
 
 | Framework | Tier | Recommendation | Use Case |
 |-----------|------|----------------|----------|

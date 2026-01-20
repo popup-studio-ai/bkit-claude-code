@@ -32,7 +32,7 @@ Support Windows, macOS, and Linux simultaneously with a single codebase.
 
 ## Framework Selection Guide
 
-### Framework Selection by Tier (v1.3.0)
+### Framework Selection by Tier (v1.2.1)
 
 | Framework | Tier | Recommendation | Use Case |
 |-----------|------|----------------|----------|

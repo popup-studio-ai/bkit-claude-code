@@ -82,7 +82,7 @@ bkit 플러그인에 **체계적인 언어/프레임워크 Tier 시스템**을 �
 
 ```bash
 # ============================================================
-# Language Tier System (v1.3.0)
+# Language Tier System (v1.2.1)
 # ============================================================
 
 # Tier 1: AI-Native Essential
@@ -219,7 +219,7 @@ is_tier_4() {
 
 ```bash
 # Check if path is a code file by extension
-# Enhanced with Tier-based multi-language support (v1.3.0)
+# Enhanced with Tier-based multi-language support (v1.2.1)
 # Usage: is_code_file "/path/to/file.ts"
 # Returns: 0 (true) or 1 (false)
 is_code_file() {
@@ -239,7 +239,7 @@ is_code_file() {
 
 ```bash
 # Check if path is a UI component file
-# Supports: React, Vue, Svelte, Astro (v1.3.0)
+# Supports: React, Vue, Svelte, Astro (v1.2.1)
 # Usage: is_ui_file "/path/to/Component.tsx"
 # Returns: 0 (true) or 1 (false)
 is_ui_file() {
@@ -281,7 +281,7 @@ is_ui_file() {
 #### Changes Required (After Line 147)
 
 ```markdown
-### Language Tier System (v1.3.0)
+### Language Tier System (v1.2.1)
 
 bkit supports languages and frameworks organized by tier:
 
@@ -302,18 +302,18 @@ bkit supports languages and frameworks organized by tier:
 #### Update Version Note (Line 7)
 
 ```markdown
-> **v1.3.0 Language Tier System**: Tier-based language classification for AI-Native development
+> **v1.2.1 Language Tier System**: Tier-based language classification for AI-Native development
 ```
 
 ### 3.2 components/scripts/_scripts-overview.md
 
 **File**: `bkit-system/components/scripts/_scripts-overview.md`
-**Current Version**: v1.3.0
+**Current Version**: v1.2.1
 
 #### Replace Supported Languages Table (Lines 140-157)
 
 ```markdown
-### Supported Languages by Tier (v1.3.0)
+### Supported Languages by Tier (v1.2.1)
 
 #### Tier 1: AI-Native Essential
 | Language | Extensions | AI Compatibility |
@@ -366,7 +366,7 @@ bkit supports languages and frameworks organized by tier:
 #### Add Tier System Tests (After existing multi-language tests)
 
 ```markdown
-### 1.1.2 Language Tier Detection (v1.3.0)
+### 1.1.2 Language Tier Detection (v1.2.1)
 
 | # | 테스트 케이스 | 예상 결과 | Pass |
 |---|-------------|----------|------|
@@ -380,7 +380,7 @@ bkit supports languages and frameworks organized by tier:
 | 1.1.19 | get_language_tier "test.mojo" | "experimental" | [ ] |
 | 1.1.20 | get_language_tier "test.unknown" | "unknown" | [ ] |
 
-### 1.1.3 New Extension Support (v1.3.0)
+### 1.1.3 New Extension Support (v1.2.1)
 
 | # | 테스트 케이스 | 예상 결과 | Pass |
 |---|-------------|----------|------|
@@ -699,7 +699,7 @@ flutter build
 #### Add New Section 9: Language Tier System
 
 ```markdown
-## 9. Language Tier System (v1.3.0)
+## 9. Language Tier System (v1.2.1)
 
 ### 9.1 Overview
 
@@ -760,7 +760,7 @@ esac
 #### Add Language Support Section
 
 ```markdown
-## 8. Language & Framework Support (v1.3.0)
+## 8. Language & Framework Support (v1.2.1)
 
 ### 8.1 Tier System
 

@@ -48,7 +48,7 @@ Tailwind CSS → Utility CSS
 TypeScript   → Type safety (optional)
 ```
 
-### Language Tier Guidance (v1.3.0)
+### Language Tier Guidance (v1.2.1)
 
 > **Recommended**: Tier 1 languages only (Python, TypeScript, JavaScript)
 >

@@ -59,7 +59,7 @@ CI/CD:
 - Docker
 ```
 
-### Language Tier Guidance (v1.3.0)
+### Language Tier Guidance (v1.2.1)
 
 > **Supported**: All Tiers
 >

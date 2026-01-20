@@ -6,7 +6,7 @@
 >
 > **v1.2.1 Multi-Language Support**: Extension-based file detection, 20+ language support, configurable patterns
 >
-> **v1.3.0 Language Tier System**: AI-Native 개발 및 Vibe Coding 트렌드 반영한 4단계 언어 분류 체계
+> **v1.2.1 Language Tier System**: AI-Native 개발 및 Vibe Coding 트렌드 반영한 4단계 언어 분류 체계
 
 ## Skills (18)
 
@@ -135,7 +135,7 @@ Defined in `hooks/hooks.json`:
 ## Infrastructure
 
 ### Shared Library
-- `lib/common.sh` - Shared utility functions (v1.3.0 Language Tier System)
+- `lib/common.sh` - Shared utility functions (v1.2.1 Language Tier System)
   - `get_config()` - Read from bkit.config.json
   - `is_source_file()` - Negative pattern + extension detection (30+ extensions)
   - `is_code_file()` - Tier-based code file detection
@@ -149,7 +149,7 @@ Defined in `hooks/hooks.json`:
   - `detect_level()` - Project level detection
   - `output_allow()`, `output_block()`, `output_empty()` - JSON output helpers
 
-### Language Tier System (v1.3.0)
+### Language Tier System (v1.2.1)
 
 bkit supports languages and frameworks organized by tier:
 

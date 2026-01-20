@@ -51,7 +51,7 @@ get_config_array() {
 BKIT_EXCLUDE_PATTERNS="${BKIT_EXCLUDE_PATTERNS:-node_modules .git dist build .next __pycache__ .venv venv coverage .pytest_cache target .cargo vendor}"
 
 # ============================================================
-# Language Tier System (v1.3.0)
+# Language Tier System (v1.2.1)
 # ============================================================
 # Tier classification based on:
 # - AI tool ecosystem compatibility (Copilot, Claude, Cursor)
@@ -121,7 +121,7 @@ is_source_file() {
 }
 
 # Check if path is a code file by extension
-# Enhanced with Tier-based multi-language support (v1.3.0)
+# Enhanced with Tier-based multi-language support (v1.2.1)
 # Usage: is_code_file "/path/to/file.ts"
 # Returns: 0 (true) or 1 (false)
 is_code_file() {
@@ -137,7 +137,7 @@ is_code_file() {
 }
 
 # Check if path is a UI component file
-# Supports: React, Vue, Svelte, Astro (v1.3.0)
+# Supports: React, Vue, Svelte, Astro (v1.2.1)
 # Usage: is_ui_file "/path/to/Component.tsx"
 # Returns: 0 (true) or 1 (false)
 is_ui_file() {
@@ -160,7 +160,7 @@ is_env_file() {
 }
 
 # ============================================================
-# Tier Detection Functions (v1.3.0)
+# Tier Detection Functions (v1.2.1)
 # ============================================================
 
 # Get language tier for a file

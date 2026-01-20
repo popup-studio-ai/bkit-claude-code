@@ -33,7 +33,7 @@
 | 1.1.10 | node_modules/pkg/index.js Write | 빈 출력 (exclude pattern) | [ ] |
 | 1.1.11 | __pycache__/module.py Write | 빈 출력 (exclude pattern) | [ ] |
 
-### 1.1.2 Language Tier Detection (v1.3.0)
+### 1.1.2 Language Tier Detection (v1.2.1)
 
 | # | 테스트 케이스 | 예상 결과 | Pass |
 |---|-------------|----------|------|
@@ -47,7 +47,7 @@
 | 1.1.19 | get_language_tier "test.mojo" | "experimental" | [ ] |
 | 1.1.20 | get_language_tier "test.unknown" | "unknown" | [ ] |
 
-### 1.1.3 New Extension Support (v1.3.0)
+### 1.1.3 New Extension Support (v1.2.1)
 
 | # | 테스트 케이스 | 예상 결과 | Pass |
 |---|-------------|----------|------|
