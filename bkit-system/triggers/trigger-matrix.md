@@ -1,6 +1,6 @@
 # Trigger Matrix
 
-> Core matrix showing which components trigger on each event (v1.2.0)
+> Core matrix showing which components trigger on each event (v1.2.3)
 
 ## Hook Event Matrix
 
@@ -8,13 +8,13 @@
 
 These hooks are defined in `hooks/hooks.json` and apply to all sessions:
 
-| Event        | Matcher       | Script               | Action                                              |
-| ------------ | ------------- | -------------------- | --------------------------------------------------- |
-| SessionStart | -             | `session-start.sh`   | Initialize session, greet user, detect level        |
-| PreToolUse   | `Write\|Edit` | `pre-write.sh`       | PDCA check + task classification + convention hints |
-| PostToolUse  | `Write`       | `pdca-post-write.sh` | Suggest gap analysis                                |
+| Event        | Matcher | Script             | Action                                                       |
+| ------------ | ------- | ------------------ | ------------------------------------------------------------ |
+| SessionStart | -       | `session-start.sh` | Initialize session, detect level, guide user via AskUserQuestion |
 
-### Skill Frontmatter Hooks
+> **Note**: Only SessionStart is in global hooks.json. PreToolUse/PostToolUse hooks are defined in skill frontmatter for contextual activation.
+
+### Skill Frontmatter Hooks (PreToolUse/PostToolUse)
 
 These hooks are defined in skill YAML frontmatter:
 
@@ -47,21 +47,21 @@ These hooks are defined in skill YAML frontmatter:
 
 ---
 
-## Write/Edit Flow (v1.2.1)
+## Write/Edit Flow (v1.2.3)
 
 When user writes/edits source code files:
 
 ```
-1. PreToolUse Stage
-   └── hooks.json (pre-write.sh) ← Unified hook
+1. PreToolUse Stage (Skill Frontmatter)
+   └── pre-write.sh ← Unified hook
        ├── 1. Task classification (Quick Fix → Major Feature)
        ├── 2. PDCA document check (design doc exists?)
        └── 3. Convention hints (by file type)
 
 2. Actual Write/Edit Execution
 
-3. PostToolUse Stage
-   ├── hooks.json (pdca-post-write.sh)
+3. PostToolUse Stage (Skill Frontmatter)
+   ├── pdca-post-write.sh
    │   └── Suggest gap analysis (if design doc exists)
    ├── phase-5-design-system (phase5-design-post.sh)
    │   └── Verify design tokens (if UI file: .tsx, .jsx, .vue, .svelte)
@@ -72,6 +72,8 @@ When user writes/edits source code files:
 **v1.2.0 Improvement**: 3 separate PreToolUse hooks merged into 1 unified hook for better performance.
 
 **v1.2.1 Improvement**: Extension-based file detection replaces path-based detection for multi-language support.
+
+**v1.2.3 Improvement**: SessionStart hook now guides users with AskUserQuestion (4 options).
 
 ---
 

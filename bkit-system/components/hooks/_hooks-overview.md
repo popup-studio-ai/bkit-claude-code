@@ -1,70 +1,93 @@
 # Hooks Overview
 
-> Hook events triggered during Claude Code operations (v1.2.0)
+> Hook events triggered during Claude Code operations (v1.2.3)
 
 ## What are Hooks?
 
 Hooks are **scripts that automatically execute on specific Claude Code events**.
-- Defined in `hooks/hooks.json`
-- Execute shell scripts on event triggers
-- Return allow/block decisions with additional context
 
-## Hook Configuration
+**Two Hook Sources:**
+1. **Global Hooks** (`hooks/hooks.json`) - Apply to all sessions
+2. **Skill Frontmatter Hooks** - Defined in SKILL.md/AGENT.md YAML frontmatter
 
-All hooks are defined in `hooks/hooks.json`:
+## Hook Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Hook Sources                              │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  hooks/hooks.json (Global)     skills/*/SKILL.md (Local)    │
+│  ┌─────────────────────┐       ┌─────────────────────┐      │
+│  │ SessionStart        │       │ PreToolUse          │      │
+│  │ └─ session-start.sh │       │ PostToolUse         │      │
+│  └─────────────────────┘       │ Stop                │      │
+│                                └─────────────────────┘      │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## Global Hooks Configuration
+
+Global hooks are defined in `hooks/hooks.json`:
 
 ```json
 {
-  "hooks": [
-    {
-      "event": "SessionStart",
-      "hooks": [{
-        "type": "command",
-        "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh",
-        "timeout": 5000
-      }],
-      "once": true
-    },
-    {
-      "event": "PreToolUse",
-      "matcher": "Write|Edit",
-      "hooks": [{
-        "type": "command",
-        "command": "${CLAUDE_PLUGIN_ROOT}/scripts/pre-write.sh",
-        "timeout": 5000
-      }]
-    },
-    {
-      "event": "PostToolUse",
-      "matcher": "Write",
-      "hooks": [{
-        "type": "command",
-        "command": "${CLAUDE_PLUGIN_ROOT}/scripts/pdca-post-write.sh",
-        "timeout": 5000
-      }]
-    }
-  ]
+  "$schema": "https://json.schemastore.org/claude-code-hooks.json",
+  "description": "bkit Vibecoding Kit - Session initialization",
+  "hooks": {
+    "SessionStart": [
+      {
+        "once": true,
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh",
+            "timeout": 5000
+          }
+        ]
+      }
+    ]
+  }
 }
 ```
 
-## Hook Events (3 Active)
+> **Note**: Only `SessionStart` is defined globally. PreToolUse/PostToolUse hooks are defined in skill frontmatter for contextual activation.
 
-### 1. SessionStart
+## Hook Events
+
+### 1. SessionStart (Global - hooks.json)
 
 **Trigger**: Once when bkit plugin loads
 
 | Script | Purpose |
 |--------|---------|
-| `hooks/session-start.sh` | Initialize session, load bkit.config.json |
+| `hooks/session-start.sh` | Initialize session, detect project level, guide user with AskUserQuestion |
 
-**Usage**:
-- Initial environment setup
-- User greeting and options
-- Project level detection
+**Features**:
+- Project level detection (Starter/Dynamic/Enterprise)
+- PDCA phase detection from `docs/.pdca-status.json`
+- Environment persistence via `CLAUDE_ENV_FILE`
+- AskUserQuestion guidance with 4 options:
+  1. Learn bkit - Introduction and 9-stage pipeline
+  2. Learn Claude Code - Setup and usage guide
+  3. Continue Previous Work - Resume from PDCA status
+  4. Start New Project - Initialize new project
 
-### 2. PreToolUse
+**Output**:
+```json
+{
+  "systemMessage": "👋 bkit Vibecoding Kit activated",
+  "hookSpecificOutput": {
+    "hookEventName": "SessionStart",
+    "additionalContext": "# bkit Vibecoding Kit - Required Startup Procedure..."
+  }
+}
+```
+
+### 2. PreToolUse (Skill Frontmatter)
 
 **Trigger**: Before Write/Edit tool operations
+**Defined in**: Skill YAML frontmatter (not hooks.json)
 
 | Matcher | Script | Purpose |
 |---------|--------|---------|
@@ -92,9 +115,10 @@ All hooks are defined in `hooks/hooks.json`:
 }
 ```
 
-### 3. PostToolUse
+### 3. PostToolUse (Skill Frontmatter)
 
 **Trigger**: After Write tool operations complete
+**Defined in**: Skill YAML frontmatter (not hooks.json)
 
 | Matcher | Script | Purpose |
 |---------|--------|---------|

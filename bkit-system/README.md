@@ -59,12 +59,14 @@
 bkit triggers occur across 5 layers:
 
 ```
-Layer 1: hooks.json          → SessionStart, PreToolUse, PostToolUse hooks
+Layer 1: hooks.json (Global) → SessionStart only (with AskUserQuestion guidance)
 Layer 2: Skill Frontmatter   → hooks: PreToolUse, PostToolUse, Stop
 Layer 3: Agent Frontmatter   → hooks: PreToolUse, PostToolUse
 Layer 4: Description Triggers → "Triggers:" keyword matching
 Layer 5: Scripts             → Actual bash logic execution
 ```
+
+> **Note**: Only SessionStart is in global hooks.json. PreToolUse/PostToolUse hooks are defined in skill/agent frontmatter for contextual activation.
 
 Details: [[triggers/trigger-matrix]]
 

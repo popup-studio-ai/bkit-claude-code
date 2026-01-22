@@ -1,9 +1,10 @@
 # Scripts Overview
 
-> 18 Shell Scripts used by bkit hooks (v1.2.1)
+> 18 Shell Scripts used by bkit hooks (v1.2.3)
 >
 > **Note**: task-classify.sh was removed and merged into pre-write.sh
 > **v1.2.1**: output_block() now exits with code 2 for proper blocking
+> **v1.2.3**: session-start.sh enhanced with AskUserQuestion guidance (see [[../hooks/_hooks-overview]])
 
 ## What are Scripts?
 
