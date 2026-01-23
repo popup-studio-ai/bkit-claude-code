@@ -797,7 +797,7 @@ hooks:                         # Skill-specific hooks
     - matcher: "Write"
       hooks:
         - type: command
-          command: "${CLAUDE_PLUGIN_ROOT}/scripts/validate.js"
+          command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/validate.js"
 ---
 
 # Skill Content
@@ -1064,7 +1064,7 @@ Create `hooks/hooks.json`:
       "hooks": [
         {
           "type": "command",
-          "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session-start.js",
+          "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/session-start.js",
           "timeout": 5000
         }
       ]
@@ -1075,7 +1075,7 @@ Create `hooks/hooks.json`:
       "hooks": [
         {
           "type": "command",
-          "command": "${CLAUDE_PLUGIN_ROOT}/hooks/validate-bash.js"
+          "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/validate-bash.js"
         }
       ]
     },
@@ -1400,7 +1400,7 @@ Provide senior-level guidance on architecture and best practices.
       "hooks": [
         {
           "type": "command",
-          "command": "${CLAUDE_PLUGIN_ROOT}/hooks/init.js"
+          "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/init.js"
         }
       ]
     }

@@ -28,7 +28,7 @@ hooks:
   Stop:
     - hooks:
         - type: command
-          command: "${CLAUDE_PLUGIN_ROOT}/scripts/gap-detector-stop.js"
+          command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/gap-detector-stop.js"
           timeout: 5000
 ---
 

@@ -29,7 +29,7 @@ hooks:
   Stop:
     - hooks:
         - type: command
-          command: "${CLAUDE_PLUGIN_ROOT}/scripts/analysis-stop.js"
+          command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/analysis-stop.js"
           timeout: 5000
 ---
 

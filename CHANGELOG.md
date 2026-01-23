@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.2] - 2026-01-23
+
+### Fixed
+- **Hook Execution Permission**: Added explicit `node` command prefix to all hook commands
+  - Fixes "SessionStart:startup hook error" on plugin installation
+  - No longer requires `chmod +x` for .js files
+  - Pattern: `"command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/xxx.js"`
+- **Cross-Platform Compatibility**: Windows users no longer need WSL for hook execution
+  - Windows doesn't support shebang (`#!/usr/bin/env node`)
+  - Explicit `node` command ensures consistent behavior across all platforms
+
+### Changed
+- **hooks/hooks.json**: All 3 hook commands now use `node` prefix
+- **skills/*.md**: Updated 7 skill files with `node` command prefix
+- **agents/*.md**: Updated 5 agent files with `node` command prefix
+- **Documentation**: Updated CUSTOMIZATION-GUIDE.md and bkit-system docs
+
+---
+
 ## [1.3.1] - 2026-01-23
 
 ### Changed

@@ -87,12 +87,12 @@ user-invocable: true|false
 hooks:
   PreToolUse:
     - matcher: "Write|Edit"
-      command: "${CLAUDE_PLUGIN_ROOT}/scripts/script-name.js"
+      command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/script-name.js"
   PostToolUse:
     - matcher: "Write"
-      command: "${CLAUDE_PLUGIN_ROOT}/scripts/script-name.js"
+      command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/script-name.js"
   Stop:
-    - command: "${CLAUDE_PLUGIN_ROOT}/scripts/script-name.js"
+    - command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/script-name.js"
 ---
 ```
 
@@ -105,7 +105,7 @@ hooks:
     - matcher: "Write|Edit"
       hooks:
         - type: command
-          command: "${CLAUDE_PLUGIN_ROOT}/scripts/pre-write.js"
+          command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/pre-write.js"
 ```
 
 ### PostToolUse
@@ -115,7 +115,7 @@ hooks:
     - matcher: "Write"
       hooks:
         - type: command
-          command: "${CLAUDE_PLUGIN_ROOT}/scripts/pdca-post-write.js"
+          command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/pdca-post-write.js"
 ```
 
 ### Stop
@@ -124,7 +124,7 @@ hooks:
   Stop:
     - hooks:
         - type: command
-          command: "${CLAUDE_PLUGIN_ROOT}/scripts/qa-stop.js"
+          command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/qa-stop.js"
 ```
 
 ## Source Location

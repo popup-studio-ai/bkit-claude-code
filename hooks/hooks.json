@@ -8,7 +8,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session-start.js",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/session-start.js",
             "timeout": 5000
           }
         ]
@@ -20,7 +20,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/pre-write.js",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/pre-write.js",
             "timeout": 5000
           }
         ]
@@ -32,7 +32,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/pdca-post-write.js",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/pdca-post-write.js",
             "timeout": 5000
           }
         ]

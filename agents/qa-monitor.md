@@ -18,23 +18,23 @@ hooks:
     - matcher: "Bash"
       hooks:
         - type: command
-          command: "${CLAUDE_PLUGIN_ROOT}/scripts/qa-pre-bash.js"
+          command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/qa-pre-bash.js"
           timeout: 5000
   PostToolUse:
     - matcher: "Write"
       hooks:
         - type: command
-          command: "${CLAUDE_PLUGIN_ROOT}/scripts/qa-monitor-post.js"
+          command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/qa-monitor-post.js"
           timeout: 5000
     - matcher: "Bash"
       hooks:
         - type: command
-          command: "${CLAUDE_PLUGIN_ROOT}/scripts/qa-monitor-post.js"
+          command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/qa-monitor-post.js"
           timeout: 5000
   Stop:
     - hooks:
         - type: command
-          command: "${CLAUDE_PLUGIN_ROOT}/scripts/qa-stop.js"
+          command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/qa-stop.js"
           timeout: 5000
 model: haiku
 tools:
