@@ -15,7 +15,7 @@ hooks:
   Stop:
     - hooks:
         - type: command
-          command: "${CLAUDE_PLUGIN_ROOT}/scripts/phase8-review-stop.js"
+          command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/phase8-review-stop.js"
 agent: code-analyzer
 allowed-tools:
   - Read

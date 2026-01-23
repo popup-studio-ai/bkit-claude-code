@@ -37,7 +37,7 @@ hooks:
   Stop:
     - hooks:
         - type: command
-          command: "${CLAUDE_PLUGIN_ROOT}/scripts/iterator-stop.js"
+          command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/iterator-stop.js"
           timeout: 5000
 ---
 

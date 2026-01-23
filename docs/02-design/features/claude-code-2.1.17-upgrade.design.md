@@ -930,7 +930,7 @@ hooks:
     - matcher: "Write|Edit"
       hooks:
         - type: command
-          command: "${CLAUDE_PLUGIN_ROOT}/scripts/pre-write.sh"
+          command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/pre-write.sh"
           timeout: 5000
 
 # After (SKILL.md)
@@ -939,7 +939,7 @@ hooks:
     - matcher: "Write|Edit"
       hooks:
         - type: command
-          command: "${CLAUDE_PLUGIN_ROOT}/scripts/pre-write.js"
+          command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/pre-write.js"
           timeout: 5000
 ```
 

@@ -22,7 +22,7 @@ hooks:
     - matcher: "Write"
       hooks:
         - type: command
-          command: "${CLAUDE_PLUGIN_ROOT}/scripts/design-validator-pre.js"
+          command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/design-validator-pre.js"
           timeout: 5000
 model: opus
 tools:

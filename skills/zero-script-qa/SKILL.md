@@ -16,12 +16,12 @@ hooks:
     - matcher: "Bash"
       hooks:
         - type: command
-          command: "${CLAUDE_PLUGIN_ROOT}/scripts/qa-pre-bash.js"
+          command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/qa-pre-bash.js"
           timeout: 5000
   Stop:
     - hooks:
         - type: command
-          command: "${CLAUDE_PLUGIN_ROOT}/scripts/qa-stop.js"
+          command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/qa-stop.js"
           timeout: 5000
 ---
 

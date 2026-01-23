@@ -14,7 +14,7 @@ hooks:
     - matcher: "Bash"
       hooks:
         - type: command
-          command: "${CLAUDE_PLUGIN_ROOT}/scripts/phase9-deploy-pre.js"
+          command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/phase9-deploy-pre.js"
 agent: infra-architect
 allowed-tools:
   - Read

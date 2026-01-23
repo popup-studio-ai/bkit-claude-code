@@ -14,7 +14,7 @@ hooks:
     - matcher: "Write"
       hooks:
         - type: command
-          command: "${CLAUDE_PLUGIN_ROOT}/scripts/phase6-ui-post.js"
+          command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/phase6-ui-post.js"
           timeout: 5000
 agent: pipeline-guide
 allowed-tools:

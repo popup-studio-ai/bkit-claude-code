@@ -41,7 +41,7 @@ Global hooks are defined in `hooks/hooks.json`:
       {
         "once": true,
         "hooks": [
-          { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session-start.js", "timeout": 5000 }
+          { "type": "command", "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/session-start.js", "timeout": 5000 }
         ]
       }
     ],
@@ -49,7 +49,7 @@ Global hooks are defined in `hooks/hooks.json`:
       {
         "matcher": "Write|Edit",
         "hooks": [
-          { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/scripts/pre-write.js", "timeout": 5000 }
+          { "type": "command", "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/pre-write.js", "timeout": 5000 }
         ]
       }
     ],
@@ -57,7 +57,7 @@ Global hooks are defined in `hooks/hooks.json`:
       {
         "matcher": "Write",
         "hooks": [
-          { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/scripts/pdca-post-write.js", "timeout": 5000 }
+          { "type": "command", "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/pdca-post-write.js", "timeout": 5000 }
         ]
       }
     ]

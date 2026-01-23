@@ -15,13 +15,13 @@ hooks:
     - matcher: "Write|Edit"
       hooks:
         - type: command
-          command: "${CLAUDE_PLUGIN_ROOT}/scripts/pre-write.js"
+          command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/pre-write.js"
           timeout: 5000
   PostToolUse:
     - matcher: "Write"
       hooks:
         - type: command
-          command: "${CLAUDE_PLUGIN_ROOT}/scripts/pdca-post-write.js"
+          command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/pdca-post-write.js"
           timeout: 5000
 ---
 

@@ -80,13 +80,13 @@
     "PreToolUse": [
       {
         "matcher": "Write|Edit",
-        "hooks": [{ "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/scripts/pre-write.js" }]
+        "hooks": [{ "type": "command", "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/pre-write.js" }]
       }
     ],
     "PostToolUse": [
       {
         "matcher": "Write",
-        "hooks": [{ "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/scripts/pdca-post-write.js" }]
+        "hooks": [{ "type": "command", "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/pdca-post-write.js" }]
       }
     ]
   }
