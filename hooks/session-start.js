@@ -47,7 +47,7 @@ function detectProjectLevel() {
 
   // Check docker-compose + services
   if (fs.existsSync(path.join(cwd, 'docker-compose.yml')) &&
-      fs.existsSync(path.join(cwd, 'services'))) {
+    fs.existsSync(path.join(cwd, 'services'))) {
     return 'enterprise';
   }
 
@@ -135,10 +135,10 @@ if (envFile) {
 
 // Output SessionStart hook response
 const response = {
-  systemMessage: "bkit Vibecoding Kit v1.3.1 activated",
+  systemMessage: "bkit Vibecoding Kit v1.3.2 activated",
   hookSpecificOutput: {
     hookEventName: "SessionStart",
-    additionalContext: `# bkit Vibecoding Kit v1.3.0 - Session Startup
+    additionalContext: `# bkit Vibecoding Kit v1.3.2 - Session Startup
 
 ## 🚨 MANDATORY: Session Start Action
 
