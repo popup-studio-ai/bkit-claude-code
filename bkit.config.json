@@ -1,7 +1,6 @@
 {
   "$schema": "./bkit.config.schema.json",
-  "version": "1.4.2",
-
+  "version": "1.4.3",
   "sourceDirectories": [
     "src",
     "lib",
@@ -11,7 +10,6 @@
     "features",
     "services"
   ],
-
   "codeExtensions": [
     ".ts",
     ".tsx",
@@ -22,7 +20,6 @@
     ".rs",
     ".java"
   ],
-
   "pdca": {
     "designDocPaths": [
       "docs/02-design/features/{feature}.design.md",
@@ -39,7 +36,6 @@
     "autoIterate": true,
     "maxIterations": 5
   },
-
   "taskClassification": {
     "thresholds": {
       "quickFix": 50,
@@ -53,20 +49,35 @@
       "majorFeature": "Major Feature"
     }
   },
-
   "levelDetection": {
     "enterprise": {
-      "directories": ["kubernetes", "terraform", "k8s", "infra"],
+      "directories": [
+        "kubernetes",
+        "terraform",
+        "k8s",
+        "infra"
+      ],
       "files": []
     },
     "dynamic": {
-      "directories": ["lib/bkend", "supabase", "api", "backend"],
-      "files": [".mcp.json", "docker-compose.yml"],
-      "packagePatterns": ["bkend", "@supabase", "firebase"]
+      "directories": [
+        "lib/bkend",
+        "supabase",
+        "api",
+        "backend"
+      ],
+      "files": [
+        ".mcp.json",
+        "docker-compose.yml"
+      ],
+      "packagePatterns": [
+        "bkend",
+        "@supabase",
+        "firebase"
+      ]
     },
     "default": "Starter"
   },
-
   "templates": {
     "directory": "templates",
     "types": {
@@ -80,7 +91,6 @@
       "enterprise": "{type}-enterprise.template.md"
     }
   },
-
   "conventions": {
     "naming": {
       "components": "PascalCase",
@@ -97,7 +107,6 @@
       "storage": "STORAGE_"
     }
   },
-
   "agents": {
     "levelBased": {
       "Starter": "starter-guide",
@@ -117,13 +126,11 @@
       "pipeline": "pipeline-guide"
     }
   },
-
   "output": {
     "jsonEscaping": true,
     "maxContextLength": 500,
     "format": "compact"
   },
-
   "permissions": {
     "Write": "allow",
     "Edit": "allow",
@@ -134,19 +141,25 @@
     "Bash(git push --force*)": "deny",
     "Bash(git reset --hard*)": "ask"
   },
-
   "context": {
     "defaultForkBehavior": "shared",
     "importCacheTTL": 30000,
     "hierarchyCacheTTL": 5000
   },
-
   "automation": {
     "intentDetection": true,
     "ambiguityThreshold": 50,
-    "supportedLanguages": ["en", "ko", "ja", "zh", "es", "fr", "de", "it"]
+    "supportedLanguages": [
+      "en",
+      "ko",
+      "ja",
+      "zh",
+      "es",
+      "fr",
+      "de",
+      "it"
+    ]
   },
-
   "hooks": {
     "userPromptSubmit": {
       "enabled": true,
