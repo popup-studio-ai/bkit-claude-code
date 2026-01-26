@@ -1,8 +1,15 @@
 {
-  "sessionCount": 21,
+  "sessionCount": 55,
   "lastSession": {
-    "startedAt": "2026-01-25T22:38:58.195Z",
+    "startedAt": "2026-01-26T14:25:23.947Z",
     "platform": "claude",
     "level": "Starter"
+  },
+  "activePdca": {
+    "feature": "gemini-cli-v026-compatibility",
+    "phase": "plan",
+    "planFile": "docs/01-plan/features/gemini-cli-v026-compatibility.plan.md",
+    "startedAt": "2026-01-26",
+    "description": "Gemini CLI v0.26+ 호환성 및 bkit 고도화"
   }
 }

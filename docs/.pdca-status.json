@@ -1,17 +1,46 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-01-25T21:40:42.888Z",
+  "lastUpdated": "2026-01-26T14:23:07.257Z",
   "activeFeatures": [
-    "context-engineering-enhancement",
-    "tests",
-    "integration",
-    "regression",
-    "test",
-    "bkit-claude-code",
-    "scripts"
+    "bkit-claude-code"
   ],
-  "primaryFeature": "tests",
+  "primaryFeature": "bkit-claude-code",
   "features": {
+    "gemini-cli-v026-compatibility": {
+      "phase": "archived",
+      "phaseNumber": 7,
+      "matchRate": 95,
+      "iterationCount": 1,
+      "archivedAt": "2026-01-26T23:10:00.000Z",
+      "archivedTo": "docs/archive/2026-01/gemini-cli-v026-compatibility",
+      "requirements": [
+        "FR-1.1",
+        "FR-1.2",
+        "FR-1.3",
+        "FR-2.1",
+        "FR-2.2",
+        "FR-3.1",
+        "FR-4.1",
+        "FR-5.1",
+        "FR-5.2"
+      ],
+      "documents": {
+        "plan": "docs/01-plan/features/gemini-cli-v026-compatibility.plan.md",
+        "design": "docs/02-design/features/gemini-agent-schema-compatibility.design.md"
+      },
+      "timestamps": {
+        "started": "2026-01-26T00:00:00.000Z",
+        "lastUpdated": "2026-01-26T23:10:00.000Z",
+        "completed": "2026-01-26T23:10:00.000Z"
+      },
+      "subFeatures": {
+        "gemini-agent-schema-compatibility": {
+          "status": "completed",
+          "matchRate": 100,
+          "completedAt": "2026-01-26T18:00:00.000Z"
+        }
+      }
+    },
     "context-engineering-enhancement": {
       "phase": "completed",
       "phaseNumber": 6,
@@ -79,54 +108,6 @@
       "archivedTo": "docs/archive/2026-01/bkit-usage-report-auto-display",
       "matchRate": 100
     },
-    "tests": {
-      "phase": "do",
-      "phaseNumber": 3,
-      "matchRate": null,
-      "iterationCount": 0,
-      "requirements": [],
-      "documents": {},
-      "timestamps": {
-        "started": "2026-01-25T20:35:26.688Z",
-        "lastUpdated": "2026-01-25T21:40:42.888Z"
-      }
-    },
-    "integration": {
-      "phase": "do",
-      "phaseNumber": 3,
-      "matchRate": null,
-      "iterationCount": 0,
-      "requirements": [],
-      "documents": {},
-      "timestamps": {
-        "started": "2026-01-25T20:39:02.008Z",
-        "lastUpdated": "2026-01-25T20:39:02.008Z"
-      }
-    },
-    "regression": {
-      "phase": "do",
-      "phaseNumber": 3,
-      "matchRate": null,
-      "iterationCount": 0,
-      "requirements": [],
-      "documents": {},
-      "timestamps": {
-        "started": "2026-01-25T20:39:39.418Z",
-        "lastUpdated": "2026-01-25T20:39:39.418Z"
-      }
-    },
-    "test": {
-      "phase": "do",
-      "phaseNumber": 3,
-      "matchRate": null,
-      "iterationCount": 0,
-      "requirements": [],
-      "documents": {},
-      "timestamps": {
-        "started": "2026-01-25T20:44:05.591Z",
-        "lastUpdated": "2026-01-25T20:44:05.591Z"
-      }
-    },
     "bkit-claude-code": {
       "phase": "do",
       "phaseNumber": 3,
@@ -135,197 +116,155 @@
       "requirements": [],
       "documents": {},
       "timestamps": {
-        "started": "2026-01-25T21:21:10.138Z",
-        "lastUpdated": "2026-01-25T21:25:49.846Z"
-      }
-    },
-    "scripts": {
-      "phase": "do",
-      "phaseNumber": 3,
-      "matchRate": null,
-      "iterationCount": 0,
-      "requirements": [],
-      "documents": {},
-      "timestamps": {
-        "started": "2026-01-25T21:21:37.086Z",
-        "lastUpdated": "2026-01-25T21:21:37.086Z"
+        "started": "2026-01-26T03:39:42.049Z",
+        "lastUpdated": "2026-01-26T14:23:07.257Z"
       }
     }
   },
   "pipeline": {
-    "currentPhase": 3,
+    "currentPhase": 1,
     "level": "Dynamic",
     "phaseHistory": []
   },
   "session": {
-    "startedAt": "2026-01-26T21:00:00.000Z",
+    "startedAt": "2026-01-26T12:15:00.000Z",
     "onboardingCompleted": true,
-    "lastActivity": "2026-01-25T21:40:42.888Z"
+    "lastActivity": "2026-01-26T14:23:07.257Z"
   },
   "history": [
     {
-      "timestamp": "2026-01-25T20:35:26.688Z",
-      "feature": "tests",
-      "phase": "do",
-      "action": "updated"
+      "timestamp": "2026-01-26T12:15:00.000Z",
+      "feature": "gemini-cli-v026-compatibility",
+      "phase": "plan",
+      "action": "created"
     },
     {
-      "timestamp": "2026-01-25T20:36:38.615Z",
-      "feature": "tests",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-25T20:36:38.695Z",
-      "feature": "tests",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-25T20:37:17.519Z",
-      "feature": "tests",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-25T20:37:17.614Z",
-      "feature": "tests",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-25T20:37:38.274Z",
-      "feature": "tests",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-25T20:37:55.713Z",
-      "feature": "tests",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-25T20:39:02.008Z",
-      "feature": "integration",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-25T20:39:39.418Z",
-      "feature": "regression",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-25T20:39:46.342Z",
-      "feature": "tests",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-25T20:39:54.660Z",
-      "feature": "tests",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-25T20:40:21.076Z",
-      "feature": "tests",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-25T20:44:05.591Z",
-      "feature": "test",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-25T21:21:10.138Z",
+      "timestamp": "2026-01-26T03:39:42.049Z",
       "feature": "bkit-claude-code",
       "phase": "do",
       "action": "updated"
     },
     {
-      "timestamp": "2026-01-25T21:21:37.086Z",
-      "feature": "scripts",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-25T21:22:20.365Z",
+      "timestamp": "2026-01-26T03:39:56.588Z",
       "feature": "bkit-claude-code",
       "phase": "do",
       "action": "updated"
     },
     {
-      "timestamp": "2026-01-25T21:22:28.420Z",
+      "timestamp": "2026-01-26T03:40:06.021Z",
       "feature": "bkit-claude-code",
       "phase": "do",
       "action": "updated"
     },
     {
-      "timestamp": "2026-01-25T21:25:49.846Z",
+      "timestamp": "2026-01-26T03:47:21.608Z",
       "feature": "bkit-claude-code",
       "phase": "do",
       "action": "updated"
     },
     {
-      "timestamp": "2026-01-25T21:34:30.953Z",
-      "feature": "tests",
+      "timestamp": "2026-01-26T06:25:45.856Z",
+      "feature": "bkit-claude-code",
       "phase": "do",
       "action": "updated"
     },
     {
-      "timestamp": "2026-01-25T21:39:16.726Z",
-      "feature": "tests",
+      "timestamp": "2026-01-26T06:26:17.767Z",
+      "feature": "bkit-claude-code",
       "phase": "do",
       "action": "updated"
     },
     {
-      "timestamp": "2026-01-25T21:39:36.803Z",
-      "feature": "tests",
+      "timestamp": "2026-01-26T06:26:24.548Z",
+      "feature": "bkit-claude-code",
       "phase": "do",
       "action": "updated"
     },
     {
-      "timestamp": "2026-01-25T21:39:52.860Z",
-      "feature": "tests",
+      "timestamp": "2026-01-26T13:22:23.672Z",
+      "feature": "bkit-claude-code",
       "phase": "do",
       "action": "updated"
     },
     {
-      "timestamp": "2026-01-25T21:40:06.538Z",
-      "feature": "tests",
+      "timestamp": "2026-01-26T12:15:00.000Z",
+      "feature": "gemini-cli-v026-compatibility",
+      "phase": "plan",
+      "action": "created"
+    },
+    {
+      "timestamp": "2026-01-26T03:39:42.049Z",
+      "feature": "bkit-claude-code",
       "phase": "do",
       "action": "updated"
     },
     {
-      "timestamp": "2026-01-25T21:40:06.628Z",
-      "feature": "tests",
+      "timestamp": "2026-01-26T03:39:56.588Z",
+      "feature": "bkit-claude-code",
       "phase": "do",
       "action": "updated"
     },
     {
-      "timestamp": "2026-01-25T21:40:06.714Z",
-      "feature": "tests",
+      "timestamp": "2026-01-26T03:40:06.021Z",
+      "feature": "bkit-claude-code",
       "phase": "do",
       "action": "updated"
     },
     {
-      "timestamp": "2026-01-25T21:40:42.786Z",
-      "feature": "tests",
+      "timestamp": "2026-01-26T03:47:21.608Z",
+      "feature": "bkit-claude-code",
       "phase": "do",
       "action": "updated"
     },
     {
-      "timestamp": "2026-01-25T21:40:42.888Z",
-      "feature": "tests",
+      "timestamp": "2026-01-26T06:25:45.856Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-26T06:26:17.767Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-26T06:26:24.548Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-26T13:22:23.672Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-26T13:24:04.831Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-26T13:24:41.965Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-26T13:25:02.412Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-26T14:23:07.257Z",
+      "feature": "bkit-claude-code",
       "phase": "do",
       "action": "updated"
     }
   ],
-  "currentFeature": "context-engineering-enhancement",
-  "currentPhase": 6
+  "currentFeature": "bkit-claude-code",
+  "currentPhase": 3
 }

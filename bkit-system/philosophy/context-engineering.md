@@ -5,6 +5,8 @@
 > **v1.4.1**: Analyzing bkit architecture from Context Engineering perspective
 >
 > **v1.4.2**: Complete Context Engineering implementation with 8 functional requirements (FR-01~FR-08)
+>
+> **v1.4.3**: Gemini CLI v0.25+ compatibility - `xmlSafeOutput()` function for XML special character escaping
 
 ## What is Context Engineering?
 

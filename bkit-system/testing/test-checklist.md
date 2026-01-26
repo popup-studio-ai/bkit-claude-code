@@ -1,6 +1,8 @@
 # Test Checklist
 
 > Test checklist for verifying bkit features
+>
+> **v1.4.3**: Added xmlSafeOutput() tests for Gemini CLI compatibility
 
 ## Test Objectives
 
@@ -261,6 +263,37 @@ echo '{"tool_input":{"file_path":"src/features/auth/login.ts","content":"test"}}
 # 2. Enter test case input
 # 3. Verify expected behavior
 ```
+
+---
+
+## 8. v1.4.3 Compatibility Tests
+
+### 8.1 xmlSafeOutput() Function Tests
+
+| # | Test Case | Input | Expected Output | Pass |
+|---|-----------|-------|-----------------|------|
+| 8.1.1 | Basic text | `"Hello World"` | `"Hello World"` | [ ] |
+| 8.1.2 | Ampersand | `"A & B"` | `"A &amp; B"` | [ ] |
+| 8.1.3 | Less than | `"<tag>"` | `"&lt;tag&gt;"` | [ ] |
+| 8.1.4 | Double quote | `"\"quoted\""` | `"&quot;quoted&quot;"` | [ ] |
+| 8.1.5 | Single quote | `"'test'"` | `"&#39;test&#39;"` | [ ] |
+| 8.1.6 | Complex | `"<a href=\"test\">A & B</a>"` | Fully escaped | [ ] |
+| 8.1.7 | Null input | `null` | `null` | [ ] |
+| 8.1.8 | Empty string | `""` | `""` | [ ] |
+
+### 8.2 Hook Output Safety Tests (Gemini CLI)
+
+| # | Test Case | Expected Result | Pass |
+|---|-----------|-----------------|------|
+| 8.2.1 | outputAllow with `<content>` | XML-safe escaped in additionalContext | [ ] |
+| 8.2.2 | outputBlock with `&reason` | XML-safe escaped in reason | [ ] |
+| 8.2.3 | session-start.js dynamic content | Feature name & phase XML-safe | [ ] |
+
+### 8.3 Gemini CLI engines Version Test
+
+| # | Test Case | Expected Result | Pass |
+|---|-----------|-----------------|------|
+| 8.3.1 | gemini-extension.json engines | `"gemini-cli": ">=0.25.0"` | [ ] |
 
 ---
 

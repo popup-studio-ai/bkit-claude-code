@@ -2,8 +2,8 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-v2.1.15+-purple.svg)](https://docs.anthropic.com/en/docs/claude-code/getting-started)
-[![Gemini CLI](https://img.shields.io/badge/Gemini%20CLI-v1.0.0+-4285F4.svg)](https://geminicli.dev)
-[![Version](https://img.shields.io/badge/Version-1.4.2-green.svg)](CHANGELOG.md)
+[![Gemini CLI](https://img.shields.io/badge/Gemini%20CLI-v0.25.0+-4285F4.svg)](https://geminicli.dev)
+[![Version](https://img.shields.io/badge/Version-1.4.3-green.svg)](CHANGELOG.md)
 [![Author](https://img.shields.io/badge/Author-POPUP%20STUDIO-orange.svg)](https://popupstudio.ai)
 
 > **PDCA methodology + AI coding assistant mastery for AI-native development**

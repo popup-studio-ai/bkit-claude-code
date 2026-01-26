@@ -2,6 +2,7 @@
 
 > Hook events triggered during Claude Code / Gemini CLI operations
 >
+> **v1.4.3**: Gemini CLI v0.25+ compatibility - `xmlSafeOutput()` applied to hook outputs
 > **v1.4.2**: Added UserPromptSubmit (FR-04) and PreCompact (FR-07) hook events
 > **v1.4.1**: Added Context Engineering perspective - 5-Layer Hook System
 > **v1.4.0**: Dual Platform Support (Claude Code + Gemini CLI)

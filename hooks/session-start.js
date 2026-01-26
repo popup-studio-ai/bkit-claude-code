@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 /**
- * bkit Vibecoding Kit - SessionStart Hook (v1.4.2)
+ * bkit Vibecoding Kit - SessionStart Hook (v1.4.3)
  * Cross-platform Node.js implementation
  * Supports: Claude Code, Gemini CLI
+ *
+ * v1.4.3 Changes:
+ * - Applied xmlSafeOutput to dynamic content for Gemini CLI v0.26+ (ISSUE-001)
  *
  * v1.4.2 Changes:
  * - Added session context initialization (FR-01)
@@ -40,7 +43,9 @@ let {
   getBkitConfig,
   // v1.4.0 P2: Ambiguity Detection Integration
   calculateAmbiguityScore,
-  generateClarifyingQuestions
+  generateClarifyingQuestions,
+  // v1.4.3: XML Safety for Gemini CLI v0.26+ (FR-1.1)
+  xmlSafeOutput
 } = require('../lib/common.js');
 
 // v1.4.2: Context Hierarchy (FR-01)
@@ -474,21 +479,24 @@ if (isGeminiCli()) {
   // ------------------------------------------------------------
 
   let output = `
-\x1b[36m🤖 bkit Vibecoding Kit v1.4.2 (Gemini Edition)\x1b[0m
+\x1b[36m🤖 bkit Vibecoding Kit v1.4.3 (Gemini Edition)\x1b[0m
 ====================================================
 PDCA Cycle & AI-Native Development Environment
 `;
 
   if (onboardingData.hasExistingWork) {
     // Resume existing work
+    // v1.4.3: Apply xmlSafeOutput for Gemini CLI v0.26+ compatibility
+    const safeFeatureName = xmlSafeOutput(onboardingData.primaryFeature);
+    const safePhase = xmlSafeOutput(onboardingData.phase);
     output += `
 \x1b[33m[📋 이전 작업 감지됨]\x1b[0m
-• 기능: \x1b[1m${onboardingData.primaryFeature}\x1b[0m
-• 단계: ${onboardingData.phase}${onboardingData.matchRate ? ` (${onboardingData.matchRate}%)` : ''}
+• 기능: \x1b[1m${safeFeatureName}\x1b[0m
+• 단계: ${safePhase}${onboardingData.matchRate ? ` (${onboardingData.matchRate}%)` : ''}
 
 \x1b[33m[권장 명령]\x1b[0m
 1. 🔄 이전 작업 계속: \x1b[1m/pdca-status\x1b[0m
-2. ✅ Gap 분석 실행: \x1b[1m/pdca-analyze ${onboardingData.primaryFeature}\x1b[0m
+2. ✅ Gap 분석 실행: \x1b[1m/pdca-analyze ${safeFeatureName}\x1b[0m
 3. 🆕 새 작업 시작: \x1b[1m/pdca-plan [기능명]\x1b[0m
 `;
   } else {
@@ -515,7 +523,7 @@ PDCA Cycle & AI-Native Development Environment
   // ------------------------------------------------------------
 
   // Build context based on onboarding type
-  let additionalContext = `# bkit Vibecoding Kit v1.4.1 - Session Startup\n\n`;
+  let additionalContext = `# bkit Vibecoding Kit v1.4.3 - Session Startup\n\n`;
 
   if (onboardingData.hasExistingWork) {
     additionalContext += `## 🔄 이전 작업 감지됨\n\n`;
@@ -560,7 +568,7 @@ PDCA Cycle & AI-Native Development Environment
   // ============================================================
   additionalContext += `
 
-## 📊 bkit 기능 현황 보고 (v1.4.1 - 모든 답변 필수)
+## 📊 bkit 기능 현황 보고 (v1.4.3 - 모든 답변 필수)
 
 **규칙: 모든 답변 끝에 아래 형식으로 bkit 기능 사용 현황을 보고합니다.**
 
@@ -615,7 +623,7 @@ AskUserQuestion, SessionStart Hook
 `;
 
   const response = {
-    systemMessage: `bkit Vibecoding Kit v1.4.2 activated (Claude Code)`,
+    systemMessage: `bkit Vibecoding Kit v1.4.3 activated (Claude Code)`,
     hookSpecificOutput: {
       hookEventName: "SessionStart",
       onboardingType: onboardingData.type,

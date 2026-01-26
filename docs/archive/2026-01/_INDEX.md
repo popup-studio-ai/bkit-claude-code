@@ -13,6 +13,8 @@
 | [pretooluse-hooks-testing](./pretooluse-hooks-testing/) | 2026-01-26 | 96.2% | 3 | ✅ Complete |
 | [pretooluse-hooks-improvement](./pretooluse-hooks-improvement/) | 2026-01-26 | 100% | 3 | ✅ Complete |
 | [context-engineering-enhancement](./context-engineering-enhancement/) | 2026-01-26 | 100% | 9 | ✅ Complete |
+| [gemini-cli-v026-compatibility](./gemini-cli-v026-compatibility/) | 2026-01-26 | 100% | 9 | ✅ Complete |
+| [bkit-comprehensive-test](./bkit-comprehensive-test/) | 2026-01-26 | - | 3 | ✅ Complete |
 
 ---
 
@@ -127,6 +129,50 @@
 - FR-08: MEMORY Variable Support (세션 간 영속성)
 - 108개 테스트 케이스 100% 통과 (Unit/Integration/Regression)
 - Lazy Loading Pattern으로 순환 의존성 방지
+
+---
+
+### gemini-cli-v026-compatibility
+
+- **완료일**: 2026-01-26
+- **PDCA Cycle**: #6
+- **최종 매치율**: 100%
+
+**포함 문서:**
+- `gemini-cli-v026-compatibility.plan.md` - Plan 문서
+- `gemini-cli-v026-compatibility.design.md` - Design 문서
+- `gemini-cli-v026-compatibility.analysis.md` - Analysis 문서
+- `gemini-cli-v026-compatibility.report.md` - Report 문서
+- `gemini-cli-v026-compatibility-test.plan.md` - 테스트 Plan 문서
+- `gemini-cli-v026-compatibility-test.report.md` - 테스트 Report 문서
+- `gemini-agent-schema-compatibility.design.md` - Agent Schema Design 문서
+- `gemini-agents-compatibility.design.md` - Agents Compatibility Design 문서
+- `gemini-cli-agents-directory-compatibility.analysis.md` - Agents Directory Analysis 문서
+
+**주요 성과:**
+- Gemini CLI v0.26+ 완전 호환성 달성
+- agents/ 디렉토리 구조 호환성 검증 완료
+- Agent Schema (YAML frontmatter) 호환성 확인
+- Skills-Agents 상호 참조 패턴 문서화
+
+---
+
+### bkit-comprehensive-test
+
+- **완료일**: 2026-01-26
+- **PDCA Cycle**: #7
+- **최종 매치율**: - (테스트 계획/분석 문서)
+
+**포함 문서:**
+- `bkit-comprehensive-test.plan.md` - Plan 문서
+- `bkit-comprehensive-test.analysis.md` - Analysis 문서
+- `bkit-comprehensive-test.report.md` - Report 문서
+
+**주요 성과:**
+- bkit 플러그인 113개 테스트 케이스 정의
+- 7개 카테고리별 테스트 구조화 (Lib, Scripts, Commands, Agents, Skills, Hooks, Integration)
+- Claude Code CLI와 Gemini CLI 호환성 테스트 매트릭스
+- Agent 호환성 이슈 발견 및 문서화
 
 ---
 
