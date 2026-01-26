@@ -128,7 +128,7 @@ For deeper understanding, explore the `bkit-system/` folder:
 
 bkit is not just a collection of prompts—it's a **production-grade plugin architecture** with carefully designed components that work together as a cohesive system.
 
-### Component Inventory (v1.4.2)
+### Component Inventory (v1.4.3)
 
 | Component | Count | Purpose |
 |-----------|-------|---------|
@@ -138,13 +138,13 @@ bkit is not just a collection of prompts—it's a **production-grade plugin arch
 | **Scripts** | 28 | Hook execution scripts (Node.js) |
 | **Templates** | 23 | Document templates (PDCA + 9 phases + shared) |
 | **Hooks** | 5 events | Event-driven automation triggers |
-| **lib/*.js** | 6 modules (86+ functions) | Shared utility library (v1.4.2) |
+| **lib/*.js** | 6 modules (87+ functions) | Shared utility library (v1.4.3) |
 
 **Total: 100+ components** working in harmony.
 
 > **v1.4.0**: Dual Platform Support - bkit now works on both Claude Code and Gemini CLI
 
-### Context Engineering Architecture (v1.4.2)
+### Context Engineering Architecture (v1.4.3)
 
 bkit is a **practical implementation of Context Engineering**—the art of curating optimal tokens for LLM inference. Unlike traditional prompt engineering that focuses on single prompts, Context Engineering designs an entire system of context delivery.
 
@@ -206,7 +206,7 @@ For detailed Context Engineering documentation, see [bkit-system/philosophy/cont
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│               bkit Component Architecture (v1.4.2)               │
+│               bkit Component Architecture (v1.4.3)               │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
 │  Knowledge Layer    │ Skills (18)      │ Domain expertise       │
@@ -720,7 +720,7 @@ bkit-claude-code/
 ├── scripts/                        # Shared between platforms (28 scripts)
 │   └── *.js
 ├── lib/
-│   └── *.js                        # Shared library (6 modules, 86+ functions, v1.4.2)
+│   └── *.js                        # Shared library (6 modules, 87+ functions, v1.4.3)
 └── templates/                      # Shared between platforms (23 templates)
     ├── plan.template.md
     └── design.template.md

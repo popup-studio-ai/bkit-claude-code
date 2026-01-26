@@ -1,7 +1,8 @@
 # Scripts Overview
 
-> 28 Node.js Scripts used by bkit hooks (v1.4.2)
+> 28 Node.js Scripts used by bkit hooks (v1.4.3)
 >
+> **v1.4.3**: Added `xmlSafeOutput()` for Gemini CLI v0.25+ XML wrapping compatibility
 > **v1.4.2**: Added UserPromptSubmit + PreCompact hooks, Context Engineering library modules
 > **v1.4.1**: Added Context Engineering perspective - State Management Layer via lib/common.js
 > **v1.4.0**: Added 5 new phase completion handlers, Dual Platform Support (Claude Code + Gemini CLI)
@@ -318,6 +319,12 @@ common.getTierPdcaGuidance(tier);                 // Get PDCA guidance for tier
 common.outputAllow('context message');            // Allow with context
 common.outputBlock('block reason');               // Block with reason
 common.outputEmpty();                             // Empty response {}
+
+// ═══════════════════════════════════════════════════════════════════
+// XML Safety (v1.4.3 - Gemini CLI v0.25+ compatibility)
+// ═══════════════════════════════════════════════════════════════════
+common.xmlSafeOutput('<content>');                // Escape XML special chars
+// Escapes: & → &amp;, < → &lt;, > → &gt;, " → &quot;, ' → &#39;
 
 // ═══════════════════════════════════════════════════════════════════
 // Task System Integration

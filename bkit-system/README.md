@@ -7,6 +7,8 @@
 > **v1.4.1**: Context Engineering perspective added - Optimal token curation for LLM reasoning
 >
 > **v1.4.2**: Context Engineering modules + Task Management integration + UserPromptSubmit/PreCompact hooks
+>
+> **v1.4.3**: Gemini CLI v0.25+ compatibility - `xmlSafeOutput()` for XML wrapping, engines version update
 
 ## Purpose of This Document
 
