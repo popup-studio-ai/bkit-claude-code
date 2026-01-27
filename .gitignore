@@ -17,7 +17,11 @@ node_modules/
 .vscode/
 *.swp
 *.swo
+
+# Test directories (local testing only)
 test/
+tests/
+test-scripts/
 
 # Obsidian - Root level (personal settings, not for sharing)
 .obsidian/
