@@ -21,9 +21,9 @@ description: |
   Do NOT use for: simple websites, MVPs, or projects without infrastructure requirements.
 argument-hint: "[init|guide|help]"
 agents:
-  default: enterprise-expert
-  infra: infra-architect
-  architecture: enterprise-expert
+  default: bkit:enterprise-expert
+  infra: bkit:infra-architect
+  architecture: bkit:enterprise-expert
 allowed-tools:
   - Read
   - Write

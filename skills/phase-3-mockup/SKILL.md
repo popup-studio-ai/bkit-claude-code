@@ -11,7 +11,7 @@ description: |
   Mockup, Prototyp, UI-Design, mockup, prototipo, design UI
 
   Do NOT use for: production code, API development, or existing component modifications.
-agent: pipeline-guide
+agent: bkit:pipeline-guide
 allowed-tools:
   - Read
   - Write

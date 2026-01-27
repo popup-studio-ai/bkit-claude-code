@@ -11,7 +11,7 @@ description: |
   Konvention, Coding-Stil, Namensregeln, convenzione, stile di codice, regole di denominazione
 
   Do NOT use for: existing projects with established conventions, deployment, or testing.
-agent: pipeline-guide
+agent: bkit:pipeline-guide
 allowed-tools:
   - Read
   - Write

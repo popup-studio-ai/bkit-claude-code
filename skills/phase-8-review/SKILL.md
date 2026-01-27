@@ -19,9 +19,9 @@ imports:
   - ${PLUGIN_ROOT}/templates/pipeline/phase-8-review.template.md
 # hooks: Managed by hooks/hooks.json (unified-stop.js) - GitHub #9354 workaround
 agents:
-  default: code-analyzer
-  validate: design-validator
-  gap: gap-detector
+  default: bkit:code-analyzer
+  validate: bkit:design-validator
+  gap: bkit:gap-detector
 allowed-tools:
   - Read
   - Glob

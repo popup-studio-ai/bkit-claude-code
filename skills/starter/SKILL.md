@@ -19,7 +19,7 @@ description: |
 
   Do NOT use for: fullstack apps with backend, authentication features, or database needs.
 argument-hint: "[init|guide|help]"
-agent: starter-guide
+agent: bkit:starter-guide
 allowed-tools:
   - Read
   - Write

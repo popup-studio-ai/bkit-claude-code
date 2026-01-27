@@ -13,7 +13,7 @@ description: |
   applicazione mobile, app mobile, sviluppo mobile
 
   Do NOT use for: web-only projects, backend-only development, or desktop apps.
-agent: pipeline-guide
+agent: bkit:pipeline-guide
 allowed-tools:
   - Read
   - Write

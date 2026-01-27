@@ -13,7 +13,7 @@ description: |
   applicazione desktop, app desktop
 
   Do NOT use for: web-only projects, mobile apps, or server-side development.
-agent: pipeline-guide
+agent: bkit:pipeline-guide
 allowed-tools:
   - Read
   - Write

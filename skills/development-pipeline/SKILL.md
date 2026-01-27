@@ -16,7 +16,7 @@ description: |
   pipeline di sviluppo, fase, ordine di sviluppo, da dove iniziare, cosa fare prima
 
   Do NOT use for: ongoing implementation, existing feature work, or bug fixes.
-agent: pipeline-guide
+agent: bkit:pipeline-guide
 allowed-tools:
   - Read
   - Write

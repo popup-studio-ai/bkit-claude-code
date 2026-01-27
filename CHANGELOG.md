@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.6] - 2026-01-28
+
+### Fixed
+- **Plugin Agent Prefix**: All bkit plugin agents now correctly use `bkit:` prefix
+  - Fixes "Agent type 'gap-detector' not found" error in Claude Code Task tool
+  - Claude Code requires plugin agents to be called as `{plugin-name}:{agent-name}`
+  - 11 agents updated: gap-detector, code-analyzer, pdca-iterator, report-generator, starter-guide, design-validator, qa-monitor, pipeline-guide, bkend-expert, enterprise-expert, infra-architect
+  - Built-in agent `claude-code-guide` correctly remains without prefix
+
+### Changed
+- **lib/common.js**: `matchImplicitAgentTrigger()` now returns `bkit:` prefixed agent names
+- **18 SKILL.md files**: Updated `agent:` and `agents:` frontmatter fields with `bkit:` prefix
+- **hooks/session-start.js**: Trigger keyword table updated with `bkit:` prefix
+- **skills/bkit-rules/SKILL.md**: Task-Based Selection table updated with `bkit:` prefix
+- **Command Renamed**: `/bkit:functions` → `/bkit:bkit`
+  - File renamed: `commands/functions.md` → `commands/bkit.md`
+  - More intuitive command name for plugin help
+- **Test files removed from repository**: `tests/` and `test-scripts/` directories
+  - Added to `.gitignore` (local testing only, not for distribution)
+  - 66 test files removed from git tracking (12,502 lines)
+
+### Compatibility
+- **Claude Code**: Minimum v2.1.15, Recommended v2.1.20
+- **Gemini CLI**: Minimum v0.25.0
+- **Node.js**: Minimum v18.0.0
+
+---
+
 ## [1.4.5] - 2026-01-27
 
 ### Added

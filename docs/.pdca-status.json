@@ -1,8 +1,10 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-01-27T15:09:56.431Z",
+  "lastUpdated": "2026-01-27T18:00:55.574Z",
   "activeFeatures": [
-    "bkit-claude-code"
+    "bkit-claude-code",
+    "unit",
+    "tests"
   ],
   "primaryFeature": "bkit-claude-code",
   "features": {
@@ -342,8 +344,84 @@
       "documents": {},
       "timestamps": {
         "started": "2026-01-26T03:39:42.049Z",
-        "lastUpdated": "2026-01-27T14:58:20.720Z"
+        "lastUpdated": "2026-01-27T17:58:03.966Z"
       }
+    },
+    "v1.4.6-subagent-stability": {
+      "phase": "archived",
+      "phaseNumber": 7,
+      "matchRate": 100,
+      "iterationCount": 0,
+      "archivedAt": "2026-01-28T11:00:00.000Z",
+      "archivedTo": "docs/archive/2026-01/v1.4.6-subagent-stability",
+      "requirements": [
+        "FR-01",
+        "FR-02",
+        "FR-03",
+        "FR-04",
+        "FR-05"
+      ],
+      "documents": {
+        "plan": "docs/archive/2026-01/v1.4.6-subagent-stability/v1.4.6-subagent-stability.plan.md",
+        "design": "docs/archive/2026-01/v1.4.6-subagent-stability/v1.4.6-subagent-stability.design.md",
+        "analysis": "docs/archive/2026-01/v1.4.6-subagent-stability/v1.4.6-subagent-stability.analysis.md",
+        "report": "docs/archive/2026-01/v1.4.6-subagent-stability/v1.4.6-subagent-stability.report.md"
+      },
+      "timestamps": {
+        "started": "2026-01-28T00:00:00.000Z",
+        "lastUpdated": "2026-01-28T10:00:00.000Z",
+        "doCompleted": "2026-01-28T09:30:00.000Z",
+        "checkCompleted": "2026-01-28T09:45:00.000Z",
+        "reportCompleted": "2026-01-28T10:00:00.000Z"
+      },
+      "targetFiles": [
+        "lib/common.js",
+        "skills/pdca/SKILL.md",
+        "skills/code-review/SKILL.md",
+        "skills/starter/SKILL.md",
+        "skills/dynamic/SKILL.md",
+        "skills/enterprise/SKILL.md",
+        "skills/phase-8-review/SKILL.md",
+        "skills/zero-script-qa/SKILL.md",
+        "skills/phase-4-api/SKILL.md",
+        "skills/phase-6-ui-integration/SKILL.md",
+        "skills/phase-7-seo-security/SKILL.md",
+        "skills/phase-9-deployment/SKILL.md",
+        "skills/development-pipeline/SKILL.md",
+        "skills/desktop-app/SKILL.md",
+        "skills/mobile-app/SKILL.md",
+        "skills/phase-1-schema/SKILL.md",
+        "skills/phase-2-convention/SKILL.md",
+        "skills/phase-3-mockup/SKILL.md",
+        "skills/phase-5-design-system/SKILL.md",
+        "skills/bkit-rules/SKILL.md",
+        "hooks/session-start.js",
+        ".claude-plugin/plugin.json"
+      ],
+      "implementedItems": [
+        "IMP-01: lib/common.js - matchImplicitAgentTrigger 5 agent keys",
+        "IMP-02: skills/pdca/SKILL.md - 3 agents mapping",
+        "IMP-03: skills/code-review/SKILL.md",
+        "IMP-04: skills/starter/SKILL.md",
+        "IMP-05: skills/dynamic/SKILL.md",
+        "IMP-06: skills/zero-script-qa/SKILL.md",
+        "IMP-07: skills/phase-4-api/SKILL.md",
+        "IMP-08: skills/phase-6-ui-integration/SKILL.md",
+        "IMP-09: skills/phase-7-seo-security/SKILL.md",
+        "IMP-10: skills/phase-9-deployment/SKILL.md",
+        "IMP-11: skills/development-pipeline/SKILL.md",
+        "IMP-12: skills/desktop-app/SKILL.md",
+        "IMP-13: skills/mobile-app/SKILL.md",
+        "IMP-14: skills/phase-1-schema/SKILL.md",
+        "IMP-15: skills/phase-2-convention/SKILL.md",
+        "IMP-16: skills/phase-3-mockup/SKILL.md",
+        "IMP-17: skills/phase-5-design-system/SKILL.md",
+        "IMP-18: skills/phase-8-review/SKILL.md - 3 agents mapping",
+        "IMP-19: skills/enterprise/SKILL.md - 3 agents mapping",
+        "IMP-20: skills/bkit-rules/SKILL.md - 6 agent names in table",
+        "IMP-21: hooks/session-start.js - 5 agent names in table",
+        "IMP-22: .claude-plugin/plugin.json - version 1.4.6"
+      ]
     },
     "scripts": {
       "phase": "archived",
@@ -432,6 +510,30 @@
         "docs/04-report/skills-autocomplete-research-2026-01.md",
         "docs/archive/legacy/02-BKIT-PLUGIN-DESIGN.md"
       ]
+    },
+    "unit": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-01-27T17:51:06.900Z",
+        "lastUpdated": "2026-01-27T17:51:12.415Z"
+      }
+    },
+    "tests": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-01-27T17:51:26.259Z",
+        "lastUpdated": "2026-01-27T17:51:26.624Z"
+      }
     }
   },
   "pipeline": {
@@ -442,7 +544,7 @@
   "session": {
     "startedAt": "2026-01-26T12:15:00.000Z",
     "onboardingCompleted": true,
-    "lastActivity": "2026-01-27T15:09:56.431Z"
+    "lastActivity": "2026-01-27T18:00:55.574Z"
   },
   "history": [
     {
@@ -849,6 +951,72 @@
     },
     {
       "timestamp": "2026-01-27T14:58:20.720Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-27T17:43:41.203Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-27T17:45:04.656Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-27T17:51:06.900Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-27T17:51:11.859Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-27T17:51:12.023Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-27T17:51:12.225Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-27T17:51:12.415Z",
+      "feature": "unit",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-27T17:51:26.259Z",
+      "feature": "tests",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-27T17:51:26.449Z",
+      "feature": "tests",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-27T17:51:26.624Z",
+      "feature": "tests",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-27T17:58:03.966Z",
       "feature": "bkit-claude-code",
       "phase": "do",
       "action": "updated"

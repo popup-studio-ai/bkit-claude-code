@@ -16,7 +16,7 @@ description: |
   Do NOT use for: design document creation, deployment tasks, or gap analysis (use phase-8-review).
 argument-hint: "[file|directory|pr]"
 user-invocable: true
-agent: code-analyzer
+agent: bkit:code-analyzer
 allowed-tools:
   - Read
   - Glob

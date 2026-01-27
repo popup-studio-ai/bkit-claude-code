@@ -19,7 +19,7 @@ description: |
 
   Do NOT use for: static websites, Enterprise-grade systems requiring custom infrastructure.
 argument-hint: "[init|guide|help]"
-agent: bkend-expert
+agent: bkit:bkend-expert
 allowed-tools:
   - Read
   - Write

@@ -19,9 +19,9 @@ description: |
 argument-hint: "[action] [feature]"
 user-invocable: true
 agents:
-  analyze: gap-detector
-  iterate: pdca-iterator
-  report: report-generator
+  analyze: bkit:gap-detector
+  iterate: bkit:pdca-iterator
+  report: bkit:report-generator
   default: null
 allowed-tools:
   - Read

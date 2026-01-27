@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
- * bkit Vibecoding Kit - SessionStart Hook (v1.4.5)
+ * bkit Vibecoding Kit - SessionStart Hook (v1.4.6)
  * Cross-platform Node.js implementation
  * Supports: Claude Code, Gemini CLI
  *
- * v1.4.5 Changes:
+ * v1.4.6 Changes:
  * - Added /pdca archive action for PDCA cycle completion
  * - 8-language trigger completion (ES, FR, DE, IT added)
  * - Korean to English translation (internationalization)
@@ -441,11 +441,11 @@ function getTriggerKeywordTable() {
 ### Agent Triggers
 | Keywords | Agent | Action |
 |----------|-------|--------|
-| verify, 검증, 確認, 验证, verificar, vérifier, prüfen, verificare | gap-detector | Run Gap analysis |
-| improve, 개선, 改善, 改进, mejorar, améliorer, verbessern, migliorare | pdca-iterator | Auto-improvement iteration |
-| analyze, 분석, 分析, 品質, analizar, analyser, analysieren, analizzare | code-analyzer | Code quality analysis |
-| report, 보고서, 報告, 报告, informe, rapport, Bericht, rapporto | report-generator | Generate completion report |
-| help, 도움, 助けて, 帮助, ayuda, aide, Hilfe, aiuto | starter-guide | Beginner guide |
+| verify, 검증, 確認, 验证, verificar, vérifier, prüfen, verificare | bkit:gap-detector | Run Gap analysis |
+| improve, 개선, 改善, 改进, mejorar, améliorer, verbessern, migliorare | bkit:pdca-iterator | Auto-improvement iteration |
+| analyze, 분석, 分析, 品質, analizar, analyser, analysieren, analizzare | bkit:code-analyzer | Code quality analysis |
+| report, 보고서, 報告, 报告, informe, rapport, Bericht, rapporto | bkit:report-generator | Generate completion report |
+| help, 도움, 助けて, 帮助, ayuda, aide, Hilfe, aiuto | bkit:starter-guide | Beginner guide |
 
 ### Skill Triggers (Auto-detection)
 | Keywords | Skill | Level |
@@ -489,7 +489,7 @@ if (isGeminiCli()) {
   // ------------------------------------------------------------
 
   let output = `
-\x1b[36m🤖 bkit Vibecoding Kit v1.4.5 (Gemini Edition)\x1b[0m
+\x1b[36m🤖 bkit Vibecoding Kit v1.4.6 (Gemini Edition)\x1b[0m
 ====================================================
 PDCA Cycle & AI-Native Development Environment
 `;
@@ -533,7 +533,7 @@ PDCA Cycle & AI-Native Development Environment
   // ------------------------------------------------------------
 
   // Build context based on onboarding type
-  let additionalContext = `# bkit Vibecoding Kit v1.4.5 - Session Startup\n\n`;
+  let additionalContext = `# bkit Vibecoding Kit v1.4.6 - Session Startup\n\n`;
 
   if (onboardingData.hasExistingWork) {
     additionalContext += `## 🔄 Previous Work Detected\n\n`;
@@ -578,7 +578,7 @@ PDCA Cycle & AI-Native Development Environment
   // ============================================================
   additionalContext += `
 
-## 📊 bkit Feature Usage Report (v1.4.5 - Required for all responses)
+## 📊 bkit Feature Usage Report (v1.4.6 - Required for all responses)
 
 **Rule: Include the following format at the end of every response to report bkit feature usage.**
 
@@ -634,7 +634,7 @@ AskUserQuestion, SessionStart Hook, Read, Write, Edit, Bash
 `;
 
   const response = {
-    systemMessage: `bkit Vibecoding Kit v1.4.5 activated (Claude Code)`,
+    systemMessage: `bkit Vibecoding Kit v1.4.6 activated (Claude Code)`,
     hookSpecificOutput: {
       hookEventName: "SessionStart",
       onboardingType: onboardingData.type,

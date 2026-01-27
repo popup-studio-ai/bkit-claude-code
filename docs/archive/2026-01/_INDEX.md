@@ -18,6 +18,7 @@
 | [pdca-archive-action](./pdca-archive-action/) | 2026-01-27 | 100% | 3 | ✅ Complete |
 | [v1.4.5-namespace-skill-refactoring](./v1.4.5-namespace-skill-refactoring/) | 2026-01-27 | 100% | 3 | ✅ Complete |
 | [korean-to-english-translation](./korean-to-english-translation/) | 2026-01-27 | 100% | 3 | ✅ Complete |
+| [v1.4.6-subagent-stability](./v1.4.6-subagent-stability/) | 2026-01-28 | 100% | 4 | ✅ Complete |
 
 ---
 
@@ -237,4 +238,25 @@
 
 ---
 
-*Last updated: 2026-01-27*
+### v1.4.6-subagent-stability
+
+- **완료일**: 2026-01-28
+- **PDCA Cycle**: #11
+- **최종 매치율**: 100%
+
+**포함 문서:**
+- `v1.4.6-subagent-stability.plan.md` - Plan 문서
+- `v1.4.6-subagent-stability.design.md` - Design 문서
+- `v1.4.6-subagent-stability.analysis.md` - Analysis 문서
+- `v1.4.6-subagent-stability.report.md` - Report 문서
+
+**주요 성과:**
+- bkit Plugin Agent 호출 시 `bkit:` 접두사 필수 적용
+- Claude Code Task Tool의 `{plugin-name}:{agent-name}` 형식 준수
+- 22개 구현 항목 완료 (lib/common.js, 18개 SKILL.md, 문서 등)
+- "Agent type 'gap-detector' not found" 에러 해결
+- 11개 Plugin Agent 모두 `bkit:` 접두사로 통일
+
+---
+
+*Last updated: 2026-01-28*

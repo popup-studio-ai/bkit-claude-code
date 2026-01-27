@@ -16,7 +16,7 @@ imports:
   - ${PLUGIN_ROOT}/templates/shared/api-patterns.md
   - ${PLUGIN_ROOT}/templates/shared/error-handling-patterns.md
 # hooks: Managed by hooks/hooks.json (unified-stop.js) - GitHub #9354 workaround
-agent: qa-monitor
+agent: bkit:qa-monitor
 allowed-tools:
   - Read
   - Write

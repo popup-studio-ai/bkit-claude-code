@@ -11,7 +11,7 @@ description: |
   Schema, Terminologie, Datenmodell, schema, terminologia, modello dati
 
   Do NOT use for: UI-only changes, deployment, or when schema is already defined.
-agent: pipeline-guide
+agent: bkit:pipeline-guide
 allowed-tools:
   - Read
   - Write

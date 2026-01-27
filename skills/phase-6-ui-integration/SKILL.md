@@ -16,7 +16,7 @@ description: |
 imports:
   - ${PLUGIN_ROOT}/templates/pipeline/phase-6-ui.template.md
 # hooks: Managed by hooks/hooks.json (unified-write-post.js, unified-stop.js) - GitHub #9354 workaround
-agent: pipeline-guide
+agent: bkit:pipeline-guide
 allowed-tools:
   - Read
   - Write

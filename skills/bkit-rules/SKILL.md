@@ -115,12 +115,12 @@ When user requests feature development:
 
 | User Intent | Auto-Invoke Agent |
 |-------------|-------------------|
-| "code review", "security scan" | `code-analyzer` |
-| "design review", "spec check" | `design-validator` |
-| "gap analysis" | `gap-detector` |
-| "report", "summary" | `report-generator` |
-| "QA", "log analysis" | `qa-monitor` |
-| "pipeline", "which phase" | `pipeline-guide` |
+| "code review", "security scan" | `bkit:code-analyzer` |
+| "design review", "spec check" | `bkit:design-validator` |
+| "gap analysis" | `bkit:gap-detector` |
+| "report", "summary" | `bkit:report-generator` |
+| "QA", "log analysis" | `bkit:qa-monitor` |
+| "pipeline", "which phase" | `bkit:pipeline-guide` |
 
 ### Proactive Suggestions
 

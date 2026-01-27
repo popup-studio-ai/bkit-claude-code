@@ -1,14 +1,17 @@
 {
-  "sessionCount": 114,
+  "sessionCount": 129,
   "lastSession": {
-    "startedAt": "2026-01-27T15:09:25.890Z",
+    "startedAt": "2026-01-27T18:00:01.560Z",
     "platform": "claude",
     "level": "Starter"
   },
   "activePdca": {
-    "feature": "korean-to-english-translation",
-    "phase": "design",
-    "startedAt": "2026-01-27T15:00:00.000Z"
+    "feature": "v1.4.6-subagent-stability",
+    "phase": "completed",
+    "startedAt": "2026-01-28T00:00:00.000Z",
+    "doCompletedAt": "2026-01-28T09:30:00.000Z",
+    "reportCompletedAt": "2026-01-28T10:00:00.000Z",
+    "matchRate": 100
   },
   "pdcaHistory": [
     {

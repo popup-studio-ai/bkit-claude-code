@@ -16,7 +16,7 @@ description: |
 imports:
   - ${PLUGIN_ROOT}/templates/pipeline/phase-9-deployment.template.md
 # hooks: Managed by hooks/hooks.json (unified-bash-pre.js, unified-stop.js) - GitHub #9354 workaround
-agent: infra-architect
+agent: bkit:infra-architect
 allowed-tools:
   - Read
   - Write

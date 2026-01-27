@@ -1,12 +1,12 @@
 ---
-name: functions
+name: bkit
 description: |
-  bkit plugin functions - Show all available bkit functions.
+  bkit plugin help - Show all available bkit functions.
   Workaround for skills autocomplete issue.
 
-  Use "/bkit:functions" to see available functions list.
+  Use "/bkit" or just type "bkit help" to see available functions list.
 
-  Triggers: bkit, bkit functions, bkit help
+  Triggers: bkit, bkit help, bkit functions, show bkit commands
 user-invocable: true
 allowed-tools:
   - Read

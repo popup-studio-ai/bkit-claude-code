@@ -14,7 +14,7 @@ description: |
 
   Do NOT use for: unit testing, static analysis, or projects without Docker setup.
 context: fork
-agent: qa-monitor
+agent: bkit:qa-monitor
 # hooks: Managed by hooks/hooks.json (unified-bash-pre.js, unified-stop.js) - GitHub #9354 workaround
 ---
 
