@@ -6,7 +6,11 @@ description: |
 
   Use proactively when user needs consistent UI components or mentions design tokens.
 
-  Triggers: design system, component library, design tokens, shadcn, 디자인 시스템, デザインシステム, 设计系统
+  Triggers: design system, component library, design tokens, shadcn, 디자인 시스템, デザインシステム, 设计系统,
+  sistema de diseño, biblioteca de componentes, tokens de diseño,
+  système de design, bibliothèque de composants, jetons de design,
+  Design-System, Komponentenbibliothek, Design-Tokens,
+  sistema di design, libreria di componenti, token di design
 
   Do NOT use for: one-off UI changes, backend development, or simple static sites.
 imports:

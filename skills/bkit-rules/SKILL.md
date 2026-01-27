@@ -7,7 +7,11 @@ description: |
   Use proactively when user requests feature development, code changes, or implementation tasks.
 
   Triggers: bkit, PDCA, develop, implement, feature, bug, code, design, document,
-  개발, 기능, 버그, 코드, 설계, 문서, 開発, 機能, バグ, 开发, 功能, 代码
+  개발, 기능, 버그, 코드, 설계, 문서, 開発, 機能, バグ, 开发, 功能, 代码,
+  desarrollar, función, error, código, diseño, documento,
+  développer, fonctionnalité, bogue, code, conception, document,
+  entwickeln, Funktion, Fehler, Code, Design, Dokument,
+  sviluppare, funzionalità, bug, codice, design, documento
 
   Do NOT use for: documentation-only tasks, research, or exploration without code changes.
 imports:

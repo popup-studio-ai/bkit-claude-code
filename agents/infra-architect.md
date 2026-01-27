@@ -8,7 +8,11 @@ description: |
   CI/CD pipelines, or requires Enterprise-level deployment architecture.
 
   Triggers: AWS, Kubernetes, Terraform, infrastructure, CI/CD, EKS, RDS, cloud,
-  인프라, 쿠버네티스, 클라우드, インフラ, クラウド, 基础设施, 云架构
+  인프라, 쿠버네티스, 클라우드, インフラ, クラウド, 基础设施, 云架构,
+  infraestructura, nube, Kubernetes, despliegue, CI/CD,
+  infrastructure, cloud, Kubernetes, déploiement, CI/CD,
+  Infrastruktur, Cloud, Kubernetes, Bereitstellung, CI/CD,
+  infrastruttura, cloud, Kubernetes, distribuzione, CI/CD
 
   Do NOT use for: frontend development, simple deployments (Vercel/Netlify),
   Starter/Dynamic level projects, or non-infrastructure coding tasks.

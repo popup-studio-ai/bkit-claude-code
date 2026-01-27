@@ -14,7 +14,7 @@ flowchart TB
         subgraph ROW1[" "]
             direction LR
             SPEC["**1. SPEC**<br/>Plan Doc<br/>Design Doc"]
-            CONTEXT["**2. CONTEXT**<br/>CLAUDE.md<br/>22 Skills"]
+            CONTEXT["**2. CONTEXT**<br/>CLAUDE.md<br/>21 Skills"]
             AGENT["**3. AI AGENT**<br/>11 Agents<br/>Autonomous Implementation"]
         end
 
@@ -126,7 +126,7 @@ According to Addy Osmani's research on AI-Native engineers, effective practition
 - Test edge cases and error handling
 - Validate against requirements
 
-### 4. Context Engineering (v1.4.4 Enhanced)
+### 4. Context Engineering (v1.4.5 Enhanced)
 
 Context Engineering is the **systematic design of information flow to LLMs**—going beyond simple prompt crafting to build entire systems that consistently guide AI behavior.
 
@@ -138,7 +138,7 @@ Context Engineering is the **systematic design of information flow to LLMs**—g
 
 **bkit Implementation**:
 ```
-Domain Knowledge (22 Skills) ─┐
+Domain Knowledge (21 Skills) ─┐
 Behavioral Rules (11 Agents) ─┼─→ Unified Hook System ─→ Dynamic Context Injection
 State Management (86+ funcs) ─┘
 ```
@@ -176,8 +176,8 @@ bkit implements **Context Engineering**—the systematic curation of context tok
 | **3 Project Levels** | Starter, Dynamic, Enterprise contexts |
 | **Convention Skill (Phase 2)** | Defines naming, structure, patterns |
 | **CLAUDE.md Files** | Project-specific AI instructions |
-| **Skill System (22 skills)** | Domain-specific knowledge |
-| **Unified Hook System (v1.4.4)** | Centralized context injection via hooks.json |
+| **Skill System (21 skills)** | Domain-specific knowledge |
+| **Unified Hook System (v1.4.5)** | Centralized context injection via hooks.json |
 | **lib/*.js (86+ functions)** | State management, intent detection, ambiguity handling |
 
 **Context Engineering Architecture**:
@@ -185,7 +185,7 @@ bkit implements **Context Engineering**—the systematic curation of context tok
 ┌─────────────────────────────────────────────────────────────────┐
 │              bkit Context Engineering Layers                     │
 ├─────────────────────────────────────────────────────────────────┤
-│  Layer 1: Domain Knowledge   │ 22 Skills (structured instructions)│
+│  Layer 1: Domain Knowledge   │ 21 Skills (structured instructions)│
 │  Layer 2: Behavioral Rules   │ 11 Agents (role + constraints)    │
 │  Layer 3: State Management   │ PDCA v2.0, Multi-Feature Context  │
 │  Layer 4: Dynamic Injection  │ Intent detection, ambiguity score │

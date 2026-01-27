@@ -9,6 +9,8 @@
 > **v1.4.3**: Gemini CLI v0.25+ compatibility - `xmlSafeOutput()` function for XML special character escaping
 >
 > **v1.4.4**: Skills-Agents multi-binding architecture, PDCA Skill integration (8 actions)
+>
+> **v1.4.5**: `/pdca archive` action, 8-language trigger completion, internationalization (KO→EN)
 
 ## What is Context Engineering?
 
@@ -95,7 +97,7 @@ v1.4.2 implements 8 functional requirements (FR-01~FR-08) for comprehensive cont
 
 ## bkit's Context Engineering Structure
 
-### 1. Domain Knowledge Layer (22 Skills)
+### 1. Domain Knowledge Layer (21 Skills)
 
 Skills provide **structured domain knowledge**.
 

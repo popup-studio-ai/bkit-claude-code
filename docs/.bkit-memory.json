@@ -1,11 +1,15 @@
 {
-  "sessionCount": 90,
+  "sessionCount": 114,
   "lastSession": {
-    "startedAt": "2026-01-27T09:11:38.747Z",
+    "startedAt": "2026-01-27T15:09:25.890Z",
     "platform": "claude",
     "level": "Starter"
   },
-  "activePdca": null,
+  "activePdca": {
+    "feature": "korean-to-english-translation",
+    "phase": "design",
+    "startedAt": "2026-01-27T15:00:00.000Z"
+  },
   "pdcaHistory": [
     {
       "feature": "v1.4.4-skills-agents-commands-enhancement",

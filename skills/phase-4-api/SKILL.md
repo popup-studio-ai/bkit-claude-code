@@ -6,7 +6,9 @@ description: |
 
   Use proactively when user needs to design or implement backend APIs.
 
-  Triggers: API design, REST API, backend, endpoint, API 설계, API設計, API设计
+  Triggers: API design, REST API, backend, endpoint, API 설계, API設計, API设计,
+  diseño de API, diseño API, diseño de backend, conception API, conception d'API, backend,
+  API-Design, API-Entwurf, Backend, progettazione API, design API, backend
 
   Do NOT use for: frontend-only projects, static websites, or Starter level projects.
 imports:

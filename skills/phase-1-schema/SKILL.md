@@ -6,7 +6,9 @@ description: |
 
   Use proactively when starting a new project or when data structures are unclear.
 
-  Triggers: schema, terminology, data model, entity, 스키마, 用語, データモデル, 数据模型
+  Triggers: schema, terminology, data model, entity, 스키마, 用語, データモデル, 数据模型,
+  esquema, terminología, modelo de datos, schéma, terminologie, modèle de données,
+  Schema, Terminologie, Datenmodell, schema, terminologia, modello dati
 
   Do NOT use for: UI-only changes, deployment, or when schema is already defined.
 agent: pipeline-guide

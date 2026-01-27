@@ -6,7 +6,9 @@ description: |
 
   Use proactively when starting a new project or when coding standards are needed.
 
-  Triggers: convention, coding style, naming rules, 컨벤션, コンベンション, 编码风格
+  Triggers: convention, coding style, naming rules, 컨벤션, コンベンション, 编码风格,
+  convención, estilo de código, reglas de nombrado, convention, style de codage, règles de nommage,
+  Konvention, Coding-Stil, Namensregeln, convenzione, stile di codice, regole di denominazione
 
   Do NOT use for: existing projects with established conventions, deployment, or testing.
 agent: pipeline-guide

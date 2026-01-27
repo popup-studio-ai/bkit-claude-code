@@ -6,7 +6,11 @@ description: |
 
   Use proactively when user asks about search ranking, security hardening, or vulnerability fixes.
 
-  Triggers: SEO, security, meta tags, XSS, CSRF, 보안, セキュリティ, 安全
+  Triggers: SEO, security, meta tags, XSS, CSRF, 보안, セキュリティ, 安全,
+  seguridad, etiquetas meta, optimización de búsqueda,
+  sécurité, balises méta, optimisation pour les moteurs de recherche,
+  Sicherheit, Meta-Tags, Suchmaschinenoptimierung,
+  sicurezza, tag meta, ottimizzazione per i motori di ricerca
 
   Do NOT use for: backend-only APIs, internal tools, or basic development setup.
 imports:

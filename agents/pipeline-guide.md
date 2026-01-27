@@ -9,7 +9,11 @@ description: |
 
   Triggers: development pipeline, phase, development order, where to start, what to do first,
   how to begin, new project, project setup, 개발 파이프라인, 뭐부터, 어디서부터, 순서, 시작,
-  開発パイプライン, 何から, どこから, 开发流程, 从哪里开始
+  開発パイプライン, 何から, どこから, 开发流程, 从哪里开始,
+  pipeline de desarrollo, fase, orden de desarrollo, por dónde empezar, qué hacer primero,
+  pipeline de développement, phase, ordre de développement, par où commencer, que faire en premier,
+  Entwicklungs-Pipeline, Phase, Entwicklungsreihenfolge, wo anfangen, was zuerst tun,
+  pipeline di sviluppo, fase, ordine di sviluppo, da dove iniziare, cosa fare prima
 
   Do NOT use for: ongoing implementation work, existing feature modifications, bug fixes,
   or when experienced developers want to proceed freely.

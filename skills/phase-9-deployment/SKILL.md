@@ -6,7 +6,11 @@ description: |
 
   Use proactively when user is ready to deploy or asks about production environment setup.
 
-  Triggers: deployment, CI/CD, production, Vercel, Kubernetes, Docker, 배포, デプロイ, 部署
+  Triggers: deployment, CI/CD, production, Vercel, Kubernetes, Docker, 배포, デプロイ, 部署,
+  despliegue, implementación, producción,
+  déploiement, mise en production,
+  Bereitstellung, Produktion,
+  distribuzione, messa in produzione
 
   Do NOT use for: local development, design phase, or feature implementation.
 imports:

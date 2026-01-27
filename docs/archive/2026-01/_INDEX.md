@@ -15,6 +15,9 @@
 | [context-engineering-enhancement](./context-engineering-enhancement/) | 2026-01-26 | 100% | 9 | ✅ Complete |
 | [gemini-cli-v026-compatibility](./gemini-cli-v026-compatibility/) | 2026-01-26 | 100% | 9 | ✅ Complete |
 | [bkit-comprehensive-test](./bkit-comprehensive-test/) | 2026-01-26 | - | 3 | ✅ Complete |
+| [pdca-archive-action](./pdca-archive-action/) | 2026-01-27 | 100% | 3 | ✅ Complete |
+| [v1.4.5-namespace-skill-refactoring](./v1.4.5-namespace-skill-refactoring/) | 2026-01-27 | 100% | 3 | ✅ Complete |
+| [korean-to-english-translation](./korean-to-english-translation/) | 2026-01-27 | 100% | 3 | ✅ Complete |
 
 ---
 
@@ -176,4 +179,62 @@
 
 ---
 
-*Last updated: 2026-01-26*
+### pdca-archive-action
+
+- **완료일**: 2026-01-27
+- **PDCA Cycle**: #8
+- **최종 매치율**: 100%
+
+**포함 문서:**
+- `pdca-archive-action.plan.md` - Plan 문서
+- `pdca-archive-action.design.md` - Design 문서
+- `pdca-archive-action.report.md` - Report 문서
+
+**주요 성과:**
+- `/pdca archive` action 추가로 PDCA 사이클 완성
+- 7단계 아카이브 Flow 구현 (Validation → Move → Update)
+- SKILL.md에 Bash tool 추가
+- Task Flow 다이어그램에 Archive 단계 추가
+- 기존 `/archive` command 마이그레이션 완료
+
+---
+
+### v1.4.5-namespace-skill-refactoring
+
+- **완료일**: 2026-01-27
+- **PDCA Cycle**: #9
+- **최종 매치율**: 100%
+
+**포함 문서:**
+- `v1.4.5-namespace-skill-refactoring.plan.md` - Plan 문서
+- `v1.4.5-namespace-skill-refactoring.design.md` - Design 문서
+- `v1.4.5-namespace-skill-refactoring.report.md` - Report 문서
+
+**주요 성과:**
+- `/bkit:*` 네임스페이스 호출 패턴 분석 및 개선 방안 수립
+- Skills autocomplete 문제 우회 방안 문서화
+- Legacy 문서와 현행 문서 간 일관성 검증
+- v1.4.5 마이그레이션 가이드 작성
+
+---
+
+### korean-to-english-translation
+
+- **완료일**: 2026-01-27
+- **PDCA Cycle**: #10
+- **최종 매치율**: 100%
+
+**포함 문서:**
+- `korean-to-english-translation.plan.md` - Plan 문서
+- `korean-to-english-translation.design.md` - Design 문서
+- `korean-to-english-translation.report.md` - Report 문서
+
+**주요 성과:**
+- bkit 코드베이스 전체 한국어 → 영어 번역 완료
+- 8언어 트리거 시스템 완성 (EN, KO, JA, ZH, ES, FR, DE, IT)
+- 40개 파일 (hooks, agents, skills, templates) 처리
+- 약 600줄 번역, 약 100개 트리거 키워드 추가
+
+---
+
+*Last updated: 2026-01-27*

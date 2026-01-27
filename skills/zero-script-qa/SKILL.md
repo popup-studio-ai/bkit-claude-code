@@ -6,7 +6,11 @@ description: |
 
   Use proactively when user needs to verify features through log analysis instead of test scripts.
 
-  Triggers: zero script qa, log-based testing, docker logs, 제로 스크립트 QA, ゼロスクリプトQA, 零脚本QA
+  Triggers: zero script qa, log-based testing, docker logs, 제로 스크립트 QA, ゼロスクリプトQA, 零脚本QA,
+  QA sin scripts, pruebas basadas en logs, registros de docker,
+  QA sans script, tests basés sur les logs, journaux docker,
+  skriptloses QA, log-basiertes Testen, Docker-Logs,
+  QA senza script, test basati sui log, log docker
 
   Do NOT use for: unit testing, static analysis, or projects without Docker setup.
 context: fork

@@ -6,7 +6,11 @@ description: |
 
   Use proactively when user wants to build mobile apps or convert web apps to mobile.
 
-  Triggers: mobile app, React Native, Flutter, Expo, iOS, Android, 모바일 앱, モバイルアプリ, 移动应用
+  Triggers: mobile app, React Native, Flutter, Expo, iOS, Android, 모바일 앱, モバイルアプリ, 移动应用,
+  aplicación móvil, app móvil, desarrollo móvil,
+  application mobile, développement mobile,
+  mobile Anwendung, mobile App, mobile Entwicklung,
+  applicazione mobile, app mobile, sviluppo mobile
 
   Do NOT use for: web-only projects, backend-only development, or desktop apps.
 agent: pipeline-guide

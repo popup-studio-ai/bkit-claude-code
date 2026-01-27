@@ -144,26 +144,26 @@ npm install -D {dev-package1} {dev-package2}
 - [ ] Inline styles (use Tailwind/CSS modules)
 - [ ] Console.log in production code
 
-### 5.4 Architecture Checklist (Phase 2 기반)
+### 5.4 Architecture Checklist (Phase 2 Based)
 
-> Clean Architecture 준수 여부 확인
+> Verify Clean Architecture compliance
 
-- [ ] **Layer Structure** - 레벨에 맞는 레이어 구조 준수
+- [ ] **Layer Structure** - Follow layer structure matching level
   - Starter: components, lib, types
   - Dynamic: components, features, services, types, lib/api
   - Enterprise: presentation, application, domain, infrastructure
-- [ ] **Dependency Direction** - 의존성 방향 준수
+- [ ] **Dependency Direction** - Follow dependency direction rules
   - Presentation → Application, Domain (not Infrastructure)
   - Application → Domain, Infrastructure
-  - Domain → none (독립)
+  - Domain → none (independent)
   - Infrastructure → Domain only
-- [ ] **Import Rules** - 임포트 규칙 준수
-  - components에서 @/lib/api 직접 임포트 금지
-  - services에서 UI 임포트 금지
+- [ ] **Import Rules** - Follow import rules
+  - No direct @/lib/api imports from components
+  - No UI imports from services
 
-### 5.5 Convention Checklist (Phase 2 기반)
+### 5.5 Convention Checklist (Phase 2 Based)
 
-> 코딩 컨벤션 준수 여부 확인
+> Verify coding convention compliance
 
 - [ ] **Naming Convention**
   - Components: PascalCase (UserProfile.tsx)
@@ -179,31 +179,31 @@ npm install -D {dev-package1} {dev-package2}
   4. Type imports (import type)
   5. Styles
 
-### 5.6 Security Checklist (Phase 7 기반)
+### 5.6 Security Checklist (Phase 7 Based)
 
-> 보안 취약점 확인
+> Verify security vulnerabilities
 
 - [ ] **Input Validation**
-  - 모든 사용자 입력 검증
-  - SQL Injection 방지 (parameterized queries)
-  - XSS 방지 (출력 이스케이프)
+  - Validate all user input
+  - SQL Injection prevention (parameterized queries)
+  - XSS prevention (output escaping)
 - [ ] **Auth**
-  - 인증 토큰 안전하게 저장 (httpOnly cookie)
-  - CSRF 토큰 사용
-  - 민감한 데이터 암호화
+  - Store auth tokens securely (httpOnly cookie)
+  - Use CSRF tokens
+  - Encrypt sensitive data
 
-### 5.7 API Checklist (Phase 4 기반)
+### 5.7 API Checklist (Phase 4 Based)
 
-> API 표준 준수 여부 확인
+> Verify API standards compliance
 
-- [ ] **Response Format** - 표준 응답 형식 사용
+- [ ] **Response Format** - Use standard response format
   - Success: `{ data, meta? }`
   - Error: `{ error: { code, message, details? } }`
   - Pagination: `{ data, pagination }`
-- [ ] **Error Codes** - 표준 에러 코드 사용
+- [ ] **Error Codes** - Use standard error codes
   - VALIDATION_ERROR, UNAUTHORIZED, NOT_FOUND, etc.
-- [ ] **HTTP Methods** - RESTful 규칙 준수
-  - GET (조회), POST (생성), PUT/PATCH (수정), DELETE (삭제)
+- [ ] **HTTP Methods** - Follow RESTful rules
+  - GET (read), POST (create), PUT/PATCH (update), DELETE (delete)
 
 ---
 

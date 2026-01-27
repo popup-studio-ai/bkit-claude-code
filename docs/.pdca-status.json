@@ -1,12 +1,43 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-01-27T09:13:16.019Z",
+  "lastUpdated": "2026-01-27T15:09:56.431Z",
   "activeFeatures": [
-    "bkit-claude-code",
-    "scripts"
+    "bkit-claude-code"
   ],
   "primaryFeature": "bkit-claude-code",
   "features": {
+    "pdca-archive-action": {
+      "phase": "archived",
+      "phaseNumber": 7,
+      "matchRate": 100,
+      "iterationCount": 1,
+      "archivedAt": "2026-01-27T14:15:00.000Z",
+      "archivedTo": "docs/archive/2026-01/pdca-archive-action",
+      "requirements": [
+        "FR-01",
+        "FR-02",
+        "FR-03",
+        "FR-04",
+        "FR-05",
+        "FR-06",
+        "FR-07",
+        "FR-08"
+      ],
+      "documents": {
+        "plan": "docs/archive/2026-01/pdca-archive-action/pdca-archive-action.plan.md",
+        "design": "docs/archive/2026-01/pdca-archive-action/pdca-archive-action.design.md",
+        "report": "docs/archive/2026-01/pdca-archive-action/pdca-archive-action.report.md"
+      },
+      "timestamps": {
+        "started": "2026-01-27T14:00:00.000Z",
+        "lastUpdated": "2026-01-27T14:15:00.000Z",
+        "completed": "2026-01-27T14:15:00.000Z"
+      },
+      "implementedFiles": [
+        "skills/pdca/SKILL.md",
+        "commands/functions.md"
+      ]
+    },
     "v1.4.4-comprehensive-test": {
       "phase": "archived",
       "phaseNumber": 7,
@@ -85,7 +116,7 @@
       },
       "testCategories": {
         "hooks": 9,
-        "skills": 22,
+        "skills": 21,
         "agents": 11,
         "pdcaCommands": 8,
         "unifiedScripts": 4,
@@ -311,20 +342,96 @@
       "documents": {},
       "timestamps": {
         "started": "2026-01-26T03:39:42.049Z",
-        "lastUpdated": "2026-01-27T08:50:22.101Z"
+        "lastUpdated": "2026-01-27T14:58:20.720Z"
       }
     },
     "scripts": {
-      "phase": "do",
-      "phaseNumber": 3,
+      "phase": "archived",
+      "phaseNumber": 7,
       "matchRate": null,
       "iterationCount": 0,
       "requirements": [],
       "documents": {},
       "timestamps": {
         "started": "2026-01-27T04:31:21.341Z",
-        "lastUpdated": "2026-01-27T08:32:53.782Z"
+        "lastUpdated": "2026-01-27T13:42:00.000Z",
+        "completed": "2026-01-27T13:42:00.000Z"
       }
+    },
+    "korean-to-english-translation": {
+      "phase": "archived",
+      "phaseNumber": 7,
+      "matchRate": 100,
+      "iterationCount": 1,
+      "archivedAt": "2026-01-27T16:45:00.000Z",
+      "archivedTo": "docs/archive/2026-01/korean-to-english-translation",
+      "requirements": [
+        "FR-01",
+        "FR-02",
+        "FR-03",
+        "FR-04",
+        "FR-05",
+        "FR-06",
+        "FR-07"
+      ],
+      "documents": {
+        "plan": "docs/archive/2026-01/korean-to-english-translation/korean-to-english-translation.plan.md",
+        "design": "docs/archive/2026-01/korean-to-english-translation/korean-to-english-translation.design.md",
+        "report": "docs/archive/2026-01/korean-to-english-translation/korean-to-english-translation.report.md"
+      },
+      "timestamps": {
+        "started": "2026-01-27T15:00:00.000Z",
+        "lastUpdated": "2026-01-27T16:45:00.000Z",
+        "completed": "2026-01-27T16:30:00.000Z"
+      },
+      "targetFiles": {
+        "hooks": 1,
+        "agents": 11,
+        "skills": 21,
+        "templates": 3,
+        "bkitSystem": 4,
+        "total": 40
+      },
+      "triggerCompletion": {
+        "agentsCompleted": 11,
+        "skillsCompleted": 21,
+        "totalTriggersAdded": 100
+      },
+      "translationScope": {
+        "linesTranslated": 600,
+        "status": "COMPLETED"
+      }
+    },
+    "v1.4.5-namespace-skill-refactoring": {
+      "phase": "archived",
+      "phaseNumber": 7,
+      "matchRate": 100,
+      "iterationCount": 0,
+      "archivedAt": "2026-01-27T14:20:00.000Z",
+      "archivedTo": "docs/archive/2026-01/v1.4.5-namespace-skill-refactoring",
+      "requirements": [
+        "FR-01",
+        "FR-02",
+        "FR-03",
+        "FR-04",
+        "FR-05"
+      ],
+      "documents": {
+        "plan": "docs/archive/2026-01/v1.4.5-namespace-skill-refactoring/v1.4.5-namespace-skill-refactoring.plan.md",
+        "design": "docs/archive/2026-01/v1.4.5-namespace-skill-refactoring/v1.4.5-namespace-skill-refactoring.design.md",
+        "report": "docs/archive/2026-01/v1.4.5-namespace-skill-refactoring/v1.4.5-namespace-skill-refactoring.report.md"
+      },
+      "timestamps": {
+        "started": "2026-01-27T13:30:00.000Z",
+        "lastUpdated": "2026-01-27T14:20:00.000Z",
+        "completed": "2026-01-27T14:20:00.000Z"
+      },
+      "targetFiles": [
+        "docs/02-design/features/bkit-hub-command.design.md",
+        "commands/menu.md",
+        "docs/04-report/skills-autocomplete-research-2026-01.md",
+        "docs/archive/legacy/02-BKIT-PLUGIN-DESIGN.md"
+      ]
     }
   },
   "pipeline": {
@@ -335,7 +442,7 @@
   "session": {
     "startedAt": "2026-01-26T12:15:00.000Z",
     "onboardingCompleted": true,
-    "lastActivity": "2026-01-27T09:13:16.019Z"
+    "lastActivity": "2026-01-27T15:09:56.431Z"
   },
   "history": [
     {
@@ -658,6 +765,90 @@
     },
     {
       "timestamp": "2026-01-27T08:50:22.101Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-27T13:37:22.209Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-27T14:31:34.244Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-27T14:31:57.883Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-27T14:32:09.234Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-27T14:32:21.733Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-27T14:32:44.262Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-27T14:33:00.457Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-27T14:33:10.866Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-27T14:35:55.211Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-27T14:36:07.124Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-27T14:36:17.281Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-27T14:36:50.180Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-27T14:58:20.538Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-27T14:58:20.720Z",
       "feature": "bkit-claude-code",
       "phase": "do",
       "action": "updated"

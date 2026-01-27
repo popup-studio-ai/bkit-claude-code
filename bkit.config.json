@@ -1,6 +1,6 @@
 {
   "$schema": "./bkit.config.schema.json",
-  "version": "1.4.4",
+  "version": "1.4.5",
   "sourceDirectories": [
     "src",
     "lib",

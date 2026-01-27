@@ -8,7 +8,11 @@ description: |
   Especially useful after API implementation (Phase 4) or UI integration (Phase 6).
 
   Triggers: zero script qa, log-based testing, docker logs, QA, testing, log analysis,
-  제로 스크립트 QA, 테스트, 로그 분석, ゼロスクリプトQA, ログ分析, 零脚本QA, 日志分析
+  제로 스크립트 QA, 테스트, 로그 분석, ゼロスクリプトQA, ログ分析, 零脚本QA, 日志分析,
+  QA sin scripts, pruebas basadas en logs, registros de docker, pruebas, análisis de logs,
+  QA sans script, tests basés sur les logs, logs docker, tests, analyse de logs,
+  Script-freies QA, Log-basiertes Testen, Docker-Logs, Tests, Log-Analyse,
+  QA senza script, test basati su log, log docker, test, analisi dei log
 
   Do NOT use for: unit testing with test scripts, frontend-only testing without Docker,
   or design document validation.

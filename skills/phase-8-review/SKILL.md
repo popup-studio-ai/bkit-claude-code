@@ -8,7 +8,11 @@ description: |
   Use proactively when implementation is complete and quality verification is needed.
 
   Triggers: code review, architecture review, quality check, refactoring, gap analysis,
-  코드 리뷰, 설계-구현 분석, コードレビュー, ギャップ分析, 代码审查, 差距分析
+  코드 리뷰, 설계-구현 분석, コードレビュー, ギャップ分析, 代码审查, 差距分析,
+  revisión de código, revisión de arquitectura, control de calidad, análisis de brechas,
+  revue de code, revue d'architecture, contrôle qualité, analyse des écarts,
+  Code-Review, Architekturüberprüfung, Qualitätskontrolle, Gap-Analyse,
+  revisione del codice, revisione dell'architettura, controllo qualità, analisi dei gap
 
   Do NOT use for: initial development, design phase, or deployment tasks.
 imports:

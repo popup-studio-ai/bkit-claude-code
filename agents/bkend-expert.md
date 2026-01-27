@@ -9,7 +9,10 @@ description: |
 
   Triggers: bkend, BaaS, authentication, login, signup, database, fullstack, backend,
   API integration, data model, 인증, 로그인, 회원가입, 데이터베이스, 풀스택, 백엔드,
-  認証, ログイン, データベース, autenticación, 身份验证, 数据库
+  認証, ログイン, データベース, autenticación, 身份验证, 数据库,
+  authentification, connexion, inscription, base de données, fullstack, backend,
+  Authentifizierung, Anmeldung, Registrierung, Datenbank, Fullstack, Backend,
+  autenticazione, accesso, registrazione, database, fullstack, backend
 
   Do NOT use for: static websites without backend, infrastructure tasks, pure frontend styling,
   or enterprise microservices architecture.

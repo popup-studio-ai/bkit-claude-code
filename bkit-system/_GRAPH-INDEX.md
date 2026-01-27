@@ -28,7 +28,7 @@ bkit is a practical implementation of **Context Engineering**:
 ┌─────────────────────────────────────────────────────────────────┐
 │              bkit Context Engineering Components                 │
 ├─────────────────────────────────────────────────────────────────┤
-│  Domain Knowledge (22 Skills)  → Structured domain knowledge     │
+│  Domain Knowledge (21 Skills)  → Structured domain knowledge     │
 │  Behavioral Rules (11 Agents)  → Role-based behavioral rules     │
 │  State Management (lib/common) → State management 76+ functions  │
 │  5-Layer Hook System           → Context injection timing ctrl   │
@@ -44,7 +44,7 @@ Core design principles and methodology:
 - [[philosophy/ai-native-principles|ai-native-principles]] - AI-Native development & 3 core competencies
 - [[philosophy/pdca-methodology|pdca-methodology]] - PDCA cycle & 9-stage pipeline relationship
 
-## Skills (22)
+## Skills (21)
 
 ### Core Skills (2)
 - [[../skills/bkit-rules/SKILL|bkit-rules]] - PDCA rules + auto-triggering + code quality standards
@@ -100,9 +100,9 @@ The following skills were consolidated:
 - [[../agents/pdca-iterator|pdca-iterator]] - Iteration optimizer (Evaluator-Optimizer pattern)
 - [[../agents/report-generator|report-generator]] - Report generation
 
-## Skills - User Invocable (v1.4.4)
+## Skills - User Invocable (v1.4.5)
 
-> **Note**: Commands deprecated in v1.4.4. Use Skills instead.
+> **Note**: Commands deprecated in v1.4.4+. Use Skills instead.
 
 ### PDCA Skill (Unified)
 - `/pdca plan` - Create plan document
@@ -128,7 +128,6 @@ The following skills were consolidated:
 - `/zero-script-qa` - Run Zero Script QA
 - `/claude-code-learning` - Learning curriculum
 - `/code-review` - Code review and quality analysis
-- `/github-integration` - GitHub statistics and automation
 
 ## Hooks (3 events)
 
@@ -327,7 +326,7 @@ Stop                →  AgentStop
 ```
 
 **Shared Components** (Cross-platform):
-- `skills/` - All 22 skills work on both platforms
+- `skills/` - All 21 skills work on both platforms
 - `agents/` - All 11 agents work on both platforms
 - `scripts/` - All 26 scripts use Node.js (cross-platform)
 - `lib/common.js` - Platform detection via `detectPlatform()`

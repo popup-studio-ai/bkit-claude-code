@@ -6,7 +6,11 @@ description: |
 
   Use proactively when user wants to build desktop applications with web technologies.
 
-  Triggers: desktop app, Electron, Tauri, mac app, windows app, 데스크톱 앱, デスクトップアプリ, 桌面应用
+  Triggers: desktop app, Electron, Tauri, mac app, windows app, 데스크톱 앱, デスクトップアプリ, 桌面应用,
+  aplicación de escritorio, app de escritorio,
+  application de bureau, application desktop,
+  Desktop-Anwendung, Desktop-App,
+  applicazione desktop, app desktop
 
   Do NOT use for: web-only projects, mobile apps, or server-side development.
 agent: pipeline-guide

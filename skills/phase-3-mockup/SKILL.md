@@ -6,7 +6,9 @@ description: |
 
   Use proactively when user wants to validate UI/UX before implementation.
 
-  Triggers: mockup, prototype, wireframe, UI design, 목업, モックアップ, 原型
+  Triggers: mockup, prototype, wireframe, UI design, 목업, モックアップ, 原型,
+  maqueta, prototipo, diseño UI, maquette, prototype, conception UI,
+  Mockup, Prototyp, UI-Design, mockup, prototipo, design UI
 
   Do NOT use for: production code, API development, or existing component modifications.
 agent: pipeline-guide

@@ -2,6 +2,7 @@
 
 > Hook events triggered during Claude Code / Gemini CLI operations
 >
+> **v1.4.5**: Archive action support, 8-language trigger system
 > **v1.4.4**: hooks-json-integration - all hooks centralized in hooks.json with unified handlers
 > **v1.4.3**: Gemini CLI v0.25+ compatibility - `xmlSafeOutput()` applied to hook outputs
 > **v1.4.2**: Added UserPromptSubmit (FR-04) and PreCompact (FR-07) hook events

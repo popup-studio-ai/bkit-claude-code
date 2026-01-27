@@ -5,14 +5,18 @@ description: |
   Includes AI Native methodology and Monorepo architecture patterns.
   Handles high traffic, high availability, and complex architecture requirements.
 
-  "init enterprise" 또는 "enterprise init"으로 프로젝트 초기화.
+  Project initialization with "init enterprise" or "enterprise init".
 
   Use proactively when user needs high traffic, microservices, custom infrastructure,
   or AI-native development patterns.
 
   Triggers: microservices, kubernetes, terraform, k8s, AWS, monorepo, AI native, 10-day,
   init enterprise, enterprise init,
-  마이크로서비스, 모노레포, マイクロサービス, モノレポ, 微服务, 单仓库
+  마이크로서비스, 모노레포, マイクロサービス, モノレポ, 微服务, 单仓库,
+  microservicios, estrategia empresarial, arquitectura, CTO, nativo de IA,
+  microservices, stratégie d'entreprise, architecture, CTO, natif IA,
+  Microservices, Unternehmensstrategie, Architektur, CTO, KI-nativ,
+  microservizi, strategia aziendale, architettura, CTO, AI nativo
 
   Do NOT use for: simple websites, MVPs, or projects without infrastructure requirements.
 argument-hint: "[init|guide|help]"
@@ -43,27 +47,27 @@ task-template: "[Init-Enterprise] {feature}"
 
 | Action | Description | Example |
 |--------|-------------|---------|
-| `init` | 프로젝트 초기화 (/init-enterprise 기능) | `/enterprise init my-platform` |
-| `guide` | 개발 가이드 표시 | `/enterprise guide` |
-| `help` | MSA/인프라 도움말 | `/enterprise help` |
+| `init` | Project initialization (/init-enterprise feature) | `/enterprise init my-platform` |
+| `guide` | Display development guide | `/enterprise guide` |
+| `help` | MSA/Infrastructure help | `/enterprise help` |
 
-### init (프로젝트 초기화)
-1. Turborepo 모노레포 구조 생성
-2. apps/, packages/, services/, infra/ 폴더 구조
-3. CLAUDE.md 생성 (Level: Enterprise 명시)
-4. docs/ 5개 카테고리 구조
-5. infra/terraform/, infra/k8s/ 기본 템플릿
-6. .bkit-memory.json 초기화
+### init (Project Initialization)
+1. Create Turborepo monorepo structure
+2. apps/, packages/, services/, infra/ folder structure
+3. Create CLAUDE.md (Level: Enterprise specified)
+4. docs/ 5-category structure
+5. infra/terraform/, infra/k8s/ base templates
+6. Initialize .bkit-memory.json
 
-### guide (개발 가이드)
-- AI Native 10-Day 개발 사이클
-- 마이크로서비스 아키텍처 패턴
-- Phase 1-9 전체 Pipeline (Enterprise 버전)
+### guide (Development Guide)
+- AI Native 10-Day development cycle
+- Microservices architecture patterns
+- Phase 1-9 full Pipeline (Enterprise version)
 
-### help (인프라 도움말)
-- Kubernetes 기본 개념
-- Terraform IaC 패턴
-- AWS EKS, RDS 설정 가이드
+### help (Infrastructure Help)
+- Kubernetes basic concepts
+- Terraform IaC patterns
+- AWS EKS, RDS configuration guide
 
 ## Target Audience
 

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-hooks.json",
-  "description": "bkit Vibecoding Kit v1.4.4 - Unified hooks (GitHub #9354 workaround)",
+  "description": "bkit Vibecoding Kit v1.4.5",
   "hooks": {
     "SessionStart": [
       {

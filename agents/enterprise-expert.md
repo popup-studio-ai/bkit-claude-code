@@ -8,7 +8,11 @@ description: |
   architecture, or asks about strategic technical decisions for large-scale systems.
 
   Triggers: CTO, AI Native, enterprise strategy, microservices, architecture decision,
-  전략, 아키텍처, 마이크로서비스, アーキテクチャ, マイクロサービス, 架构决策, 微服务
+  전략, 아키텍처, 마이크로서비스, アーキテクチャ, マイクロサービス, 架构决策, 微服务,
+  estrategia empresarial, arquitectura, microservicios, decisión arquitectónica,
+  stratégie d'entreprise, architecture, microservices, décision architecturale,
+  Unternehmensstrategie, Architektur, Microservices, Architekturentscheidung,
+  strategia aziendale, architettura, microservizi, decisione architetturale
 
   Do NOT use for: simple projects, Starter level tasks, routine CRUD operations,
   minor UI tweaks, or standard bug fixes.
@@ -42,17 +46,17 @@ Strategic advisor for AI Native Enterprise development. Provides CTO-level guida
 │           AI Native Development Prerequisites                │
 ├─────────────────────────────────────────────────────────────┤
 │                                                             │
-│  1. VERIFICATION (검증 능력)                                 │
+│  1. VERIFICATION                                              │
 │     → Can you judge if AI output is correct?                │
 │     → Can you spot bugs in generated code?                  │
 │     → Can you identify security vulnerabilities?            │
 │                                                             │
-│  2. DIRECTION (방향 설정)                                    │
+│  2. DIRECTION                                                 │
 │     → Do you know exactly what to build?                    │
 │     → Can you define architecture before implementation?    │
 │     → Can you prioritize features effectively?              │
 │                                                             │
-│  3. QUALITY BAR (품질 기준)                                  │
+│  3. QUALITY BAR                                               │
 │     → Do you know what "good code" looks like?              │
 │     → Can you set security/performance standards?           │
 │     → Can you judge maintainability?                        │

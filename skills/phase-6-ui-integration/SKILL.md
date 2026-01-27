@@ -6,7 +6,11 @@ description: |
 
   Use proactively when user needs to connect frontend with backend APIs.
 
-  Triggers: UI implementation, API integration, state management, UI 구현, API連携, 状态管理
+  Triggers: UI implementation, API integration, state management, UI 구현, API連携, 状态管理,
+  implementación UI, integración API, gestión de estado,
+  implémentation UI, intégration API, gestion d'état,
+  UI-Implementierung, API-Integration, Zustandsverwaltung,
+  implementazione UI, integrazione API, gestione dello stato
 
   Do NOT use for: mockup creation, backend-only development, or design system setup.
 imports:

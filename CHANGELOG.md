@@ -5,6 +5,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.5] - 2026-01-27
+
+### Added
+- **`/pdca archive` Action**: Complete PDCA cycle with document archiving
+  - Move completed PDCA documents to `docs/archive/YYYY-MM/{feature}/`
+  - Update Archive Index automatically
+  - Remove feature from activeFeatures after archiving
+- **`/bkit:functions` Command**: Skills autocomplete workaround (GitHub #10246, #18949)
+  - Single entry point showing all available bkit skills
+  - Renamed from `/bkit:menu` for clarity
+- **8-Language Trigger Completion**: Full multilingual support
+  - Added ES, FR, DE, IT triggers to all 11 agents and 21 skills
+  - Complete coverage: EN, KO, JA, ZH, ES, FR, DE, IT
+
+### Changed
+- **Internationalization**: Korean content translated to English
+  - All skill descriptions, guides, and documentation in English
+  - 8-language trigger keywords preserved for auto-activation
+  - ~600 lines translated, ~100 trigger keywords added
+- **`github-integration` Skill**: Made internal-only (company use)
+  - Added to `.gitignore`
+  - Public skill count: 21 (unchanged, was already counted)
+- **Command Renaming**: `/bkit` → `/bkit:menu` → `/bkit:functions`
+
+### Documentation
+- Archived 10 completed PDCA features to `docs/archive/2026-01/`
+- Added `skills-autocomplete-research-2026-01.md` research report
+- Updated all version references across documentation
+
+### Compatibility
+- **Claude Code**: Minimum v2.1.15, Recommended v2.1.20
+- **Gemini CLI**: Minimum v0.25.0
+- **Node.js**: Minimum v18.0.0
+
+---
+
 ## [1.4.4] - 2026-01-27
 
 ### Added
@@ -18,17 +54,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `scripts/unified-write-post.js` (166 lines) - 4 handlers
   - `scripts/unified-bash-post.js` (80 lines) - 1 handler
 - **skill-orchestrator.js**: New library module for skill action routing
-- **New Skills** (4):
+- **New Skills** (3):
   - `pdca` - Unified PDCA cycle management
   - `code-review` - Code review and quality analysis
   - `claude-code-learning` - Claude Code learning guide
-  - `github-integration` - GitHub statistics and automation
 
 ### Changed
 - **Commands deprecated**: All `commands/*.md` migrated to Skills
   - See `commands/DEPRECATED.md` for migration guide
   - Commands still available via `commands/gemini/` for Gemini CLI
-- **Skills count**: Increased from 18 to 22
+- **Skills count**: Increased from 18 to 21
 - **Scripts count**: Increased from 28 to 39
 - **Library modules**: Increased from 6 to 7 (added `skill-orchestrator.js`)
 - **Hook system**: Migrated from SKILL.md frontmatter to centralized `hooks.json`
