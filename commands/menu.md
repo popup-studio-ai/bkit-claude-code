@@ -1,12 +1,12 @@
 ---
-name: bkit
+name: menu
 description: |
   bkit plugin hub - Single entry point for all bkit features.
   Workaround for skills autocomplete issue, providing access to 22 skills.
 
-  Use "/bkit" or "/bkit help" to see available commands.
+  Use "/bkit:menu" or "/bkit:menu help" to see available commands.
 
-  Triggers: bkit, bkit help
+  Triggers: menu, bkit menu
 argument-hint: "[category] [action] [args...]"
 user-invocable: true
 allowed-tools:
@@ -20,7 +20,7 @@ allowed-tools:
   - AskUserQuestion
 ---
 
-# bkit Hub Command
+# bkit Menu Command
 
 > Single entry point for all bkit features (Skills autocomplete workaround)
 
@@ -44,43 +44,43 @@ If no arguments or first argument is `help`, display the help message below:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 📋 PDCA (Document-Driven Development)
-  /bkit pdca plan <feature>     Start planning a new feature
-  /bkit pdca design <feature>   Create design document
-  /bkit pdca do <feature>       Implementation guide
-  /bkit pdca analyze <feature>  Gap analysis (design vs implementation)
-  /bkit pdca iterate <feature>  Auto-improvement iteration
-  /bkit pdca report <feature>   Generate completion report
-  /bkit pdca status             Show current PDCA status
-  /bkit pdca next               Guide to next step
+  /bkit:menu pdca plan <feature>     Start planning a new feature
+  /bkit:menu pdca design <feature>   Create design document
+  /bkit:menu pdca do <feature>       Implementation guide
+  /bkit:menu pdca analyze <feature>  Gap analysis (design vs implementation)
+  /bkit:menu pdca iterate <feature>  Auto-improvement iteration
+  /bkit:menu pdca report <feature>   Generate completion report
+  /bkit:menu pdca status             Show current PDCA status
+  /bkit:menu pdca next               Guide to next step
 
 🚀 Project Initialization
-  /bkit init starter <name>     Static web project (HTML/CSS/Next.js)
-  /bkit init dynamic <name>     Fullstack app (bkend.ai BaaS)
-  /bkit init enterprise <name>  Enterprise system (K8s/Terraform)
+  /bkit:menu init starter <name>     Static web project (HTML/CSS/Next.js)
+  /bkit:menu init dynamic <name>     Fullstack app (bkend.ai BaaS)
+  /bkit:menu init enterprise <name>  Enterprise system (K8s/Terraform)
 
 📊 Development Pipeline
-  /bkit pipeline start          Start pipeline
-  /bkit pipeline next           Proceed to next phase
-  /bkit pipeline status         Check current phase
+  /bkit:menu pipeline start          Start pipeline
+  /bkit:menu pipeline next           Proceed to next phase
+  /bkit:menu pipeline status         Check current phase
 
 🔍 Quality Management
-  /bkit review <path>           Code review
-  /bkit qa                      Start Zero Script QA
+  /bkit:menu review <path>           Code review
+  /bkit:menu qa                      Start Zero Script QA
 
 🔗 Integration
-  /bkit github stats            Collect GitHub statistics
-  /bkit github report           Generate GitHub report
+  /bkit:menu github stats            Collect GitHub statistics
+  /bkit:menu github report           Generate GitHub report
 
 📚 Learning
-  /bkit learn [1-5]             Learn Claude Code (by level)
-  /bkit learn setup             Analyze current project setup
+  /bkit:menu learn [1-5]             Learn Claude Code (by level)
+  /bkit:menu learn setup             Analyze current project setup
 
 ℹ️  Status
-  /bkit status                  Full status dashboard
-  /bkit help                    This help message
+  /bkit:menu status                  Full status dashboard
+  /bkit:menu help                    This help message
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-💡 Tip: For detailed help on each command, use /bkit <category> help
+💡 Tip: For detailed help on each command, use /bkit:menu <category> help
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
@@ -96,14 +96,14 @@ When first argument is `pdca`:
 **Examples**:
 | Input | Skill Call |
 |-------|-----------|
-| `/bkit pdca plan login` | `Skill("bkit:pdca", "plan login")` |
-| `/bkit pdca design login` | `Skill("bkit:pdca", "design login")` |
-| `/bkit pdca do login` | `Skill("bkit:pdca", "do login")` |
-| `/bkit pdca analyze login` | `Skill("bkit:pdca", "analyze login")` |
-| `/bkit pdca iterate login` | `Skill("bkit:pdca", "iterate login")` |
-| `/bkit pdca report login` | `Skill("bkit:pdca", "report login")` |
-| `/bkit pdca status` | `Skill("bkit:pdca", "status")` |
-| `/bkit pdca next` | `Skill("bkit:pdca", "next")` |
+| `/bkit:menu pdca plan login` | `Skill("bkit:pdca", "plan login")` |
+| `/bkit:menu pdca design login` | `Skill("bkit:pdca", "design login")` |
+| `/bkit:menu pdca do login` | `Skill("bkit:pdca", "do login")` |
+| `/bkit:menu pdca analyze login` | `Skill("bkit:pdca", "analyze login")` |
+| `/bkit:menu pdca iterate login` | `Skill("bkit:pdca", "iterate login")` |
+| `/bkit:menu pdca report login` | `Skill("bkit:pdca", "report login")` |
+| `/bkit:menu pdca status` | `Skill("bkit:pdca", "status")` |
+| `/bkit:menu pdca next` | `Skill("bkit:pdca", "next")` |
 
 ---
 
@@ -123,9 +123,9 @@ When first argument is `init`:
 **Examples**:
 | Input | Skill Call |
 |-------|-----------|
-| `/bkit init starter my-site` | `Skill("bkit:starter", "init my-site")` |
-| `/bkit init dynamic my-saas` | `Skill("bkit:dynamic", "init my-saas")` |
-| `/bkit init enterprise my-platform` | `Skill("bkit:enterprise", "init my-platform")` |
+| `/bkit:menu init starter my-site` | `Skill("bkit:starter", "init my-site")` |
+| `/bkit:menu init dynamic my-saas` | `Skill("bkit:dynamic", "init my-saas")` |
+| `/bkit:menu init enterprise my-platform` | `Skill("bkit:enterprise", "init my-platform")` |
 
 **If level not specified**: Use AskUserQuestion to request level selection
 ```
@@ -147,9 +147,9 @@ When first argument is `pipeline`:
 **Examples**:
 | Input | Skill Call |
 |-------|-----------|
-| `/bkit pipeline start` | `Skill("bkit:development-pipeline", "start")` |
-| `/bkit pipeline next` | `Skill("bkit:development-pipeline", "next")` |
-| `/bkit pipeline status` | `Skill("bkit:development-pipeline", "status")` |
+| `/bkit:menu pipeline start` | `Skill("bkit:development-pipeline", "start")` |
+| `/bkit:menu pipeline next` | `Skill("bkit:development-pipeline", "next")` |
+| `/bkit:menu pipeline status` | `Skill("bkit:development-pipeline", "status")` |
 
 ---
 
@@ -163,9 +163,9 @@ When first argument is `review`:
 **Examples**:
 | Input | Skill Call |
 |-------|-----------|
-| `/bkit review src/` | `Skill("bkit:code-review", "src/")` |
-| `/bkit review src/lib/auth.ts` | `Skill("bkit:code-review", "src/lib/auth.ts")` |
-| `/bkit review pr 123` | `Skill("bkit:code-review", "pr 123")` |
+| `/bkit:menu review src/` | `Skill("bkit:code-review", "src/")` |
+| `/bkit:menu review src/lib/auth.ts` | `Skill("bkit:code-review", "src/lib/auth.ts")` |
+| `/bkit:menu review pr 123` | `Skill("bkit:code-review", "pr 123")` |
 
 ---
 
@@ -179,8 +179,8 @@ When first argument is `qa`:
 **Examples**:
 | Input | Skill Call |
 |-------|-----------|
-| `/bkit qa` | `Skill("bkit:zero-script-qa", "")` |
-| `/bkit qa start` | `Skill("bkit:zero-script-qa", "start")` |
+| `/bkit:menu qa` | `Skill("bkit:zero-script-qa", "")` |
+| `/bkit:menu qa start` | `Skill("bkit:zero-script-qa", "start")` |
 
 ---
 
@@ -194,9 +194,9 @@ When first argument is `github`:
 **Examples**:
 | Input | Skill Call |
 |-------|-----------|
-| `/bkit github stats` | `Skill("bkit:github-integration", "stats")` |
-| `/bkit github report` | `Skill("bkit:github-integration", "report")` |
-| `/bkit github setup` | `Skill("bkit:github-integration", "setup")` |
+| `/bkit:menu github stats` | `Skill("bkit:github-integration", "stats")` |
+| `/bkit:menu github report` | `Skill("bkit:github-integration", "report")` |
+| `/bkit:menu github setup` | `Skill("bkit:github-integration", "setup")` |
 
 ---
 
@@ -210,9 +210,9 @@ When first argument is `learn`:
 **Examples**:
 | Input | Skill Call |
 |-------|-----------|
-| `/bkit learn` | `Skill("bkit:claude-code-learning", "")` |
-| `/bkit learn 1` | `Skill("bkit:claude-code-learning", "learn 1")` |
-| `/bkit learn setup` | `Skill("bkit:claude-code-learning", "setup")` |
+| `/bkit:menu learn` | `Skill("bkit:claude-code-learning", "")` |
+| `/bkit:menu learn 1` | `Skill("bkit:claude-code-learning", "learn 1")` |
+| `/bkit:menu learn setup` | `Skill("bkit:claude-code-learning", "setup")` |
 
 ---
 
@@ -246,7 +246,7 @@ When first argument is `status`:
   - [Design] {feature} (completed)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-💡 Next step: /bkit pdca do {feature}
+💡 Next step: /bkit:menu pdca do {feature}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
