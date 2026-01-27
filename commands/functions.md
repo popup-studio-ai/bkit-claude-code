@@ -1,19 +1,19 @@
 ---
-name: menu
+name: functions
 description: |
-  bkit plugin menu - Show all available bkit functions.
+  bkit plugin functions - Show all available bkit functions.
   Workaround for skills autocomplete issue.
 
-  Use "/bkit:menu" to see available functions list.
+  Use "/bkit:functions" to see available functions list.
 
-  Triggers: menu, bkit menu
+  Triggers: bkit, bkit functions, bkit help
 user-invocable: true
 allowed-tools:
   - Read
   - Skill
 ---
 
-# bkit Menu
+# bkit Functions
 
 > Show all available bkit functions (Skills autocomplete workaround)
 
@@ -48,10 +48,6 @@ Display the following help message:
   /code-review <path>        Code review
   /zero-script-qa            Start Zero Script QA
 
-🔗 Integration
-  /github-integration stats      Collect GitHub statistics
-  /github-integration report     Generate GitHub report
-
 📚 Learning
   /claude-code-learning          Learn Claude Code
   /claude-code-learning setup    Analyze current project setup
@@ -66,7 +62,7 @@ Display the following help message:
 
 ## Functions Reference
 
-### User-Invocable Functions (11)
+### User-Invocable Functions (10)
 
 | Function | Description |
 |----------|-------------|
@@ -77,7 +73,6 @@ Display the following help message:
 | `/development-pipeline` | 9-phase development pipeline |
 | `/code-review` | Code quality analysis |
 | `/zero-script-qa` | Log-based QA |
-| `/github-integration` | GitHub statistics/reports |
 | `/claude-code-learning` | Claude Code learning |
 | `/bkit-rules` | Core rules (auto-applied) |
 | `/bkit-templates` | PDCA document templates |

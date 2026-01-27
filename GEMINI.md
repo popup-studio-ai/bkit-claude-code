@@ -107,7 +107,6 @@ Never guess
 | `/zero-script-qa` | Run Zero Script QA |
 | `/claude-code-learning` | Claude Code learning guide |
 | `/code-review` | Code review and quality analysis |
-| `/github-integration` | GitHub statistics and automation |
 
 ---
 
@@ -286,7 +285,7 @@ When generating PDCA documents, use these templates:
 - Agents: gap-detector, pdca-iterator, code-analyzer, report-generator, starter-guide, design-validator, qa-monitor, pipeline-guide, bkend-expert, enterprise-expert, infra-architect
 
 **Display When Used:**
-- Skills (22): pdca, bkit-rules, bkit-templates, development-pipeline, starter, dynamic, enterprise, mobile-app, desktop-app, phase-1~9, zero-script-qa, code-review, claude-code-learning, github-integration
+- Skills (21): pdca, bkit-rules, bkit-templates, development-pipeline, starter, dynamic, enterprise, mobile-app, desktop-app, phase-1~9, zero-script-qa, code-review, claude-code-learning
 - Tools: AskUserQuestion, SessionStart Hook
 
 ### Report Rules

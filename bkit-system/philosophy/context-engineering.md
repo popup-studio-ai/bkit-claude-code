@@ -95,7 +95,7 @@ v1.4.2 implements 8 functional requirements (FR-01~FR-08) for comprehensive cont
 
 ## bkit's Context Engineering Structure
 
-### 1. Domain Knowledge Layer (22 Skills)
+### 1. Domain Knowledge Layer (21 Skills)
 
 Skills provide **structured domain knowledge**.
 

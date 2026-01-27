@@ -597,12 +597,12 @@ TaskCreate, TaskUpdate, TaskList, TaskGet
 **3. Agents (우선 표시):**
 gap-detector, pdca-iterator, code-analyzer, report-generator, starter-guide, design-validator, qa-monitor, pipeline-guide, bkend-expert, enterprise-expert, infra-architect
 
-**4. Core Skills (22개):**
+**4. Core Skills (21개):**
 - **PDCA**: /pdca (plan, design, do, analyze, iterate, report, status, next)
 - **Level**: /starter, /dynamic, /enterprise
 - **Pipeline**: /development-pipeline (start, next, status)
 - **Phase**: /phase-1-schema ~ /phase-9-deployment
-- **Utility**: /code-review, /zero-script-qa, /claude-code-learning, /github-integration, /mobile-app, /desktop-app, /bkit-templates, /bkit-rules
+- **Utility**: /code-review, /zero-script-qa, /claude-code-learning, /mobile-app, /desktop-app, /bkit-templates, /bkit-rules
 
 **5. 도구 (관련 시 표시):**
 AskUserQuestion, SessionStart Hook, Read, Write, Edit, Bash

@@ -18,17 +18,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `scripts/unified-write-post.js` (166 lines) - 4 handlers
   - `scripts/unified-bash-post.js` (80 lines) - 1 handler
 - **skill-orchestrator.js**: New library module for skill action routing
-- **New Skills** (4):
+- **New Skills** (3):
   - `pdca` - Unified PDCA cycle management
   - `code-review` - Code review and quality analysis
   - `claude-code-learning` - Claude Code learning guide
-  - `github-integration` - GitHub statistics and automation
 
 ### Changed
 - **Commands deprecated**: All `commands/*.md` migrated to Skills
   - See `commands/DEPRECATED.md` for migration guide
   - Commands still available via `commands/gemini/` for Gemini CLI
-- **Skills count**: Increased from 18 to 22
+- **Skills count**: Increased from 18 to 21
 - **Scripts count**: Increased from 28 to 39
 - **Library modules**: Increased from 6 to 7 (added `skill-orchestrator.js`)
 - **Hook system**: Migrated from SKILL.md frontmatter to centralized `hooks.json`

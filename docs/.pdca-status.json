@@ -1,7 +1,8 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-01-27T09:13:16.019Z",
+  "lastUpdated": "2026-01-27T13:39:45.226Z",
   "activeFeatures": [
+    "v1.4.5-namespace-skill-refactoring",
     "bkit-claude-code",
     "scripts"
   ],
@@ -85,7 +86,7 @@
       },
       "testCategories": {
         "hooks": 9,
-        "skills": 22,
+        "skills": 21,
         "agents": 11,
         "pdcaCommands": 8,
         "unifiedScripts": 4,
@@ -311,7 +312,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-01-26T03:39:42.049Z",
-        "lastUpdated": "2026-01-27T08:50:22.101Z"
+        "lastUpdated": "2026-01-27T13:37:22.209Z"
       }
     },
     "scripts": {
@@ -325,6 +326,33 @@
         "started": "2026-01-27T04:31:21.341Z",
         "lastUpdated": "2026-01-27T08:32:53.782Z"
       }
+    },
+    "v1.4.5-namespace-skill-refactoring": {
+      "phase": "design",
+      "phaseNumber": 2,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [
+        "FR-01",
+        "FR-02",
+        "FR-03",
+        "FR-04",
+        "FR-05"
+      ],
+      "documents": {
+        "plan": "docs/01-plan/features/v1.4.5-namespace-skill-refactoring.plan.md",
+        "design": "docs/02-design/features/v1.4.5-namespace-skill-refactoring.design.md"
+      },
+      "timestamps": {
+        "started": "2026-01-27T13:30:00.000Z",
+        "lastUpdated": "2026-01-27T13:30:00.000Z"
+      },
+      "targetFiles": [
+        "docs/02-design/features/bkit-hub-command.design.md",
+        "commands/menu.md",
+        "docs/04-report/skills-autocomplete-research-2026-01.md",
+        "docs/archive/legacy/02-BKIT-PLUGIN-DESIGN.md"
+      ]
     }
   },
   "pipeline": {
@@ -335,7 +363,7 @@
   "session": {
     "startedAt": "2026-01-26T12:15:00.000Z",
     "onboardingCompleted": true,
-    "lastActivity": "2026-01-27T09:13:16.019Z"
+    "lastActivity": "2026-01-27T13:39:45.226Z"
   },
   "history": [
     {
@@ -658,6 +686,12 @@
     },
     {
       "timestamp": "2026-01-27T08:50:22.101Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-27T13:37:22.209Z",
       "feature": "bkit-claude-code",
       "phase": "do",
       "action": "updated"

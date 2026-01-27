@@ -36,7 +36,7 @@ bkit implements Context Engineering through three interconnected layers:
 
 | Layer | Components | Purpose |
 |-------|------------|---------|
-| **Domain Knowledge** | 22 Skills | Structured expert knowledge (phases, levels, specialized domains) |
+| **Domain Knowledge** | 21 Skills | Structured expert knowledge (phases, levels, specialized domains) |
 | **Behavioral Rules** | 11 Agents | Role-based constraints with model selection (opus/sonnet/haiku) |
 | **State Management** | 86+ Functions | PDCA status, intent detection, ambiguity scoring, multi-feature context |
 
@@ -67,7 +67,7 @@ Layer 5: Scripts (39 modules)    → Actual Node.js execution logic with unified
 - **9-Stage Development Pipeline** - From schema design to deployment
 - **3 Project Levels** - Starter (static), Dynamic (fullstack), Enterprise (microservices)
 - **Multilingual Support** - 8 languages (EN, KO, JA, ZH, ES, FR, DE, IT)
-- **22 Skills** - Domain-specific knowledge for various development scenarios
+- **21 Skills** - Domain-specific knowledge for various development scenarios
 - **11 Agents** - Specialized AI assistants for different tasks
 - **39 Scripts** - Hook execution with unified handlers (hooks-json-integration)
 - **86+ Utility Functions** - 7 library modules with state management, intent detection, ambiguity handling
