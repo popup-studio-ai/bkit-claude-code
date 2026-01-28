@@ -1,9 +1,10 @@
 # bkit Context Engineering 심층 분석 보고서
 
-> **Version**: 1.0.0
-> **Date**: 2026-01-25
+> **Version**: 2.0.0 (Updated for v1.4.6)
+> **Date**: 2026-01-28 (Original: 2026-01-25)
 > **Author**: Claude Opus 4.5
 > **Scope**: bkit 플러그인 전체 코드베이스 Context Engineering 분석
+> **bkit Version**: v1.4.6
 
 ---
 
@@ -11,17 +12,26 @@
 
 bkit (Vibecoding Kit)은 Claude Code 플러그인 및 Gemini CLI Extension으로, **Context Engineering** 기법을 체계적으로 적용하여 AI-Native 개발 워크플로우를 지원합니다. 본 보고서는 bkit의 7개 핵심 디렉토리(agents/, commands/, hooks/, lib/, scripts/, skills/, templates/)를 심층 분석하여 각 컴포넌트가 구현하는 Context Engineering 기법을 문서화합니다.
 
-### 핵심 발견사항
+### 핵심 발견사항 (v1.4.6 Updated)
 
 | 영역 | 파일 수 | Context Engineering 기법 |
 |------|---------|-------------------------|
-| **agents/** | 11개 | Role definition, Instruction structuring, Multi-language triggers |
+| **agents/** | 11개 | Role definition, Instruction structuring, 8-language triggers |
 | **commands/** | 21+20 (TOML) | Declarative prompts, PDCA workflow integration |
-| **hooks/** | 3개 | Event-driven context injection, Platform detection |
-| **lib/** | 1개 (2776줄) | 76 utility functions, Intent detection, Caching |
-| **scripts/** | 26개 | Pre/Post hooks, Phase automation, QA monitoring |
-| **skills/** | 18개 | Domain knowledge structuring, Level-based adaptation |
+| **hooks/** | **6 타입** | Event-driven context injection, Unified handler pattern |
+| **lib/** | **7개 (common.js 3240줄)** | ~95 utility functions, Intent detection, Skill orchestration |
+| **scripts/** | **39개** | Unified hooks, Phase automation, QA monitoring |
+| **skills/** | **21개** | Domain knowledge structuring, Level-based adaptation |
 | **templates/** | 20개 | Document scaffolding, Cross-reference system |
+
+### v1.4.x 주요 변경사항
+
+| 버전 | 주요 변경 |
+|------|----------|
+| v1.4.3 | xmlSafeOutput() - Gemini CLI v0.27+ 호환성 |
+| v1.4.4 | unified-* handler pattern (GitHub #9354 workaround) |
+| v1.4.5 | 8개 언어 트리거 완성 (EN/KO/JA/ZH/ES/FR/DE/IT) |
+| v1.4.6 | bkit: prefix for sub-agent stability |
 
 ---
 
@@ -74,19 +84,32 @@ bkit (Vibecoding Kit)은 Claude Code 플러그인 및 Gemini CLI Extension으로
 
 ## Part 2: bkit 아키텍처 개요
 
-### 2.1 디렉토리 구조
+### 2.1 디렉토리 구조 (v1.4.6 Updated)
 
 ```
 bkit-claude-code/
 ├── agents/          # 11개 전문 에이전트 정의
 ├── commands/        # 21개 슬래시 커맨드 (+ Gemini TOML 20개)
-├── hooks/           # 이벤트 훅 시스템 (SessionStart, Pre/PostToolUse)
-├── lib/             # 공통 유틸리티 (2776줄, 76개 함수)
-├── scripts/         # 26개 자동화 스크립트
-├── skills/          # 18개 도메인 지식 스킬
+├── hooks/           # 6가지 이벤트 훅 타입 (hooks.json + session-start.js)
+├── lib/             # 7개 라이브러리 파일 (common.js 3240줄, ~95개 함수)
+├── scripts/         # 39개 자동화 스크립트 (unified-* 패턴 적용)
+├── skills/          # 21개 도메인 지식 스킬
 ├── templates/       # 20개 PDCA/Pipeline 문서 템플릿
+├── bkit-system/     # 시스템 문서 (philosophy, components, triggers, scenarios)
 └── docs/            # 문서화 (01-plan, 02-design, 03-analysis, 04-report)
 ```
+
+### 2.1.1 lib/ 디렉토리 상세 (v1.4.x New)
+
+| 파일 | 줄 수 | 용도 |
+|------|-------|------|
+| **common.js** | 3,240 | 핵심 유틸리티 (~95개 함수) |
+| **skill-orchestrator.js** | ~300 | 스킬 생명주기 관리, 다음 단계 제안 |
+| **import-resolver.js** | ~150 | 스킬 import 해결 |
+| **context-fork.js** | ~100 | 컨텍스트 포킹 |
+| **context-hierarchy.js** | ~80 | 계층적 컨텍스트 관리 |
+| **memory-store.js** | ~120 | 영구 메모리 저장소 |
+| **permission-manager.js** | ~90 | 도구 권한 관리 |
 
 ### 2.2 핵심 개념
 
@@ -301,37 +324,49 @@ Save to: `docs/01-plan/features/{feature_name}.plan.md`
 
 ## Part 5: hooks/ 및 lib/ 분석
 
-### 5.1 hooks/ 개요
+### 5.1 hooks/ 개요 (v1.4.6 Updated)
 
 | 파일 | 목적 |
 |------|------|
-| **hooks.json** | 훅 트리거 정의 |
-| **session-start.js** | 세션 시작 시 초기화 |
+| **hooks.json** | 6가지 훅 타입 정의 |
+| **session-start.js** | 세션 시작 시 초기화, PDCA 상태 로드 |
 
-### 5.2 훅 유형
+### 5.2 훅 유형 (v1.4.6 - 6가지 타입)
 
 ```json
-// hooks.json
+// hooks.json (v1.4.6)
 {
-  "hooks": [
-    {
-      "event": "SessionStart",
-      "type": "once",
-      "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/session-start.js"
-    },
-    {
-      "event": "PreToolUse",
-      "matcher": "Write|Edit",
-      "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/pre-write.js"
-    },
-    {
-      "event": "PostToolUse",
-      "matcher": "Write",
-      "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/pdca-post-write.js"
-    }
-  ]
+  "hooks": {
+    "SessionStart": [{ "once": true, "command": "session-start.js" }],
+    "PreToolUse": [
+      { "matcher": "Write|Edit", "command": "pre-write.js" },
+      { "matcher": "Bash", "command": "unified-bash-pre.js" }
+    ],
+    "PostToolUse": [
+      { "matcher": "Write", "command": "unified-write-post.js" },
+      { "matcher": "Bash", "command": "unified-bash-post.js" },
+      { "matcher": "Skill", "command": "skill-post.js" }
+    ],
+    "Stop": [{ "command": "unified-stop.js" }],
+    "UserPromptSubmit": [{ "command": "user-prompt-handler.js" }],
+    "PreCompact": [{ "matcher": "auto|manual", "command": "context-compaction.js" }]
+  }
 }
 ```
+
+### 5.2.1 Hook 타입별 역할 (v1.4.x New)
+
+| Hook 타입 | 핸들러 | 역할 |
+|-----------|--------|------|
+| **SessionStart** | session-start.js | PDCA 상태 초기화, 이전 작업 resume 옵션 |
+| **PreToolUse(Write\|Edit)** | pre-write.js | PDCA 문서 체크, Task 분류, Convention 힌트 |
+| **PreToolUse(Bash)** | unified-bash-pre.js | 위험 명령 차단 (rm -rf, kubectl delete 등) |
+| **PostToolUse(Write)** | unified-write-post.js | PDCA 상태 업데이트, Phase 추적 |
+| **PostToolUse(Bash)** | unified-bash-post.js | QA 모니터링, 로그 분석 |
+| **PostToolUse(Skill)** | skill-post.js | 스킬 오케스트레이션, 다음 단계 제안 |
+| **Stop** | unified-stop.js | Agent/Skill 완료 처리, 요약 생성 |
+| **UserPromptSubmit** | user-prompt-handler.js | 의도 감지, Agent/Skill 자동 제안 |
+| **PreCompact** | context-compaction.js | PDCA 스냅샷 저장, 컨텍스트 보존 |
 
 ### 5.3 session-start.js Context Engineering 기법
 
@@ -342,19 +377,19 @@ Save to: `docs/01-plan/features/{feature_name}.plan.md`
 | **Enhanced Onboarding** | 이전 작업 resume 옵션 제공 |
 | **다국어 지원** | 8개 언어 트리거 키워드 표시 |
 
-### 5.4 lib/common.js 분석
+### 5.4 lib/common.js 분석 (v1.4.6 Updated)
 
 | 항목 | 내용 |
 |------|------|
-| 파일 크기 | 2,776줄 |
-| 내보내기 함수 | 76개 |
-| 섹션 수 | 18개 |
+| 파일 크기 | **3,240줄** (+464줄) |
+| 내보내기 함수 | **~95개** (+19개) |
+| 섹션 수 | **22개** (+4개) |
 
-#### 5.4.1 주요 유틸리티 분류
+#### 5.4.1 주요 유틸리티 분류 (v1.4.6 Updated)
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    lib/common.js 구조                            │
+│                    lib/common.js 구조 (v1.4.6)                   │
 ├───────────────────────┬─────────────────────────────────────────┤
 │ Configuration (3)     │ getPluginRoot, getDocsRoot, getConfig   │
 ├───────────────────────┼─────────────────────────────────────────┤
@@ -364,13 +399,23 @@ Save to: `docs/01-plan/features/{feature_name}.plan.md`
 ├───────────────────────┼─────────────────────────────────────────┤
 │ PDCA Management (11)  │ getPdcaStatus, updatePdcaStatus...      │
 ├───────────────────────┼─────────────────────────────────────────┤
-│ Intent Detection (3)  │ detectIntent, classifyTask, analyzeReq  │
+│ Intent Detection (5)  │ detectIntent, detectNewFeatureIntent... │
+│   [+2 NEW]            │ matchImplicitAgentTrigger,              │
+│                       │ matchImplicitSkillTrigger               │
 ├───────────────────────┼─────────────────────────────────────────┤
 │ Ambiguity Detection (9)│ calculateAmbiguity, generateClarify... │
 ├───────────────────────┼─────────────────────────────────────────┤
-│ Platform Compat (8)   │ formatOutput, formatError, formatJson   │
+│ Platform Compat (10)  │ formatOutput, isGeminiCli, isClaudeCode │
+│   [+2 NEW]            │ xmlSafeOutput (v1.4.3)                  │
 ├───────────────────────┼─────────────────────────────────────────┤
 │ Debug Logging (3)     │ debugLog, setDebugMode, getDebugMode    │
+├───────────────────────┼─────────────────────────────────────────┤
+│ Active Context (5)    │ setActiveSkill, setActiveAgent,         │
+│   [NEW v1.4.4]        │ getActiveSkill, getActiveAgent,         │
+│                       │ clearActiveContext                      │
+├───────────────────────┼─────────────────────────────────────────┤
+│ Path Utilities (4)    │ getPluginPath, getProjectPath,          │
+│   [NEW v1.4.x]        │ getTemplatePath, resolvePluginPath      │
 └───────────────────────┴─────────────────────────────────────────┘
 ```
 
@@ -429,31 +474,63 @@ function getCachedOrCompute(key, computeFn, ttl = 60000) {
 
 ## Part 6: scripts/ 디렉토리 분석
 
-### 6.1 개요
+### 6.1 개요 (v1.4.6 Updated)
 
 | 항목 | 내용 |
 |------|------|
-| 파일 수 | 26개 |
+| 파일 수 | **39개** (+13개) |
 | 형식 | JavaScript (Node.js) |
 | 목적 | Hook 핸들러 및 자동화 스크립트 |
+| 아키텍처 | **Unified Handler Pattern** (v1.4.4) |
 
-### 6.2 스크립트 분류
+### 6.2 스크립트 분류 (v1.4.6 Updated)
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                     scripts/ 분류                                │
+│                     scripts/ 분류 (v1.4.6)                       │
 ├─────────────────────┬───────────────────────────────────────────┤
-│ PDCA Hooks (10)     │ pre-write.js, pdca-post-write.js,         │
-│                     │ gap-detector-stop.js, iterator-stop.js... │
+│ Unified Handlers (4)│ unified-stop.js, unified-bash-pre.js,     │
+│   [NEW v1.4.4]      │ unified-bash-post.js, unified-write-post.js│
 ├─────────────────────┼───────────────────────────────────────────┤
-│ Phase Hooks (9)     │ phase1-schema-stop.js ~ phase9-deploy-pre │
+│ PDCA Hooks (12)     │ pre-write.js, pdca-post-write.js,         │
+│                     │ gap-detector-stop.js, iterator-stop.js,   │
+│                     │ pdca-skill-stop.js, skill-post.js         │
 ├─────────────────────┼───────────────────────────────────────────┤
-│ QA Scripts (3)      │ qa-pre-bash.js, qa-monitor-post.js,       │
-│                     │ qa-stop.js                                │
+│ Phase Hooks (12)    │ phase1~9 stop/pre/post handlers           │
+├─────────────────────┼───────────────────────────────────────────┤
+│ Context Hooks (3)   │ user-prompt-handler.js,                   │
+│   [NEW v1.4.x]      │ context-compaction.js, learning-stop.js   │
+├─────────────────────┼───────────────────────────────────────────┤
+│ QA Scripts (4)      │ qa-pre-bash.js, qa-monitor-post.js,       │
+│                     │ qa-stop.js, code-review-stop.js           │
 ├─────────────────────┼───────────────────────────────────────────┤
 │ Utilities (4)       │ select-template.js, sync-folders.js,      │
 │                     │ validate-plugin.js, archive-feature.js    │
 └─────────────────────┴───────────────────────────────────────────┘
+```
+
+### 6.2.1 Unified Handler Pattern (v1.4.4 - GitHub #9354 Workaround)
+
+`${CLAUDE_PLUGIN_ROOT}`가 markdown 파일에서 확장되지 않는 문제를 해결하기 위해 통합 핸들러 패턴 도입:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    Unified Handler Pattern                       │
+├─────────────────────────────────────────────────────────────────┤
+│ unified-stop.js                                                  │
+│   ├── SKILL_HANDLERS: pdca, code-review, phase-8-review, etc.   │
+│   └── AGENT_HANDLERS: gap-detector, pdca-iterator, qa-monitor   │
+├─────────────────────────────────────────────────────────────────┤
+│ unified-bash-pre.js                                              │
+│   ├── phase9-deploy-pre (deployment safety checks)              │
+│   └── qa-pre-bash (destructive command prevention)              │
+├─────────────────────────────────────────────────────────────────┤
+│ unified-write-post.js                                            │
+│   ├── pdca-post-write (PDCA status update - always runs)        │
+│   ├── phase5-design-post (design system tracking)               │
+│   ├── phase6-ui-post (UI integration tracking)                  │
+│   └── qa-monitor-post (QA file tracking)                        │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
 ### 6.3 Context Engineering 기법
@@ -557,19 +634,20 @@ module.exports = async function preBash(context) {
 
 ## Part 7: skills/ 디렉토리 분석
 
-### 7.1 개요
+### 7.1 개요 (v1.4.6 Updated)
 
 | 항목 | 내용 |
 |------|------|
-| 폴더 수 | 18개 |
+| 폴더 수 | **21개** (+3개) |
 | 형식 | Markdown (SKILL.md) with YAML frontmatter |
 | 목적 | 도메인별 전문 지식 제공 |
+| 트리거 | **8개 언어 지원** (v1.4.5) |
 
-### 7.2 스킬 분류
+### 7.2 스킬 분류 (v1.4.6 Updated)
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                       skills/ 분류                               │
+│                       skills/ 분류 (v1.4.6)                      │
 ├───────────────────────┬─────────────────────────────────────────┤
 │ Level Skills (3)      │ starter, dynamic, enterprise            │
 ├───────────────────────┼─────────────────────────────────────────┤
@@ -577,11 +655,23 @@ module.exports = async function preBash(context) {
 ├───────────────────────┼─────────────────────────────────────────┤
 │ Platform Skills (2)   │ mobile-app, desktop-app                 │
 ├───────────────────────┼─────────────────────────────────────────┤
-│ Core Skills (2)       │ bkit-rules, bkit-templates              │
+│ Core Skills (4)       │ bkit-rules, bkit-templates,             │
+│   [+2 NEW]            │ pdca, code-review                       │
+├───────────────────────┼─────────────────────────────────────────┤
+│ Learning Skills (1)   │ claude-code-learning                    │
+│   [NEW v1.4.x]        │                                         │
 ├───────────────────────┼─────────────────────────────────────────┤
 │ QA Skills (1)         │ zero-script-qa                          │
 └───────────────────────┴─────────────────────────────────────────┘
 ```
+
+### 7.2.1 신규 스킬 상세 (v1.4.x New)
+
+| 스킬 | 용도 | Agent 연동 |
+|------|------|------------|
+| **pdca** | 통합 PDCA 사이클 관리 | gap-detector, pdca-iterator, report-generator |
+| **code-review** | 코드 리뷰 워크플로우 | code-analyzer |
+| **claude-code-learning** | Claude Code 학습/설정 | - |
 
 ### 7.3 스킬별 Context Engineering 기법
 
@@ -888,24 +978,26 @@ bkit 플러그인은 **Context Engineering**의 핵심 원칙을 체계적으로
 
 1. **역할 기반 에이전트 분리**: 11개 전문 에이전트가 각자의 도메인에 특화
 2. **선언적 커맨드 시스템**: PDCA/Pipeline 워크플로우의 일관된 실행
-3. **이벤트 기반 훅**: Pre/Post 검증으로 품질 자동 관리
-4. **도메인 지식 구조화**: 18개 스킬로 레벨/플랫폼별 맞춤 지식 제공
+3. **이벤트 기반 훅**: 6개 훅 타입으로 전체 생명주기 관리 (v1.4.6)
+4. **도메인 지식 구조화**: 21개 스킬로 레벨/플랫폼별 맞춤 지식 제공 (v1.4.6)
 5. **문서 템플릿 시스템**: 20개 템플릿으로 일관된 문서화 지원
+6. **다국어 지원**: 8개 언어 자동 감지 트리거 시스템 (v1.4.0 신규)
 
 ### 11.2 bkit의 Context Engineering 성숙도
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│           bkit Context Engineering 성숙도 평가                   │
+│           bkit Context Engineering 성숙도 평가 (v1.4.6)          │
 ├─────────────────────────┬───────────────────────────────────────┤
 │ System Prompts          │ ████████████████████ 100%            │
 │ Tool Design             │ █████████████████░░░  85%            │
 │ Few-shot Prompting      │ ████████████████░░░░  80%            │
-│ Memory Management       │ ████████████░░░░░░░░  60%            │
+│ Memory Management       │ ████████████████░░░░  80% [+20%]     │
 │ RAG Integration         │ ████░░░░░░░░░░░░░░░░  20%            │
-│ Dynamic Context Mgmt    │ ██████░░░░░░░░░░░░░░  30%            │
+│ Dynamic Context Mgmt    │ ████████████░░░░░░░░  60% [+30%]     │
+│ Multi-language Support  │ ████████████████████ 100% [NEW]      │
 ├─────────────────────────┼───────────────────────────────────────┤
-│ Overall Maturity        │ ████████████████░░░░  70%            │
+│ Overall Maturity        │ ██████████████████░░  80% [+10%]     │
 └─────────────────────────┴───────────────────────────────────────┘
 ```
 
@@ -935,6 +1027,26 @@ bkit은 **AI-Native 개발 워크플로우**를 위한 강력한 Context Enginee
 
 ---
 
-> **Document Version**: 1.0.0
-> **Last Updated**: 2026-01-25
+## 변경 이력
+
+| 버전 | 날짜 | 변경 내용 |
+|------|------|----------|
+| 1.0.0 | 2026-01-25 | 최초 작성 (bkit v1.4.4 기준) |
+| 2.0.0 | 2026-01-28 | v1.4.6 기준 전면 업데이트 |
+
+### v2.0.0 주요 변경사항 (2026-01-28)
+
+- **Executive Summary**: 파일 수 업데이트 (skills 18→21, scripts 26→39, lib 1→7)
+- **Part 2.1**: lib/ 디렉토리 구조 상세화 (7개 파일)
+- **Part 5**: 훅 타입 6개로 확장 (UserPromptSubmit, PreCompact, Skill PostToolUse 추가)
+- **Part 5.4**: lib/common.js 함수 카테고리 재분류 (~95개)
+- **Part 6**: Unified handler pattern 문서화
+- **Part 7**: 스킬 21개로 업데이트 (pdca, code-review, claude-code-learning 추가)
+- **Part 11**: 성숙도 평가 상향 (Memory 80%, Dynamic 60%, Multi-language 100%, Overall 80%)
+
+---
+
+> **Document Version**: 2.0.0
+> **Last Updated**: 2026-01-28
+> **bkit Version**: v1.4.6
 > **Generated by**: Claude Opus 4.5 with bkit plugin
