@@ -2,6 +2,8 @@
 
 > Hook events triggered during Claude Code / Gemini CLI operations
 >
+> **v1.4.7**: Task Management Integration - triggerNextPdcaAction, Task Chain Auto-Creation
+> **v1.4.6**: Sub-agent call stability with `bkit:` prefix
 > **v1.4.5**: Archive action support, 8-language trigger system
 > **v1.4.4**: hooks-json-integration - all hooks centralized in hooks.json with unified handlers
 > **v1.4.3**: Gemini CLI v0.25+ compatibility - `xmlSafeOutput()` applied to hook outputs
@@ -323,15 +325,20 @@ PreCompact (when context limit reached) (v1.4.2)
         └─ Auto-cleanup (10 recent)
 ```
 
-## Script Dependencies
+## Script Dependencies (v1.4.7)
 
 | Hook | Script | Dependencies |
 |------|--------|--------------|
-| SessionStart | `session-start.js` | `lib/common.js`, `lib/context-hierarchy.js`, `lib/import-resolver.js`, `lib/context-fork.js`, `lib/memory-store.js` |
-| UserPromptSubmit | `user-prompt-handler.js` | `lib/common.js`, `lib/import-resolver.js` |
-| PreToolUse | `pre-write.js` | `lib/common.js`, `lib/permission-manager.js`, `bkit.config.json` |
-| PostToolUse | `pdca-post-write.js` | `lib/common.js` |
-| PreCompact | `context-compaction.js` | `lib/common.js` |
+| SessionStart | `session-start.js` | `lib/common.js` (→ `lib/core/`, `lib/pdca/`, `lib/intent/`) |
+| UserPromptSubmit | `user-prompt-handler.js` | `lib/common.js` (→ `lib/intent/`) |
+| PreToolUse | `pre-write.js` | `lib/common.js` (→ `lib/pdca/`, `lib/task/`) |
+| PostToolUse | `pdca-post-write.js` | `lib/common.js` (→ `lib/pdca/`) |
+| PreCompact | `context-compaction.js` | `lib/common.js` (→ `lib/pdca/`) |
+| Stop (gap-detector) | `gap-detector-stop.js` | `lib/common.js` (→ `lib/task/`) |
+| Stop (iterator) | `iterator-stop.js` | `lib/common.js` (→ `lib/task/`) |
+| Stop (pdca-skill) | `pdca-skill-stop.js` | `lib/common.js` (→ `lib/task/`) |
+
+**Note (v1.4.7)**: `lib/common.js` acts as Migration Bridge, re-exporting all modules for backward compatibility.
 
 ## Additional Scripts (Not in hooks.json)
 
@@ -361,13 +368,14 @@ These scripts are available for skill frontmatter hooks or manual use:
 | `qa-monitor-post.js` | PostToolUse | QA completion guidance |
 | `qa-stop.js` | Stop | QA session cleanup |
 
-### Agent Scripts
+### Agent Scripts (v1.4.7)
 
 | Script | Event | Agent | Purpose |
 |--------|-------|-------|---------|
 | `design-validator-pre.js` | PreToolUse | design-validator | Design document validation |
-| `gap-detector-stop.js` | Stop | gap-detector | Check-Act iteration: Match Rate branching |
-| `iterator-stop.js` | Stop | pdca-iterator | Check-Act iteration: Complete/Continue guidance |
+| `gap-detector-stop.js` | Stop | gap-detector | Check-Act iteration: triggerNextPdcaAction (v1.4.7) |
+| `iterator-stop.js` | Stop | pdca-iterator | Check-Act iteration: triggerNextPdcaAction (v1.4.7) |
+| `pdca-skill-stop.js` | Stop | pdca skill | Task Chain Auto-Creation (v1.4.7) |
 | `analysis-stop.js` | Stop | code-analyzer | Analysis completion guidance |
 | `qa-pre-bash.js` | PreToolUse | qa-monitor | Block destructive commands |
 | `qa-monitor-post.js` | PostToolUse | qa-monitor | Critical issue notification |

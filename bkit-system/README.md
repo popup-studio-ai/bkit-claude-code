@@ -13,6 +13,10 @@
 > **v1.4.4**: Commands deprecated → Skills migration, PDCA Skill integration (8 actions), hooks-json-integration (unified scripts)
 >
 > **v1.4.5**: `/pdca archive` action, 8-language trigger completion (ES/FR/DE/IT), internationalization (KO→EN translation)
+>
+> **v1.4.6**: Sub-agent call stability with `bkit:` prefix, all 11 agents updated
+>
+> **v1.4.7**: Task Management + PDCA Integration, Core Modularization (lib/ split into 4 modules with 132 functions)
 
 ## Purpose of This Document
 
@@ -39,7 +43,7 @@ bkit is a practical implementation of **Context Engineering**. Context Engineeri
 │                                                                 │
 │  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────┐  │
 │  │ Domain Knowledge │  │ Behavioral Rules │  │ State Mgmt   │  │
-│  │    (21 Skills)   │  │   (11 Agents)    │  │(lib/common)  │  │
+│  │    (21 Skills)   │  │   (11 Agents)    │  │ (4 modules)  │  │
 │  │                  │  │                  │  │              │  │
 │  │ • 9-Phase Guide  │  │ • Role Def.      │  │ • PDCA v2.0  │  │
 │  │ • 3 Levels       │  │ • Constraints    │  │ • Multi-Feat │  │
@@ -78,11 +82,11 @@ bkit is a practical implementation of **Context Engineering**. Context Engineeri
 | **Few-shot Examples** | Agent/Skill prompts | Code patterns, output templates, conversation examples |
 | **Constraint Specification** | Hook + Permission Mode | Tool restrictions, score thresholds, workflow rules |
 | **State Injection** | SessionStart + Scripts | PDCA state, feature context, iteration counters |
-| **Adaptive Guidance** | lib/common.js | Level-based branching, language-specific triggers, ambiguity handling |
+| **Adaptive Guidance** | `lib/pdca/`, `lib/intent/` | Level-based branching, language-specific triggers, ambiguity handling |
 
 Details: [[philosophy/context-engineering]]
 
-## v1.4.4 Architecture
+## v1.4.7 Architecture
 
 ### Component Diagram (5-Layer)
 
@@ -125,35 +129,54 @@ flowchart TB
     StopHooks --> StateLayer
 ```
 
-### Data Flow (PDCA Cycle)
+### Data Flow (PDCA Cycle with Task Integration v1.4.7)
 
 ```mermaid
 flowchart LR
-    A["/pdca analyze"] --> B["gap-detector"]
-    B --> C{"matchRate?"}
-    C -->|"< 90%"| D["[Act] Task + AskUserQuestion"]
-    C -->|">= 90%"| E["[Report] Task"]
-    D --> F["/pdca iterate"]
-    F --> G["pdca-iterator"]
-    G --> A
-    E --> H["/pdca report"]
+    A["/pdca plan"] --> T["Task Chain Auto-Creation"]
+    T --> B["/pdca analyze"]
+    B --> C["gap-detector"]
+    C --> D{"matchRate?"}
+    D -->|"< 90%"| E["[Act] Task + triggerNextPdcaAction"]
+    D -->|">= 90%"| F["[Report] Task"]
+    E --> G["/pdca iterate"]
+    G --> H["pdca-iterator"]
+    H --> B
+    F --> I["/pdca report"]
 ```
 
-### Component Dependencies
+**v1.4.7 Task Chain Features:**
+- Task Chain Auto-Creation: Plan→Design→Do→Check→Report tasks created on `/pdca plan`
+- Task ID Persistence: Task IDs stored in `.pdca-status.json`
+- Check↔Act Iteration: Max 5 iterations, 90% threshold
+- Full-Auto Mode: manual/semi-auto/full-auto levels
+
+### Component Dependencies (v1.4.7)
 
 | Component | Depends On | Purpose |
 |-----------|-----------|---------|
-| `skill-orchestrator.js` | `lib/common.js` | PDCA state management |
-| `gap-detector-stop.js` | `lib/common.js` | Task creation, state update |
-| `iterator-stop.js` | `lib/common.js` | Task update, phase transition |
+| `skill-orchestrator.js` | `lib/pdca/`, `lib/task/` | PDCA state + Task management |
+| `gap-detector-stop.js` | `lib/common.js` → `lib/task/` | Task creation, triggerNextPdcaAction |
+| `iterator-stop.js` | `lib/common.js` → `lib/task/` | Task update, phase transition |
+| `pdca-skill-stop.js` | `lib/task/` | Task chain creation (v1.4.7) |
 | `pdca` skill | `templates/*.md` | Template imports |
 | `agents/*.md` | `skills` | `skills_preload` fields |
+
+**Library Module Structure (v1.4.7):**
+```
+lib/
+├── common.js              # Migration Bridge (re-exports all)
+├── core/                  # Platform, cache, debug, config (7 files)
+├── pdca/                  # PDCA phase, status, automation (6 files)
+├── intent/                # Language, trigger, ambiguity (4 files)
+└── task/                  # Classification, context, creator, tracker (5 files)
+```
 
 ## System Overview
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                bkit Trigger System (v1.4.4)                      │
+│                bkit Trigger System (v1.4.7)                      │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
 │  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐      │
@@ -185,7 +208,7 @@ flowchart LR
 | Commands | DEPRECATED | Migrated to Skills (v1.4.4) | Gemini: `commands/gemini/*.toml` |
 | Hooks | 6 events | Event-based triggers (unified) | [[components/hooks/_hooks-overview]] |
 | Scripts | 39 | Actual logic execution | [[components/scripts/_scripts-overview]] |
-| Lib | 7 | Shared utilities | `lib/*.js` (86+ functions) |
+| Lib | 4 modules | Shared utilities | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/` (132 functions) |
 | Config | 1 | Centralized settings | `bkit.config.json` |
 | Templates | 23 | Document templates | PDCA + Pipeline + Shared |
 
@@ -246,7 +269,7 @@ bkit-system/
 | Commands | `commands/*.md` | `commands/gemini/*.toml` |
 | Templates | `templates/*.md` | (shared) |
 | Hooks | `hooks/hooks.json` | `gemini-extension.json` |
-| Lib | `lib/common.js` | (shared) |
+| Lib | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/` | (shared) |
 | Config | `bkit.config.json` | (shared) |
 | Context | `CLAUDE.md` | `GEMINI.md` |
 | Manifest | `.claude-plugin/plugin.json` | `gemini-extension.json` |

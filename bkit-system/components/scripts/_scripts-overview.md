@@ -1,7 +1,11 @@
 # Scripts Overview
 
-> 28 Node.js Scripts used by bkit hooks (v1.4.3)
+> 39 Node.js Scripts used by bkit hooks (v1.4.7)
 >
+> **v1.4.7**: Core Modularization - lib/ split into 4 modules (132 functions), Task Management Integration
+> **v1.4.6**: Sub-agent call stability with `bkit:` prefix
+> **v1.4.5**: `/pdca archive` action, 8-language trigger completion
+> **v1.4.4**: hooks-json-integration, unified handlers (unified-stop.js, unified-bash-pre.js, etc.)
 > **v1.4.3**: Added `xmlSafeOutput()` for Gemini CLI v0.25+ XML wrapping compatibility
 > **v1.4.2**: Added UserPromptSubmit + PreCompact hooks, Context Engineering library modules
 > **v1.4.1**: Added Context Engineering perspective - State Management Layer via lib/common.js
@@ -65,13 +69,34 @@ All scripts are at root level (not in .claude/):
 
 ```
 bkit-claude-code/
-├── lib/
-│   ├── common.js              # Shared utility library (v1.4.2, 86+ functions)
-│   ├── context-hierarchy.js   # Multi-level context management (v1.4.2)
-│   ├── import-resolver.js     # @import directive processing (v1.4.2)
-│   ├── context-fork.js        # Context isolation (v1.4.2)
-│   ├── permission-manager.js  # Permission hierarchy (v1.4.2)
-│   └── memory-store.js        # Persistent memory storage (v1.4.2)
+├── lib/                       # Modular Library (v1.4.7, 132 functions)
+│   ├── common.js              # Migration Bridge (re-exports all modules)
+│   ├── core/                  # Core utilities (7 files, 40 exports)
+│   │   ├── index.js           # Entry point
+│   │   ├── platform.js        # Platform detection (Claude/Gemini)
+│   │   ├── cache.js           # In-memory TTL cache
+│   │   ├── debug.js           # Debug logging
+│   │   ├── config.js          # Configuration management
+│   │   ├── io.js              # I/O utilities
+│   │   └── file.js            # File type detection
+│   ├── pdca/                  # PDCA management (6 files, 50 exports)
+│   │   ├── index.js
+│   │   ├── tier.js            # Language tier system
+│   │   ├── level.js           # Project level detection
+│   │   ├── phase.js           # PDCA phase management
+│   │   ├── status.js          # Status file operations
+│   │   └── automation.js      # Full-auto mode (v1.4.7)
+│   ├── intent/                # Intent analysis (4 files, 19 exports)
+│   │   ├── index.js
+│   │   ├── language.js        # Multi-language detection
+│   │   ├── trigger.js         # Agent/Skill triggers
+│   │   └── ambiguity.js       # Ambiguity scoring
+│   └── task/                  # Task management (5 files, 26 exports)
+│       ├── index.js
+│       ├── classification.js  # Task size classification
+│       ├── context.js         # Context tracking
+│       ├── creator.js         # Task chain creation (v1.4.7)
+│       └── tracker.js         # Task ID persistence (v1.4.7)
 ├── hooks/
 │   └── session-start.js       # SessionStart hook
 ├── scripts/
@@ -156,18 +181,19 @@ bkit-claude-code/
 | qa-monitor-post.js | PostToolUse | Critical issue notification |
 | qa-stop.js | Stop | QA session cleanup |
 
-### Agent Scripts (6)
+### Agent Scripts (7)
 
 | Script | Hook | Agent(s) | Purpose |
 |--------|------|----------|---------|
 | design-validator-pre.js | PreToolUse | design-validator | Design document checklist |
-| gap-detector-stop.js | Stop | gap-detector | Check-Act iteration: Match Rate branching (v1.3.0) |
-| iterator-stop.js | Stop | pdca-iterator | Check-Act iteration: Complete/Continue guidance (v1.3.0) |
+| gap-detector-stop.js | Stop | gap-detector | Check-Act iteration: triggerNextPdcaAction (v1.4.7) |
+| iterator-stop.js | Stop | pdca-iterator | Check-Act iteration: triggerNextPdcaAction (v1.4.7) |
+| pdca-skill-stop.js | Stop | pdca skill | Task Chain Auto-Creation (v1.4.7) |
 | analysis-stop.js | Stop | code-analyzer | Analysis completion guidance |
 | qa-pre-bash.js | PreToolUse | qa-monitor | Block destructive commands during QA |
 | qa-monitor-post.js | PostToolUse | qa-monitor | Critical issue notification |
 
-> **Note**: `gap-detector-post.js` exists in scripts/ but is **not currently used** by any agent. The gap-detector agent only uses Stop hook.
+> **Note (v1.4.7)**: `gap-detector-stop.js` and `iterator-stop.js` now use `triggerNextPdcaAction()` for automatic next phase triggering. `pdca-skill-stop.js` creates Task Chain on `/pdca plan`.
 
 ### Utility Scripts (3)
 
@@ -186,21 +212,34 @@ bkit-claude-code/
 
 > **Note**: pdca-pre-write.js was deprecated and deleted in v1.4.2. Its functionality is integrated into pre-write.js.
 
-## Shared Library: lib/*.js
+## Shared Library: lib/ (v1.4.7)
 
+> **v1.4.7**: Core Modularization - 4 module directories with 132 functions total
 > **v1.4.2**: 6 library modules with 86+ functions total
 > **v1.4.0**: Expanded from 38 to 80+ functions with dual platform support
 
-### Library Modules (v1.4.2)
+### Library Modules (v1.4.7)
 
-| Module | Functions | Purpose |
-|--------|-----------|---------|
-| common.js | 86+ | Core utilities, PDCA status, intent detection |
-| context-hierarchy.js | 4 | Multi-level context management (Plugin → User → Project → Session) |
-| import-resolver.js | 3 | @import directive processing |
-| context-fork.js | 2 | Skill/Agent isolated context execution |
-| permission-manager.js | 3 | Permission hierarchy (deny → ask → allow) |
-| memory-store.js | 4 | Session-persistent data storage (MEMORY variable) |
+| Module | Files | Exports | Purpose |
+|--------|:-----:|:-------:|---------|
+| `lib/core/` | 7 | 40 | Platform detection, caching, debugging, configuration |
+| `lib/pdca/` | 6 | 50 | PDCA phase, status, automation, tier system |
+| `lib/intent/` | 4 | 19 | Language detection, triggers, ambiguity scoring |
+| `lib/task/` | 5 | 26 | Task classification, context, creation, tracking |
+| `lib/common.js` | 1 | 132 | Migration Bridge (re-exports all modules) |
+
+### Import Options
+
+```javascript
+// Recommended: Import from specific modules
+const { debugLog, getConfig } = require('./lib/core');
+const { getPdcaStatusFull, updatePdcaStatus } = require('./lib/pdca');
+const { matchImplicitAgentTrigger } = require('./lib/intent');
+const { classifyTask, createPdcaTaskChain } = require('./lib/task');
+
+// Legacy: Still supported via Migration Bridge
+const common = require('./lib/common');
+```
 
 All scripts can require common utilities:
 
@@ -327,7 +366,7 @@ common.xmlSafeOutput('<content>');                // Escape XML special chars
 // Escapes: & → &amp;, < → &lt;, > → &gt;, " → &quot;, ' → &#39;
 
 // ═══════════════════════════════════════════════════════════════════
-// Task System Integration
+// Task System Integration (v1.4.7)
 // ═══════════════════════════════════════════════════════════════════
 const { PDCA_PHASES } = common;                   // Phase definitions
 common.getPdcaTaskMetadata('design', 'login');    // { pdcaPhase, pdcaOrder, feature, ... }
@@ -337,6 +376,19 @@ common.generateTaskGuidance('design', 'login');   // Guidance for additionalCont
 common.getPreviousPdcaPhase('check');             // → 'do'
 common.findPdcaStatus();                          // Read docs/.pdca-status.json
 common.getCurrentPdcaPhase('login');              // Get current phase
+
+// v1.4.7 Task Chain Functions
+common.savePdcaTaskId('login', 'plan', 'task-123'); // Save Task ID
+common.getPdcaTaskId('login', 'plan');              // Get Task ID
+common.createPdcaTaskChain('login');                // Create Plan→Design→Do→Check→Report chain
+common.getTaskChainStatus('login');                 // Get Task chain status
+common.triggerNextPdcaAction('login', 'check', { matchRate: 85 }); // Trigger next action
+
+// v1.4.7 Full-Auto Mode
+common.getAutomationLevel();                        // 'manual' | 'semi-auto' | 'full-auto'
+common.isFullAutoMode();                            // true if full-auto
+common.shouldAutoAdvance('check');                  // Check if auto-advance allowed
+common.generateAutoTrigger('check', { matchRate: 95 }); // Generate auto-trigger
 ```
 
 ### Configurable Patterns
