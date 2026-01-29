@@ -30,7 +30,14 @@ const {
   isGeminiCli,
   autoAdvancePdcaPhase,
   // v1.4.4 FR-07: Task Status Update
-  updatePdcaTaskStatus
+  updatePdcaTaskStatus,
+  // v1.4.7 FR-04, FR-05, FR-06: Check↔Act Iteration
+  triggerNextPdcaAction,
+  savePdcaTaskId,
+  // v1.4.7 Full-Auto Mode
+  isFullAutoMode,
+  shouldAutoAdvance,
+  getAutomationLevel
 } = require('../lib/common.js');
 
 // Log execution start
@@ -261,16 +268,21 @@ try {
     }
   }
 
-  // v1.4.4 FR-06: Auto-trigger re-analyze if improved but not complete
-  if (status === 'improved' && matchRate < threshold && currentIteration < maxIterations) {
-    autoTrigger = {
-      agent: 'gap-detector',
-      skill: '/pdca analyze',
-      feature: feature,
-      reason: `Auto re-analyze after iteration (current: ${matchRate}%, target: ${threshold}%)`,
-      delay: 0
-    };
-    debugLog('Agent:pdca-iterator:Stop', 'Auto re-analyze triggered', { matchRate, threshold });
+  // v1.4.7 FR-04, FR-05, FR-06: Use triggerNextPdcaAction for Check↔Act iteration
+  if (status === 'improved' || status === 'completed') {
+    const triggerResult = triggerNextPdcaAction(feature, 'act', {
+      matchRate,
+      iterationCount: currentIteration,
+      maxIterations,
+      threshold
+    });
+    if (triggerResult && triggerResult.autoTrigger) {
+      autoTrigger = triggerResult.autoTrigger;
+      debugLog('Agent:pdca-iterator:Stop', 'Auto-trigger generated', {
+        nextAction: triggerResult.nextAction,
+        autoTrigger
+      });
+    }
   }
 } catch (e) {
   debugLog('Agent:pdca-iterator:Stop', 'Auto-task creation skipped', { error: e.message });

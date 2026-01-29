@@ -31,7 +31,14 @@ const {
   extractRequirementsFromPlan,
   calculateRequirementFulfillment,
   // v1.4.4 FR-07: Task Status Update
-  updatePdcaTaskStatus
+  updatePdcaTaskStatus,
+  // v1.4.7 FR-04, FR-05, FR-06: Check↔Act Iteration
+  triggerNextPdcaAction,
+  savePdcaTaskId,
+  // v1.4.7 Full-Auto Mode
+  isFullAutoMode,
+  shouldAutoAdvance,
+  getAutomationLevel
 } = require('../lib/common.js');
 
 // Log execution start
@@ -299,6 +306,26 @@ try {
   debugLog('Agent:gap-detector:Stop', 'Auto-task creation skipped', { error: e.message });
 }
 
+// v1.4.7 FR-04, FR-05, FR-06: Get autoTrigger for Check↔Act iteration
+let autoTrigger = null;
+try {
+  const triggerResult = triggerNextPdcaAction(feature, 'check', {
+    matchRate,
+    iterationCount: iterCount,
+    maxIterations,
+    threshold
+  });
+  if (triggerResult) {
+    autoTrigger = triggerResult.autoTrigger;
+    debugLog('Agent:gap-detector:Stop', 'AutoTrigger generated', {
+      nextAction: triggerResult.nextAction,
+      autoTrigger
+    });
+  }
+} catch (e) {
+  debugLog('Agent:gap-detector:Stop', 'AutoTrigger generation failed', { error: e.message });
+}
+
 // Add Task System guidance for PDCA workflow (v1.3.1 - FR-04)
 const taskGuidance = matchRate >= 90
   ? generateTaskGuidance('check', feature || 'feature', 'do')
@@ -341,6 +368,8 @@ if (isGeminiCli()) {
     taskGuidance: taskGuidance,
     // v1.4.0: Include user prompt for AskUserQuestion
     userPrompt: userPrompt,
+    // v1.4.7 FR-04, FR-05, FR-06: Auto-trigger for Check↔Act iteration
+    autoTrigger: autoTrigger,
     // v1.4.0: Stop hooks use systemMessage instead of additionalContext (not supported)
     systemMessage: `Gap Analysis 완료. 매치율: ${matchRate}%\n\n` +
       `## 🚨 MANDATORY: AskUserQuestion 호출\n\n` +

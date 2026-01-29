@@ -26,7 +26,15 @@ const {
   outputAllow,
   // v1.4.4 FR-06: Phase transition and task creation
   autoCreatePdcaTask,
-  updatePdcaTaskStatus
+  updatePdcaTaskStatus,
+  // v1.4.7 FR-01: Task Chain auto generation
+  createPdcaTaskChain,
+  getTaskChainStatus,
+  // v1.4.7 Full-Auto Mode
+  isFullAutoMode,
+  shouldAutoAdvance,
+  generateAutoTrigger,
+  getAutomationLevel
 } = require('../lib/common.js');
 
 // ============================================================
@@ -232,11 +240,37 @@ const nextStep = action ? nextStepMap[action] : null;
 // Generate user prompt if applicable
 let userPrompt = null;
 let guidance = '';
+let autoTrigger = null;
+
+// v1.4.7: Check automation level
+const automationLevel = getAutomationLevel();
+const phaseMap = {
+  plan: 'plan',
+  design: 'design',
+  do: 'do',
+  analyze: 'check',
+  iterate: 'act',
+  report: 'completed'
+};
+const currentPhaseForAuto = action ? phaseMap[action] : null;
 
 if (nextStep && nextStep.message) {
   guidance = `✅ ${nextStep.message}`;
 
-  if (nextStep.question && nextStep.options) {
+  // v1.4.7 Full-Auto Mode: Skip userPrompt and generate autoTrigger
+  if (shouldAutoAdvance(currentPhaseForAuto) && feature) {
+    autoTrigger = generateAutoTrigger(currentPhaseForAuto, {
+      feature,
+      matchRate: currentStatus?.features?.[feature]?.matchRate || 0,
+      iterationCount: currentStatus?.features?.[feature]?.iterationCount || 0
+    });
+
+    if (autoTrigger) {
+      guidance += `\n\n🤖 [${automationLevel}] 자동 진행: ${autoTrigger.skill}`;
+      debugLog('Skill:pdca:Stop', 'Auto-advance triggered', { autoTrigger });
+    }
+  } else if (nextStep.question && nextStep.options) {
+    // Manual/Semi-auto: Generate user prompt
     userPrompt = emitUserPrompt({
       questions: [{
         question: nextStep.question,
@@ -260,6 +294,23 @@ if (action && feature && ['plan', 'design', 'do', 'analyze', 'iterate', 'report'
   };
 
   const currentPhase = phaseMap[action];
+
+  // v1.4.7 FR-01: Create Task chain when plan starts
+  if (action === 'plan') {
+    try {
+      const chain = createPdcaTaskChain(feature, { skipIfExists: true });
+      if (chain) {
+        debugLog('Skill:pdca:Stop', 'Task chain created', {
+          feature,
+          taskCount: chain.entries.length,
+          firstTaskId: chain.entries[0]?.id
+        });
+        guidance += `\n\n📋 PDCA Task Chain 생성됨 (${chain.entries.length}개 Task)`;
+      }
+    } catch (e) {
+      debugLog('Skill:pdca:Stop', 'Task chain creation failed', { error: e.message });
+    }
+  }
 
   updatePdcaStatus(feature, currentPhase, {
     lastAction: action,
@@ -345,10 +396,13 @@ if (isGeminiCli()) {
     skillResult: {
       action,
       feature: feature || 'unknown',
-      nextAction: nextStep?.nextAction || null
+      nextAction: nextStep?.nextAction || null,
+      automationLevel: automationLevel
     },
     guidance: guidance || null,
     userPrompt: userPrompt,
+    // v1.4.7: Auto-trigger for full-auto mode
+    autoTrigger: autoTrigger,
     systemMessage: guidance ? (
       `${guidance}\n\n` +
       `## 🚨 MANDATORY: AskUserQuestion 호출\n\n` +

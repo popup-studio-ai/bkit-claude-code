@@ -1,19 +1,20 @@
 {
-  "sessionCount": 141,
+  "sessionCount": 163,
   "lastSession": {
-    "startedAt": "2026-01-28T03:26:34.747Z",
+    "startedAt": "2026-01-29T04:48:25.327Z",
     "platform": "claude",
     "level": "Starter"
   },
-  "activePdca": {
-    "feature": "v1.4.6-subagent-stability",
-    "phase": "completed",
-    "startedAt": "2026-01-28T00:00:00.000Z",
-    "doCompletedAt": "2026-01-28T09:30:00.000Z",
-    "reportCompletedAt": "2026-01-28T10:00:00.000Z",
-    "matchRate": 100
-  },
+  "activePdca": null,
   "pdcaHistory": [
+    {
+      "feature": "task-bkit-integration",
+      "completedAt": "2026-01-29",
+      "status": "completed",
+      "matchRate": 100,
+      "iterations": 1,
+      "reportFile": "docs/04-report/features/task-bkit-integration.report.md"
+    },
     {
       "feature": "v1.4.4-skills-agents-commands-enhancement",
       "completedAt": "2026-01-27",

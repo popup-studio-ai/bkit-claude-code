@@ -1,13 +1,70 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-01-28T03:27:52.366Z",
+  "lastUpdated": "2026-01-29T03:53:02.495Z",
   "activeFeatures": [
+    "task-bkit-integration",
     "bkit-claude-code",
-    "unit",
-    "tests"
+    "bkit-core-modularization"
   ],
   "primaryFeature": "bkit-claude-code",
   "features": {
+    "bkit-integration-test": {
+      "phase": "archived",
+      "phaseNumber": 7,
+      "matchRate": 95.4,
+      "iterationCount": 0,
+      "archivedAt": "2026-01-29T07:00:00.000Z",
+      "archivedTo": "docs/archive/2026-01/bkit-integration-test",
+      "requirements": [
+        "FR-01: Task 체인 자동 생성",
+        "FR-02: Task ID 영속화",
+        "FR-03: 세션 간 Task 복원",
+        "FR-04: Check→Act 자동 트리거",
+        "FR-05: Check↔Act 자동 반복",
+        "FR-06: matchRate >= 90% → Report",
+        "FR-07: blockedBy Task ID 기반",
+        "FR-08: Core 모듈 분리 검증",
+        "FR-09: Skills 21개 회귀 테스트",
+        "FR-10: Agents 11개 회귀 테스트"
+      ],
+      "documents": {
+        "plan": "docs/archive/2026-01/bkit-integration-test/bkit-integration-test.plan.md",
+        "report": "docs/archive/2026-01/bkit-integration-test/bkit-integration-test.report.md"
+      },
+      "timestamps": {
+        "started": "2026-01-29T05:00:00.000Z",
+        "lastUpdated": "2026-01-29T07:00:00.000Z",
+        "doCompleted": "2026-01-29T06:00:00.000Z",
+        "checkCompleted": "2026-01-29T06:15:00.000Z",
+        "reportCompleted": "2026-01-29T06:30:00.000Z",
+        "archivedAt": "2026-01-29T07:00:00.000Z"
+      },
+      "testScope": {
+        "totalCases": 108,
+        "categories": {
+          "modulUnit": 45,
+          "taskIntegration": 18,
+          "skills": 21,
+          "agents": 11,
+          "hooks": 5,
+          "e2e": 8
+        }
+      },
+      "testResults": {
+        "pass": 103,
+        "warning": 5,
+        "fail": 0,
+        "passRate": "95.4%"
+      },
+      "referenceDesigns": [
+        "docs/02-design/features/task-bkit-integration.design.md",
+        "docs/02-design/features/bkit-core-modularization.design.md"
+      ],
+      "designMatchRate": {
+        "task-bkit-integration": "100%",
+        "bkit-core-modularization": "100%"
+      }
+    },
     "pdca-archive-action": {
       "phase": "archived",
       "phaseNumber": 7,
@@ -344,7 +401,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-01-26T03:39:42.049Z",
-        "lastUpdated": "2026-01-27T17:58:03.966Z"
+        "lastUpdated": "2026-01-29T03:53:02.495Z"
       }
     },
     "v1.4.6-subagent-stability": {
@@ -424,15 +481,15 @@
       ]
     },
     "scripts": {
-      "phase": "archived",
-      "phaseNumber": 7,
+      "phase": "do",
+      "phaseNumber": 3,
       "matchRate": null,
       "iterationCount": 0,
       "requirements": [],
       "documents": {},
       "timestamps": {
         "started": "2026-01-27T04:31:21.341Z",
-        "lastUpdated": "2026-01-27T13:42:00.000Z",
+        "lastUpdated": "2026-01-29T02:05:00.138Z",
         "completed": "2026-01-27T13:42:00.000Z"
       }
     },
@@ -534,6 +591,197 @@
         "started": "2026-01-27T17:51:26.259Z",
         "lastUpdated": "2026-01-27T17:51:26.624Z"
       }
+    },
+    "task-bkit-integration": {
+      "phase": "completed",
+      "phaseNumber": 6,
+      "matchRate": 100,
+      "iterationCount": 1,
+      "requirements": [
+        "FR-01",
+        "FR-02",
+        "FR-03",
+        "FR-04",
+        "FR-05",
+        "FR-06",
+        "FR-07",
+        "FR-08",
+        "FR-09",
+        "FR-10",
+        "FR-11",
+        "FR-12"
+      ],
+      "documents": {
+        "plan": "docs/01-plan/features/task-bkit-integration.plan.md",
+        "design": "docs/02-design/features/task-bkit-integration.design.md",
+        "analysis": "docs/03-analysis/task-bkit-integration.analysis.md",
+        "report": "docs/04-report/features/task-bkit-integration.report.md"
+      },
+      "timestamps": {
+        "started": "2026-01-29T00:00:00.000Z",
+        "lastUpdated": "2026-01-29T02:15:00.000Z",
+        "planCompleted": "2026-01-29T01:00:00.000Z",
+        "designCompleted": "2026-01-29T01:30:00.000Z",
+        "doCompleted": "2026-01-29T02:05:00.000Z",
+        "checkCompleted": "2026-01-29T02:10:00.000Z",
+        "reportCompleted": "2026-01-29T02:15:00.000Z"
+      },
+      "tasks": {
+        "plan": "1",
+        "design": null,
+        "do": "do-task-bkit-integration-1738112700000",
+        "check": "check-task-bkit-integration-1738113000000",
+        "act": [],
+        "report": null
+      },
+      "implementedFiles": [
+        ".claude/lib/common.js",
+        ".claude/scripts/pdca-skill-stop.js",
+        ".claude/scripts/gap-detector-stop.js",
+        ".claude/scripts/iterator-stop.js"
+      ],
+      "p0MatchRate": 100,
+      "p1MatchRate": 23,
+      "bugFixed": true
+    },
+    ".claude": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-01-29T01:53:57.543Z",
+        "lastUpdated": "2026-01-29T02:07:44.370Z"
+      }
+    },
+    "bkit-core-modularization": {
+      "phase": "completed",
+      "phaseNumber": 6,
+      "matchRate": 100,
+      "iterationCount": 0,
+      "requirements": [
+        "FR-01",
+        "FR-02",
+        "FR-03",
+        "FR-04",
+        "FR-05",
+        "FR-06",
+        "FR-07",
+        "FR-08",
+        "FR-09",
+        "FR-10",
+        "FR-11",
+        "FR-12",
+        "FR-13",
+        "FR-14",
+        "FR-15",
+        "FR-16",
+        "FR-17",
+        "FR-18",
+        "FR-19",
+        "FR-20"
+      ],
+      "documents": {
+        "plan": ".claude/docs/enterprise/unit-1-core-modularization.plan.md",
+        "design": "docs/02-design/features/bkit-core-modularization.design.md",
+        "report": "docs/04-report/features/bkit-core-modularization.report.md"
+      },
+      "timestamps": {
+        "started": "2026-01-29T02:30:00.000Z",
+        "lastUpdated": "2026-01-29T04:00:00.000Z",
+        "designCompleted": "2026-01-29T03:00:00.000Z",
+        "doCompleted": "2026-01-29T03:50:00.000Z",
+        "checkCompleted": "2026-01-29T03:55:00.000Z",
+        "reportCompleted": "2026-01-29T04:00:00.000Z"
+      },
+      "targetModules": [
+        "lib/core",
+        "lib/pdca",
+        "lib/intent",
+        "lib/task"
+      ],
+      "sourceFile": "lib/common.js.backup",
+      "sourceStats": {
+        "lines": 3722,
+        "bytes": 117446,
+        "functions": 110
+      },
+      "implementedFiles": [
+        "lib/core/index.js",
+        "lib/core/platform.js",
+        "lib/core/cache.js",
+        "lib/core/debug.js",
+        "lib/core/config.js",
+        "lib/core/io.js",
+        "lib/core/file.js",
+        "lib/pdca/index.js",
+        "lib/pdca/tier.js",
+        "lib/pdca/level.js",
+        "lib/pdca/phase.js",
+        "lib/pdca/status.js",
+        "lib/pdca/automation.js",
+        "lib/intent/index.js",
+        "lib/intent/language.js",
+        "lib/intent/trigger.js",
+        "lib/intent/ambiguity.js",
+        "lib/task/index.js",
+        "lib/task/classification.js",
+        "lib/task/context.js",
+        "lib/task/creator.js",
+        "lib/task/tracker.js",
+        "lib/common.js"
+      ],
+      "totalExports": 132
+    },
+    "core": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-01-29T03:43:35.131Z",
+        "lastUpdated": "2026-01-29T03:44:41.963Z"
+      }
+    },
+    "pdca": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-01-29T03:45:55.979Z",
+        "lastUpdated": "2026-01-29T03:47:13.206Z"
+      }
+    },
+    "intent": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-01-29T03:48:38.194Z",
+        "lastUpdated": "2026-01-29T03:48:42.150Z"
+      }
+    },
+    "task": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-01-29T03:49:49.379Z",
+        "lastUpdated": "2026-01-29T03:49:54.559Z"
+      }
     }
   },
   "pipeline": {
@@ -544,159 +792,9 @@
   "session": {
     "startedAt": "2026-01-26T12:15:00.000Z",
     "onboardingCompleted": true,
-    "lastActivity": "2026-01-28T03:27:52.366Z"
+    "lastActivity": "2026-01-29T03:53:02.495Z"
   },
   "history": [
-    {
-      "timestamp": "2026-01-26T12:15:00.000Z",
-      "feature": "gemini-cli-v026-compatibility",
-      "phase": "plan",
-      "action": "created"
-    },
-    {
-      "timestamp": "2026-01-26T03:39:42.049Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-26T03:39:56.588Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-26T03:40:06.021Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-26T03:47:21.608Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-26T06:25:45.856Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-26T06:26:17.767Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-26T06:26:24.548Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-26T13:22:23.672Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-26T12:15:00.000Z",
-      "feature": "gemini-cli-v026-compatibility",
-      "phase": "plan",
-      "action": "created"
-    },
-    {
-      "timestamp": "2026-01-26T03:39:42.049Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-26T03:39:56.588Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-26T03:40:06.021Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-26T03:47:21.608Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-26T06:25:45.856Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-26T06:26:17.767Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-26T06:26:24.548Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-26T13:22:23.672Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-26T13:24:04.831Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-26T13:24:41.965Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-26T13:25:02.412Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-26T14:23:07.257Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T04:31:21.341Z",
-      "feature": "scripts",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T04:32:14.484Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T04:36:39.489Z",
-      "feature": "scripts",
-      "phase": "do",
-      "action": "updated"
-    },
     {
       "timestamp": "2026-01-27T04:38:01.070Z",
       "feature": "scripts",
@@ -1017,6 +1115,282 @@
     },
     {
       "timestamp": "2026-01-27T17:58:03.966Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T01:53:57.543Z",
+      "feature": ".claude",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T01:59:12.631Z",
+      "feature": ".claude",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T01:59:29.762Z",
+      "feature": ".claude",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T01:59:36.423Z",
+      "feature": ".claude",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T02:00:13.291Z",
+      "feature": ".claude",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T02:00:21.624Z",
+      "feature": ".claude",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T02:00:54.362Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T02:01:04.838Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T02:01:46.453Z",
+      "feature": ".claude",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T02:01:55.204Z",
+      "feature": ".claude",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T02:02:30.632Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T02:02:41.008Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T02:02:49.940Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T02:03:11.905Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T02:03:21.887Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T02:03:53.222Z",
+      "feature": ".claude",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T02:04:00.196Z",
+      "feature": ".claude",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T02:04:09.849Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T02:04:29.404Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T02:04:46.412Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T02:04:54.632Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T02:05:00.138Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T02:07:44.370Z",
+      "feature": ".claude",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T03:43:35.131Z",
+      "feature": "core",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T03:43:36.542Z",
+      "feature": "core",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T03:43:37.580Z",
+      "feature": "core",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T03:44:24.918Z",
+      "feature": "core",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T03:44:25.989Z",
+      "feature": "core",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T03:44:27.230Z",
+      "feature": "core",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T03:44:41.963Z",
+      "feature": "core",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T03:45:55.979Z",
+      "feature": "pdca",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T03:45:57.292Z",
+      "feature": "pdca",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T03:45:58.586Z",
+      "feature": "pdca",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T03:47:10.621Z",
+      "feature": "pdca",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T03:47:11.908Z",
+      "feature": "pdca",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T03:47:13.206Z",
+      "feature": "pdca",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T03:48:38.194Z",
+      "feature": "intent",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T03:48:39.454Z",
+      "feature": "intent",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T03:48:40.811Z",
+      "feature": "intent",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T03:48:42.150Z",
+      "feature": "intent",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T03:49:49.379Z",
+      "feature": "task",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T03:49:50.537Z",
+      "feature": "task",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T03:49:51.879Z",
+      "feature": "task",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T03:49:53.207Z",
+      "feature": "task",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T03:49:54.559Z",
+      "feature": "task",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-29T03:53:02.495Z",
       "feature": "bkit-claude-code",
       "phase": "do",
       "action": "updated"
