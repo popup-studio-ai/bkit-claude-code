@@ -35,11 +35,8 @@ bkit-system/.obsidian/plugins/
 # Local Claude Code settings (plugin elements are at root level)
 .claude/
 
-# Archive documents (root level only, exclude subfolders)
-docs/archive/*.md
-
-# PDCA snapshots (local session backup, auto-generated)
-docs/.pdca-snapshots/
+# Docs folder (too large for plugin distribution)
+docs/
 
 # Internal skills/commands (company-only, not for public repo)
 skills/github-integration/
