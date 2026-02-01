@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 /**
- * bkit Vibecoding Kit - SessionStart Hook (v1.4.7)
- * Cross-platform Node.js implementation
- * Supports: Claude Code, Gemini CLI
+ * bkit Vibecoding Kit - SessionStart Hook (v1.5.0)
+ * Claude Code 전용 플러그인
+ *
+ * v1.5.0 Changes:
+ * - Gemini CLI 지원 제거 (Claude Code 전용으로 단순화)
  *
  * v1.4.7 Changes:
  * - Task Management + PDCA Integration (Task Chain Auto-Creation)
@@ -45,10 +47,9 @@
 
 const fs = require('fs');
 const path = require('path');
-let {
+const {
   BKIT_PLATFORM,
   detectLevel,
-  isGeminiCli,
   debugLog,
   initPdcaStatusIfNotExists,
   getPdcaStatusFull,
@@ -61,8 +62,6 @@ let {
   // v1.4.0 P2: Ambiguity Detection Integration
   calculateAmbiguityScore,
   generateClarifyingQuestions,
-  // v1.4.3: XML Safety for Gemini CLI v0.26+ (FR-1.1)
-  xmlSafeOutput
 } = require('../lib/common.js');
 
 // v1.4.2: Context Hierarchy (FR-01)
@@ -99,19 +98,6 @@ try {
 } catch (e) {
   // Fallback if module not available
   contextFork = null;
-}
-
-// Force-detect Gemini if gemini-extension.json exists (Fix for stale BKIT_PLATFORM)
-try {
-  const extensionJsonPath = path.join(__dirname, '../gemini-extension.json');
-  if (BKIT_PLATFORM !== 'gemini' && fs.existsSync(extensionJsonPath) && !process.env.CLAUDE_PROJECT_DIR) {
-    const oldPlatform = BKIT_PLATFORM;
-    BKIT_PLATFORM = 'gemini';
-    isGeminiCli = () => true;
-    debugLog('SessionStart', 'Platform override', { from: oldPlatform, to: 'gemini' });
-  }
-} catch (e) {
-  // Ignore detection errors
 }
 
 // Log session start
@@ -466,81 +452,32 @@ function getTriggerKeywordTable() {
 `;
 }
 
-// Persist environment variables (cross-platform)
-// Claude Code: CLAUDE_ENV_FILE, Gemini CLI: GEMINI_ENV_FILE
-const envFile = process.env.CLAUDE_ENV_FILE || process.env.GEMINI_ENV_FILE;
+// Persist environment variables (Claude Code only)
+const envFile = process.env.CLAUDE_ENV_FILE;
 if (envFile) {
-  const detectedLevel = detectLevel(); // Uses common.js logic
+  const detectedLevel = detectLevel();
   const detectedPhase = detectPdcaPhase();
 
   try {
     fs.appendFileSync(envFile, `export BKIT_LEVEL=${detectedLevel}\n`);
     fs.appendFileSync(envFile, `export BKIT_PDCA_PHASE=${detectedPhase}\n`);
-    fs.appendFileSync(envFile, `export BKIT_PLATFORM=${BKIT_PLATFORM}\n`);
+    fs.appendFileSync(envFile, `export BKIT_PLATFORM=claude\n`);
   } catch (e) {
     // Ignore write errors
   }
 }
 
 // ============================================================
-// Output Response (Dual Platform) - v1.4.0 Enhanced
+// Output Response (Claude Code only) - v1.5.0
 // ============================================================
 
 // Get enhanced onboarding data
 const onboardingData = enhancedOnboarding();
 const triggerTable = getTriggerKeywordTable();
 
-if (isGeminiCli()) {
-  // ------------------------------------------------------------
-  // Gemini CLI Output: Plain Text with ANSI Colors
-  // ------------------------------------------------------------
-
-  let output = `
-\x1b[36m🤖 bkit Vibecoding Kit v1.4.7 (Gemini Edition)\x1b[0m
-====================================================
-PDCA Cycle & AI-Native Development Environment
-`;
-
-  if (onboardingData.hasExistingWork) {
-    // Resume existing work
-    // v1.4.3: Apply xmlSafeOutput for Gemini CLI v0.26+ compatibility
-    const safeFeatureName = xmlSafeOutput(onboardingData.primaryFeature);
-    const safePhase = xmlSafeOutput(onboardingData.phase);
-    output += `
-\x1b[33m[📋 Previous Work Detected]\x1b[0m
-• Feature: \x1b[1m${safeFeatureName}\x1b[0m
-• Phase: ${safePhase}${onboardingData.matchRate ? ` (${onboardingData.matchRate}%)` : ''}
-
-\x1b[33m[Recommended Commands]\x1b[0m
-1. 🔄 Continue previous work: \x1b[1m/pdca status\x1b[0m
-2. ✅ Run Gap analysis: \x1b[1m/pdca analyze ${safeFeatureName}\x1b[0m
-3. 🆕 Start new task: \x1b[1m/pdca plan [feature-name]\x1b[0m
-`;
-  } else {
-    // New user onboarding
-    output += `
-\x1b[33m[Recommended Starting Commands]\x1b[0m
-1. 📚 Learn bkit (9-phase pipeline): \x1b[1m/development-pipeline\x1b[0m
-2. 🤖 Learn Claude Code (settings guide): \x1b[1m/claude-code-learning\x1b[0m
-3. 🆕 Start new project (initialization): \x1b[1m/starter\x1b[0m
-`;
-  }
-
-  output += `
-\x1b[32m💡 Tip: Use natural language like "verify", "improve" and the appropriate Agent will run automatically.\x1b[0m
-\x1b[32m   (8 languages supported: EN, KO, JA, ZH, ES, FR, DE, IT)\x1b[0m
-`;
-
-  console.log(output);
-  process.exit(0);
-
-} else {
-  // ------------------------------------------------------------
-  // Claude Code Output: JSON with Tool Call Prompt
-  // ------------------------------------------------------------
-
-  // Build context based on onboarding type
-  let additionalContext = `# bkit Vibecoding Kit v1.4.7 - Session Startup\n\n`;
+// Claude Code Output: JSON with Tool Call Prompt
+// Build context based on onboarding type
+let additionalContext = `# bkit Vibecoding Kit v1.5.0 - Session Startup\n\n`;
 
   if (onboardingData.hasExistingWork) {
     additionalContext += `## 🔄 Previous Work Detected\n\n`;
@@ -585,7 +522,7 @@ PDCA Cycle & AI-Native Development Environment
   // ============================================================
   additionalContext += `
 
-## 📊 bkit Feature Usage Report (v1.4.7 - Required for all responses)
+## 📊 bkit Feature Usage Report (v1.5.0 - Required for all responses)
 
 **Rule: Include the following format at the end of every response to report bkit feature usage.**
 
@@ -640,19 +577,18 @@ AskUserQuestion, SessionStart Hook, Read, Write, Edit, Bash
 
 `;
 
-  const response = {
-    systemMessage: `bkit Vibecoding Kit v1.4.7 activated (Claude Code)`,
-    hookSpecificOutput: {
-      hookEventName: "SessionStart",
-      onboardingType: onboardingData.type,
-      hasExistingWork: onboardingData.hasExistingWork,
-      primaryFeature: onboardingData.primaryFeature || null,
-      currentPhase: onboardingData.phase || null,
-      matchRate: onboardingData.matchRate || null,
-      additionalContext: additionalContext
-    }
-  };
+const response = {
+  systemMessage: `bkit Vibecoding Kit v1.5.0 activated (Claude Code)`,
+  hookSpecificOutput: {
+    hookEventName: "SessionStart",
+    onboardingType: onboardingData.type,
+    hasExistingWork: onboardingData.hasExistingWork,
+    primaryFeature: onboardingData.primaryFeature || null,
+    currentPhase: onboardingData.phase || null,
+    matchRate: onboardingData.matchRate || null,
+    additionalContext: additionalContext
+  }
+};
 
-  console.log(JSON.stringify(response));
-  process.exit(0);
-}
+console.log(JSON.stringify(response));
+process.exit(0);

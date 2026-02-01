@@ -2,14 +2,13 @@
 
 > 39 Node.js Scripts used by bkit hooks (v1.4.7)
 >
+> **v1.5.0**: Claude Code Exclusive - Gemini CLI support removed, simplified architecture
 > **v1.4.7**: Core Modularization - lib/ split into 4 modules (132 functions), Task Management Integration
 > **v1.4.6**: Sub-agent call stability with `bkit:` prefix
 > **v1.4.5**: `/pdca archive` action, 8-language trigger completion
 > **v1.4.4**: hooks-json-integration, unified handlers (unified-stop.js, unified-bash-pre.js, etc.)
-> **v1.4.3**: Added `xmlSafeOutput()` for Gemini CLI v0.25+ XML wrapping compatibility
 > **v1.4.2**: Added UserPromptSubmit + PreCompact hooks, Context Engineering library modules
 > **v1.4.1**: Added Context Engineering perspective - State Management Layer via lib/common.js
-> **v1.4.0**: Added 5 new phase completion handlers, Dual Platform Support (Claude Code + Gemini CLI)
 > **v1.3.1**: All scripts converted from Bash (.sh) to Node.js (.js) for cross-platform support
 > **v1.3.0**: session-start.js enhanced with AskUserQuestion guidance (see [[../hooks/_hooks-overview]])
 
@@ -248,12 +247,10 @@ All scripts can require common utilities:
 const common = require('../lib/common.js');
 
 // ═══════════════════════════════════════════════════════════════════
-// Platform Detection (v1.4.0)
+// Platform Detection (v1.5.0 - Claude Code Exclusive)
 // ═══════════════════════════════════════════════════════════════════
-const platform = common.detectPlatform();         // 'claude' | 'gemini' | 'unknown'
 common.isClaudeCode();                            // true if Claude Code
-common.isGeminiCli();                             // true if Gemini CLI
-const pluginPath = common.getPluginPath();        // Platform-specific plugin root
+const pluginPath = common.getPluginPath();        // Plugin root path
 
 // ═══════════════════════════════════════════════════════════════════
 // Debug Logging (v1.4.0)
@@ -360,9 +357,9 @@ common.outputBlock('block reason');               // Block with reason
 common.outputEmpty();                             // Empty response {}
 
 // ═══════════════════════════════════════════════════════════════════
-// XML Safety (v1.4.3 - Gemini CLI v0.25+ compatibility)
+// Text Safety
 // ═══════════════════════════════════════════════════════════════════
-common.xmlSafeOutput('<content>');                // Escape XML special chars
+common.xmlSafeOutput('<content>');                // Escape special chars
 // Escapes: & → &amp;, < → &lt;, > → &gt;, " → &quot;, ' → &#39;
 
 // ═══════════════════════════════════════════════════════════════════

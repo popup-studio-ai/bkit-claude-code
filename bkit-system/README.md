@@ -17,6 +17,8 @@
 > **v1.4.6**: Sub-agent call stability with `bkit:` prefix, all 11 agents updated
 >
 > **v1.4.7**: Task Management + PDCA Integration, Core Modularization (lib/ split into 4 modules with 132 functions)
+>
+> **v1.5.0**: Claude Code Exclusive - Gemini CLI support removed, simplified architecture
 
 ## Purpose of This Document
 
@@ -193,7 +195,7 @@ lib/
 │                              │                                  │
 │                              ▼                                  │
 │  ┌──────────────────────────────────────────────────────┐      │
-│  │         Claude Code / Gemini CLI Runtime              │      │
+│  │              Claude Code Runtime                       │      │
 │  └──────────────────────────────────────────────────────┘      │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
@@ -205,7 +207,7 @@ lib/
 |-----------|-------|------|---------|
 | Skills | 22 | Domain knowledge + Slash commands | [[components/skills/_skills-overview]] |
 | Agents | 11 | Specialized task execution | [[components/agents/_agents-overview]] |
-| Commands | DEPRECATED | Migrated to Skills (v1.4.4) | Gemini: `commands/gemini/*.toml` |
+| Commands | DEPRECATED | Migrated to Skills (v1.4.4) | - |
 | Hooks | 6 events | Event-based triggers (unified) | [[components/hooks/_hooks-overview]] |
 | Scripts | 39 | Actual logic execution | [[components/scripts/_scripts-overview]] |
 | Lib | 4 modules | Shared utilities | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/` (132 functions) |
@@ -261,18 +263,19 @@ bkit-system/
 
 ## Source Locations
 
-| Item | Claude Code | Gemini CLI |
-|------|-------------|------------|
-| Skills | `skills/*/SKILL.md` | (shared) |
-| Agents | `agents/*.md` | (shared) |
-| Scripts | `scripts/*.js` | (shared) |
-| Commands | `commands/*.md` | `commands/gemini/*.toml` |
-| Templates | `templates/*.md` | (shared) |
-| Hooks | `hooks/hooks.json` | `gemini-extension.json` |
-| Lib | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/` | (shared) |
-| Config | `bkit.config.json` | (shared) |
-| Context | `CLAUDE.md` | `GEMINI.md` |
-| Manifest | `.claude-plugin/plugin.json` | `gemini-extension.json` |
+| Item | Path |
+|------|------|
+| Skills | `skills/*/SKILL.md` |
+| Agents | `agents/*.md` |
+| Scripts | `scripts/*.js` |
+| Templates | `templates/*.md` |
+| Hooks | `hooks/hooks.json` |
+| Lib | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/` |
+| Config | `bkit.config.json` |
+| Context | `CLAUDE.md` |
+| Manifest | `.claude-plugin/plugin.json` |
+
+> **Note (v1.5.0)**: bkit is now Claude Code exclusive. Gemini CLI support was removed.
 
 > **Note**: The `.claude/` folder is not in version control. All plugin elements are at root level.
 > **v1.4.0**: Skills, Agents, Scripts, Templates, Lib, and Config are shared between both platforms.

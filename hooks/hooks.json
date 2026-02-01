@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-hooks.json",
-  "description": "bkit Vibecoding Kit v1.4.7",
+  "description": "bkit Vibecoding Kit v1.5.0 - Claude Code",
   "hooks": {
     "SessionStart": [
       {

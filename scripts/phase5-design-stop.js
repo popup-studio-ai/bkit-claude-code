@@ -51,27 +51,11 @@ function generatePhaseCompletion() {
 }
 
 /**
- * Format output for different CLI environments
+ * Format output (Claude Code only)
  * @param {Object} result - Hook result
- * @param {boolean} isGemini - Is Gemini CLI
  * @returns {string} Formatted output
  */
-function formatOutput(result, isGemini) {
-  if (isGemini) {
-    const lines = [
-      '\n--- Phase 5: Design System 완료 ---\n',
-      '✅ 완료 항목:',
-      ...result.completedItems.map(item => `   - ${item}`),
-      '',
-      `📍 다음 단계: Phase ${result.nextPhase.number} - ${result.nextPhase.name}`,
-      `   ${result.nextPhase.description}`,
-      '',
-      `💡 진행하려면: /${result.nextPhase.skill}`,
-      ''
-    ];
-    return lines.join('\n');
-  }
-
+function formatOutput(result) {
   return JSON.stringify({
     status: 'success',
     ...result
@@ -88,9 +72,8 @@ async function main() {
     lib.debugLog('Phase5Stop', 'Design System phase completed');
 
     const result = generatePhaseCompletion();
-    const isGemini = lib.isGeminiCli();
 
-    console.log(formatOutput(result, isGemini));
+    console.log(formatOutput(result));
 
     // Update pipeline status
     const memory = lib.readBkitMemory();

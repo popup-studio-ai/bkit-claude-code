@@ -1,32 +1,8 @@
 {
-  "sessionCount": 171,
+  "sessionCount": 15,
   "lastSession": {
-    "startedAt": "2026-01-30T02:42:20.898Z",
+    "startedAt": "2026-02-01T03:16:26.192Z",
     "platform": "claude",
     "level": "Starter"
-  },
-  "activePdca": null,
-  "pdcaHistory": [
-    {
-      "feature": "task-bkit-integration",
-      "completedAt": "2026-01-29",
-      "status": "completed",
-      "matchRate": 100,
-      "iterations": 1,
-      "reportFile": "docs/04-report/features/task-bkit-integration.report.md"
-    },
-    {
-      "feature": "v1.4.4-skills-agents-commands-enhancement",
-      "completedAt": "2026-01-27",
-      "status": "completed",
-      "matchRate": 100,
-      "iterations": 2,
-      "reportFile": "docs/04-report/features/v1.4.4-skills-agents-commands-enhancement.report.md"
-    },
-    {
-      "feature": "gemini-cli-v026-compatibility",
-      "completedAt": "2026-01-26",
-      "status": "completed"
-    }
-  ]
+  }
 }

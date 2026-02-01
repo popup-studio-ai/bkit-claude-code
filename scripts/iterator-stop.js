@@ -27,7 +27,6 @@ const {
   // v1.4.0 Automation Functions
   emitUserPrompt,
   getBkitConfig,
-  isGeminiCli,
   autoAdvancePdcaPhase,
   // v1.4.4 FR-07: Task Status Update
   updatePdcaTaskStatus,
@@ -313,49 +312,39 @@ debugLog('Agent:pdca-iterator:Stop', 'Hook completed', {
   phaseAdvance: phaseAdvance.nextPhase
 });
 
-// v1.4.0: Output based on platform
-if (isGeminiCli()) {
-  // Gemini CLI: Plain text output
-  let output = guidance.replace(/\*\*/g, '');  // Remove markdown bold
-  output += `\n\n${taskGuidance}`;
+// Claude Code: JSON output with AskUserQuestion prompt
+const response = {
+  decision: 'allow',
+  hookEventName: 'Agent:pdca-iterator:Stop',
+  iterationResult: {
+    feature: feature || 'unknown',
+    iteration: currentIteration,
+    maxIterations,
+    matchRate,
+    threshold,
+    status,
+    changedFiles,
+    phaseAdvance: phaseAdvance,
+    // v1.4.4 FR-06: Auto-trigger flags
+    autoCreatedTasks: autoCreatedTasks.map(t => t.taskId),
+    autoTrigger
+  },
+  guidance: guidance,
+  taskGuidance: taskGuidance,
+  // v1.4.0: Include user prompt for AskUserQuestion
+  userPrompt: userPrompt,
+  // v1.4.0: Stop hooks use systemMessage instead of additionalContext (not supported)
+  systemMessage: `Iterator 완료. 반복: ${currentIteration}/${maxIterations}, 매치율: ${matchRate}%\n\n` +
+    `## 🚨 MANDATORY: AskUserQuestion 호출\n\n` +
+    `아래 AskUserQuestion 파라미터로 사용자에게 다음 단계를 질문하세요:\n\n` +
+    `${userPrompt}\n\n` +
+    `### 선택별 동작:\n` +
+    (status === 'completed'
+      ? `- **보고서 생성** → /pdca-report ${feature || ''} 실행\n- **추가 검토** → 코드 리뷰 진행\n- **Archive** → /archive 실행`
+      : status === 'improved'
+        ? `- **재분석** → /pdca-analyze ${feature || ''} 실행\n- **추가 수정** → 가이드 제공\n- **완료** → /pdca-report 실행`
+        : `- **재분석** → /pdca-analyze ${feature || ''} 실행\n- **추가 반복** → /pdca-iterate ${feature || ''} 실행\n- **완료 처리** → /pdca-report 실행`)
+};
 
-  console.log(output);
-  process.exit(0);
-} else {
-  // Claude Code: JSON output with AskUserQuestion prompt
-  const response = {
-    decision: 'allow',
-    hookEventName: 'Agent:pdca-iterator:Stop',
-    iterationResult: {
-      feature: feature || 'unknown',
-      iteration: currentIteration,
-      maxIterations,
-      matchRate,
-      threshold,
-      status,
-      changedFiles,
-      phaseAdvance: phaseAdvance,
-      // v1.4.4 FR-06: Auto-trigger flags
-      autoCreatedTasks: autoCreatedTasks.map(t => t.taskId),
-      autoTrigger
-    },
-    guidance: guidance,
-    taskGuidance: taskGuidance,
-    // v1.4.0: Include user prompt for AskUserQuestion
-    userPrompt: userPrompt,
-    // v1.4.0: Stop hooks use systemMessage instead of additionalContext (not supported)
-    systemMessage: `Iterator 완료. 반복: ${currentIteration}/${maxIterations}, 매치율: ${matchRate}%\n\n` +
-      `## 🚨 MANDATORY: AskUserQuestion 호출\n\n` +
-      `아래 AskUserQuestion 파라미터로 사용자에게 다음 단계를 질문하세요:\n\n` +
-      `${userPrompt}\n\n` +
-      `### 선택별 동작:\n` +
-      (status === 'completed'
-        ? `- **보고서 생성** → /pdca-report ${feature || ''} 실행\n- **추가 검토** → 코드 리뷰 진행\n- **Archive** → /archive 실행`
-        : status === 'improved'
-          ? `- **재분석** → /pdca-analyze ${feature || ''} 실행\n- **추가 수정** → 가이드 제공\n- **완료** → /pdca-report 실행`
-          : `- **재분석** → /pdca-analyze ${feature || ''} 실행\n- **추가 반복** → /pdca-iterate ${feature || ''} 실행\n- **완료 처리** → /pdca-report 실행`)
-  };
-
-  console.log(JSON.stringify(response));
-  process.exit(0);
-}
+console.log(JSON.stringify(response));
+process.exit(0);

@@ -14,9 +14,11 @@
 >
 > **v1.3.1 Cross-Platform**: All hooks converted from Bash (.sh) to Node.js (.js) for Windows/Mac/Linux compatibility
 >
-> **v1.4.0 Dual Platform Support**: Claude Code + Gemini CLI simultaneous support, 80+ lib/common.js functions, 8-language Intent Detection
+> **v1.4.0**: 80+ lib/common.js functions, 8-language Intent Detection
 >
 > **v1.4.1 Context Engineering**: Optimal token curation perspective for LLM reasoning, Response Report Rule
+>
+> **v1.5.0 Claude Code Exclusive**: Gemini CLI support removed, simplified architecture
 
 ## Philosophy (4)
 
@@ -185,20 +187,18 @@ The following skills were consolidated:
 ### Shared Library
 - `lib/common.js` - Shared utility functions (v1.4.0 Node.js, **80+ functions**)
 
-#### Platform Detection (v1.4.0)
-  - `detectPlatform()` - Detect current platform ('claude' | 'gemini' | 'unknown')
+#### Platform Detection (v1.5.0 - Claude Code Exclusive)
   - `isClaudeCode()` - Check if running in Claude Code
-  - `isGeminiCli()` - Check if running in Gemini CLI
-  - `getPluginPath()` - Get plugin root path for current platform
+  - `getPluginPath()` - Get plugin root path
   - `getBkitConfig()` - Load bkit.config.json with caching
 
 #### Caching System (v1.4.0)
   - `_cache` - In-memory TTL-based cache object
   - TTL-based invalidation for config, status, and feature data
 
-#### Debug Logging (v1.4.0)
-  - `debugLog()` - Debug logging with platform-specific paths
-  - Writes to `~/.claude/bkit-debug.log` or `~/.gemini/bkit-debug.log`
+#### Debug Logging (v1.5.0)
+  - `debugLog()` - Debug logging
+  - Writes to `~/.claude/bkit-debug.log`
 
 #### PDCA Status v2.0 (v1.4.0)
   - `createInitialStatusV2()` - Create PDCA Status v2.0 schema
@@ -302,35 +302,16 @@ bkit supports languages and frameworks organized by tier:
   - PDCA document paths
   - Naming conventions
 
-### Gemini CLI Support (v1.4.0)
+### Platform Note (v1.5.0)
 
-bkit supports Gemini CLI as a secondary platform:
+> **v1.5.0**: bkit is now Claude Code exclusive. Gemini CLI support was removed for simplified architecture.
 
-| Item | Claude Code | Gemini CLI |
-|------|-------------|------------|
-| Manifest | `.claude-plugin/plugin.json` | `gemini-extension.json` |
-| Context File | `CLAUDE.md` | `GEMINI.md` |
-| Commands | `commands/*.md` (Markdown) | `commands/gemini/*.toml` (TOML) |
-| Hook Events | `PreToolUse` / `PostToolUse` | `BeforeTool` / `AfterTool` |
-| Plugin Root | `$CLAUDE_PLUGIN_ROOT` | `$extensionPath` |
-| Project Dir | `$CLAUDE_PROJECT_DIR` | `$GEMINI_PROJECT_DIR` |
-
-**Hook Mapping**:
-```
-Claude Code         →  Gemini CLI
-─────────────────────────────────
-SessionStart        →  SessionStart
-PreToolUse          →  BeforeTool
-PostToolUse         →  AfterTool
-Stop                →  AgentStop
-```
-
-**Shared Components** (Cross-platform):
-- `skills/` - All 21 skills work on both platforms
-- `agents/` - All 11 agents work on both platforms
-- `scripts/` - All 26 scripts use Node.js (cross-platform)
-- `lib/common.js` - Platform detection via `detectPlatform()`
-- `templates/` - All 20 templates work on both platforms
+**Components**:
+- `skills/` - 22 skills
+- `agents/` - 11 agents
+- `scripts/` - 39 scripts (Node.js)
+- `lib/` - 4 modules (132 functions)
+- `templates/` - 23 templates
 
 ## Templates (20)
 

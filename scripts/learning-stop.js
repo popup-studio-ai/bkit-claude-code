@@ -39,18 +39,7 @@ function generateLearningCompletion(level) {
   };
 }
 
-function formatOutput(result, isGemini) {
-  if (isGemini) {
-    const lines = [
-      '\n--- Claude Code Learning Complete ---\n',
-      `✅ Level ${result.completedLevel} 학습 완료`,
-      '',
-      '💡 다음 단계 제안:',
-      ...result.suggestions.map((s, i) => `   ${i + 1}. ${s.action} - ${s.description}`),
-      ''
-    ];
-    return lines.join('\n');
-  }
+function formatOutput(result) {
   return JSON.stringify({ status: 'success', ...result }, null, 2);
 }
 
@@ -76,9 +65,8 @@ async function main() {
     } catch (e) {}
 
     const result = generateLearningCompletion(level);
-    const isGemini = lib.isGeminiCli();
 
-    console.log(formatOutput(result, isGemini));
+    console.log(formatOutput(result));
   } catch (e) {
     console.log(JSON.stringify({ status: 'error', error: e.message }));
   }

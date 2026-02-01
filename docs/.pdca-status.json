@@ -1,396 +1,20 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-01-29T03:53:02.495Z",
+  "lastUpdated": "2026-01-31T18:38:50.918Z",
   "activeFeatures": [
-    "bkit-claude-code"
+    "core",
+    "claude",
+    "local",
+    "scripts",
+    "bkit-claude-code",
+    "claude-code-exclusive-refactoring",
+    "bkit-v1.5.0-comprehensive-test",
+    "pdca",
+    "test"
   ],
-  "primaryFeature": "bkit-claude-code",
+  "primaryFeature": "bkit-v1.5.0-comprehensive-test",
   "features": {
-    "bkit-integration-test": {
-      "phase": "archived",
-      "phaseNumber": 7,
-      "matchRate": 95.4,
-      "iterationCount": 0,
-      "archivedAt": "2026-01-29T07:00:00.000Z",
-      "archivedTo": "docs/archive/2026-01/bkit-integration-test",
-      "requirements": [
-        "FR-01: Task 체인 자동 생성",
-        "FR-02: Task ID 영속화",
-        "FR-03: 세션 간 Task 복원",
-        "FR-04: Check→Act 자동 트리거",
-        "FR-05: Check↔Act 자동 반복",
-        "FR-06: matchRate >= 90% → Report",
-        "FR-07: blockedBy Task ID 기반",
-        "FR-08: Core 모듈 분리 검증",
-        "FR-09: Skills 21개 회귀 테스트",
-        "FR-10: Agents 11개 회귀 테스트"
-      ],
-      "documents": {
-        "plan": "docs/archive/2026-01/bkit-integration-test/bkit-integration-test.plan.md",
-        "report": "docs/archive/2026-01/bkit-integration-test/bkit-integration-test.report.md"
-      },
-      "timestamps": {
-        "started": "2026-01-29T05:00:00.000Z",
-        "lastUpdated": "2026-01-29T07:00:00.000Z",
-        "doCompleted": "2026-01-29T06:00:00.000Z",
-        "checkCompleted": "2026-01-29T06:15:00.000Z",
-        "reportCompleted": "2026-01-29T06:30:00.000Z",
-        "archivedAt": "2026-01-29T07:00:00.000Z"
-      },
-      "testScope": {
-        "totalCases": 108,
-        "categories": {
-          "modulUnit": 45,
-          "taskIntegration": 18,
-          "skills": 21,
-          "agents": 11,
-          "hooks": 5,
-          "e2e": 8
-        }
-      },
-      "testResults": {
-        "pass": 103,
-        "warning": 5,
-        "fail": 0,
-        "passRate": "95.4%"
-      },
-      "referenceDesigns": [
-        "docs/02-design/features/task-bkit-integration.design.md",
-        "docs/02-design/features/bkit-core-modularization.design.md"
-      ],
-      "designMatchRate": {
-        "task-bkit-integration": "100%",
-        "bkit-core-modularization": "100%"
-      }
-    },
-    "pdca-archive-action": {
-      "phase": "archived",
-      "phaseNumber": 7,
-      "matchRate": 100,
-      "iterationCount": 1,
-      "archivedAt": "2026-01-27T14:15:00.000Z",
-      "archivedTo": "docs/archive/2026-01/pdca-archive-action",
-      "requirements": [
-        "FR-01",
-        "FR-02",
-        "FR-03",
-        "FR-04",
-        "FR-05",
-        "FR-06",
-        "FR-07",
-        "FR-08"
-      ],
-      "documents": {
-        "plan": "docs/archive/2026-01/pdca-archive-action/pdca-archive-action.plan.md",
-        "design": "docs/archive/2026-01/pdca-archive-action/pdca-archive-action.design.md",
-        "report": "docs/archive/2026-01/pdca-archive-action/pdca-archive-action.report.md"
-      },
-      "timestamps": {
-        "started": "2026-01-27T14:00:00.000Z",
-        "lastUpdated": "2026-01-27T14:15:00.000Z",
-        "completed": "2026-01-27T14:15:00.000Z"
-      },
-      "implementedFiles": [
-        "skills/pdca/SKILL.md",
-        "commands/functions.md"
-      ]
-    },
-    "v1.4.4-comprehensive-test": {
-      "phase": "archived",
-      "phaseNumber": 7,
-      "matchRate": 100,
-      "iterationCount": 0,
-      "archivedAt": "2026-01-27T08:48:00.000Z",
-      "archivedTo": "docs/archive/2026-01/v1.4.4-comprehensive-test",
-      "requirements": [
-        "TC-H01",
-        "TC-H02",
-        "TC-H03",
-        "TC-H04",
-        "TC-H05",
-        "TC-H06",
-        "TC-H07",
-        "TC-H08",
-        "TC-H09",
-        "TC-S01",
-        "TC-S02",
-        "TC-S03",
-        "TC-S04",
-        "TC-S05",
-        "TC-S06",
-        "TC-S07",
-        "TC-S08",
-        "TC-S09",
-        "TC-S10",
-        "TC-S11",
-        "TC-S12",
-        "TC-S13",
-        "TC-S14",
-        "TC-S15",
-        "TC-S16",
-        "TC-S17",
-        "TC-S18",
-        "TC-S19",
-        "TC-S20",
-        "TC-S21",
-        "TC-S22",
-        "TC-A01",
-        "TC-A02",
-        "TC-A03",
-        "TC-A04",
-        "TC-A05",
-        "TC-A06",
-        "TC-A07",
-        "TC-A08",
-        "TC-A09",
-        "TC-A10",
-        "TC-A11",
-        "TC-P01",
-        "TC-P02",
-        "TC-P03",
-        "TC-P04",
-        "TC-P05",
-        "TC-P06",
-        "TC-P07",
-        "TC-P08",
-        "TC-U01",
-        "TC-U02",
-        "TC-U03",
-        "TC-U04",
-        "E2E-01",
-        "E2E-02",
-        "E2E-03"
-      ],
-      "documents": {
-        "plan": "docs/archive/2026-01/v1.4.4-comprehensive-test/v1.4.4-comprehensive-test.plan.md",
-        "analysis": "docs/archive/2026-01/v1.4.4-comprehensive-test/v1.4.4-comprehensive-test.analysis.md",
-        "report": "docs/archive/2026-01/v1.4.4-comprehensive-test/v1.4.4-comprehensive-test.report.md"
-      },
-      "timestamps": {
-        "started": "2026-01-27T08:45:00.000Z",
-        "lastUpdated": "2026-01-27T08:48:00.000Z",
-        "completed": "2026-01-27T08:48:00.000Z"
-      },
-      "testCategories": {
-        "hooks": 9,
-        "skills": 21,
-        "agents": 11,
-        "pdcaCommands": 8,
-        "unifiedScripts": 4,
-        "e2eScenarios": 3
-      },
-      "totalTests": 57
-    },
-    "v1.4.4-comprehensive-enhancement": {
-      "phase": "archived",
-      "phaseNumber": 7,
-      "matchRate": 100,
-      "iterationCount": 2,
-      "archivedAt": "2026-01-27T08:45:00.000Z",
-      "archivedTo": "docs/archive/2026-01/v1.4.4-comprehensive-enhancement",
-      "requirements": [
-        "FR-01",
-        "FR-02",
-        "FR-03",
-        "FR-04",
-        "FR-05",
-        "FR-06",
-        "FR-07",
-        "FR-08",
-        "FR-09",
-        "FR-10",
-        "FR-11",
-        "FR-12"
-      ],
-      "documents": {
-        "plan": "docs/archive/2026-01/v1.4.4-comprehensive-enhancement/v1.4.4-comprehensive-enhancement.plan.md",
-        "design": "docs/archive/2026-01/v1.4.4-comprehensive-enhancement/v1.4.4-comprehensive-enhancement.design.md",
-        "report": "docs/archive/2026-01/v1.4.4-comprehensive-enhancement/v1.4.4-comprehensive-enhancement.report.md"
-      },
-      "timestamps": {
-        "started": "2026-01-27T05:43:00.000Z",
-        "lastUpdated": "2026-01-27T08:00:00.000Z",
-        "completed": "2026-01-27T08:00:00.000Z"
-      },
-      "implementedFiles": [
-        "skills/pdca/SKILL.md",
-        "skills/enterprise/SKILL.md",
-        "skills/phase-8-review/SKILL.md",
-        "skills/code-review/SKILL.md",
-        "agents/gap-detector.md",
-        "agents/pdca-iterator.md",
-        "agents/report-generator.md",
-        "agents/code-analyzer.md",
-        "agents/design-validator.md",
-        "agents/enterprise-expert.md",
-        "lib/skill-orchestrator.js",
-        "lib/common.js",
-        "scripts/gap-detector-stop.js",
-        "scripts/iterator-stop.js",
-        "scripts/pdca-skill-stop.js",
-        "templates/do.template.md"
-      ]
-    },
-    "v1.4.4-script-path-fix": {
-      "phase": "archived",
-      "phaseNumber": 7,
-      "matchRate": null,
-      "iterationCount": 0,
-      "archivedAt": "2026-01-27T08:45:00.000Z",
-      "archivedTo": "docs/archive/2026-01/v1.4.4-script-path-fix",
-      "requirements": [],
-      "documents": {
-        "plan": "docs/archive/2026-01/v1.4.4-script-path-fix/v1.4.4-script-path-fix.plan.md"
-      },
-      "timestamps": {
-        "started": "2026-01-27T00:00:00.000Z",
-        "lastUpdated": "2026-01-27T08:45:00.000Z"
-      }
-    },
-    "v1.4.4-skills-agents-commands-enhancement": {
-      "phase": "archived",
-      "phaseNumber": 7,
-      "matchRate": 100,
-      "iterationCount": 2,
-      "archivedAt": "2026-01-27T05:00:00.000Z",
-      "archivedTo": "docs/archive/2026-01/v1.4.4-skills-agents-commands-enhancement",
-      "requirements": [
-        "PDCA-Skill",
-        "Skill-Orchestrator",
-        "Stop-Hooks",
-        "Phase-Skills-Extension",
-        "Level-Skills-Extension",
-        "Agent-Enhancement",
-        "Commands-Deprecation"
-      ],
-      "documents": {
-        "plan": "docs/01-plan/features/v1.4.4-skills-agents-commands-enhancement.plan.md",
-        "design": "docs/02-design/features/v1.4.4-skills-agents-commands-enhancement.design.md",
-        "analysis": "docs/03-analysis/v1.4.4-gap-analysis-10-perspectives.md",
-        "report": "docs/04-report/features/v1.4.4-skills-agents-commands-enhancement.report.md"
-      },
-      "timestamps": {
-        "started": "2026-01-27T00:00:00.000Z",
-        "lastUpdated": "2026-01-27T05:00:00.000Z",
-        "completed": "2026-01-27T05:00:00.000Z"
-      },
-      "implementedFiles": [
-        "skills/pdca/SKILL.md",
-        "skills/claude-code-learning/SKILL.md",
-        "skills/github-integration/SKILL.md",
-        "lib/skill-orchestrator.js",
-        "templates/do.template.md",
-        "scripts/pdca-skill-stop.js",
-        "scripts/skill-post.js",
-        "scripts/phase5-design-stop.js",
-        "scripts/phase6-ui-stop.js",
-        "scripts/phase9-deploy-stop.js",
-        "scripts/learning-stop.js",
-        "commands/DEPRECATED.md"
-      ]
-    },
-    "gemini-cli-v026-compatibility": {
-      "phase": "archived",
-      "phaseNumber": 7,
-      "matchRate": 95,
-      "iterationCount": 1,
-      "archivedAt": "2026-01-26T23:10:00.000Z",
-      "archivedTo": "docs/archive/2026-01/gemini-cli-v026-compatibility",
-      "requirements": [
-        "FR-1.1",
-        "FR-1.2",
-        "FR-1.3",
-        "FR-2.1",
-        "FR-2.2",
-        "FR-3.1",
-        "FR-4.1",
-        "FR-5.1",
-        "FR-5.2"
-      ],
-      "documents": {
-        "plan": "docs/01-plan/features/gemini-cli-v026-compatibility.plan.md",
-        "design": "docs/02-design/features/gemini-agent-schema-compatibility.design.md"
-      },
-      "timestamps": {
-        "started": "2026-01-26T00:00:00.000Z",
-        "lastUpdated": "2026-01-26T23:10:00.000Z",
-        "completed": "2026-01-26T23:10:00.000Z"
-      },
-      "subFeatures": {
-        "gemini-agent-schema-compatibility": {
-          "status": "completed",
-          "matchRate": 100,
-          "completedAt": "2026-01-26T18:00:00.000Z"
-        }
-      }
-    },
-    "context-engineering-enhancement": {
-      "phase": "archived",
-      "phaseNumber": 7,
-      "archivedAt": "2026-01-27T08:47:00.000Z",
-      "archivedTo": "docs/archive/2026-01/context-engineering-enhancement",
-      "matchRate": 100,
-      "iterationCount": 1,
-      "lastIterationStatus": "completed",
-      "requirements": [
-        "FR-01",
-        "FR-02",
-        "FR-03",
-        "FR-04",
-        "FR-05",
-        "FR-06",
-        "FR-07",
-        "FR-08"
-      ],
-      "documents": {
-        "plan": "docs/archive/2026-01/context-engineering-enhancement/context-engineering-enhancement.plan.md",
-        "design": "docs/archive/2026-01/context-engineering-enhancement/context-engineering-enhancement.design.md",
-        "report": "docs/archive/2026-01/context-engineering-enhancement/context-engineering-enhancement.report.md"
-      },
-      "timestamps": {
-        "started": "2026-01-26T00:00:00.000Z",
-        "lastUpdated": "2026-01-26T15:00:00.000Z",
-        "completed": "2026-01-26T15:00:00.000Z"
-      },
-      "implementedFiles": [
-        "lib/context-hierarchy.js",
-        "lib/import-resolver.js",
-        "lib/context-fork.js",
-        "lib/permission-manager.js",
-        "lib/memory-store.js",
-        "scripts/user-prompt-handler.js",
-        "scripts/context-compaction.js"
-      ]
-    },
-    "pretooluse-hooks-improvement": {
-      "phase": "archived",
-      "phaseNumber": 7,
-      "archivedAt": "2026-01-26T10:20:00.000Z",
-      "archivedTo": "docs/archive/2026-01/pretooluse-hooks-improvement",
-      "matchRate": 100
-    },
-    "pretooluse-hooks-testing": {
-      "phase": "archived",
-      "phaseNumber": 7,
-      "archivedAt": "2026-01-26T10:15:00.000Z",
-      "archivedTo": "docs/archive/2026-01/pretooluse-hooks-testing",
-      "matchRate": 96.2
-    },
-    "bkit-automation-enhancement-v1.4.0": {
-      "phase": "archived",
-      "phaseNumber": 7,
-      "archivedAt": "2026-01-24T00:00:00.000Z",
-      "archivedTo": "docs/archive/2026-01/bkit-automation-enhancement-v1.4.0",
-      "matchRate": 97
-    },
-    "bkit-usage-report-auto-display": {
-      "phase": "archived",
-      "phaseNumber": 7,
-      "archivedAt": "2026-01-25T20:03:00.000Z",
-      "archivedTo": "docs/archive/2026-01/bkit-usage-report-auto-display",
-      "matchRate": 100
-    },
-    "bkit-claude-code": {
+    "core": {
       "phase": "do",
       "phaseNumber": 3,
       "matchRate": null,
@@ -398,85 +22,36 @@
       "requirements": [],
       "documents": {},
       "timestamps": {
-        "started": "2026-01-26T03:39:42.049Z",
-        "lastUpdated": "2026-01-29T03:53:02.495Z"
-      }
+        "started": "2026-01-31T16:18:04.369Z",
+        "lastUpdated": "2026-01-31T17:46:33.135Z"
+      },
+      "lastFile": "/Users/popup-kay/Documents/GitHub/popup/bkit-claude-code/lib/core/index.js"
     },
-    "v1.4.6-subagent-stability": {
-      "phase": "archived",
-      "phaseNumber": 7,
-      "matchRate": 100,
+    "claude": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
       "iterationCount": 0,
-      "archivedAt": "2026-01-28T11:00:00.000Z",
-      "archivedTo": "docs/archive/2026-01/v1.4.6-subagent-stability",
-      "requirements": [
-        "FR-01",
-        "FR-02",
-        "FR-03",
-        "FR-04",
-        "FR-05"
-      ],
-      "documents": {
-        "plan": "docs/archive/2026-01/v1.4.6-subagent-stability/v1.4.6-subagent-stability.plan.md",
-        "design": "docs/archive/2026-01/v1.4.6-subagent-stability/v1.4.6-subagent-stability.design.md",
-        "analysis": "docs/archive/2026-01/v1.4.6-subagent-stability/v1.4.6-subagent-stability.analysis.md",
-        "report": "docs/archive/2026-01/v1.4.6-subagent-stability/v1.4.6-subagent-stability.report.md"
-      },
+      "requirements": [],
+      "documents": {},
       "timestamps": {
-        "started": "2026-01-28T00:00:00.000Z",
-        "lastUpdated": "2026-01-28T10:00:00.000Z",
-        "doCompleted": "2026-01-28T09:30:00.000Z",
-        "checkCompleted": "2026-01-28T09:45:00.000Z",
-        "reportCompleted": "2026-01-28T10:00:00.000Z"
+        "started": "2026-01-31T16:18:59.975Z",
+        "lastUpdated": "2026-01-31T16:18:59.975Z"
       },
-      "targetFiles": [
-        "lib/common.js",
-        "skills/pdca/SKILL.md",
-        "skills/code-review/SKILL.md",
-        "skills/starter/SKILL.md",
-        "skills/dynamic/SKILL.md",
-        "skills/enterprise/SKILL.md",
-        "skills/phase-8-review/SKILL.md",
-        "skills/zero-script-qa/SKILL.md",
-        "skills/phase-4-api/SKILL.md",
-        "skills/phase-6-ui-integration/SKILL.md",
-        "skills/phase-7-seo-security/SKILL.md",
-        "skills/phase-9-deployment/SKILL.md",
-        "skills/development-pipeline/SKILL.md",
-        "skills/desktop-app/SKILL.md",
-        "skills/mobile-app/SKILL.md",
-        "skills/phase-1-schema/SKILL.md",
-        "skills/phase-2-convention/SKILL.md",
-        "skills/phase-3-mockup/SKILL.md",
-        "skills/phase-5-design-system/SKILL.md",
-        "skills/bkit-rules/SKILL.md",
-        "hooks/session-start.js",
-        ".claude-plugin/plugin.json"
-      ],
-      "implementedItems": [
-        "IMP-01: lib/common.js - matchImplicitAgentTrigger 5 agent keys",
-        "IMP-02: skills/pdca/SKILL.md - 3 agents mapping",
-        "IMP-03: skills/code-review/SKILL.md",
-        "IMP-04: skills/starter/SKILL.md",
-        "IMP-05: skills/dynamic/SKILL.md",
-        "IMP-06: skills/zero-script-qa/SKILL.md",
-        "IMP-07: skills/phase-4-api/SKILL.md",
-        "IMP-08: skills/phase-6-ui-integration/SKILL.md",
-        "IMP-09: skills/phase-7-seo-security/SKILL.md",
-        "IMP-10: skills/phase-9-deployment/SKILL.md",
-        "IMP-11: skills/development-pipeline/SKILL.md",
-        "IMP-12: skills/desktop-app/SKILL.md",
-        "IMP-13: skills/mobile-app/SKILL.md",
-        "IMP-14: skills/phase-1-schema/SKILL.md",
-        "IMP-15: skills/phase-2-convention/SKILL.md",
-        "IMP-16: skills/phase-3-mockup/SKILL.md",
-        "IMP-17: skills/phase-5-design-system/SKILL.md",
-        "IMP-18: skills/phase-8-review/SKILL.md - 3 agents mapping",
-        "IMP-19: skills/enterprise/SKILL.md - 3 agents mapping",
-        "IMP-20: skills/bkit-rules/SKILL.md - 6 agent names in table",
-        "IMP-21: hooks/session-start.js - 5 agent names in table",
-        "IMP-22: .claude-plugin/plugin.json - version 1.4.6"
-      ]
+      "lastFile": "/Users/popup-kay/Documents/GitHub/popup/bkit-claude-code/lib/adapters/claude/task-impl.js"
+    },
+    "local": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-01-31T16:19:41.366Z",
+        "lastUpdated": "2026-01-31T16:19:41.367Z"
+      },
+      "lastFile": "/Users/popup-kay/Documents/GitHub/popup/bkit-claude-code/lib/adapters/local/task-impl.js"
     },
     "scripts": {
       "phase": "do",
@@ -486,87 +61,12 @@
       "requirements": [],
       "documents": {},
       "timestamps": {
-        "started": "2026-01-27T04:31:21.341Z",
-        "lastUpdated": "2026-01-29T02:05:00.138Z",
-        "completed": "2026-01-27T13:42:00.000Z"
-      }
+        "started": "2026-01-31T16:21:01.457Z",
+        "lastUpdated": "2026-01-31T17:46:05.991Z"
+      },
+      "lastFile": "/Users/popup-kay/Documents/GitHub/popup/bkit-claude-code/scripts/learning-stop.js"
     },
-    "korean-to-english-translation": {
-      "phase": "archived",
-      "phaseNumber": 7,
-      "matchRate": 100,
-      "iterationCount": 1,
-      "archivedAt": "2026-01-27T16:45:00.000Z",
-      "archivedTo": "docs/archive/2026-01/korean-to-english-translation",
-      "requirements": [
-        "FR-01",
-        "FR-02",
-        "FR-03",
-        "FR-04",
-        "FR-05",
-        "FR-06",
-        "FR-07"
-      ],
-      "documents": {
-        "plan": "docs/archive/2026-01/korean-to-english-translation/korean-to-english-translation.plan.md",
-        "design": "docs/archive/2026-01/korean-to-english-translation/korean-to-english-translation.design.md",
-        "report": "docs/archive/2026-01/korean-to-english-translation/korean-to-english-translation.report.md"
-      },
-      "timestamps": {
-        "started": "2026-01-27T15:00:00.000Z",
-        "lastUpdated": "2026-01-27T16:45:00.000Z",
-        "completed": "2026-01-27T16:30:00.000Z"
-      },
-      "targetFiles": {
-        "hooks": 1,
-        "agents": 11,
-        "skills": 21,
-        "templates": 3,
-        "bkitSystem": 4,
-        "total": 40
-      },
-      "triggerCompletion": {
-        "agentsCompleted": 11,
-        "skillsCompleted": 21,
-        "totalTriggersAdded": 100
-      },
-      "translationScope": {
-        "linesTranslated": 600,
-        "status": "COMPLETED"
-      }
-    },
-    "v1.4.5-namespace-skill-refactoring": {
-      "phase": "archived",
-      "phaseNumber": 7,
-      "matchRate": 100,
-      "iterationCount": 0,
-      "archivedAt": "2026-01-27T14:20:00.000Z",
-      "archivedTo": "docs/archive/2026-01/v1.4.5-namespace-skill-refactoring",
-      "requirements": [
-        "FR-01",
-        "FR-02",
-        "FR-03",
-        "FR-04",
-        "FR-05"
-      ],
-      "documents": {
-        "plan": "docs/archive/2026-01/v1.4.5-namespace-skill-refactoring/v1.4.5-namespace-skill-refactoring.plan.md",
-        "design": "docs/archive/2026-01/v1.4.5-namespace-skill-refactoring/v1.4.5-namespace-skill-refactoring.design.md",
-        "report": "docs/archive/2026-01/v1.4.5-namespace-skill-refactoring/v1.4.5-namespace-skill-refactoring.report.md"
-      },
-      "timestamps": {
-        "started": "2026-01-27T13:30:00.000Z",
-        "lastUpdated": "2026-01-27T14:20:00.000Z",
-        "completed": "2026-01-27T14:20:00.000Z"
-      },
-      "targetFiles": [
-        "docs/02-design/features/bkit-hub-command.design.md",
-        "commands/menu.md",
-        "docs/04-report/skills-autocomplete-research-2026-01.md",
-        "docs/archive/legacy/02-BKIT-PLUGIN-DESIGN.md"
-      ]
-    },
-    "unit": {
+    "bkit-claude-code": {
       "phase": "do",
       "phaseNumber": 3,
       "matchRate": null,
@@ -574,182 +74,98 @@
       "requirements": [],
       "documents": {},
       "timestamps": {
-        "started": "2026-01-27T17:51:06.900Z",
-        "lastUpdated": "2026-01-27T17:51:12.415Z"
-      }
+        "started": "2026-01-31T16:46:10.337Z",
+        "lastUpdated": "2026-01-31T17:46:21.135Z"
+      },
+      "lastFile": "/Users/popup-kay/Documents/GitHub/popup/bkit-claude-code/lib/common.js"
     },
-    "tests": {
-      "phase": "do",
-      "phaseNumber": 3,
-      "matchRate": null,
-      "iterationCount": 0,
-      "requirements": [],
-      "documents": {},
-      "timestamps": {
-        "started": "2026-01-27T17:51:26.259Z",
-        "lastUpdated": "2026-01-27T17:51:26.624Z"
-      }
-    },
-    "task-bkit-integration": {
+    "dual-platform-refactoring": {
       "phase": "archived",
       "phaseNumber": 7,
-      "matchRate": 100,
-      "iterationCount": 1,
-      "archivedAt": "2026-01-29T07:30:00.000Z",
-      "archivedTo": "docs/archive/2026-01/task-bkit-integration",
-      "requirements": [
-        "FR-01",
-        "FR-02",
-        "FR-03",
-        "FR-04",
-        "FR-05",
-        "FR-06",
-        "FR-07",
-        "FR-08",
-        "FR-09",
-        "FR-10",
-        "FR-11",
-        "FR-12"
-      ],
-      "documents": {
-        "plan": "docs/archive/2026-01/task-bkit-integration/task-bkit-integration.plan.md",
-        "design": "docs/archive/2026-01/task-bkit-integration/task-bkit-integration.design.md",
-        "analysis": "docs/archive/2026-01/task-bkit-integration/task-bkit-integration.analysis.md",
-        "report": "docs/archive/2026-01/task-bkit-integration/task-bkit-integration.report.md"
-      },
-      "timestamps": {
-        "started": "2026-01-29T00:00:00.000Z",
-        "lastUpdated": "2026-01-29T07:30:00.000Z",
-        "planCompleted": "2026-01-29T01:00:00.000Z",
-        "designCompleted": "2026-01-29T01:30:00.000Z",
-        "doCompleted": "2026-01-29T02:05:00.000Z",
-        "checkCompleted": "2026-01-29T02:10:00.000Z",
-        "reportCompleted": "2026-01-29T02:15:00.000Z",
-        "archivedAt": "2026-01-29T07:30:00.000Z"
-      },
-      "tasks": {
-        "plan": "1",
-        "design": null,
-        "do": "do-task-bkit-integration-1738112700000",
-        "check": "check-task-bkit-integration-1738113000000",
-        "act": [],
-        "report": null
-      },
-      "implementedFiles": [
-        ".claude/lib/common.js",
-        ".claude/scripts/pdca-skill-stop.js",
-        ".claude/scripts/gap-detector-stop.js",
-        ".claude/scripts/iterator-stop.js"
-      ],
-      "p0MatchRate": 100,
-      "p1MatchRate": 23,
-      "bugFixed": true
-    },
-    ".claude": {
-      "phase": "do",
-      "phaseNumber": 3,
       "matchRate": null,
       "iterationCount": 0,
       "requirements": [],
-      "documents": {},
+      "documents": {
+        "plan": "docs/01-plan/features/dual-platform-refactoring.plan.md"
+      },
       "timestamps": {
-        "started": "2026-01-29T01:53:57.543Z",
-        "lastUpdated": "2026-01-29T02:07:44.370Z"
-      }
+        "started": "2026-02-01T00:00:00.000Z",
+        "lastUpdated": "2026-02-01T00:00:00.000Z",
+        "archivedAt": "2026-02-01T00:00:00.000Z"
+      },
+      "archivedReason": "방향 변경: Claude Code 전용으로 분리"
     },
-    "bkit-core-modularization": {
-      "phase": "archived",
-      "phaseNumber": 7,
+    "claude-code-exclusive-refactoring": {
+      "phase": "completed",
+      "phaseNumber": 5,
       "matchRate": 100,
       "iterationCount": 0,
-      "archivedAt": "2026-01-29T07:30:00.000Z",
-      "archivedTo": "docs/archive/2026-01/bkit-core-modularization",
       "requirements": [
-        "FR-01",
-        "FR-02",
-        "FR-03",
-        "FR-04",
-        "FR-05",
-        "FR-06",
-        "FR-07",
-        "FR-08",
-        "FR-09",
-        "FR-10",
-        "FR-11",
-        "FR-12",
-        "FR-13",
-        "FR-14",
-        "FR-15",
-        "FR-16",
-        "FR-17",
-        "FR-18",
-        "FR-19",
-        "FR-20"
+        "FR-01: gemini-extension.json 파일 삭제",
+        "FR-02: GEMINI.md 파일 삭제",
+        "FR-03: commands/gemini/ 디렉토리 삭제",
+        "FR-04: lib/adapters/gemini/ 디렉토리 삭제",
+        "FR-05: lib/core/platform.js Gemini 로직 제거",
+        "FR-06: lib/core/io.js Gemini 출력 포맷 제거",
+        "FR-07: lib/core/debug.js Gemini 로그 경로 제거",
+        "FR-08: lib/context-hierarchy.js Gemini config 경로 제거",
+        "FR-09: hooks/session-start.js Gemini 감지/출력 제거",
+        "FR-10: 26개 스크립트 isGeminiCli() 분기 제거",
+        "FR-11: README.md Gemini 언급 제거",
+        "FR-12: CHANGELOG.md Gemini 항목 아카이브",
+        "FR-13: debug-platform.js 삭제",
+        "FR-14: lib/common.js.backup 삭제",
+        "FR-15: .pdca-status.json platform 필드 단순화"
       ],
       "documents": {
-        "plan": ".claude/docs/enterprise/unit-1-core-modularization.plan.md",
-        "design": "docs/archive/2026-01/bkit-core-modularization/bkit-core-modularization.design.md",
-        "report": "docs/archive/2026-01/bkit-core-modularization/bkit-core-modularization.report.md"
+        "plan": "docs/01-plan/features/claude-code-exclusive-refactoring.plan.md",
+        "design": "docs/02-design/features/claude-code-exclusive-refactoring.design.md",
+        "report": "docs/04-report/features/claude-code-exclusive-refactoring.report.md"
       },
       "timestamps": {
-        "started": "2026-01-29T02:30:00.000Z",
-        "lastUpdated": "2026-01-29T07:30:00.000Z",
-        "designCompleted": "2026-01-29T03:00:00.000Z",
-        "doCompleted": "2026-01-29T03:50:00.000Z",
-        "checkCompleted": "2026-01-29T03:55:00.000Z",
-        "reportCompleted": "2026-01-29T04:00:00.000Z",
-        "archivedAt": "2026-01-29T07:30:00.000Z"
-      },
-      "targetModules": [
-        "lib/core",
-        "lib/pdca",
-        "lib/intent",
-        "lib/task"
-      ],
-      "sourceFile": "lib/common.js.backup",
-      "sourceStats": {
-        "lines": 3722,
-        "bytes": 117446,
-        "functions": 110
-      },
-      "implementedFiles": [
-        "lib/core/index.js",
-        "lib/core/platform.js",
-        "lib/core/cache.js",
-        "lib/core/debug.js",
-        "lib/core/config.js",
-        "lib/core/io.js",
-        "lib/core/file.js",
-        "lib/pdca/index.js",
-        "lib/pdca/tier.js",
-        "lib/pdca/level.js",
-        "lib/pdca/phase.js",
-        "lib/pdca/status.js",
-        "lib/pdca/automation.js",
-        "lib/intent/index.js",
-        "lib/intent/language.js",
-        "lib/intent/trigger.js",
-        "lib/intent/ambiguity.js",
-        "lib/task/index.js",
-        "lib/task/classification.js",
-        "lib/task/context.js",
-        "lib/task/creator.js",
-        "lib/task/tracker.js",
-        "lib/common.js"
-      ],
-      "totalExports": 132
-    },
-    "core": {
-      "phase": "do",
-      "phaseNumber": 3,
-      "matchRate": null,
-      "iterationCount": 0,
-      "requirements": [],
-      "documents": {},
-      "timestamps": {
-        "started": "2026-01-29T03:43:35.131Z",
-        "lastUpdated": "2026-01-29T03:44:41.963Z"
+        "started": "2026-02-01T00:00:00.000Z",
+        "lastUpdated": "2026-02-01T00:00:00.000Z",
+        "planCompleted": "2026-02-01T00:00:00.000Z",
+        "designCompleted": "2026-02-01T00:00:00.000Z",
+        "reportCompleted": "2026-02-01T00:00:00.000Z"
       }
+    },
+    "bkit-v1.5.0-comprehensive-test": {
+      "phase": "completed",
+      "phaseNumber": 6,
+      "matchRate": 100,
+      "iterationCount": 2,
+      "requirements": [
+        "TC-CORE: lib/core/ 모듈 테스트 (7 모듈) ✅",
+        "TC-PDCA: lib/pdca/ 모듈 테스트 (5 모듈) ✅",
+        "TC-INTENT: lib/intent/ 모듈 테스트 (4 모듈) ✅",
+        "TC-TASK: lib/task/ 모듈 테스트 (5 모듈) ✅",
+        "TC-CE: Context Engineering 모듈 테스트 ✅",
+        "TC-HOOK: Hook 스크립트 테스트 (9 hooks) ✅",
+        "TC-SKILL: Skill 기능 테스트 (21 skills) ✅",
+        "TC-AGENT: Agent 동작 테스트 (11 agents) ✅",
+        "GEM-001~009: Gemini 코드 제거 검증 ✅",
+        "BUG-018: tier.js 버그 수정 ✅"
+      ],
+      "documents": {
+        "plan": "docs/01-plan/features/bkit-v1.5.0-comprehensive-test.plan.md",
+        "design": "docs/02-design/features/bkit-v1.5.0-comprehensive-test.design.md",
+        "report": "docs/04-report/features/bkit-v1.5.0-comprehensive-test.report.md"
+      },
+      "timestamps": {
+        "started": "2026-02-01T00:00:00.000Z",
+        "lastUpdated": "2026-02-01T00:00:00.000Z",
+        "planCompleted": "2026-02-01T00:00:00.000Z",
+        "designCompleted": "2026-02-01T00:00:00.000Z",
+        "reportCompleted": "2026-02-01T00:00:00.000Z"
+      }
+    },
+    "plan": {
+      "phase": "test-123",
+      "timestamps": {
+        "started": "2026-01-31T18:26:18.421Z"
+      },
+      "tasks": {}
     },
     "pdca": {
       "phase": "do",
@@ -759,61 +175,23 @@
       "requirements": [],
       "documents": {},
       "timestamps": {
-        "started": "2026-01-29T03:45:55.979Z",
-        "lastUpdated": "2026-01-29T03:47:13.206Z"
-      }
-    },
-    "intent": {
-      "phase": "do",
-      "phaseNumber": 3,
-      "matchRate": null,
-      "iterationCount": 0,
-      "requirements": [],
-      "documents": {},
-      "timestamps": {
-        "started": "2026-01-29T03:48:38.194Z",
-        "lastUpdated": "2026-01-29T03:48:42.150Z"
-      }
-    },
-    "task": {
-      "phase": "do",
-      "phaseNumber": 3,
-      "matchRate": null,
-      "iterationCount": 0,
-      "requirements": [],
-      "documents": {},
-      "timestamps": {
-        "started": "2026-01-29T03:49:49.379Z",
-        "lastUpdated": "2026-01-29T03:49:54.559Z"
-      }
-    },
-    "v1.4.7-docs-sync": {
-      "phase": "archived",
-      "phaseNumber": 7,
-      "matchRate": 100,
-      "iterationCount": 0,
-      "archivedAt": "2026-01-29T05:33:00.000Z",
-      "archivedTo": "docs/archive/2026-01/v1.4.7-docs-sync",
-      "requirements": [
-        "VU-01",
-        "VU-02",
-        "VU-03",
-        "VU-04",
-        "DU-01",
-        "DU-02",
-        "DU-03",
-        "DU-04"
-      ],
-      "documents": {
-        "plan": "docs/archive/2026-01/v1.4.7-docs-sync/v1.4.7-docs-sync.plan.md",
-        "analysis": "docs/archive/2026-01/v1.4.7-docs-sync/v1.4.7-docs-sync.analysis.md",
-        "report": "docs/archive/2026-01/v1.4.7-docs-sync/v1.4.7-docs-sync.report.md"
+        "started": "2026-01-31T18:29:00.663Z",
+        "lastUpdated": "2026-01-31T18:29:00.663Z"
       },
+      "lastFile": "/Users/popup-kay/Documents/GitHub/popup/bkit-claude-code/lib/pdca/tier.js"
+    },
+    "test": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
       "timestamps": {
-        "started": "2026-01-29T04:30:00.000Z",
-        "lastUpdated": "2026-01-29T05:33:00.000Z",
-        "archivedAt": "2026-01-29T05:33:00.000Z"
-      }
+        "started": "2026-01-31T18:38:50.918Z",
+        "lastUpdated": "2026-01-31T18:38:50.918Z"
+      },
+      "lastFile": "/test/file.js"
     }
   },
   "pipeline": {
@@ -822,612 +200,304 @@
     "phaseHistory": []
   },
   "session": {
-    "startedAt": "2026-01-26T12:15:00.000Z",
-    "onboardingCompleted": true,
-    "lastActivity": "2026-01-29T03:53:02.495Z"
+    "startedAt": "2026-01-31T15:12:59.812Z",
+    "onboardingCompleted": false,
+    "lastActivity": "2026-01-31T18:38:50.918Z"
   },
   "history": [
     {
-      "timestamp": "2026-01-27T04:38:01.070Z",
-      "feature": "scripts",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T04:38:01.170Z",
-      "feature": "scripts",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T04:38:01.278Z",
-      "feature": "scripts",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T04:44:05.249Z",
-      "feature": "scripts",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T06:02:48.797Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T06:04:16.902Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T06:04:23.365Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T06:04:28.812Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T06:05:46.872Z",
-      "feature": "scripts",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T06:07:05.443Z",
-      "feature": "scripts",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T06:07:15.375Z",
-      "feature": "scripts",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T06:07:21.262Z",
-      "feature": "scripts",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T06:07:27.942Z",
-      "feature": "scripts",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T06:08:38.837Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T06:08:46.906Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T08:28:42.155Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T08:28:46.995Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T08:29:14.481Z",
-      "feature": "scripts",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T08:29:32.527Z",
-      "feature": "scripts",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T08:29:50.380Z",
-      "feature": "scripts",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T08:29:59.623Z",
-      "feature": "scripts",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T08:30:40.425Z",
-      "feature": "scripts",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T08:32:53.782Z",
-      "feature": "scripts",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T08:49:49.898Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T08:49:58.817Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T08:49:58.956Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T08:50:13.722Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T08:50:13.869Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T08:50:22.101Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T13:37:22.209Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T14:31:34.244Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T14:31:57.883Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T14:32:09.234Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T14:32:21.733Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T14:32:44.262Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T14:33:00.457Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T14:33:10.866Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T14:35:55.211Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T14:36:07.124Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T14:36:17.281Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T14:36:50.180Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T14:58:20.538Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T14:58:20.720Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T17:43:41.203Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T17:45:04.656Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T17:51:06.900Z",
-      "feature": "unit",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T17:51:11.859Z",
-      "feature": "unit",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T17:51:12.023Z",
-      "feature": "unit",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T17:51:12.225Z",
-      "feature": "unit",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T17:51:12.415Z",
-      "feature": "unit",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T17:51:26.259Z",
-      "feature": "tests",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T17:51:26.449Z",
-      "feature": "tests",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T17:51:26.624Z",
-      "feature": "tests",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-27T17:58:03.966Z",
-      "feature": "bkit-claude-code",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T01:53:57.543Z",
-      "feature": ".claude",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T01:59:12.631Z",
-      "feature": ".claude",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T01:59:29.762Z",
-      "feature": ".claude",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T01:59:36.423Z",
-      "feature": ".claude",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T02:00:13.291Z",
-      "feature": ".claude",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T02:00:21.624Z",
-      "feature": ".claude",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T02:00:54.362Z",
-      "feature": "scripts",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T02:01:04.838Z",
-      "feature": "scripts",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T02:01:46.453Z",
-      "feature": ".claude",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T02:01:55.204Z",
-      "feature": ".claude",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T02:02:30.632Z",
-      "feature": "scripts",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T02:02:41.008Z",
-      "feature": "scripts",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T02:02:49.940Z",
-      "feature": "scripts",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T02:03:11.905Z",
-      "feature": "scripts",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T02:03:21.887Z",
-      "feature": "scripts",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T02:03:53.222Z",
-      "feature": ".claude",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T02:04:00.196Z",
-      "feature": ".claude",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T02:04:09.849Z",
-      "feature": "scripts",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T02:04:29.404Z",
-      "feature": "scripts",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T02:04:46.412Z",
-      "feature": "scripts",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T02:04:54.632Z",
-      "feature": "scripts",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T02:05:00.138Z",
-      "feature": "scripts",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T02:07:44.370Z",
-      "feature": ".claude",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T03:43:35.131Z",
+      "timestamp": "2026-01-31T16:18:04.369Z",
       "feature": "core",
       "phase": "do",
       "action": "updated"
     },
     {
-      "timestamp": "2026-01-29T03:43:36.542Z",
+      "timestamp": "2026-01-31T16:18:22.837Z",
       "feature": "core",
       "phase": "do",
       "action": "updated"
     },
     {
-      "timestamp": "2026-01-29T03:43:37.580Z",
+      "timestamp": "2026-01-31T16:18:40.465Z",
       "feature": "core",
       "phase": "do",
       "action": "updated"
     },
     {
-      "timestamp": "2026-01-29T03:44:24.918Z",
+      "timestamp": "2026-01-31T16:18:59.975Z",
+      "feature": "claude",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T16:19:41.367Z",
+      "feature": "local",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T16:20:08.514Z",
       "feature": "core",
       "phase": "do",
       "action": "updated"
     },
     {
-      "timestamp": "2026-01-29T03:44:25.989Z",
+      "timestamp": "2026-01-31T16:20:38.274Z",
       "feature": "core",
       "phase": "do",
       "action": "updated"
     },
     {
-      "timestamp": "2026-01-29T03:44:27.230Z",
+      "timestamp": "2026-01-31T16:21:01.457Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T16:24:41.437Z",
       "feature": "core",
       "phase": "do",
       "action": "updated"
     },
     {
-      "timestamp": "2026-01-29T03:44:41.963Z",
+      "timestamp": "2026-01-31T16:24:48.102Z",
       "feature": "core",
       "phase": "do",
       "action": "updated"
     },
     {
-      "timestamp": "2026-01-29T03:45:55.979Z",
+      "timestamp": "2026-01-31T16:24:54.715Z",
+      "feature": "core",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T16:27:54.514Z",
+      "feature": "core",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T16:28:00.606Z",
+      "feature": "core",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T16:46:10.337Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T16:46:16.169Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T16:46:17.606Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T16:46:19.122Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T16:46:20.470Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T17:42:05.168Z",
+      "feature": "core",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T17:42:20.288Z",
+      "feature": "core",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T17:42:32.205Z",
+      "feature": "core",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T17:42:38.095Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T17:42:48.850Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T17:42:56.854Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T17:43:03.047Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T17:43:10.046Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T17:43:26.640Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T17:43:32.670Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T17:43:45.354Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T17:43:57.380Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T17:44:08.927Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T17:44:24.357Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T17:44:36.053Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T17:44:48.238Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T17:45:06.880Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T17:45:11.643Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T17:45:21.931Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T17:45:26.088Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T17:45:36.122Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T17:45:40.531Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T17:45:49.603Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T17:46:02.028Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T17:46:05.991Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T17:46:14.467Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T17:46:21.135Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-01-31T17:46:33.135Z",
+      "feature": "core",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-01T00:00:00.000Z",
+      "feature": "claude-code-exclusive-refactoring",
+      "phase": "completed",
+      "action": "report_generated"
+    },
+    {
+      "timestamp": "2026-01-31T18:29:00.663Z",
       "feature": "pdca",
       "phase": "do",
       "action": "updated"
     },
     {
-      "timestamp": "2026-01-29T03:45:57.292Z",
-      "feature": "pdca",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T03:45:58.586Z",
-      "feature": "pdca",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T03:47:10.621Z",
-      "feature": "pdca",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T03:47:11.908Z",
-      "feature": "pdca",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T03:47:13.206Z",
-      "feature": "pdca",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T03:48:38.194Z",
-      "feature": "intent",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T03:48:39.454Z",
-      "feature": "intent",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T03:48:40.811Z",
-      "feature": "intent",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T03:48:42.150Z",
-      "feature": "intent",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T03:49:49.379Z",
-      "feature": "task",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T03:49:50.537Z",
-      "feature": "task",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T03:49:51.879Z",
-      "feature": "task",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T03:49:53.207Z",
-      "feature": "task",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T03:49:54.559Z",
-      "feature": "task",
-      "phase": "do",
-      "action": "updated"
-    },
-    {
-      "timestamp": "2026-01-29T03:53:02.495Z",
-      "feature": "bkit-claude-code",
+      "timestamp": "2026-01-31T18:38:50.918Z",
+      "feature": "test",
       "phase": "do",
       "action": "updated"
     }
-  ],
-  "currentFeature": "bkit-claude-code",
-  "currentPhase": 3
+  ]
 }

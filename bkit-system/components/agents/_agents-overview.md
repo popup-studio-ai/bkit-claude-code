@@ -3,7 +3,7 @@
 > List of 11 Agents defined in bkit and their roles (v1.4.1)
 >
 > **v1.4.1**: Added Context Engineering perspective - Role-based Behavioral Rules Layer
-> **v1.4.0**: Dual Platform Support (Claude Code + Gemini CLI)
+> **v1.5.0**: Claude Code Exclusive
 
 ## What are Agents?
 

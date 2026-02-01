@@ -2,7 +2,7 @@
 
 > Test checklist for verifying bkit features
 >
-> **v1.4.3**: Added xmlSafeOutput() tests for Gemini CLI compatibility
+> **v1.5.0**: Claude Code Exclusive - Gemini CLI tests removed
 
 ## Test Objectives
 
@@ -281,19 +281,15 @@ echo '{"tool_input":{"file_path":"src/features/auth/login.ts","content":"test"}}
 | 8.1.7 | Null input | `null` | `null` | [ ] |
 | 8.1.8 | Empty string | `""` | `""` | [ ] |
 
-### 8.2 Hook Output Safety Tests (Gemini CLI)
+### 8.2 Hook Output Safety Tests
 
 | # | Test Case | Expected Result | Pass |
 |---|-----------|-----------------|------|
-| 8.2.1 | outputAllow with `<content>` | XML-safe escaped in additionalContext | [ ] |
-| 8.2.2 | outputBlock with `&reason` | XML-safe escaped in reason | [ ] |
-| 8.2.3 | session-start.js dynamic content | Feature name & phase XML-safe | [ ] |
+| 8.2.1 | outputAllow with special chars | Properly escaped in additionalContext | [ ] |
+| 8.2.2 | outputBlock with special chars | Properly escaped in reason | [ ] |
+| 8.2.3 | session-start.js dynamic content | Feature name & phase properly handled | [ ] |
 
-### 8.3 Gemini CLI engines Version Test
-
-| # | Test Case | Expected Result | Pass |
-|---|-----------|-----------------|------|
-| 8.3.1 | gemini-extension.json engines | `"gemini-cli": ">=0.25.0"` | [ ] |
+> **Note (v1.5.0)**: Gemini CLI tests removed - bkit is now Claude Code exclusive.
 
 ---
 

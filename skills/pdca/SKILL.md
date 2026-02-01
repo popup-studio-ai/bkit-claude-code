@@ -63,6 +63,7 @@ task-template: "[PDCA] {feature}"
 | `iterate [feature]` | Auto improvement iteration (Act phase) | `/pdca iterate user-auth` |
 | `report [feature]` | Generate completion report | `/pdca report user-auth` |
 | `archive [feature]` | Archive completed PDCA documents | `/pdca archive user-auth` |
+| `cleanup [feature]` | Cleanup archived features from status | `/pdca cleanup` |
 | `status` | Show current PDCA status | `/pdca status` |
 | `next` | Guide to next phase | `/pdca next` |
 
@@ -143,7 +144,13 @@ task-template: "[PDCA] {feature}"
 4. Move documents (delete from original location)
 5. Update Archive Index (`docs/archive/YYYY-MM/_INDEX.md`)
 6. Update .pdca-status.json: phase = "archived", record archivedTo path
-7. Remove feature from activeFeatures
+7. Remove feature from status (or preserve summary with `--summary` option)
+
+**Arguments**:
+| Argument | Description | Example |
+|----------|-------------|---------|
+| `archive {feature}` | Archive with complete cleanup (default) | `/pdca archive user-auth` |
+| `archive {feature} --summary` | Archive with summary preservation (FR-04) | `/pdca archive user-auth --summary` |
 
 **Output Path**: `docs/archive/YYYY-MM/{feature}/`
 
@@ -153,10 +160,80 @@ task-template: "[PDCA] {feature}"
 - `docs/03-analysis/{feature}.analysis.md`
 - `docs/04-report/features/{feature}.report.md`
 
+**FR-04: Summary Preservation Option** (v1.4.8):
+
+When using `--summary` (or `--preserve-summary`, `-s`), the feature data in `.pdca-status.json`
+is converted to a lightweight summary instead of being deleted:
+
+```json
+// Summary format (70% size reduction)
+{
+  "my-feature": {
+    "phase": "archived",
+    "matchRate": 100,
+    "iterationCount": 2,
+    "startedAt": "2026-01-15T10:00:00Z",
+    "archivedAt": "2026-01-20T15:30:00Z",
+    "archivedTo": "docs/archive/2026-01/my-feature/"
+  }
+}
+```
+
+Use `--summary` when you need:
+- Historical statistics and metrics
+- Project duration tracking
+- PDCA efficiency analysis
+
 **Important Notes**:
 - Cannot archive before Report completion
 - Documents are deleted from original location after move (irreversible)
 - Feature name must match exactly
+- Default behavior: complete deletion from status
+- Use `--summary` to preserve metrics for future reference
+
+### cleanup (Cleanup Phase) - v1.4.8
+
+Clean up archived features from `.pdca-status.json` to reduce file size.
+
+1. Read archived features from `.pdca-status.json`
+2. Display list with timestamps and archive paths
+3. Ask user for confirmation via AskUserQuestion (FR-06)
+4. Delete selected features from status using `cleanupArchivedFeatures()`
+5. Report cleanup results
+
+**Arguments**:
+| Argument | Description | Example |
+|----------|-------------|---------|
+| `cleanup` | Interactive cleanup (shows list) | `/pdca cleanup` |
+| `cleanup all` | Delete all archived features | `/pdca cleanup all` |
+| `cleanup {feature}` | Delete specific feature | `/pdca cleanup old-feature` |
+
+**Output Example**:
+```
+🧹 PDCA Cleanup
+─────────────────────────────
+Archived features found: 3
+
+1. feature-a (archived: 2026-01-15)
+2. feature-b (archived: 2026-01-20)
+3. feature-c (archived: 2026-01-25)
+
+Select features to cleanup:
+[ ] All archived features
+[ ] Select specific features
+[ ] Cancel
+```
+
+**Related Functions** (`lib/pdca/status.js`):
+- `getArchivedFeatures()` - Get list of archived features
+- `cleanupArchivedFeatures(features?)` - Cleanup specific or all archived
+- `deleteFeatureFromStatus(feature)` - Delete single feature
+- `enforceFeatureLimit(max=50)` - Auto cleanup when limit exceeded
+
+**Notes**:
+- Only archived/completed features can be deleted
+- Active features are protected from deletion
+- Archive documents remain in `docs/archive/` (only status is cleaned)
 
 ### status (Status Check)
 
@@ -291,4 +368,5 @@ Auto-suggest related action when detecting these keywords:
 | "verify", "analyze", "check" | analyze |
 | "improve", "iterate", "fix" | iterate |
 | "complete", "report", "summary" | report |
-| "archive", "cleanup", "store" | archive |
+| "archive", "store" | archive |
+| "cleanup", "clean", "remove old" | cleanup |

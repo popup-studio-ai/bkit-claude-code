@@ -5,6 +5,49 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-02-01
+
+### Breaking Changes
+- **Claude Code Exclusive**: bkit is now Claude Code exclusive plugin
+  - Gemini CLI support has been removed
+  - All dual-platform code branches eliminated
+  - Simplified codebase with single-platform focus
+
+### Removed
+- **Gemini CLI Files**:
+  - `gemini-extension.json` - Gemini CLI extension manifest
+  - `GEMINI.md` - Gemini CLI context file
+  - `commands/gemini/` - 20 TOML command files
+  - `lib/adapters/gemini/` - Gemini adapter implementations
+  - `debug-platform.js` - Platform debugging utility
+  - `lib/common.js.backup` - Backup file cleanup
+
+- **Gemini CLI Code**:
+  - `lib/core/platform.js`: Removed `isGeminiCli()` function and Gemini detection
+  - `lib/core/io.js`: Removed Gemini output format branches from `outputAllow()`, `outputBlock()`, `outputEmpty()`
+  - `lib/core/debug.js`: Removed Gemini log path from `getDebugLogPaths()`
+  - `lib/context-hierarchy.js`: Removed Gemini config path from `getUserConfigDir()`
+  - `hooks/session-start.js`: Removed ~70 lines of Gemini-specific code
+  - 8 scripts: Removed `isGeminiCli` imports and platform branches
+
+### Changed
+- **README.md**: Removed all Gemini CLI references
+  - Removed Gemini CLI badge
+  - Removed "Dual Platform Support" messaging
+  - Removed Gemini CLI installation section
+  - Updated plugin structure documentation
+- **Version**: Updated all version references to 1.5.0
+
+### Compatibility
+- **Claude Code**: Minimum v2.1.15, Recommended v2.1.25
+- **Node.js**: Minimum v18.0.0
+
+### Migration Guide
+If you were using bkit with Gemini CLI, please note that Gemini CLI support has been discontinued.
+For Gemini CLI users, consider using native Gemini CLI extensions or alternative tools.
+
+---
+
 ## [1.4.7] - 2026-01-29
 
 ### Added
@@ -231,17 +274,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.4.0] - 2026-01-24
 
 ### Added
-- **Dual Platform Support**: bkit now supports both Claude Code and Gemini CLI
-  - New `gemini-extension.json` manifest for Gemini CLI
-  - New `GEMINI.md` context file (equivalent to CLAUDE.md)
-  - New `commands/gemini/` directory with TOML-format commands (20 commands)
-  - Hook mapping: `BeforeTool`/`AfterTool` for Gemini (vs `PreToolUse`/`PostToolUse` for Claude)
+- ~~**Dual Platform Support**: bkit now supports both Claude Code and Gemini CLI~~ *(Removed in v1.5.0)*
+  - ~~New `gemini-extension.json` manifest for Gemini CLI~~ *(Removed in v1.5.0)*
+  - ~~New `GEMINI.md` context file (equivalent to CLAUDE.md)~~ *(Removed in v1.5.0)*
+  - ~~New `commands/gemini/` directory with TOML-format commands (20 commands)~~ *(Removed in v1.5.0)*
+  - ~~Hook mapping: `BeforeTool`/`AfterTool` for Gemini (vs `PreToolUse`/`PostToolUse` for Claude)~~ *(Removed in v1.5.0)*
 - **PDCA Status v2.0 Schema**: Multi-feature context management
   - `features` object for tracking multiple features simultaneously
   - `activeFeature` for current working context
   - Auto-migration from v1.0 schema via `migrateStatusToV2()`
 - **lib/common.js Expansion**: 86+ functions (up from 38)
-  - **Platform Detection**: `detectPlatform()`, `isGeminiCli()`, `isClaudeCode()`, `getPluginPath()`
+  - **Platform Detection**: `detectPlatform()`, ~~`isGeminiCli()`~~ *(Removed in v1.5.0)*, `isClaudeCode()`, `getPluginPath()`
   - **Caching System**: In-memory TTL-based cache (`_cache` object)
   - **Debug Logging**: `debugLog()` with platform-specific paths
   - **Multi-Feature Management**: `setActiveFeature()`, `addActiveFeature()`, `getActiveFeatures()`, `switchFeatureContext()`
@@ -270,7 +313,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Compatibility
 - **Claude Code**: Minimum v2.1.15, Recommended v2.1.17
-- **Gemini CLI**: Minimum v1.0.0
+- ~~**Gemini CLI**: Minimum v1.0.0~~ *(Removed in v1.5.0)*
 - **Node.js**: Minimum v18.0.0
 
 ---

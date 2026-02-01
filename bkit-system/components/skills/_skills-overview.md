@@ -3,7 +3,7 @@
 > 21 Skills defined in bkit (v1.4.5)
 >
 > **v1.4.1**: Added Context Engineering perspective - Domain Knowledge Layer
-> **v1.4.0**: Dual Platform Support (Claude Code + Gemini CLI)
+> **v1.5.0**: Claude Code Exclusive
 
 ## What are Skills?
 

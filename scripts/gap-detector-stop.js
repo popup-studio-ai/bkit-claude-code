@@ -25,7 +25,6 @@ const {
   // v1.4.0 Automation Functions
   emitUserPrompt,
   getBkitConfig,
-  isGeminiCli,
   autoAdvancePdcaPhase,
   // v1.4.0 P2: Requirement Fulfillment Integration
   extractRequirementsFromPlan,
@@ -340,47 +339,37 @@ debugLog('Agent:gap-detector:Stop', 'Hook completed', {
   phaseAdvance: phaseAdvance.nextPhase
 });
 
-// v1.4.0: Output based on platform
-if (isGeminiCli()) {
-  // Gemini CLI: Plain text output with colors
-  let output = guidance.replace(/\*\*/g, '');  // Remove markdown bold
-  output += `\n\n${taskGuidance}`;
+// Claude Code: JSON output with AskUserQuestion prompt
+const response = {
+  decision: 'allow',
+  hookEventName: 'Agent:gap-detector:Stop',
+  analysisResult: {
+    matchRate,
+    feature: feature || 'unknown',
+    iterationCount: iterCount,
+    maxIterations,
+    threshold,
+    nextStep,
+    phaseAdvance: phaseAdvance,
+    // v1.4.4 FR-06: Auto-created tasks
+    autoCreatedTasks: autoCreatedTasks.map(t => t.taskId)
+  },
+  guidance: guidance,
+  taskGuidance: taskGuidance,
+  // v1.4.0: Include user prompt for AskUserQuestion
+  userPrompt: userPrompt,
+  // v1.4.7 FR-04, FR-05, FR-06: Auto-trigger for Check↔Act iteration
+  autoTrigger: autoTrigger,
+  // v1.4.0: Stop hooks use systemMessage instead of additionalContext (not supported)
+  systemMessage: `Gap Analysis 완료. 매치율: ${matchRate}%\n\n` +
+    `## 🚨 MANDATORY: AskUserQuestion 호출\n\n` +
+    `아래 AskUserQuestion 파라미터로 사용자에게 다음 단계를 질문하세요:\n\n` +
+    `${userPrompt}\n\n` +
+    `### 선택별 동작:\n` +
+    (matchRate >= threshold
+      ? `- **보고서 생성** → /pdca-report ${feature || ''} 실행\n- **추가 개선** → /pdca-iterate ${feature || ''} 실행\n- **나중에** → 현재 상태 유지`
+      : `- **자동 개선** → /pdca-iterate ${feature || ''} 실행\n- **수동 수정** → 가이드 제공\n- **현재 상태로 완료** → 경고와 함께 /pdca-report 실행`)
+};
 
-  console.log(output);
-  process.exit(0);
-} else {
-  // Claude Code: JSON output with AskUserQuestion prompt
-  const response = {
-    decision: 'allow',
-    hookEventName: 'Agent:gap-detector:Stop',
-    analysisResult: {
-      matchRate,
-      feature: feature || 'unknown',
-      iterationCount: iterCount,
-      maxIterations,
-      threshold,
-      nextStep,
-      phaseAdvance: phaseAdvance,
-      // v1.4.4 FR-06: Auto-created tasks
-      autoCreatedTasks: autoCreatedTasks.map(t => t.taskId)
-    },
-    guidance: guidance,
-    taskGuidance: taskGuidance,
-    // v1.4.0: Include user prompt for AskUserQuestion
-    userPrompt: userPrompt,
-    // v1.4.7 FR-04, FR-05, FR-06: Auto-trigger for Check↔Act iteration
-    autoTrigger: autoTrigger,
-    // v1.4.0: Stop hooks use systemMessage instead of additionalContext (not supported)
-    systemMessage: `Gap Analysis 완료. 매치율: ${matchRate}%\n\n` +
-      `## 🚨 MANDATORY: AskUserQuestion 호출\n\n` +
-      `아래 AskUserQuestion 파라미터로 사용자에게 다음 단계를 질문하세요:\n\n` +
-      `${userPrompt}\n\n` +
-      `### 선택별 동작:\n` +
-      (matchRate >= threshold
-        ? `- **보고서 생성** → /pdca-report ${feature || ''} 실행\n- **추가 개선** → /pdca-iterate ${feature || ''} 실행\n- **나중에** → 현재 상태 유지`
-        : `- **자동 개선** → /pdca-iterate ${feature || ''} 실행\n- **수동 수정** → 가이드 제공\n- **현재 상태로 완료** → 경고와 함께 /pdca-report 실행`)
-  };
-
-  console.log(JSON.stringify(response));
-  process.exit(0);
-}
+console.log(JSON.stringify(response));
+process.exit(0);

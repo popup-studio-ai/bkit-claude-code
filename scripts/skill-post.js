@@ -160,19 +160,10 @@ async function main() {
     const result = await orch.orchestrateSkillPost(skillName, {}, { args });
     const suggestions = result.suggestions || {};
 
-    // Check output format preference
-    const isGemini = lib.isGeminiCli();
-
-    if (isGemini) {
-      // Plain text for Gemini CLI
-      const message = formatNextStepMessage(suggestions, skillName);
-      console.log(message);
-    } else {
-      // JSON for Claude Code
-      const output = generateJsonOutput(suggestions, skillName);
-      output.status = 'success';
-      console.log(JSON.stringify(output, null, 2));
-    }
+    // Claude Code: JSON output
+    const output = generateJsonOutput(suggestions, skillName);
+    output.status = 'success';
+    console.log(JSON.stringify(output, null, 2));
 
     // Update PDCA status if skill has pdca-phase
     const skillConfig = orch.getSkillConfig(skillName);

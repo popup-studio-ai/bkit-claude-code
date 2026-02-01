@@ -6,11 +6,11 @@
 >
 > **v1.4.2**: Complete Context Engineering implementation with 8 functional requirements (FR-01~FR-08)
 >
-> **v1.4.3**: Gemini CLI v0.25+ compatibility - `xmlSafeOutput()` function for XML special character escaping
->
 > **v1.4.4**: Skills-Agents multi-binding architecture, PDCA Skill integration (8 actions)
 >
 > **v1.4.5**: `/pdca archive` action, 8-language trigger completion, internationalization (KO→EN)
+>
+> **v1.5.0**: Claude Code Exclusive - simplified architecture
 
 ## What is Context Engineering?
 
@@ -25,7 +25,7 @@ Context Engineering:
    to provide LLMs with optimal context for inference"
 ```
 
-bkit is a **practical implementation of Context Engineering**, providing a systematic context management system for Claude Code/Gemini CLI environments.
+bkit is a **practical implementation of Context Engineering**, providing a systematic context management system for Claude Code.
 
 ---
 
@@ -332,20 +332,19 @@ Reports bkit feature usage status at the end of every response.
 
 ---
 
-## Cross-Platform Context Sharing
+## Component Architecture (v1.5.0)
 
-Context sharing between Claude Code and Gemini CLI:
+> **Note**: As of v1.5.0, bkit is Claude Code exclusive.
 
-| Component | Claude Code | Gemini CLI | Shared |
-|-----------|-------------|------------|:------:|
-| Skills | SKILL.md | SKILL.md | ✅ |
-| Agents | *.md | *.md | ✅ |
-| Scripts | *.js | *.js | ✅ |
-| Templates | *.md | *.md | ✅ |
-| lib/common.js | Node.js | Node.js | ✅ |
-| Commands | *.md | *.toml | ❌ |
-| Context File | CLAUDE.md | GEMINI.md | ❌ |
-| Manifest | plugin.json | extension.json | ❌ |
+| Component | Location | Count |
+|-----------|----------|:-----:|
+| Skills | `skills/*/SKILL.md` | 22 |
+| Agents | `agents/*.md` | 11 |
+| Scripts | `scripts/*.js` | 39 |
+| Templates | `templates/*.md` | 23 |
+| lib/ modules | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/` | 132 functions |
+| Context File | `CLAUDE.md` | 1 |
+| Manifest | `.claude-plugin/plugin.json` | 1 |
 
 ---
 

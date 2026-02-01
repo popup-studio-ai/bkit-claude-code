@@ -22,7 +22,6 @@ const {
   extractFeatureFromContext,
   emitUserPrompt,
   getBkitConfig,
-  isGeminiCli,
   outputAllow,
   // v1.4.4 FR-06: Phase transition and task creation
   autoCreatePdcaTask,
@@ -373,46 +372,29 @@ debugLog('Skill:pdca:Stop', 'Hook completed', {
   hasNextStep: !!nextStep?.nextAction
 });
 
-// Output based on platform
-if (isGeminiCli()) {
-  // Gemini CLI: Plain text output
-  if (guidance) {
-    console.log(guidance);
-    if (nextStep?.question) {
-      console.log(`\n${nextStep.question}`);
-      if (nextStep.options) {
-        nextStep.options.forEach((opt, i) => {
-          console.log(`  ${i + 1}. ${opt.label}: ${opt.description}`);
-        });
-      }
-    }
-  }
-  process.exit(0);
-} else {
-  // Claude Code: JSON output
-  const response = {
-    decision: 'allow',
-    hookEventName: 'Skill:pdca:Stop',
-    skillResult: {
-      action,
-      feature: feature || 'unknown',
-      nextAction: nextStep?.nextAction || null,
-      automationLevel: automationLevel
-    },
-    guidance: guidance || null,
-    userPrompt: userPrompt,
-    // v1.4.7: Auto-trigger for full-auto mode
-    autoTrigger: autoTrigger,
-    systemMessage: guidance ? (
-      `${guidance}\n\n` +
-      `## 🚨 MANDATORY: AskUserQuestion 호출\n\n` +
-      `아래 파라미터로 사용자에게 다음 단계를 질문하세요:\n\n` +
-      `${userPrompt || '(다음 단계 선택)'}\n\n` +
-      `### 선택별 동작:\n` +
-      (nextStep?.options ? nextStep.options.map(opt => `- **${opt.label}** → ${opt.description}`).join('\n') : '')
-    ) : null
-  };
+// Claude Code: JSON output
+const response = {
+  decision: 'allow',
+  hookEventName: 'Skill:pdca:Stop',
+  skillResult: {
+    action,
+    feature: feature || 'unknown',
+    nextAction: nextStep?.nextAction || null,
+    automationLevel: automationLevel
+  },
+  guidance: guidance || null,
+  userPrompt: userPrompt,
+  // v1.4.7: Auto-trigger for full-auto mode
+  autoTrigger: autoTrigger,
+  systemMessage: guidance ? (
+    `${guidance}\n\n` +
+    `## 🚨 MANDATORY: AskUserQuestion 호출\n\n` +
+    `아래 파라미터로 사용자에게 다음 단계를 질문하세요:\n\n` +
+    `${userPrompt || '(다음 단계 선택)'}\n\n` +
+    `### 선택별 동작:\n` +
+    (nextStep?.options ? nextStep.options.map(opt => `- **${opt.label}** → ${opt.description}`).join('\n') : '')
+  ) : null
+};
 
-  console.log(JSON.stringify(response));
-  process.exit(0);
-}
+console.log(JSON.stringify(response));
+process.exit(0);

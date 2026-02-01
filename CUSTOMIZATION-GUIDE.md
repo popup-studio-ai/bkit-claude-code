@@ -134,7 +134,7 @@ bkit is not just a collection of prompts—it's a **production-grade plugin arch
 |-----------|-------|---------|
 | **Agents** | 11 | Specialized AI subagents for task delegation |
 | **Skills** | 22 | Domain knowledge and slash commands (Commands deprecated) |
-| **Commands** | DEPRECATED | Migrated to Skills in v1.4.4+ (Gemini: `commands/gemini/*.toml`) |
+| **Commands** | DEPRECATED | Migrated to Skills in v1.4.4+ |
 | **Scripts** | 39 | Hook execution scripts with unified handlers |
 | **Templates** | 23 | Document templates (PDCA + 9 phases + shared) |
 | **Hooks** | 6 events | Event-driven automation (centralized in hooks.json) |
@@ -187,7 +187,7 @@ const { classifyTask } = require('./lib/task');
 const { debugLog, getConfig } = require('./lib/common');
 ```
 
-> **v1.4.0**: Dual Platform Support - bkit now works on both Claude Code and Gemini CLI
+> **v1.5.0**: Claude Code Exclusive - bkit is now optimized for Claude Code only
 
 ### Context Engineering Architecture (v1.4.7)
 
@@ -669,26 +669,7 @@ When you install a Claude Code plugin, components are deployed to the global con
 | **Windows (PowerShell)** | `%USERPROFILE%\.claude\` or `C:\Users\<username>\.claude\` |
 | **Windows (WSL)** | `/home/<username>/.claude/` (Linux filesystem, NOT `/mnt/c/...`) |
 
-### Gemini CLI User Configuration (v1.4.0)
-
-| Platform | Path |
-|----------|------|
-| **macOS** | `~/.gemini/` |
-| **Linux** | `~/.gemini/` |
-| **Windows (PowerShell)** | `%USERPROFILE%\.gemini\` |
-| **Windows (WSL)** | `/home/<username>/.gemini/` |
-
-### Platform Comparison
-
-| Item | Claude Code | Gemini CLI |
-|------|-------------|------------|
-| **Config Directory** | `~/.claude/` | `~/.gemini/` |
-| **Extension Directory** | `~/.claude/plugins/` | `~/.gemini/extensions/` |
-| **Project Root Env** | `$CLAUDE_PROJECT_DIR` | `$GEMINI_PROJECT_DIR` |
-| **Plugin Root Env** | `$CLAUDE_PLUGIN_ROOT` | `$extensionPath` |
-| **Manifest File** | `plugin.json` | `gemini-extension.json` |
-| **Context File** | `CLAUDE.md` | `GEMINI.md` |
-| **Commands Format** | Markdown (`.md`) | TOML (`.toml`) |
+> **Note (v1.5.0)**: bkit is now Claude Code exclusive. Gemini CLI support was removed in v1.5.0.
 
 ### Managed Settings (Enterprise/Admin - Claude Code Only)
 
@@ -737,21 +718,19 @@ A Claude Code plugin like bkit consists of these components:
 | **Templates** | Document templates for standardization | `templates/` |
 | **Scripts** | Helper scripts for automation | `scripts/` |
 
-### bkit Plugin Structure Example (v1.4.0 - Dual Platform)
+### bkit Plugin Structure Example (v1.5.0 - Claude Code Exclusive)
 
 ```
 bkit-claude-code/
 ├── .claude-plugin/
 │   ├── plugin.json                 # Claude Code plugin metadata
 │   └── marketplace.json            # Marketplace registration
-├── gemini-extension.json           # Gemini CLI extension manifest (v1.4.0)
-├── GEMINI.md                       # Gemini CLI context file (v1.4.0)
-├── agents/                         # Shared between platforms
+├── agents/                         # AI subagents (11 total)
 │   ├── starter-guide.md            # Beginner-friendly agent
 │   ├── enterprise-expert.md        # Enterprise architecture agent
 │   ├── code-analyzer.md            # Code review agent
 │   └── ... (11 total)
-├── skills/                         # Shared between platforms
+├── skills/                         # Domain knowledge (22 skills)
 │   ├── bkit-rules/SKILL.md         # Core PDCA rules
 │   ├── development-pipeline/SKILL.md
 │   └── phase-*/SKILL.md            # 9-phase pipeline skills (18 total)
@@ -775,7 +754,7 @@ bkit-claude-code/
     └── design.template.md
 ```
 
-> **v1.4.0**: Skills, agents, scripts, lib, and templates are shared between Claude Code and Gemini CLI. Only commands and manifests are platform-specific.
+> **v1.5.0**: All plugin components (skills, agents, scripts, lib, templates) work exclusively with Claude Code.
 
 ---
 
