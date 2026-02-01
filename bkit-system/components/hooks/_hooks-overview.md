@@ -1,23 +1,22 @@
 # Hooks Overview
 
-> Hook events triggered during Claude Code / Gemini CLI operations
+> Hook events triggered during Claude Code operations
 >
+> **v1.5.0**: Claude Code Exclusive - Gemini CLI support removed
 > **v1.4.7**: Task Management Integration - triggerNextPdcaAction, Task Chain Auto-Creation
 > **v1.4.6**: Sub-agent call stability with `bkit:` prefix
 > **v1.4.5**: Archive action support, 8-language trigger system
 > **v1.4.4**: hooks-json-integration - all hooks centralized in hooks.json with unified handlers
-> **v1.4.3**: Gemini CLI v0.25+ compatibility - `xmlSafeOutput()` applied to hook outputs
 > **v1.4.2**: Added UserPromptSubmit (FR-04) and PreCompact (FR-07) hook events
 > **v1.4.1**: Added Context Engineering perspective - 5-Layer Hook System
-> **v1.4.0**: Dual Platform Support (Claude Code + Gemini CLI)
 > **v1.3.1**: All hooks converted from Bash (.sh) to Node.js (.js) for cross-platform compatibility
 
 ## What are Hooks?
 
-Hooks are **scripts that automatically execute on specific Claude Code / Gemini CLI events**.
+Hooks are **scripts that automatically execute on specific Claude Code events**.
 
 **Two Hook Sources:**
-1. **Global Hooks** (`hooks/hooks.json` for Claude, `gemini-extension.json` for Gemini) - Apply to all sessions
+1. **Global Hooks** (`hooks/hooks.json`) - Apply to all sessions
 2. **Skill Frontmatter Hooks** - Defined in SKILL.md/AGENT.md YAML frontmatter
 
 ## Context Engineering Perspective (v1.4.1)
@@ -61,16 +60,16 @@ Hooks are the core of bkit's **context injection system**, organized into 5 laye
 | **PreCompact** | Before context compaction (v1.4.2) | PDCA state snapshot, context preservation |
 | **Stop** | Agent termination | State transition, user choice prompt |
 
-## Platform Hook Mapping (v1.4.2)
+## Hook Events (v1.5.0 - Claude Code Exclusive)
 
-| Hook Event | Claude Code | Gemini CLI | Added |
-|------------|-------------|------------|:-----:|
-| Session initialization | `SessionStart` | `SessionStart` | v1.0 |
-| User input preprocessing | `UserPromptSubmit` | `UserPromptSubmit` | v1.4.2 |
-| Before tool execution | `PreToolUse` | `BeforeTool` | v1.0 |
-| After tool execution | `PostToolUse` | `AfterTool` | v1.0 |
-| Before context compaction | `PreCompact` | `PreCompact` | v1.4.2 |
-| Agent completion | `Stop` | `AgentStop` | v1.0 |
+| Hook Event | Description | Added |
+|------------|-------------|:-----:|
+| `SessionStart` | Session initialization | v1.0 |
+| `UserPromptSubmit` | User input preprocessing | v1.4.2 |
+| `PreToolUse` | Before tool execution | v1.0 |
+| `PostToolUse` | After tool execution | v1.0 |
+| `PreCompact` | Before context compaction | v1.4.2 |
+| `Stop` | Agent completion | v1.0 |
 
 ## Hook Architecture (v1.4.2)
 

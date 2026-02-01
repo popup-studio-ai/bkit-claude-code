@@ -1,17 +1,19 @@
 # Trigger Matrix
 
-> Core matrix showing which components trigger on each event (v1.4.0)
+> Core matrix showing which components trigger on each event (v1.5.0)
 >
-> **v1.4.0**: Dual Platform Support (Claude Code + Gemini CLI)
+> **v1.5.0**: Claude Code Exclusive
 
-## Platform Hook Mapping (v1.4.0)
+## Hook Event Reference (v1.5.0)
 
-| Hook Event | Claude Code | Gemini CLI | Description |
-|------------|-------------|------------|-------------|
-| Session initialization | `SessionStart` | `SessionStart` | Session start |
-| Before tool execution | `PreToolUse` | `BeforeTool` | Before tool execution |
-| After tool execution | `PostToolUse` | `AfterTool` | After tool execution |
-| Agent completion | `Stop` | `AgentStop` | Agent completion |
+| Hook Event | Description |
+|------------|-------------|
+| `SessionStart` | Session initialization |
+| `PreToolUse` | Before tool execution |
+| `PostToolUse` | After tool execution |
+| `Stop` | Agent completion |
+| `UserPromptSubmit` | User prompt submitted |
+| `PreCompact` | Before context compaction |
 
 ---
 

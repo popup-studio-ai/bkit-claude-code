@@ -477,7 +477,7 @@ const triggerTable = getTriggerKeywordTable();
 
 // Claude Code Output: JSON with Tool Call Prompt
 // Build context based on onboarding type
-let additionalContext = `# bkit Vibecoding Kit v1.4.7 - Session Startup\n\n`;
+let additionalContext = `# bkit Vibecoding Kit v1.5.0 - Session Startup\n\n`;
 
   if (onboardingData.hasExistingWork) {
     additionalContext += `## 🔄 Previous Work Detected\n\n`;
@@ -522,7 +522,7 @@ let additionalContext = `# bkit Vibecoding Kit v1.4.7 - Session Startup\n\n`;
   // ============================================================
   additionalContext += `
 
-## 📊 bkit Feature Usage Report (v1.4.7 - Required for all responses)
+## 📊 bkit Feature Usage Report (v1.5.0 - Required for all responses)
 
 **Rule: Include the following format at the end of every response to report bkit feature usage.**
 
@@ -578,7 +578,7 @@ AskUserQuestion, SessionStart Hook, Read, Write, Edit, Bash
 `;
 
 const response = {
-  systemMessage: `bkit Vibecoding Kit v1.4.7 activated (Claude Code)`,
+  systemMessage: `bkit Vibecoding Kit v1.5.0 activated (Claude Code)`,
   hookSpecificOutput: {
     hookEventName: "SessionStart",
     onboardingType: onboardingData.type,
