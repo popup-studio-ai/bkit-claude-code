@@ -47,14 +47,15 @@ Three essential competencies required of humans in AI-Native development:
 
 ### Team Composition
 
-| Role | As-Is (10-person) | To-Be (bkit) | Change |
-|------|-------------------|--------------|--------|
-| **PM** | 1 | 0.5 | PDCA auto-tracking |
-| **Senior Dev** | 2 | 1 | AI guides architecture |
-| **Junior Dev** | 4 | 2 | 3x productivity with AI |
-| **QA** | 2 | 0.5 | Zero Script QA |
-| **Tech Writer** | 1 | 0 | Auto-generated docs |
-| **Total** | **10** | **4** | **60% reduction** |
+| Role | As-Is (10-person) | To-Be (bkit) | bkit Agent | Change |
+|------|-------------------|--------------|------------|--------|
+| **PM** | 1 | 0.5 | product-manager | PDCA auto-tracking |
+| **Senior Dev** | 2 | 1 | cto-lead (CTO) | AI guides architecture |
+| **Junior Dev** | 4 | 2 | bkend-expert, frontend-architect | 3x productivity with AI |
+| **QA** | 2 | 0.5 | qa-strategist, qa-monitor | Zero Script QA |
+| **Security** | 1 | 0 | security-architect | AI-automated review |
+| **Tech Writer** | 1 | 0 | report-generator | Auto-generated docs |
+| **Total** | **11** | **4** | **16 AI agents** | **64% reduction** |
 
 ---
 
@@ -172,12 +173,14 @@ Output Styles implement adaptive communication:
 | `bkit-pdca-guide` | Enforces document-driven development through visual progress |
 | `bkit-enterprise` | CTO-level analysis for architecture decisions |
 
-### Agent Teams in AI-Native Context
+### CTO-Led Agent Teams in AI-Native Context
 
-Agent Teams transform AI from "assistant" to "team member":
-- Multiple AI agents work in parallel on different PDCA phases
-- Reduces development time further beyond single-agent workflows
-- Mirrors real team composition (architect, developer, qa, reviewer)
+Agent Teams transform AI from "assistant" to "professional development team":
+- CTO Lead (opus) orchestrates the entire PDCA workflow automatically
+- 5 specialized roles: PM, Architect, Developer, QA, Security
+- 5 orchestration patterns adapt to PDCA phases (Leader, Council, Swarm, Pipeline, Watchdog)
+- Auto-suggested for major features — users don't need to know commands (Automation First)
+- Mirrors real CTO-led team structure with quality gates and Plan approval
 
 ### Agent Memory in AI-Native Context
 

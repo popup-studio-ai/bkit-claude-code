@@ -22,6 +22,8 @@ agents:
   default: bkit:code-analyzer
   validate: bkit:design-validator
   gap: bkit:gap-detector
+  qa: bkit:qa-strategist
+  team: bkit:cto-lead
 allowed-tools:
   - Read
   - Glob

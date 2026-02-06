@@ -115,15 +115,23 @@
     },
     "taskBased": {
       "code review": "code-analyzer",
-      "security scan": "code-analyzer",
+      "security scan": "security-architect",
+      "security review": "security-architect",
       "design review": "design-validator",
       "spec check": "design-validator",
       "gap analysis": "gap-detector",
       "report": "report-generator",
       "summary": "report-generator",
-      "QA": "qa-monitor",
+      "QA": "qa-strategist",
+      "test strategy": "qa-strategist",
       "log analysis": "qa-monitor",
-      "pipeline": "pipeline-guide"
+      "pipeline": "pipeline-guide",
+      "requirements": "product-manager",
+      "feature spec": "product-manager",
+      "frontend": "frontend-architect",
+      "UI architecture": "frontend-architect",
+      "team": "cto-lead",
+      "project lead": "cto-lead"
     }
   },
   "output": {
@@ -180,11 +188,28 @@
   "team": {
     "enabled": false,
     "displayMode": "in-process",
-    "maxTeammates": 4,
+    "maxTeammates": 5,
     "delegateMode": false,
+    "ctoAgent": "cto-lead",
     "levelOverrides": {
-      "Dynamic": { "maxTeammates": 2 },
-      "Enterprise": { "maxTeammates": 4 }
+      "Dynamic": { "maxTeammates": 3 },
+      "Enterprise": { "maxTeammates": 5 }
+    },
+    "orchestrationPatterns": {
+      "Dynamic": {
+        "plan": "leader",
+        "design": "leader",
+        "do": "swarm",
+        "check": "council",
+        "act": "leader"
+      },
+      "Enterprise": {
+        "plan": "leader",
+        "design": "council",
+        "do": "swarm",
+        "check": "council",
+        "act": "watchdog"
+      }
     }
   },
   "outputStyles": {

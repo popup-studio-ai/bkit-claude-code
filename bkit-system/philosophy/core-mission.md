@@ -117,20 +117,20 @@ After:  /learn-claude-code → Systematic training
 
 ---
 
-## Current Implementation (v1.5.0)
+## Current Implementation (v1.5.1)
 
-> **v1.5.0**: Claude Code Exclusive - Gemini CLI support removed
+> **v1.5.1**: CTO-Led Agent Teams + Claude Code Exclusive
 
 ### Component Counts
 
 | Component | Count | Location |
 |-----------|-------|----------|
 | Skills | 22 | `skills/*/SKILL.md` |
-| Agents | 11 | `agents/*.md` |
+| Agents | 16 | `agents/*.md` |
 | Commands | DEPRECATED | Migrated to Skills |
-| Scripts | 39 | `scripts/*.js` |
+| Scripts | 43 | `scripts/*.js` |
 | Templates | 23 | `templates/*.md` |
-| lib/ | 4 modules (132 functions) | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/` |
+| lib/ | 5 modules (160+ functions) | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/`, `lib/team/` |
 
 ### Key Features
 
@@ -152,7 +152,7 @@ Three features introduced in v1.5.1 that align with the core mission:
 | Feature | Philosophy Alignment | Discovery Mechanism |
 |---------|---------------------|---------------------|
 | **Output Styles** | Automation First | Auto-suggested based on detected level |
-| **Agent Teams** | Automation First | Suggested for major features at Dynamic/Enterprise level |
+| **CTO-Led Agent Teams** | Automation First | Auto-suggested for major features; CTO orchestrates PDCA phases |
 | **Agent Memory** | Automation First | Fully automatic, no user action needed |
 
 ### Output Styles
@@ -162,14 +162,18 @@ Response formatting optimized per project level:
 - Dynamic → `bkit-pdca-guide` (PDCA status badges, checklists)
 - Enterprise → `bkit-enterprise` (tradeoff analysis, cost impact)
 
-### Agent Teams
+### CTO-Led Agent Teams
 
-Parallel PDCA execution for Dynamic (2 teammates) and Enterprise (4 teammates) projects.
-Requires: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+CTO Lead (opus) orchestrates specialized teams for PDCA execution:
+- Dynamic: 3 teammates (developer, frontend, qa) + CTO Lead
+- Enterprise: 5 teammates (architect, developer, qa, reviewer, security) + CTO Lead
+- 5 orchestration patterns: Leader, Council, Swarm, Pipeline, Watchdog
+- Auto-suggested for Major Features (Automation First)
+- Requires: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
 
 ### Agent Memory
 
-Automatic cross-session context persistence for all 11 agents.
+Automatic cross-session context persistence for all 16 agents.
 Scopes: `project` (9 agents), `user` (2 agents: starter-guide, pipeline-guide)
 
 ---

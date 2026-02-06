@@ -108,7 +108,35 @@ try {
   debugLog('UserPrompt', 'Ambiguity detection failed', { error: e.message });
 }
 
-// 5. v1.4.2: Resolve Skill/Agent imports (FR-02)
+// 5. Team Mode Auto-Suggestion (Automation First)
+try {
+  let teamModule = null;
+  try {
+    teamModule = require('../lib/team');
+  } catch (e) {
+    // Team module not available
+  }
+
+  if (teamModule && teamModule.suggestTeamMode) {
+    const teamSuggestion = teamModule.suggestTeamMode(userPrompt, {
+      messageLength: userPrompt.length,
+    });
+    if (teamSuggestion && teamSuggestion.suggest) {
+      contextParts.push(
+        `CTO Team Mode recommended for ${teamSuggestion.level} level. ` +
+        `Use \`/pdca team {feature}\` for parallel PDCA with CTO-Led orchestration.`
+      );
+      debugLog('UserPrompt', 'Team mode suggested', {
+        level: teamSuggestion.level,
+        reason: teamSuggestion.reason,
+      });
+    }
+  }
+} catch (e) {
+  debugLog('UserPrompt', 'Team suggestion failed', { error: e.message });
+}
+
+// 6. v1.4.2: Resolve Skill/Agent imports (FR-02)
 if (importResolver) {
   try {
     // Get triggered skill from step 3

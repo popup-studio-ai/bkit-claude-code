@@ -1,26 +1,36 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-02-06T07:55:40.385Z",
+  "lastUpdated": "2026-02-06T10:20:14.260Z",
   "activeFeatures": [
     "pdca",
     "bkit-claude-code",
     "Re-verify gap analysis after implementation",
-    "core"
+    "core",
+    "team",
+    "scripts",
+    "intent",
+    "Gap Analysis - 15개 검증 항목 100% 달성",
+    "tmp"
   ],
   "primaryFeature": "pdca",
   "features": {
     "pdca": {
-      "phase": "do",
-      "phaseNumber": 3,
-      "matchRate": null,
-      "iterationCount": 0,
+      "phase": "act",
+      "phaseNumber": 5,
+      "matchRate": 0,
+      "iterationCount": 2,
       "requirements": [],
       "documents": {},
       "timestamps": {
         "started": "2026-02-06T06:55:40.318Z",
-        "lastUpdated": "2026-02-06T06:55:48.646Z"
+        "lastUpdated": "2026-02-06T10:20:14.260Z"
       },
-      "lastFile": "/Users/popup-kay/Documents/GitHub/popup/bkit-claude-code/lib/pdca/index.js"
+      "lastFile": "/Users/popup-kay/Documents/GitHub/popup/bkit-claude-code/lib/pdca/index.js",
+      "lastIterationStatus": "unknown",
+      "analysisDoc": "docs/03-analysis/pdca.analysis.md",
+      "fulfillment": null,
+      "previousPhase": "check",
+      "autoAdvanced": true
     },
     "bkit-claude-code": {
       "phase": "do",
@@ -31,9 +41,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-06T06:55:52.070Z",
-        "lastUpdated": "2026-02-06T07:37:56.280Z"
+        "lastUpdated": "2026-02-06T10:04:49.198Z"
       },
-      "lastFile": "/Users/popup-kay/Documents/GitHub/popup/bkit-claude-code/hooks/session-start.js"
+      "lastFile": "/Users/popup-kay/Documents/GitHub/popup/bkit-claude-code/lib/common.js"
     },
     "Re-verify gap analysis after implementation": {
       "phase": "act",
@@ -61,17 +71,92 @@
         "lastUpdated": "2026-02-06T07:55:40.385Z"
       },
       "lastFile": "/Users/popup-kay/Documents/GitHub/popup/bkit-claude-code/lib/core/platform.js"
+    },
+    "team": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-06T08:41:33.449Z",
+        "lastUpdated": "2026-02-06T09:27:13.164Z"
+      },
+      "lastFile": "/Users/popup-kay/Documents/GitHub/popup/bkit-claude-code/lib/team/index.js"
+    },
+    "scripts": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-06T08:47:35.668Z",
+        "lastUpdated": "2026-02-06T10:04:07.701Z"
+      },
+      "lastFile": "/Users/popup-kay/Documents/GitHub/popup/bkit-claude-code/scripts/gap-detector-stop.js"
+    },
+    "intent": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-06T09:27:02.847Z",
+        "lastUpdated": "2026-02-06T09:27:02.847Z"
+      },
+      "lastFile": "/Users/popup-kay/Documents/GitHub/popup/bkit-claude-code/lib/intent/language.js"
+    },
+    "Gap Analysis - 15개 검증 항목 100% 달성": {
+      "phase": "act",
+      "phaseNumber": 5,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-06T09:30:22.741Z",
+        "lastUpdated": "2026-02-06T09:30:22.742Z"
+      },
+      "previousPhase": "check",
+      "autoAdvanced": true
+    },
+    "tmp": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-06T09:56:17.547Z",
+        "lastUpdated": "2026-02-06T10:20:13.687Z"
+      },
+      "lastFile": "/tmp/test-bkit-write.js"
     }
   },
   "pipeline": {
-    "currentPhase": 1,
+    "currentPhase": 3,
     "level": "Dynamic",
-    "phaseHistory": []
+    "phaseHistory": [
+      {
+        "phase": 1,
+        "completedAt": "2026-02-06T10:07:16.652Z"
+      },
+      {
+        "phase": 2,
+        "completedAt": "2026-02-06T10:20:14.033Z"
+      }
+    ]
   },
   "session": {
     "startedAt": "2026-02-01T07:00:00.000Z",
     "onboardingCompleted": true,
-    "lastActivity": "2026-02-06T07:55:40.385Z"
+    "lastActivity": "2026-02-06T10:20:14.260Z"
   },
   "history": [
     {
@@ -132,6 +217,252 @@
       "timestamp": "2026-02-06T07:55:40.385Z",
       "feature": "core",
       "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T08:41:33.449Z",
+      "feature": "team",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T08:41:48.229Z",
+      "feature": "team",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T08:42:21.367Z",
+      "feature": "team",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T08:42:50.428Z",
+      "feature": "team",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T08:43:03.736Z",
+      "feature": "team",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T08:43:20.997Z",
+      "feature": "team",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T08:43:32.910Z",
+      "feature": "team",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T08:43:41.902Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T08:47:35.668Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T08:47:48.225Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T08:47:56.887Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T08:48:03.683Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T08:49:55.111Z",
+      "feature": "team",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T08:50:02.479Z",
+      "feature": "team",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T09:27:02.847Z",
+      "feature": "intent",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T09:27:11.198Z",
+      "feature": "team",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T09:27:13.164Z",
+      "feature": "team",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T09:27:15.203Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T09:27:18.896Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T09:27:31.989Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T09:27:42.639Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T09:30:22.742Z",
+      "feature": "Gap Analysis - 15개 검증 항목 100% 달성",
+      "phase": "act",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T09:56:17.547Z",
+      "feature": "tmp",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T10:03:58.615Z",
+      "feature": "pdca",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T10:04:03.520Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T10:04:07.701Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T10:04:33.561Z",
+      "feature": "pdca",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T10:04:40.559Z",
+      "feature": "pdca",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T10:04:44.777Z",
+      "feature": "pdca",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T10:04:49.198Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T10:07:11.739Z",
+      "feature": "tmp",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T10:07:16.308Z",
+      "feature": "tmp",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T10:07:16.846Z",
+      "feature": "pdca",
+      "phase": "act",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T10:07:16.871Z",
+      "feature": "pdca",
+      "phase": "check",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T10:07:16.871Z",
+      "feature": "pdca",
+      "phase": "act",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T10:10:29.251Z",
+      "feature": "tmp",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T10:19:10.890Z",
+      "feature": "tmp",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T10:20:13.687Z",
+      "feature": "tmp",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T10:20:14.234Z",
+      "feature": "pdca",
+      "phase": "act",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T10:20:14.259Z",
+      "feature": "pdca",
+      "phase": "check",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-06T10:20:14.260Z",
+      "feature": "pdca",
+      "phase": "act",
       "action": "updated"
     }
   ]

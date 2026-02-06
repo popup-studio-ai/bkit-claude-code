@@ -35,8 +35,8 @@ bkit implements Context Engineering through three interconnected layers:
 | Layer | Components | Purpose |
 |-------|------------|---------|
 | **Domain Knowledge** | 21 Skills | Structured expert knowledge (phases, levels, specialized domains) |
-| **Behavioral Rules** | 11 Agents | Role-based constraints with model selection (opus/sonnet/haiku) |
-| **State Management** | 144+ Functions | PDCA status, intent detection, ambiguity scoring, multi-feature context, team coordination |
+| **Behavioral Rules** | 16 Agents | Role-based constraints with model selection (opus/sonnet/haiku) |
+| **State Management** | 165 Functions | PDCA status, intent detection, ambiguity scoring, multi-feature context, team coordination |
 
 ### 5-Layer Hook System
 
@@ -58,9 +58,9 @@ Layer 5: Scripts (39 modules)    → Actual Node.js execution logic with unified
 
 ![bkit Features](images/bkit-features.png)
 
-- **Agent Teams (v1.5.1)** - Parallel PDCA execution with multiple AI agents (Dynamic: 2, Enterprise: 4 teammates)
+- **CTO-Led Agent Teams (v1.5.1)** - CTO agent orchestrates parallel PDCA execution with multi-agent teams (Dynamic: 3, Enterprise: 5 teammates)
 - **Output Styles (v1.5.1)** - Level-based response formatting (bkit-learning, bkit-pdca-guide, bkit-enterprise)
-- **Agent Memory (v1.5.1)** - Cross-session context persistence for all 11 agents (auto-active)
+- **Agent Memory (v1.5.1)** - Cross-session context persistence for all 16 agents (auto-active)
 - **Natural Feature Discovery (v1.5.1)** - Auto-trigger integration aligned with "Automation First" philosophy
 - **Task Management + PDCA Integration (v1.4.7)** - Task Chain Auto-Creation, Task ID Persistence, Check↔Act Iteration
 - **Core Modularization (v1.4.7)** - lib/common.js split into 5 modules (lib/core/, lib/pdca/, lib/intent/, lib/task/, lib/team/)
@@ -72,9 +72,9 @@ Layer 5: Scripts (39 modules)    → Actual Node.js execution logic with unified
 - **3 Project Levels** - Starter (static), Dynamic (fullstack), Enterprise (microservices)
 - **Multilingual Support** - 8 languages (EN, KO, JA, ZH, ES, FR, DE, IT)
 - **21 Skills** - Domain-specific knowledge for various development scenarios
-- **11 Agents** - Specialized AI assistants for different tasks
+- **16 Agents** - Specialized AI assistants including CTO-Led Team agents
 - **39 Scripts** - Hook execution with unified handlers (hooks-json-integration)
-- **144+ Utility Functions** - 5 modular libraries with state management, intent detection, task tracking, team coordination
+- **165 Utility Functions** - 5 modular libraries with state management, intent detection, task tracking, team coordination
 - **Check-Act Iteration Loop** - Automatic gap analysis and fix cycles with max 5 iterations (90% threshold)
 
 ---
@@ -247,6 +247,42 @@ git commit -m "feat: customize bkit starter skill"
 /pdca next               # Guide to next PDCA step
 ```
 
+### CTO-Led Agent Teams (v1.5.1)
+
+CTO-Led Agent Teams enable parallel PDCA execution with multiple AI agents orchestrated by a CTO lead agent.
+
+```bash
+# Start CTO Team for a feature
+/pdca team {feature}
+
+# Monitor team progress
+/pdca team status
+
+# Cleanup team resources
+/pdca team cleanup
+```
+
+**How it works:**
+1. CTO lead agent (opus) analyzes the feature and selects the optimal team composition
+2. Teammates are spawned in parallel (Dynamic: 3, Enterprise: 5 agents)
+3. Each teammate handles a specific area (QA, frontend, backend, security, etc.)
+4. CTO orchestrates task assignment, progress monitoring, and result aggregation
+5. Team is cleaned up after work is complete
+
+**Requirements:**
+- Set environment variable: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+- Claude Code v2.1.32+
+
+**Available Team Agents (5 new):**
+
+| Agent | Model | Role |
+|-------|-------|------|
+| cto-lead | opus | Team orchestration, PDCA workflow management |
+| frontend-architect | sonnet | UI/UX design, component architecture |
+| product-manager | sonnet | Requirements analysis, feature prioritization |
+| qa-strategist | sonnet | Test strategy, quality metrics coordination |
+| security-architect | opus | Vulnerability analysis, auth design review |
+
 ---
 
 ## Project Levels
@@ -298,7 +334,7 @@ bkit is **primarily designed for software development**. However, some component
 
 - [Development Pipeline](skills/development-pipeline/SKILL.md) - 9-stage pipeline skill
 - [Skills Reference](skills/) - 22 domain skills (Commands deprecated in v1.4.4)
-- [Agents Reference](agents/) - 11 specialized agents
+- [Agents Reference](agents/) - 16 specialized agents (including 5 CTO Team agents)
 
 ### PDCA Documents
 

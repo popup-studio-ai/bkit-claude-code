@@ -49,15 +49,23 @@ function main() {
     primaryFeature: pdcaStatus?.primaryFeature
   });
 
-  // 안내 메시지 생성
+  // Use handleTeammateIdle for task-queue integration
+  const idleResult = teamModule.handleTeammateIdle(teammateId, pdcaStatus);
+
   const response = {
     systemMessage: `Teammate ${teammateId} is idle`,
     hookSpecificOutput: {
       hookEventName: "TeammateIdle",
       teammateId: teammateId,
-      additionalContext: `\n## Teammate Idle\n` +
-        `Teammate ${teammateId} has completed its current task.\n` +
-        `Check TaskList for pending tasks or assign new work.\n`
+      nextTask: idleResult?.nextTask || null,
+      additionalContext: idleResult?.nextTask
+        ? `\n## Teammate Work Assignment\n` +
+          `Assigned: ${idleResult.nextTask.subject}\n` +
+          `Feature: ${idleResult.feature}\n` +
+          `Phase: ${idleResult.currentPhase}\n`
+        : `\n## Teammate Idle\n` +
+          `No pending tasks for ${teammateId}.\n` +
+          `Waiting for phase transition.\n`
     }
   };
 

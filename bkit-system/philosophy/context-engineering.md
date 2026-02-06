@@ -165,8 +165,8 @@ Agents define **role-based behavioral rules**.
 
 | Model | Agents | Characteristics |
 |-------|--------|-----------------|
-| **opus** | code-analyzer, design-validator, gap-detector, enterprise-expert, infra-architect | Complex analysis, strategic judgment |
-| **sonnet** | bkend-expert, pdca-iterator, pipeline-guide, starter-guide | Execution, guidance, iteration |
+| **opus** | cto-lead, code-analyzer, design-validator, gap-detector, enterprise-expert, infra-architect, security-architect | Strategic leadership, complex analysis |
+| **sonnet** | bkend-expert, pdca-iterator, pipeline-guide, starter-guide, product-manager, frontend-architect, qa-strategist | Execution, guidance, iteration |
 | **haiku** | qa-monitor, report-generator | Fast monitoring, document generation |
 
 ### 3. State Management Layer (lib/common.js)
@@ -332,17 +332,17 @@ Reports bkit feature usage status at the end of every response.
 
 ---
 
-## Component Architecture (v1.5.0)
+## Component Architecture (v1.5.1)
 
-> **Note**: As of v1.5.0, bkit is Claude Code exclusive.
+> **Note**: As of v1.5.0, bkit is Claude Code exclusive. v1.5.1 adds CTO-Led Agent Teams.
 
 | Component | Location | Count |
 |-----------|----------|:-----:|
 | Skills | `skills/*/SKILL.md` | 22 |
-| Agents | `agents/*.md` | 11 |
-| Scripts | `scripts/*.js` | 39 |
+| Agents | `agents/*.md` | 16 |
+| Scripts | `scripts/*.js` | 43 |
 | Templates | `templates/*.md` | 23 |
-| lib/ modules | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/` | 132 functions |
+| lib/ modules | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/`, `lib/team/` | 160+ functions |
 | Context File | `CLAUDE.md` | 1 |
 | Manifest | `.claude-plugin/plugin.json` | 1 |
 
@@ -711,12 +711,14 @@ Output Styles add a response formatting context layer:
 
 **Auto-Selection**: Level detection → Output style suggestion (Starter→learning, Dynamic→pdca-guide, Enterprise→enterprise)
 
-### Agent Teams as Parallel Context
+### CTO-Led Agent Teams as Parallel Context
 
-Agent Teams enable parallel context management:
-- Each teammate operates with its own context scope
+CTO-Led Agent Teams enable orchestrated parallel context management:
+- CTO Lead (opus) coordinates all context flow across teammates
+- Each teammate operates with its own context scope per PDCA phase
 - Phase-specific agents focus on their domain context
-- Coordinator manages cross-teammate context synchronization
+- Orchestrator selects pattern (Leader/Council/Swarm/Watchdog) per phase
+- Communication module manages structured team messages (7 types)
 
 ### Agent Memory as Persistent Context
 

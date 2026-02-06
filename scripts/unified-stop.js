@@ -50,7 +50,8 @@ const AGENT_HANDLERS = {
   'pdca-iterator': './iterator-stop.js',
   'code-analyzer': './analysis-stop.js',
   'qa-monitor': './qa-stop.js',
-  'team-coordinator': './team-stop.js'  // v1.5.1: Team cleanup on stop
+  'team-coordinator': './team-stop.js',  // v1.5.1: Team cleanup on stop
+  'cto-lead': './cto-stop.js',           // v1.5.1: CTO session cleanup
   // design-validator: PreToolUse only, no Stop handler
 };
 

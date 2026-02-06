@@ -336,7 +336,7 @@ debugLog('Agent:gap-detector:Stop', 'Hook completed', {
   feature: feature || 'unknown',
   nextStep,
   iterCount,
-  phaseAdvance: phaseAdvance.nextPhase
+  phaseAdvance: phaseAdvance?.nextPhase
 });
 
 // Claude Code: JSON output with AskUserQuestion prompt

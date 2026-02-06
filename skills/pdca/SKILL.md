@@ -22,6 +22,7 @@ agents:
   analyze: bkit:gap-detector
   iterate: bkit:pdca-iterator
   report: bkit:report-generator
+  team: bkit:cto-lead
   default: null
 allowed-tools:
   - Read
@@ -149,10 +150,14 @@ Start PDCA Team Mode using Claude Code Agent Teams (requires `CLAUDE_CODE_EXPERI
 2. If not available, display: "Agent Teams is not enabled. Set `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` to enable."
 3. Detect project level via `detectLevel()` - Starter projects cannot use Team Mode
 4. Generate team strategy via `generateTeamStrategy(level)`:
-   - Dynamic: 2 teammates (developer, qa)
-   - Enterprise: 4 teammates (architect, developer, qa, reviewer)
-5. Show strategy and confirm with AskUserQuestion before starting
-6. Assign PDCA tasks to teammates via `assignNextTeammateWork()`
+   - Dynamic: 3 teammates (developer, frontend, qa) — CTO Lead orchestrates
+   - Enterprise: 5 teammates (architect, developer, qa, reviewer, security) — CTO Lead orchestrates
+5. CTO Lead (cto-lead agent, opus) automatically:
+   - Sets technical direction and selects orchestration pattern
+   - Distributes tasks to teammates based on PDCA phase
+   - Enforces quality gates (90% Match Rate threshold)
+6. Show strategy and confirm with AskUserQuestion before starting
+7. Assign PDCA tasks to teammates via `assignNextTeammateWork()`
 
 #### team status - Show Team Status
 
@@ -185,11 +190,11 @@ Feature: user-auth
 **Required Environment**: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
 
 **Level Requirements**:
-| Level | Available | Teammates |
-|-------|:---------:|:---------:|
-| Starter | No | - |
-| Dynamic | Yes | 2 |
-| Enterprise | Yes | 4 |
+| Level | Available | Teammates | CTO Lead |
+|-------|:---------:|:---------:|:--------:|
+| Starter | No | - | - |
+| Dynamic | Yes | 3 | cto-lead (opus) |
+| Enterprise | Yes | 5 | cto-lead (opus) |
 
 ### archive (Archive Phase)
 
@@ -441,6 +446,12 @@ Suggest Agent Teams when:
 - Feature is classified as Major Feature (>= 1000 chars)
 - Match Rate < 70% (parallel iteration can speed up fixes)
 - Project level is Dynamic or Enterprise
+
+CTO-Led Team Orchestration Patterns:
+| Level | Plan | Design | Do | Check | Act |
+|-------|------|--------|-----|-------|-----|
+| Dynamic | leader | leader | swarm | council | leader |
+| Enterprise | leader | council | swarm | council | watchdog |
 
 ## Auto Triggers
 

@@ -105,7 +105,9 @@ Output Styles (v1.5.1)
 | `/phase-8-review` | Code review and gap analysis |
 | `/phase-9-deployment` | Production deployment (CI/CD, K8s) |
 
-### Agents (11, auto-triggered by keywords)
+### Agents (16, auto-triggered by keywords)
+
+#### Core Agents (11)
 
 | Agent | Trigger Keywords | Model |
 |-------|-----------------|-------|
@@ -120,6 +122,33 @@ Output Styles (v1.5.1)
 | qa-monitor | QA, docker logs, testing | haiku |
 | pipeline-guide | where to start, what first | sonnet |
 | infra-architect | AWS, terraform, infrastructure | opus |
+
+#### CTO-Led Team Agents (5, v1.5.1)
+
+| Agent | Trigger Keywords | Model | Role |
+|-------|-----------------|-------|------|
+| cto-lead | team, project lead, CTO | opus | Team orchestration, PDCA workflow management |
+| frontend-architect | frontend, UI architecture, component | sonnet | UI/UX design, component structure, Design System |
+| product-manager | requirements, feature spec, priority | sonnet | Requirements analysis, feature prioritization |
+| qa-strategist | test strategy, QA plan, quality metrics | sonnet | Test strategy, quality metrics coordination |
+| security-architect | security, vulnerability, OWASP | opus | Vulnerability analysis, authentication design review |
+
+**How to Use CTO-Led Agent Teams:**
+```bash
+# 1. Set environment variable
+export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
+
+# 2. Start CTO Team for a feature
+/pdca team {feature}
+
+# 3. CTO lead orchestrates: team composition → task assignment → execution → quality gates
+
+# 4. Monitor progress
+/pdca team status
+
+# 5. Cleanup when done
+/pdca team cleanup
+```
 
 ### Output Styles (3, select via /output-style)
 

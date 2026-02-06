@@ -515,18 +515,22 @@ let additionalContext = `# bkit Vibecoding Kit v1.5.1 - Session Startup\n\n`;
     const { isTeamModeAvailable, getTeamConfig } = require('../lib/team');
     if (isTeamModeAvailable()) {
       const teamConfig = getTeamConfig();
-      additionalContext += `## Agent Teams (Active)\n`;
-      additionalContext += `- Team Mode available: \`/pdca team {feature}\`\n`;
+      additionalContext += `## CTO-Led Agent Teams (Active)\n`;
+      additionalContext += `- CTO Lead: cto-lead (opus) orchestrates PDCA workflow\n`;
+      additionalContext += `- Start: \`/pdca team {feature}\`\n`;
       additionalContext += `- Display mode: ${teamConfig.displayMode}\n`;
       if (detectedLevel === 'Enterprise') {
-        additionalContext += `- Enterprise: 4 teammates (architect, developer, qa, reviewer)\n`;
+        additionalContext += `- Enterprise: 5 teammates (architect, developer, qa, reviewer, security)\n`;
+        additionalContext += `- Patterns: leader → council → swarm → council → watchdog\n`;
       } else if (detectedLevel === 'Dynamic') {
-        additionalContext += `- Dynamic: 2 teammates (developer, qa)\n`;
+        additionalContext += `- Dynamic: 3 teammates (developer, frontend, qa)\n`;
+        additionalContext += `- Patterns: leader → leader → swarm → council → leader\n`;
       }
       additionalContext += `\n`;
     } else if (detectedLevel !== 'Starter') {
-      additionalContext += `## Agent Teams (Not Enabled)\n`;
-      additionalContext += `- Your ${detectedLevel} project supports Agent Teams for parallel PDCA execution\n`;
+      additionalContext += `## CTO-Led Agent Teams (Not Enabled)\n`;
+      additionalContext += `- Your ${detectedLevel} project supports CTO-Led Agent Teams\n`;
+      additionalContext += `- CTO Lead (opus) orchestrates specialized teammates for parallel PDCA\n`;
       additionalContext += `- To enable: set \`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1\` environment variable\n`;
       additionalContext += `- Then use: \`/pdca team {feature}\`\n\n`;
     }

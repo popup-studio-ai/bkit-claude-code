@@ -24,6 +24,8 @@ agents:
   default: bkit:enterprise-expert
   infra: bkit:infra-architect
   architecture: bkit:enterprise-expert
+  security: bkit:security-architect
+  team: bkit:cto-lead
 allowed-tools:
   - Read
   - Write

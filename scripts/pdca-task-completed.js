@@ -98,6 +98,33 @@ function main() {
         }
       };
 
+      // Team Mode: generate team assignment for next phase
+      let teamModule = null;
+      try {
+        teamModule = require('../lib/team');
+      } catch (e) {
+        // Graceful degradation
+      }
+
+      if (teamModule && teamModule.isTeamModeAvailable()) {
+        const level = pdcaStatus?.features?.[featureName]?.level || 'Dynamic';
+        const assignment = teamModule.assignNextTeammateWork(detectedPhase, featureName, level);
+        if (assignment) {
+          debugLog('TaskCompleted', 'Team assignment generated', {
+            nextPhase: assignment.nextPhase,
+            teammateCount: assignment.team?.teammates?.length || 0,
+            needsRecompose: assignment.needsRecompose,
+          });
+
+          response.hookSpecificOutput.teamAssignment = {
+            nextPhase: assignment.nextPhase,
+            pattern: assignment.team?.pattern,
+            teammates: assignment.team?.teammates?.map(t => t.name) || [],
+            notice: assignment.notice,
+          };
+        }
+      }
+
       console.log(JSON.stringify(response));
       process.exit(0);
     }
