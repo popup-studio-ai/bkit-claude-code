@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 /**
- * bkit Vibecoding Kit - SessionStart Hook (v1.5.1)
+ * bkit Vibecoding Kit - SessionStart Hook (v1.5.2)
  * Claude Code 전용 플러그인
  *
- * v1.5.1 Changes:
+ * v1.5.2 Changes:
  * - Agent Teams detection and Team Mode integration
  * - Claude Code v2.1.33 compatibility enhancements
  *
@@ -482,7 +482,7 @@ const triggerTable = getTriggerKeywordTable();
 
 // Claude Code Output: JSON with Tool Call Prompt
 // Build context based on onboarding type
-let additionalContext = `# bkit Vibecoding Kit v1.5.1 - Session Startup\n\n`;
+let additionalContext = `# bkit Vibecoding Kit v1.5.2 - Session Startup\n\n`;
 
   if (onboardingData.hasExistingWork) {
     additionalContext += `## 🔄 Previous Work Detected\n\n`;
@@ -508,7 +508,7 @@ let additionalContext = `# bkit Vibecoding Kit v1.5.1 - Session Startup\n\n`;
     additionalContext += `- **Start freely** → General conversation mode\n\n`;
   }
 
-  // v1.5.1: Feature Awareness - Agent Teams, Output Styles, Agent Memory
+  // v1.5.2: Feature Awareness - Agent Teams, Output Styles, Agent Memory
   const detectedLevel = detectLevel();
 
   // Agent Teams detection and suggestion
@@ -546,7 +546,7 @@ let additionalContext = `# bkit Vibecoding Kit v1.5.1 - Session Startup\n\n`;
     'Enterprise': 'bkit-enterprise'
   };
   const suggestedStyle = levelStyleMap[detectedLevel] || 'bkit-pdca-guide';
-  additionalContext += `## Output Styles (v1.5.1)\n`;
+  additionalContext += `## Output Styles (v1.5.2)\n`;
   additionalContext += `- Recommended for ${detectedLevel} level: \`${suggestedStyle}\`\n`;
   additionalContext += `- Change anytime with \`/output-style\`\n`;
   additionalContext += `- Available: bkit-learning (beginners), bkit-pdca-guide (PDCA workflow), bkit-enterprise (architecture)\n\n`;
@@ -602,7 +602,7 @@ let additionalContext = `# bkit Vibecoding Kit v1.5.1 - Session Startup\n\n`;
   // ============================================================
   additionalContext += `
 
-## 📊 bkit Feature Usage Report (v1.5.1 - Required for all responses)
+## 📊 bkit Feature Usage Report (v1.5.2 - Required for all responses)
 
 **Rule: Include the following format at the end of every response to report bkit feature usage.**
 
@@ -658,7 +658,7 @@ AskUserQuestion, SessionStart Hook, Read, Write, Edit, Bash
 `;
 
 const response = {
-  systemMessage: `bkit Vibecoding Kit v1.5.1 activated (Claude Code)`,
+  systemMessage: `bkit Vibecoding Kit v1.5.2 activated (Claude Code)`,
   hookSpecificOutput: {
     hookEventName: "SessionStart",
     onboardingType: onboardingData.type,

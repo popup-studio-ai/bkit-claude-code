@@ -14,7 +14,7 @@ flowchart TB
         subgraph ROW1[" "]
             direction LR
             SPEC["**1. SPEC**<br/>Plan Doc<br/>Design Doc"]
-            CONTEXT["**2. CONTEXT**<br/>CLAUDE.md<br/>21 Skills"]
+            CONTEXT["**2. CONTEXT**<br/>CLAUDE.md<br/>26 Skills"]
             AGENT["**3. AI AGENT**<br/>16 Agents<br/>Autonomous Implementation"]
         end
 
@@ -138,7 +138,7 @@ Context Engineering is the **systematic design of information flow to LLMs**—g
 
 **bkit Implementation**:
 ```
-Domain Knowledge (21 Skills) ─┐
+Domain Knowledge (26 Skills) ─┐
 Behavioral Rules (16 Agents) ─┼─→ Unified Hook System ─→ Dynamic Context Injection
 State Management (165 funcs) ─┘
 ```
@@ -176,7 +176,7 @@ bkit implements **Context Engineering**—the systematic curation of context tok
 | **3 Project Levels** | Starter, Dynamic, Enterprise contexts |
 | **Convention Skill (Phase 2)** | Defines naming, structure, patterns |
 | **CLAUDE.md Files** | Project-specific AI instructions |
-| **Skill System (21 skills)** | Domain-specific knowledge |
+| **Skill System (26 skills)** | Domain-specific knowledge |
 | **Unified Hook System (v1.4.5)** | Centralized context injection via hooks.json |
 | **lib/*.js (86+ functions)** | State management, intent detection, ambiguity handling |
 
@@ -185,7 +185,7 @@ bkit implements **Context Engineering**—the systematic curation of context tok
 ┌─────────────────────────────────────────────────────────────────┐
 │              bkit Context Engineering Layers                     │
 ├─────────────────────────────────────────────────────────────────┤
-│  Layer 1: Domain Knowledge   │ 21 Skills (structured instructions)│
+│  Layer 1: Domain Knowledge   │ 26 Skills (structured instructions)│
 │  Layer 2: Behavioral Rules   │ 16 Agents (role + constraints)    │
 │  Layer 3: State Management   │ PDCA v2.0, Multi-Feature Context  │
 │  Layer 4: Dynamic Injection  │ Intent detection, ambiguity score │
@@ -227,7 +227,7 @@ code-explorer → code-architect → implementation → code-reviewer → qa-mon
 Plan → [Human Review] → Design → [Human Review] → Do → Check → [Human Review] → Act
 ```
 
-### Principle 5: CTO-Led Agent Teams (v1.5.1)
+### Principle 5: CTO-Led Agent Teams (v1.5.2)
 
 **Principle**: A CTO agent orchestrates multiple specialized AI agents working in parallel, mimicking real development team dynamics.
 

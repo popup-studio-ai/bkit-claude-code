@@ -5,6 +5,47 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.2] - 2026-02-06
+
+### Added
+- **bkend.ai BaaS Expert Enhancement**
+  - 5 new bkend specialist Skills (21 → 26 total):
+    - `bkend-quickstart`: Platform onboarding, MCP setup, resource hierarchy
+    - `bkend-data`: Database expert (table creation, CRUD, 7 column types, filtering)
+    - `bkend-auth`: Authentication expert (email/social login, JWT, RBAC, RLS)
+    - `bkend-storage`: File storage expert (Presigned URL, 4 visibility levels)
+    - `bkend-cookbook`: Practical tutorials (10 project guides, troubleshooting)
+  - Shared template: `templates/shared/bkend-patterns.md`
+  - Agent-Skill binding: `bkend-expert` preloads 3 core skills (data, auth, storage)
+  - MCP auto-detection in session start and prompt handler
+
+### Changed
+- **agents/bkend-expert.md**: Complete rewrite (~215 lines)
+  - MCP Tools reference (19 tools: 8 guide + 11 API)
+  - REST Service API endpoints (Database 5, Auth 18, Storage 12)
+  - OAuth 2.1 + PKCE authentication pattern
+  - Troubleshooting table (12+ scenarios)
+- **skills/dynamic/SKILL.md**: MCP integration modernization
+  - MCP setup: `npx @bkend/mcp-server` → `claude mcp add bkend --transport http`
+  - Authentication: API Key → OAuth 2.1 + PKCE
+- **skills/phase-4-api/SKILL.md**: BaaS implementation guide added
+- **lib/intent/language.js**: bkend-expert 8-language trigger patterns
+- **hooks/session-start.js**: bkend MCP status detection
+- **templates/plan.template.md**: BaaS architectural options added
+- **templates/design.template.md**: BaaS architecture patterns added
+
+### Fixed
+- **BUG-01 (Critical)**: `scripts/user-prompt-handler.js` Line 72
+  - Agent trigger confidence: `> 0.8` → `>= 0.8`
+  - Impact: All 16 agents' implicit triggers were broken in UserPromptSubmit hook
+
+### Compatibility
+- Claude Code: Minimum v2.1.15, Recommended v2.1.33
+- Node.js: Minimum v18.0.0
+- bkend.ai: MCP endpoint via OAuth 2.1 + PKCE
+
+---
+
 ## [1.5.1] - 2026-02-06
 
 ### Added

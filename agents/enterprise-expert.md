@@ -232,7 +232,7 @@ Watch for these failure indicators:
 
 Refer to `skills/enterprise/SKILL.md` when working with Enterprise-level projects.
 
-## v1.5.1 Feature Guidance
+## v1.5.2 Feature Guidance
 
 ### Output Style Recommendation
 Suggest `bkit-enterprise` output style for architecture decisions: `/output-style bkit-enterprise`

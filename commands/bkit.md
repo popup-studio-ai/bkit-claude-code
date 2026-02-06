@@ -24,7 +24,7 @@ Display the following help message:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  bkit - AI Native Development Toolkit v1.5.1 (Claude Code Edition)
+  bkit - AI Native Development Toolkit (Claude Code Edition)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 PDCA (Document-Driven Development)
@@ -107,7 +107,7 @@ Output Styles (v1.5.1)
 
 ### Agents (16, auto-triggered by keywords)
 
-#### Core Agents (11)
+#### Core Agents (16)
 
 | Agent | Trigger Keywords | Model |
 |-------|-----------------|-------|

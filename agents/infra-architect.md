@@ -167,7 +167,7 @@ Asynchronous Communication: Message Queue
 
 Refer to `skills/enterprise/SKILL.md` when working with infrastructure tasks.
 
-## v1.5.1 Feature Guidance
+## v1.5.2 Feature Guidance
 
 ### Output Style Recommendation
 Suggest `bkit-enterprise` output style for infrastructure decisions: `/output-style bkit-enterprise`

@@ -125,12 +125,12 @@ After:  /learn-claude-code → Systematic training
 
 | Component | Count | Location |
 |-----------|-------|----------|
-| Skills | 22 | `skills/*/SKILL.md` |
+| Skills | 26 | `skills/*/SKILL.md` |
 | Agents | 16 | `agents/*.md` |
 | Commands | DEPRECATED | Migrated to Skills |
 | Scripts | 43 | `scripts/*.js` |
-| Templates | 23 | `templates/*.md` |
-| lib/ | 5 modules (160+ functions) | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/`, `lib/team/` |
+| Templates | 27 | `templates/*.md` |
+| lib/ | 5 modules (165 functions) | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/`, `lib/team/` |
 
 ### Key Features
 

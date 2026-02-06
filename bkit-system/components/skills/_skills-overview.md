@@ -1,6 +1,6 @@
 # Skills Overview
 
-> 21 Skills defined in bkit (v1.4.5)
+> 26 Skills defined in bkit (v1.5.2)
 >
 > **v1.4.1**: Added Context Engineering perspective - Domain Knowledge Layer
 > **v1.5.0**: Claude Code Exclusive
@@ -54,7 +54,7 @@ Skills form bkit's **Domain Knowledge Layer**, designed according to [[../../phi
 | **Code Examples** | Ready-to-apply references | Consistent implementation |
 | **Few-shot Examples** | Conversation/output patterns | Predictable responses |
 
-## Skill List (22)
+## Skill List (26)
 
 ### New Skills (v1.4.4)
 | Skill | Purpose | Hooks |
@@ -100,6 +100,16 @@ Skills form bkit's **Domain Knowledge Layer**, designed according to [[../../phi
 | [[../../../skills/zero-script-qa/SKILL|zero-script-qa]] | Log-based QA | PreToolUse, Stop | [[../../../agents/qa-monitor|qa-monitor]] |
 | [[../../../skills/mobile-app/SKILL|mobile-app]] | Mobile app dev | - | [[../../../agents/pipeline-guide|pipeline-guide]] |
 | [[../../../skills/desktop-app/SKILL|desktop-app]] | Desktop app dev | - | [[../../../agents/pipeline-guide|pipeline-guide]] |
+
+### bkend Specialist Skills (v1.5.2)
+
+| Skill | Level | Description |
+|-------|-------|-------------|
+| bkend-quickstart | Dynamic | Platform onboarding, MCP setup, resource hierarchy |
+| bkend-data | Dynamic | Database expert (CRUD, column types, filtering) |
+| bkend-auth | Dynamic | Authentication (email/social, JWT, RBAC, RLS) |
+| bkend-storage | Dynamic | File storage (Presigned URL, visibility levels) |
+| bkend-cookbook | Dynamic | Practical tutorials and troubleshooting |
 
 ## Removed Skills (v1.2.0)
 

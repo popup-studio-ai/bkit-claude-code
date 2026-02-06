@@ -30,8 +30,8 @@ bkit is a practical implementation of **Context Engineering**:
 ┌─────────────────────────────────────────────────────────────────┐
 │              bkit Context Engineering Components                 │
 ├─────────────────────────────────────────────────────────────────┤
-│  Domain Knowledge (21 Skills)  → Structured domain knowledge     │
-│  Behavioral Rules (11 Agents)  → Role-based behavioral rules     │
+│  Domain Knowledge (26 Skills)  → Structured domain knowledge     │
+│  Behavioral Rules (16 Agents)  → Role-based behavioral rules     │
 │  State Management (lib/common) → State management 76+ functions  │
 │  5-Layer Hook System           → Context injection timing ctrl   │
 │  Dynamic Injection             → Conditional context selection   │
@@ -46,7 +46,7 @@ Core design principles and methodology:
 - [[philosophy/ai-native-principles|ai-native-principles]] - AI-Native development & 3 core competencies
 - [[philosophy/pdca-methodology|pdca-methodology]] - PDCA cycle & 9-stage pipeline relationship
 
-## Skills (21)
+## Skills (26)
 
 ### Core Skills (2)
 - [[../skills/bkit-rules/SKILL|bkit-rules]] - PDCA rules + auto-triggering + code quality standards
@@ -85,7 +85,7 @@ The following skills were consolidated:
 - ~~ai-native-development~~ → `enterprise`
 - ~~monorepo-architecture~~ → `enterprise`
 
-## Agents (11)
+## Agents (16)
 
 ### Level-Based Agents
 - [[../agents/starter-guide|starter-guide]] - Starter level guide (beginners)
@@ -116,7 +116,7 @@ The following skills were consolidated:
 - [[../lib/team/hooks|team hooks]] - TaskCompleted and TeammateIdle handlers
 
 ### Agent Memory
-- All 11 agents configured with `memory:` frontmatter
+- All 16 agents configured with `memory:` frontmatter
 - 9 agents: `project` scope, 2 agents: `user` scope
 - Automatic cross-session context persistence
 
@@ -325,13 +325,13 @@ bkit supports languages and frameworks organized by tier:
 > **v1.5.0**: bkit is now Claude Code exclusive. Gemini CLI support was removed for simplified architecture.
 
 **Components**:
-- `skills/` - 22 skills
-- `agents/` - 11 agents
-- `scripts/` - 39 scripts (Node.js)
-- `lib/` - 4 modules (132 functions)
-- `templates/` - 23 templates
+- `skills/` - 26 skills
+- `agents/` - 16 agents
+- `scripts/` - 43 scripts (Node.js)
+- `lib/` - 5 modules (165 functions)
+- `templates/` - 27 templates
 
-## Templates (20)
+## Templates (27)
 
 ### PDCA Templates
 - `plan.template.md` - Plan phase
