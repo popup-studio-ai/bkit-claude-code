@@ -15,7 +15,7 @@ flowchart TB
             direction LR
             SPEC["**1. SPEC**<br/>Plan Doc<br/>Design Doc"]
             CONTEXT["**2. CONTEXT**<br/>CLAUDE.md<br/>21 Skills"]
-            AGENT["**3. AI AGENT**<br/>11 Agents<br/>Autonomous Implementation"]
+            AGENT["**3. AI AGENT**<br/>16 Agents<br/>Autonomous Implementation"]
         end
 
         OVERSIGHT["**4. HUMAN OVERSIGHT**<br/>Gap Analysis<br/>Verification & Approval"]
@@ -139,8 +139,8 @@ Context Engineering is the **systematic design of information flow to LLMs**—g
 **bkit Implementation**:
 ```
 Domain Knowledge (21 Skills) ─┐
-Behavioral Rules (11 Agents) ─┼─→ Unified Hook System ─→ Dynamic Context Injection
-State Management (86+ funcs) ─┘
+Behavioral Rules (16 Agents) ─┼─→ Unified Hook System ─→ Dynamic Context Injection
+State Management (165 funcs) ─┘
 ```
 
 See [bkit-system/philosophy/context-engineering.md](bkit-system/philosophy/context-engineering.md) for detailed implementation.
@@ -186,7 +186,7 @@ bkit implements **Context Engineering**—the systematic curation of context tok
 │              bkit Context Engineering Layers                     │
 ├─────────────────────────────────────────────────────────────────┤
 │  Layer 1: Domain Knowledge   │ 21 Skills (structured instructions)│
-│  Layer 2: Behavioral Rules   │ 11 Agents (role + constraints)    │
+│  Layer 2: Behavioral Rules   │ 16 Agents (role + constraints)    │
 │  Layer 3: State Management   │ PDCA v2.0, Multi-Feature Context  │
 │  Layer 4: Dynamic Injection  │ Intent detection, ambiguity score │
 │  Layer 5: Feedback Loop      │ Match Rate → Iteration            │
@@ -203,7 +203,7 @@ User Message → Intent Detection → Skill/Agent Trigger →
 
 | bkit Feature | Implementation |
 |--------------|----------------|
-| **11 Specialized Agents** | code-architect, code-reviewer, qa-monitor, etc. |
+| **16 Specialized Agents** | code-analyzer, qa-monitor, cto-lead, frontend-architect, etc. |
 | **Evaluator-Optimizer Pattern** | Automatic iteration cycles |
 | **gap-detector Agent** | Finds design-implementation gaps |
 | **code-analyzer Agent** | Quality and security analysis |
@@ -226,6 +226,38 @@ code-explorer → code-architect → implementation → code-reviewer → qa-mon
 ```
 Plan → [Human Review] → Design → [Human Review] → Do → Check → [Human Review] → Act
 ```
+
+### Principle 5: CTO-Led Agent Teams (v1.5.1)
+
+**Principle**: A CTO agent orchestrates multiple specialized AI agents working in parallel, mimicking real development team dynamics.
+
+| bkit Feature | Implementation |
+|--------------|----------------|
+| **CTO Lead Agent** | Orchestrates team composition, task assignment, and quality gates |
+| **5 Team Agents** | frontend-architect, product-manager, qa-strategist, security-architect, cto-lead |
+| **Parallel Execution** | Multiple agents work simultaneously on different aspects |
+| **PDCA Integration** | `/pdca team {feature}` activates CTO-Led team workflow |
+
+**CTO-Led Team Workflow**:
+```
+/pdca team {feature}
+  → CTO analyzes feature scope
+  → Selects optimal team composition (Dynamic: 3, Enterprise: 5 agents)
+  → Spawns teammates in parallel
+  → Assigns tasks based on expertise
+  → Monitors progress and quality
+  → Aggregates results
+  → Team cleanup
+```
+
+**Team Composition by Level**:
+
+| Level | Teammates | Agents |
+|-------|-----------|--------|
+| Dynamic | 3 | QA + Frontend + Backend |
+| Enterprise | 5 | QA + Frontend + Backend + Security + Product |
+
+**Requirements**: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` + Claude Code v2.1.32+
 
 ---
 

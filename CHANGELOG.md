@@ -5,6 +5,74 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.1] - 2026-02-06
+
+### Added
+- **CTO-Led Agent Teams**: Multi-agent parallel PDCA execution orchestrated by CTO lead agent
+  - CTO lead (opus) orchestrates team composition, task assignment, and quality gates
+  - 5 new team agents: `cto-lead`, `frontend-architect`, `product-manager`, `qa-strategist`, `security-architect`
+  - `lib/team/` module expanded to 7 files: coordinator, strategy, hooks, index, orchestrator, communication, task-queue, cto-logic
+  - Team composition: Dynamic (3 teammates), Enterprise (5 teammates)
+  - New hook handlers: `pdca-task-completed.js` (TaskCompleted), `team-idle-handler.js` (TeammateIdle), `team-stop.js`, `cto-stop.js`
+  - `team` configuration section in `bkit.config.json`
+  - Requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+  - Total agents: 16 (11 core + 5 CTO Team)
+
+- **Output Styles System**: Level-based response formatting
+  - 3 styles in `output-styles/` directory:
+    - `bkit-learning` for Starter level (learning points, TODO markers)
+    - `bkit-pdca-guide` for Dynamic level (status badges, checklists)
+    - `bkit-enterprise` for Enterprise level (tradeoff analysis, cost impact)
+  - `outputStyles` configuration in `bkit.config.json` with `levelDefaults`
+
+- **Agent Memory Integration**: Cross-session context persistence
+  - `memory: user` scope for starter-guide, pipeline-guide (cross-project learning)
+  - `memory: project` scope for 14 agents (project-specific context)
+  - No configuration needed — auto-active
+
+- **Natural Feature Discovery**: Philosophy-aligned auto-trigger integration
+  - `bkit-rules/SKILL.md`: 3 new sections (Output Style Auto-Selection, Agent Teams Auto-Suggestion, Agent Memory Awareness)
+  - `session-start.js`: Feature awareness block (styles, teams, memory) at every session start
+  - Level skills: v1.5.1 feature announcements per level (Starter/Dynamic/Enterprise)
+  - All 16 agents: v1.5.1 Feature Guidance sections
+  - `claude-code-learning/SKILL.md`: Level 6 (Advanced Features) curriculum
+  - `pdca/SKILL.md`: Output Style + Agent Teams integration sections
+
+- **PDCA Team Mode**: `/pdca team {feature}` for CTO-Led parallel PDCA execution
+  - `/pdca team status` to monitor teammate progress
+  - `/pdca team cleanup` to end team session
+
+- **New Hook Events**: `TaskCompleted` and `TeammateIdle` support in `hooks/hooks.json`
+
+- **bkit Memory Functions**: `readBkitMemory()` and `writeBkitMemory()` for `docs/.bkit-memory.json` CRUD
+
+- **bkit-system Documentation**: v1.5.1 coverage across 16 system docs
+  - Philosophy docs (4): v1.5.1 feature integration sections
+  - Component overviews (4): Agent Memory, Teams, Styles coverage
+  - Trigger docs (2): Output Style, Agent Teams, Agent Memory triggers
+  - New scenario: `scenario-discover-features.md`
+  - Test checklist: 19 new test cases (OS-T:7, AT-T:7, AM-T:5)
+
+### Fixed
+- **BUG-01 (Critical)**: `checkPhaseDeliverables()` now supports both number (pipeline phase 1-9) and string (PDCA phase name) input types
+- **BUG-02 (Medium)**: `scripts/iterator-stop.js` - Added optional chaining (`phaseAdvance?.nextPhase`) to prevent TypeError
+- **BUG-03 (Medium)**: `scripts/gap-detector-stop.js` - Added optional chaining (`phaseAdvance?.nextPhase`) to prevent TypeError
+- **BUG-04 (Low)**: Added missing `readBkitMemory`/`writeBkitMemory` exports in `lib/pdca/status.js`, `lib/pdca/index.js`, and `lib/common.js`
+
+### Changed
+- **lib/common.js**: Added Team module re-exports (30 team functions, total 165 exports)
+- **lib/team/**: Expanded from 4 to 7+ files (added orchestrator.js, communication.js, task-queue.js, cto-logic.js)
+- **Agent count**: Increased from 11 to 16 (5 new CTO Team agents)
+- **Plugin metadata**: Updated `plugin.json` version to 1.5.1
+- **Claude Code compatibility**: Minimum v2.1.15, Recommended v2.1.33
+
+### Compatibility
+- **Claude Code**: Minimum v2.1.15, Recommended v2.1.33
+- **Node.js**: Minimum v18.0.0
+- **Agent Teams**: Requires Claude Code v2.1.32+ with `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+
+---
+
 ## [1.5.0] - 2026-02-01
 
 ### Breaking Changes

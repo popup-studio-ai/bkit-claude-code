@@ -24,6 +24,8 @@ agents:
   default: bkit:enterprise-expert
   infra: bkit:infra-architect
   architecture: bkit:enterprise-expert
+  security: bkit:security-architect
+  team: bkit:cto-lead
 allowed-tools:
   - Read
   - Write
@@ -397,3 +399,44 @@ project/
 ```
 
 Rule: Area-specific CLAUDE.md overrides project-level rules
+
+---
+
+## bkit Features for Enterprise Level (v1.5.1)
+
+### Output Style: bkit-enterprise (Recommended)
+
+For CTO-level architecture perspectives, activate the enterprise style:
+
+```
+/output-style bkit-enterprise
+```
+
+This provides:
+- Architecture tradeoff analysis tables (Option/Pros/Cons/Recommendation)
+- Performance, security, and scalability perspectives for every decision
+- Cost impact estimates for infrastructure changes
+- Deployment strategy recommendations (Blue/Green, Canary, Rolling)
+- SOLID principles and Clean Architecture compliance checks
+
+### Agent Teams (4 Teammates)
+
+Enterprise projects support full Agent Teams for parallel PDCA execution:
+
+| Role | Agents | PDCA Phases |
+|------|--------|-------------|
+| architect | enterprise-expert, infra-architect | Design |
+| developer | bkend-expert | Do, Act |
+| qa | qa-monitor, gap-detector | Check |
+| reviewer | code-analyzer, design-validator | Check, Act |
+
+**To enable:**
+1. Set environment: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+2. Start team mode: `/pdca team {feature}`
+3. Monitor progress: `/pdca team status`
+
+### Agent Memory (Auto-Active)
+
+All bkit agents automatically remember project context across sessions.
+Enterprise agents use `project` scope memory, ensuring architecture decisions
+and infrastructure patterns persist across development sessions.

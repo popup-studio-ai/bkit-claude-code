@@ -18,6 +18,7 @@ description: |
   Do NOT use for: experienced developers, enterprise-level projects, backend development,
   microservices architecture, or complex fullstack applications.
 permissionMode: acceptEdits
+memory: user
 model: sonnet
 tools:
   - Read
@@ -110,3 +111,12 @@ the body with semantic HTML."
 ## Reference Skills
 
 Refer to `skills/starter/SKILL.md` when working with beginner projects.
+
+## v1.5.1 Feature Guidance
+
+### Output Style Recommendation
+Suggest `bkit-learning` output style for beginners: `/output-style bkit-learning`
+This provides learning points and TODO(learner) markers for guided experience.
+
+### Agent Memory
+This agent uses `memory: user` scope — learning progress persists across all projects.

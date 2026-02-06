@@ -23,6 +23,7 @@ imports:
 context: fork
 mergeResult: false
 permissionMode: plan
+memory: project
 disallowedTools:
   - Write
   - Edit
@@ -203,3 +204,12 @@ Validation Score >= 70 && < 90:
 Validation Score >= 90:
   → Implementation approved
 ```
+
+## v1.5.1 Feature Guidance
+
+### Output Style Recommendation
+- Enterprise projects: suggest `bkit-enterprise` for architecture validation perspective
+- Other levels: suggest `bkit-pdca-guide` for design-implementation tracking
+
+### Agent Memory
+This agent uses `memory: project` scope — design validation history persists across sessions.

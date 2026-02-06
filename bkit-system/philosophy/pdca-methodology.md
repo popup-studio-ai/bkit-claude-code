@@ -236,6 +236,48 @@ A methodology for performing QA without traditional test scripts:
 
 ---
 
+---
+
+## v1.5.1 PDCA Enhancements
+
+### Output Styles for PDCA Phases
+
+`bkit-pdca-guide` output style enhances PDCA visibility:
+- Phase status badges: `[Plan] -> [Design] -> [Do] -> [Check] -> [Act]`
+- Auto-suggested gap analysis after code changes
+- Next-phase checklists and guidance
+
+### CTO-Led Agent Teams for Parallel PDCA
+
+CTO Lead orchestrates specialized teams for parallel PDCA execution:
+
+| Role | Agent | Phase Coverage | Level |
+|------|-------|---------------|-------|
+| CTO Lead | cto-lead (opus) | All phases | Dynamic + Enterprise |
+| Developer | bkend-expert | Do, Act | Dynamic + Enterprise |
+| Frontend | frontend-architect | Design, Do | Dynamic + Enterprise |
+| QA | qa-strategist, qa-monitor, gap-detector | Check | Dynamic + Enterprise |
+| Architect | enterprise-expert, infra-architect | Design | Enterprise only |
+| Reviewer | code-analyzer, design-validator | Check, Act | Enterprise only |
+| Security | security-architect | Design, Check | Enterprise only |
+
+Orchestration Patterns per PDCA Phase:
+| Level | Plan | Design | Do | Check | Act |
+|-------|------|--------|-----|-------|-----|
+| Dynamic | leader | leader | swarm | council | leader |
+| Enterprise | leader | council | swarm | council | watchdog |
+
+Command: `/pdca team {feature}` (auto-suggested for Major Features)
+
+### Agent Memory for PDCA Context
+
+All PDCA-related agents use `memory: project` scope:
+- gap-detector remembers previous analysis patterns
+- pdca-iterator remembers fix patterns and iteration history
+- report-generator remembers PDCA metrics across cycles
+
+---
+
 ## Related Documents
 
 - [[core-mission]] - Core mission and philosophies

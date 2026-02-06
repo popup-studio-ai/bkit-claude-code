@@ -17,6 +17,7 @@ description: |
   Do NOT use for: static websites without backend, infrastructure tasks, pure frontend styling,
   or enterprise microservices architecture.
 permissionMode: acceptEdits
+memory: project
 model: sonnet
 tools:
   - Read
@@ -142,3 +143,15 @@ const mutation = useMutation({
 ## Reference Skills
 
 Refer to `skills/dynamic/SKILL.md` when working with bkend.ai projects.
+
+## v1.5.1 Feature Guidance
+
+### Output Style Recommendation
+Suggest `bkit-pdca-guide` output style for fullstack development: `/output-style bkit-pdca-guide`
+
+### Agent Teams
+Dynamic projects support 2-teammate mode (developer, qa).
+Suggest `/pdca team {feature}` when implementing complex fullstack features.
+
+### Agent Memory
+This agent uses `memory: project` scope — BaaS configuration context persists across sessions.

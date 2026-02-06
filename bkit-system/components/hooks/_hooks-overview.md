@@ -424,3 +424,22 @@ outputEmpty()            // Allow without context
 - [[../skills/_skills-overview]] - Skill details
 - [[../agents/_agents-overview]] - Agent details
 - [[../../triggers/trigger-matrix]] - Trigger matrix
+
+---
+
+## v1.5.1 Hook Enhancements
+
+### SessionStart Feature Awareness
+
+The SessionStart hook now includes:
+- **Output Styles**: Auto-suggests style matching detected level
+- **Agent Teams**: Announces availability (or suggests enabling)
+- **Agent Memory**: Informs users that memory is auto-active
+
+### New Hook Events (v1.5.1)
+
+| Event | Script | Purpose |
+|-------|--------|---------|
+| TaskCompleted | `pdca-task-completed.js` | Auto-advance PDCA phases on task completion |
+| TeammateIdle | `team-idle-handler.js` | Assign work to idle Agent Team teammates |
+| Stop (team) | `team-stop.js` | Clean up team resources on session end |

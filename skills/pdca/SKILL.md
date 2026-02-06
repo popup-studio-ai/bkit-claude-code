@@ -22,6 +22,7 @@ agents:
   analyze: bkit:gap-detector
   iterate: bkit:pdca-iterator
   report: bkit:report-generator
+  team: bkit:cto-lead
   default: null
 allowed-tools:
   - Read
@@ -64,6 +65,9 @@ task-template: "[PDCA] {feature}"
 | `report [feature]` | Generate completion report | `/pdca report user-auth` |
 | `archive [feature]` | Archive completed PDCA documents | `/pdca archive user-auth` |
 | `cleanup [feature]` | Cleanup archived features from status | `/pdca cleanup` |
+| `team [feature]` | Start PDCA Team Mode (requires Agent Teams) | `/pdca team user-auth` |
+| `team status` | Show Team status | `/pdca team status` |
+| `team cleanup` | Cleanup Team resources | `/pdca team cleanup` |
 | `status` | Show current PDCA status | `/pdca status` |
 | `next` | Guide to next phase | `/pdca next` |
 
@@ -135,6 +139,62 @@ task-template: "[PDCA] {feature}"
 5. Update .bkit-memory.json: phase = "completed"
 
 **Output Path**: `docs/04-report/{feature}.report.md`
+
+### team (Team Mode) - v1.5.1
+
+Start PDCA Team Mode using Claude Code Agent Teams (requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`).
+
+#### team [feature] - Start Team Mode
+
+1. Check if Agent Teams is available: call `isTeamModeAvailable()` from `lib/team/coordinator.js`
+2. If not available, display: "Agent Teams is not enabled. Set `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` to enable."
+3. Detect project level via `detectLevel()` - Starter projects cannot use Team Mode
+4. Generate team strategy via `generateTeamStrategy(level)`:
+   - Dynamic: 3 teammates (developer, frontend, qa) — CTO Lead orchestrates
+   - Enterprise: 5 teammates (architect, developer, qa, reviewer, security) — CTO Lead orchestrates
+5. CTO Lead (cto-lead agent, opus) automatically:
+   - Sets technical direction and selects orchestration pattern
+   - Distributes tasks to teammates based on PDCA phase
+   - Enforces quality gates (90% Match Rate threshold)
+6. Show strategy and confirm with AskUserQuestion before starting
+7. Assign PDCA tasks to teammates via `assignNextTeammateWork()`
+
+#### team status - Show Team Status
+
+1. Call `formatTeamStatus()` from `lib/team/coordinator.js`
+2. Display: Team availability, enabled state, display mode, teammate count
+3. Show current PDCA feature progress per teammate if active
+
+**Output Example**:
+```
+📊 PDCA Team Status
+─────────────────────────────
+Agent Teams: Available ✅
+Display Mode: in-process
+Teammates: 4 / 4 (Enterprise)
+─────────────────────────────
+Feature: user-auth
+  architect: [Design] in progress
+  developer: [Do] waiting
+  qa: idle
+  reviewer: idle
+```
+
+#### team cleanup - Cleanup Team Resources
+
+1. Stop all active teammates
+2. Record `team_session_ended` in PDCA history via `addPdcaHistory()`
+3. Return to single-session PDCA mode
+4. Display: "Returning to single-session mode"
+
+**Required Environment**: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+
+**Level Requirements**:
+| Level | Available | Teammates | CTO Lead |
+|-------|:---------:|:---------:|:--------:|
+| Starter | No | - | - |
+| Dynamic | Yes | 3 | cto-lead (opus) |
+| Enterprise | Yes | 5 | cto-lead (opus) |
 
 ### archive (Archive Phase)
 
@@ -355,6 +415,43 @@ Task Creation Pattern:
 | `/pdca-status` | `/pdca status` |
 | `/pdca-next` | `/pdca next` |
 | `/archive` | `/pdca archive` |
+
+## Output Style Integration (v1.5.1)
+
+PDCA workflows benefit from the `bkit-pdca-guide` output style:
+
+```
+/output-style bkit-pdca-guide
+```
+
+This provides PDCA-specific response formatting:
+- Phase status badges: `[Plan] -> [Design] -> [Do] -> [Check] -> [Act]`
+- Gap analysis suggestions after code changes
+- Next-phase guidance with checklists
+- Feature usage report integration
+
+When running PDCA commands, suggest this style if not already active.
+
+## Agent Teams Integration (v1.5.1)
+
+For Dynamic/Enterprise projects, PDCA phases can run in parallel using Agent Teams:
+
+```
+/pdca team {feature}        Start parallel PDCA
+/pdca team status            Monitor teammate progress
+/pdca team cleanup           End team session
+```
+
+Suggest Agent Teams when:
+- Feature is classified as Major Feature (>= 1000 chars)
+- Match Rate < 70% (parallel iteration can speed up fixes)
+- Project level is Dynamic or Enterprise
+
+CTO-Led Team Orchestration Patterns:
+| Level | Plan | Design | Do | Check | Act |
+|-------|------|--------|-----|-------|-----|
+| Dynamic | leader | leader | swarm | council | leader |
+| Enterprise | leader | council | swarm | council | watchdog |
 
 ## Auto Triggers
 

@@ -1,11 +1,11 @@
 # bkit - Vibecoding Kit
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Claude Code](https://img.shields.io/badge/Claude%20Code-v2.1.15+-purple.svg)](https://docs.anthropic.com/en/docs/claude-code/getting-started)
-[![Version](https://img.shields.io/badge/Version-1.5.0-green.svg)](CHANGELOG.md)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-v2.1.33+-purple.svg)](https://docs.anthropic.com/en/docs/claude-code/getting-started)
+[![Version](https://img.shields.io/badge/Version-1.5.1-green.svg)](CHANGELOG.md)
 [![Author](https://img.shields.io/badge/Author-POPUP%20STUDIO-orange.svg)](https://popupstudio.ai)
 
-> **PDCA methodology + AI coding assistant mastery for AI-native development**
+> **PDCA methodology + CTO-Led Agent Teams + AI coding assistant mastery for AI-native development**
 
 bkit is a Claude Code plugin that transforms how you build software with AI. It provides structured development workflows, automatic documentation, and intelligent code assistance through the PDCA (Plan-Do-Check-Act) methodology.
 
@@ -35,8 +35,8 @@ bkit implements Context Engineering through three interconnected layers:
 | Layer | Components | Purpose |
 |-------|------------|---------|
 | **Domain Knowledge** | 21 Skills | Structured expert knowledge (phases, levels, specialized domains) |
-| **Behavioral Rules** | 11 Agents | Role-based constraints with model selection (opus/sonnet/haiku) |
-| **State Management** | 86+ Functions | PDCA status, intent detection, ambiguity scoring, multi-feature context |
+| **Behavioral Rules** | 16 Agents | Role-based constraints with model selection (opus/sonnet/haiku) |
+| **State Management** | 165 Functions | PDCA status, intent detection, ambiguity scoring, multi-feature context, team coordination |
 
 ### 5-Layer Hook System
 
@@ -58,8 +58,12 @@ Layer 5: Scripts (39 modules)    → Actual Node.js execution logic with unified
 
 ![bkit Features](images/bkit-features.png)
 
+- **CTO-Led Agent Teams (v1.5.1)** - CTO agent orchestrates parallel PDCA execution with multi-agent teams (Dynamic: 3, Enterprise: 5 teammates)
+- **Output Styles (v1.5.1)** - Level-based response formatting (bkit-learning, bkit-pdca-guide, bkit-enterprise)
+- **Agent Memory (v1.5.1)** - Cross-session context persistence for all 16 agents (auto-active)
+- **Natural Feature Discovery (v1.5.1)** - Auto-trigger integration aligned with "Automation First" philosophy
 - **Task Management + PDCA Integration (v1.4.7)** - Task Chain Auto-Creation, Task ID Persistence, Check↔Act Iteration
-- **Core Modularization (v1.4.7)** - lib/common.js split into 4 modules (lib/core/, lib/pdca/, lib/intent/, lib/task/)
+- **Core Modularization (v1.4.7)** - lib/common.js split into 5 modules (lib/core/, lib/pdca/, lib/intent/, lib/task/, lib/team/)
 - **Context Engineering (v1.4.4)** - Systematic context curation with 7 library modules and unified hook system
 - **PDCA Methodology** - Structured development workflow with automatic documentation
 - **PDCA Skill Integration (v1.4.4)** - Unified `/pdca` skill with 8 actions (plan, design, do, analyze, iterate, report, status, next)
@@ -68,9 +72,9 @@ Layer 5: Scripts (39 modules)    → Actual Node.js execution logic with unified
 - **3 Project Levels** - Starter (static), Dynamic (fullstack), Enterprise (microservices)
 - **Multilingual Support** - 8 languages (EN, KO, JA, ZH, ES, FR, DE, IT)
 - **21 Skills** - Domain-specific knowledge for various development scenarios
-- **11 Agents** - Specialized AI assistants for different tasks
+- **16 Agents** - Specialized AI assistants including CTO-Led Team agents
 - **39 Scripts** - Hook execution with unified handlers (hooks-json-integration)
-- **132 Utility Functions** - 4 modular libraries with state management, intent detection, task tracking
+- **165 Utility Functions** - 5 modular libraries with state management, intent detection, task tracking, team coordination
 - **Check-Act Iteration Loop** - Automatic gap analysis and fix cycles with max 5 iterations (90% threshold)
 
 ---
@@ -158,7 +162,8 @@ bkit-claude-code/
 ├── skills/                  # Domain knowledge
 ├── hooks/                   # Event hooks (hooks.json)
 ├── scripts/                 # Hook execution scripts
-├── lib/                     # Shared utilities (4 modules)
+├── lib/                     # Shared utilities (5 modules)
+├── output-styles/           # Level-based response formatting
 ├── templates/               # Document templates
 └── bkit.config.json         # Centralized configuration
 ```
@@ -242,6 +247,42 @@ git commit -m "feat: customize bkit starter skill"
 /pdca next               # Guide to next PDCA step
 ```
 
+### CTO-Led Agent Teams (v1.5.1)
+
+CTO-Led Agent Teams enable parallel PDCA execution with multiple AI agents orchestrated by a CTO lead agent.
+
+```bash
+# Start CTO Team for a feature
+/pdca team {feature}
+
+# Monitor team progress
+/pdca team status
+
+# Cleanup team resources
+/pdca team cleanup
+```
+
+**How it works:**
+1. CTO lead agent (opus) analyzes the feature and selects the optimal team composition
+2. Teammates are spawned in parallel (Dynamic: 3, Enterprise: 5 agents)
+3. Each teammate handles a specific area (QA, frontend, backend, security, etc.)
+4. CTO orchestrates task assignment, progress monitoring, and result aggregation
+5. Team is cleaned up after work is complete
+
+**Requirements:**
+- Set environment variable: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+- Claude Code v2.1.32+
+
+**Available Team Agents (5 new):**
+
+| Agent | Model | Role |
+|-------|-------|------|
+| cto-lead | opus | Team orchestration, PDCA workflow management |
+| frontend-architect | sonnet | UI/UX design, component architecture |
+| product-manager | sonnet | Requirements analysis, feature prioritization |
+| qa-strategist | sonnet | Test strategy, quality metrics coordination |
+| security-architect | opus | Vulnerability analysis, auth design review |
+
 ---
 
 ## Project Levels
@@ -293,7 +334,7 @@ bkit is **primarily designed for software development**. However, some component
 
 - [Development Pipeline](skills/development-pipeline/SKILL.md) - 9-stage pipeline skill
 - [Skills Reference](skills/) - 22 domain skills (Commands deprecated in v1.4.4)
-- [Agents Reference](agents/) - 11 specialized agents
+- [Agents Reference](agents/) - 16 specialized agents (including 5 CTO Team agents)
 
 ### PDCA Documents
 

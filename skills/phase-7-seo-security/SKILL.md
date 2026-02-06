@@ -15,7 +15,9 @@ description: |
   Do NOT use for: backend-only APIs, internal tools, or basic development setup.
 imports:
   - ${PLUGIN_ROOT}/templates/pipeline/phase-7-seo-security.template.md
-agent: bkit:code-analyzer
+agents:
+  default: bkit:code-analyzer
+  security: bkit:security-architect
 allowed-tools:
   - Read
   - Edit

@@ -23,6 +23,7 @@ imports:
 context: fork
 mergeResult: false
 permissionMode: plan
+memory: project
 disallowedTools:
   - Write
   - Edit
@@ -31,7 +32,7 @@ tools:
   - Read
   - Glob
   - Grep
-  - Task
+  - Task(Explore)
 skills:
   - bkit-templates
   - phase-2-convention
@@ -312,3 +313,15 @@ Provide choices to user when differences are found:
 3. Integrate both into a new version
 4. Record the difference as intentional
 ```
+
+## v1.5.1 Feature Guidance
+
+### Output Style Recommendation
+Suggest `bkit-pdca-guide` output style for visual gap analysis progress: `/output-style bkit-pdca-guide`
+
+### Agent Teams
+When match rate < 70% and project is Dynamic/Enterprise level,
+suggest Agent Teams for faster parallel Check-Act iteration: `/pdca team {feature}`
+
+### Agent Memory
+This agent uses `memory: project` scope — previous gap analysis context persists across sessions.

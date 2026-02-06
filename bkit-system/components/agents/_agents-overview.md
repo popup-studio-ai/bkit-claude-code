@@ -217,3 +217,33 @@ bkit-claude-code/
 - [[../hooks/_hooks-overview]] - Hook Event Details
 - [[../scripts/_scripts-overview]] - Script Details
 - [[../../triggers/trigger-matrix]] - Trigger Matrix
+
+---
+
+## v1.5.1 Agent Enhancements
+
+### Agent Memory
+
+All 11 agents have `memory:` frontmatter for cross-session context persistence:
+
+| Scope | Agents |
+|-------|--------|
+| `project` | code-analyzer, gap-detector, pdca-iterator, report-generator, bkend-expert, enterprise-expert, infra-architect, design-validator, qa-monitor |
+| `user` | starter-guide, pipeline-guide |
+
+### Agent Feature Guidance
+
+Each agent now includes contextual suggestions for:
+- **Output Styles**: Recommends appropriate style based on task context
+- **Agent Teams**: Suggests team mode when beneficial (Dynamic/Enterprise only)
+
+### Agent Teams Integration
+
+Agents map to team roles:
+
+| Role | Agents | Phases |
+|------|--------|--------|
+| architect | enterprise-expert, infra-architect | Design |
+| developer | bkend-expert | Do, Act |
+| qa | qa-monitor, gap-detector | Check |
+| reviewer | code-analyzer, design-validator | Check, Act |

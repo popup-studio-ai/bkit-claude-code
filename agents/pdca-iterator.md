@@ -30,6 +30,7 @@ skills_preload:
   - pdca
   - bkit-rules
 permissionMode: acceptEdits
+memory: project
 model: sonnet
 tools:
   - Read
@@ -38,7 +39,8 @@ tools:
   - Glob
   - Grep
   - Bash
-  - Task
+  - Task(Explore)
+  - Task(gap-detector)
   - TodoWrite
   - LSP
 # hooks: Managed by hooks/hooks.json (unified-stop.js) - GitHub #9354 workaround
@@ -338,3 +340,16 @@ pdca-iterator orchestrates:
 Reports to:
 └── report-generator (creates final PDCA report)
 ```
+
+## v1.5.1 Feature Guidance
+
+### Output Style Recommendation
+Suggest `bkit-pdca-guide` output style for iteration tracking: `/output-style bkit-pdca-guide`
+Status badges and checklists help visualize improvement progress.
+
+### Agent Teams
+For Dynamic/Enterprise projects with complex iteration needs,
+suggest Agent Teams for parallel fix-verify cycles: `/pdca team {feature}`
+
+### Agent Memory
+This agent uses `memory: project` scope — iteration history and fix patterns persist across sessions.

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * unified-stop.js - Unified Stop Event Handler (v1.4.4)
+ * unified-stop.js - Unified Stop Event Handler (v1.5.1)
  *
  * GitHub Issue #9354 Workaround:
  * ${CLAUDE_PLUGIN_ROOT} doesn't expand in markdown files,
@@ -49,7 +49,9 @@ const AGENT_HANDLERS = {
   'gap-detector': './gap-detector-stop.js',
   'pdca-iterator': './iterator-stop.js',
   'code-analyzer': './analysis-stop.js',
-  'qa-monitor': './qa-stop.js'
+  'qa-monitor': './qa-stop.js',
+  'team-coordinator': './team-stop.js',  // v1.5.1: Team cleanup on stop
+  'cto-lead': './cto-stop.js',           // v1.5.1: CTO session cleanup
   // design-validator: PreToolUse only, no Stop handler
 };
 

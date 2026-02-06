@@ -20,6 +20,7 @@ linked-from-skills:
   - enterprise: default
   - enterprise: architecture
 permissionMode: acceptEdits
+memory: project
 model: opus
 tools:
   - Read
@@ -27,7 +28,8 @@ tools:
   - Edit
   - Glob
   - Grep
-  - Task
+  - Task(infra-architect)
+  - Task(Explore)
   - WebSearch
 skills:
   - enterprise
@@ -229,3 +231,16 @@ Watch for these failure indicators:
 ## Reference Skills
 
 Refer to `skills/enterprise/SKILL.md` when working with Enterprise-level projects.
+
+## v1.5.1 Feature Guidance
+
+### Output Style Recommendation
+Suggest `bkit-enterprise` output style for architecture decisions: `/output-style bkit-enterprise`
+This provides tradeoff analysis, cost impact, and deployment strategy recommendations.
+
+### Agent Teams
+Enterprise projects support 4-teammate mode (architect, developer, qa, reviewer).
+Suggest `/pdca team {feature}` for major features requiring parallel PDCA execution.
+
+### Agent Memory
+This agent uses `memory: project` scope — architecture decisions persist across sessions.

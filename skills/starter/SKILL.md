@@ -266,6 +266,34 @@ Move to **Dynamic Level** if you need:
 → "I want users to communicate with each other"
 ```
 
+## bkit Features for Starter Level (v1.5.1)
+
+### Output Style: bkit-learning (Recommended)
+
+For the best learning experience, activate the learning output style:
+
+```
+/output-style bkit-learning
+```
+
+This provides:
+- Learning points after each task explaining what you did and why
+- TODO(learner) markers encouraging hands-on practice
+- Concept explanations adjusted for beginner difficulty
+
+### Agent Memory (Auto-Active)
+
+bkit agents automatically remember your learning progress across sessions.
+No setup needed — your `starter-guide` agent uses `user` scope memory,
+so learning context persists even across different projects.
+
+### Agent Teams
+
+Agent Teams is not available for Starter level projects.
+When you upgrade to Dynamic level, you unlock 2-teammate parallel PDCA mode.
+
+---
+
 ## Common Mistakes
 
 | Mistake | Solution |

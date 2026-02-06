@@ -309,7 +309,7 @@ debugLog('Agent:pdca-iterator:Stop', 'Hook completed', {
   matchRate,
   status,
   changedFiles,
-  phaseAdvance: phaseAdvance.nextPhase
+  phaseAdvance: phaseAdvance?.nextPhase
 });
 
 // Claude Code: JSON output with AskUserQuestion prompt
