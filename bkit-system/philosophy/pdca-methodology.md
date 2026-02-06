@@ -236,6 +236,39 @@ A methodology for performing QA without traditional test scripts:
 
 ---
 
+---
+
+## v1.5.1 PDCA Enhancements
+
+### Output Styles for PDCA Phases
+
+`bkit-pdca-guide` output style enhances PDCA visibility:
+- Phase status badges: `[Plan] -> [Design] -> [Do] -> [Check] -> [Act]`
+- Auto-suggested gap analysis after code changes
+- Next-phase checklists and guidance
+
+### Agent Teams for Parallel PDCA
+
+PDCA phases can execute in parallel using Agent Teams:
+
+| Role | Phase Coverage | Level |
+|------|---------------|-------|
+| architect | Design | Enterprise only |
+| developer | Do, Act | Dynamic + Enterprise |
+| qa | Check | Dynamic + Enterprise |
+| reviewer | Check, Act | Enterprise only |
+
+Command: `/pdca team {feature}`
+
+### Agent Memory for PDCA Context
+
+All PDCA-related agents use `memory: project` scope:
+- gap-detector remembers previous analysis patterns
+- pdca-iterator remembers fix patterns and iteration history
+- report-generator remembers PDCA metrics across cycles
+
+---
+
 ## Related Documents
 
 - [[core-mission]] - Core mission and philosophies

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-hooks.json",
-  "description": "bkit Vibecoding Kit v1.5.0 - Claude Code",
+  "description": "bkit Vibecoding Kit v1.5.1 - Claude Code",
   "hooks": {
     "SessionStart": [
       {
@@ -97,6 +97,28 @@
           {
             "type": "command",
             "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/context-compaction.js",
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "TaskCompleted": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/pdca-task-completed.js",
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "TeammateIdle": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/team-idle-handler.js",
             "timeout": 5000
           }
         ]

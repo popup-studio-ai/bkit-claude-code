@@ -141,6 +141,39 @@ After:  /learn-claude-code → Systematic training
 
 ---
 
+---
+
+## v1.5.1 Features
+
+### Natural Discovery Through Automation First
+
+Three features introduced in v1.5.1 that align with the core mission:
+
+| Feature | Philosophy Alignment | Discovery Mechanism |
+|---------|---------------------|---------------------|
+| **Output Styles** | Automation First | Auto-suggested based on detected level |
+| **Agent Teams** | Automation First | Suggested for major features at Dynamic/Enterprise level |
+| **Agent Memory** | Automation First | Fully automatic, no user action needed |
+
+### Output Styles
+
+Response formatting optimized per project level:
+- Starter → `bkit-learning` (learning points, concept explanations)
+- Dynamic → `bkit-pdca-guide` (PDCA status badges, checklists)
+- Enterprise → `bkit-enterprise` (tradeoff analysis, cost impact)
+
+### Agent Teams
+
+Parallel PDCA execution for Dynamic (2 teammates) and Enterprise (4 teammates) projects.
+Requires: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+
+### Agent Memory
+
+Automatic cross-session context persistence for all 11 agents.
+Scopes: `project` (9 agents), `user` (2 agents: starter-guide, pipeline-guide)
+
+---
+
 ## Related Documents
 
 - [[ai-native-principles]] - AI-Native core competencies

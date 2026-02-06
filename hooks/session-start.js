@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 /**
- * bkit Vibecoding Kit - SessionStart Hook (v1.5.0)
+ * bkit Vibecoding Kit - SessionStart Hook (v1.5.1)
  * Claude Code 전용 플러그인
+ *
+ * v1.5.1 Changes:
+ * - Agent Teams detection and Team Mode integration
+ * - Claude Code v2.1.33 compatibility enhancements
  *
  * v1.5.0 Changes:
  * - Gemini CLI 지원 제거 (Claude Code 전용으로 단순화)
@@ -477,7 +481,7 @@ const triggerTable = getTriggerKeywordTable();
 
 // Claude Code Output: JSON with Tool Call Prompt
 // Build context based on onboarding type
-let additionalContext = `# bkit Vibecoding Kit v1.5.0 - Session Startup\n\n`;
+let additionalContext = `# bkit Vibecoding Kit v1.5.1 - Session Startup\n\n`;
 
   if (onboardingData.hasExistingWork) {
     additionalContext += `## 🔄 Previous Work Detected\n\n`;
@@ -503,6 +507,51 @@ let additionalContext = `# bkit Vibecoding Kit v1.5.0 - Session Startup\n\n`;
     additionalContext += `- **Start freely** → General conversation mode\n\n`;
   }
 
+  // v1.5.1: Feature Awareness - Agent Teams, Output Styles, Agent Memory
+  const detectedLevel = detectLevel();
+
+  // Agent Teams detection and suggestion
+  try {
+    const { isTeamModeAvailable, getTeamConfig } = require('../lib/team');
+    if (isTeamModeAvailable()) {
+      const teamConfig = getTeamConfig();
+      additionalContext += `## Agent Teams (Active)\n`;
+      additionalContext += `- Team Mode available: \`/pdca team {feature}\`\n`;
+      additionalContext += `- Display mode: ${teamConfig.displayMode}\n`;
+      if (detectedLevel === 'Enterprise') {
+        additionalContext += `- Enterprise: 4 teammates (architect, developer, qa, reviewer)\n`;
+      } else if (detectedLevel === 'Dynamic') {
+        additionalContext += `- Dynamic: 2 teammates (developer, qa)\n`;
+      }
+      additionalContext += `\n`;
+    } else if (detectedLevel !== 'Starter') {
+      additionalContext += `## Agent Teams (Not Enabled)\n`;
+      additionalContext += `- Your ${detectedLevel} project supports Agent Teams for parallel PDCA execution\n`;
+      additionalContext += `- To enable: set \`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1\` environment variable\n`;
+      additionalContext += `- Then use: \`/pdca team {feature}\`\n\n`;
+    }
+  } catch (e) {
+    debugLog('SessionStart', 'Agent Teams detection skipped', { error: e.message });
+  }
+
+  // Output Styles suggestion based on level
+  const levelStyleMap = {
+    'Starter': 'bkit-learning',
+    'Dynamic': 'bkit-pdca-guide',
+    'Enterprise': 'bkit-enterprise'
+  };
+  const suggestedStyle = levelStyleMap[detectedLevel] || 'bkit-pdca-guide';
+  additionalContext += `## Output Styles (v1.5.1)\n`;
+  additionalContext += `- Recommended for ${detectedLevel} level: \`${suggestedStyle}\`\n`;
+  additionalContext += `- Change anytime with \`/output-style\`\n`;
+  additionalContext += `- Available: bkit-learning (beginners), bkit-pdca-guide (PDCA workflow), bkit-enterprise (architecture)\n\n`;
+
+  // Agent Memory awareness
+  additionalContext += `## Agent Memory (Auto-Active)\n`;
+  additionalContext += `- All bkit agents remember context across sessions automatically\n`;
+  additionalContext += `- 9 agents use project scope, 2 agents (starter-guide, pipeline-guide) use user scope\n`;
+  additionalContext += `- No configuration needed\n\n`;
+
   additionalContext += `## PDCA Core Rules (Always Apply)\n`;
   additionalContext += `- New feature request → Check/create Plan/Design documents first\n`;
   additionalContext += `- After implementation → Suggest Gap analysis\n`;
@@ -522,7 +571,7 @@ let additionalContext = `# bkit Vibecoding Kit v1.5.0 - Session Startup\n\n`;
   // ============================================================
   additionalContext += `
 
-## 📊 bkit Feature Usage Report (v1.5.0 - Required for all responses)
+## 📊 bkit Feature Usage Report (v1.5.1 - Required for all responses)
 
 **Rule: Include the following format at the end of every response to report bkit feature usage.**
 
@@ -578,7 +627,7 @@ AskUserQuestion, SessionStart Hook, Read, Write, Edit, Bash
 `;
 
 const response = {
-  systemMessage: `bkit Vibecoding Kit v1.5.0 activated (Claude Code)`,
+  systemMessage: `bkit Vibecoding Kit v1.5.1 activated (Claude Code)`,
   hookSpecificOutput: {
     hookEventName: "SessionStart",
     onboardingType: onboardingData.type,

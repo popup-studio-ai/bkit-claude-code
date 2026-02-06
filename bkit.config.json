@@ -1,6 +1,6 @@
 {
   "$schema": "./bkit.config.schema.json",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "sourceDirectories": [
     "src",
     "lib",
@@ -168,6 +168,36 @@
     "contextCompaction": {
       "enabled": true,
       "snapshotLimit": 10
+    },
+    "taskCompleted": {
+      "enabled": true,
+      "autoAdvance": true
+    },
+    "teammateIdle": {
+      "enabled": true
+    }
+  },
+  "team": {
+    "enabled": false,
+    "displayMode": "in-process",
+    "maxTeammates": 4,
+    "delegateMode": false,
+    "levelOverrides": {
+      "Dynamic": { "maxTeammates": 2 },
+      "Enterprise": { "maxTeammates": 4 }
+    }
+  },
+  "outputStyles": {
+    "directory": "output-styles",
+    "available": [
+      "bkit-pdca-guide",
+      "bkit-learning",
+      "bkit-enterprise"
+    ],
+    "levelDefaults": {
+      "Starter": "bkit-learning",
+      "Dynamic": "bkit-pdca-guide",
+      "Enterprise": "bkit-enterprise"
     }
   }
 }

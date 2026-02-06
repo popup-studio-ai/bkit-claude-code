@@ -695,6 +695,43 @@ agents:
 
 ---
 
+---
+
+## v1.5.1 Context Engineering Features
+
+### Output Styles as Context Layer
+
+Output Styles add a response formatting context layer:
+
+| Style | Context Injection |
+|-------|-------------------|
+| `bkit-learning` | Learning points, TODO(learner) markers, concept explanations |
+| `bkit-pdca-guide` | Status badges, checklists, gap analysis suggestions |
+| `bkit-enterprise` | Tradeoff tables, cost impact, deployment strategy |
+
+**Auto-Selection**: Level detection → Output style suggestion (Starter→learning, Dynamic→pdca-guide, Enterprise→enterprise)
+
+### Agent Teams as Parallel Context
+
+Agent Teams enable parallel context management:
+- Each teammate operates with its own context scope
+- Phase-specific agents focus on their domain context
+- Coordinator manages cross-teammate context synchronization
+
+### Agent Memory as Persistent Context
+
+Agent Memory implements cross-session context persistence:
+
+| Scope | Location | Persistence |
+|-------|----------|-------------|
+| `project` | `.claude/agent-memory/` | Per-project, across sessions |
+| `user` | `~/.claude/agent-memory/` | Global, across all projects |
+| `local` | `.claude/agent-memory-local/` | Per-project, local only |
+
+9 agents use `project` scope, 2 agents use `user` scope.
+
+---
+
 ## Related Documents
 
 - [[core-mission]] - Three core philosophies

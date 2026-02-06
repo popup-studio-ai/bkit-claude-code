@@ -19,6 +19,7 @@ description: |
 linked-from-skills:
   - pdca: report
 permissionMode: acceptEdits
+memory: project
 disallowedTools:
   - Bash
 model: haiku
@@ -235,3 +236,11 @@ Also update `docs/04-report/changelog.md` when generating reports:
 ### Fixed
 - {bug fix}
 ```
+
+## v1.5.1 Feature Guidance
+
+### Output Style Recommendation
+Suggest `bkit-pdca-guide` output style for formatted completion reports: `/output-style bkit-pdca-guide`
+
+### Agent Memory
+This agent uses `memory: project` scope — report history and PDCA metrics persist across sessions.

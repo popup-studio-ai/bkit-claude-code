@@ -213,3 +213,39 @@ bkit-claude-code/
 - [[../scripts/_scripts-overview]] - Script details
 - [[../agents/_agents-overview]] - Agent details
 - [[../../triggers/trigger-matrix]] - Trigger matrix
+
+---
+
+## v1.5.1 Skill Enhancements
+
+### Output Style Integration
+
+Level skills now suggest appropriate output styles:
+
+| Skill | Suggested Style |
+|-------|----------------|
+| `/starter` | `bkit-learning` |
+| `/dynamic` | `bkit-pdca-guide` |
+| `/enterprise` | `bkit-enterprise` |
+| `/pdca` | `bkit-pdca-guide` |
+
+### Agent Teams Integration
+
+`/pdca team {feature}` enables parallel PDCA execution:
+- Dynamic: 2 teammates (developer, qa)
+- Enterprise: 4 teammates (architect, developer, qa, reviewer)
+
+### Learning Skill Enhancement
+
+`/claude-code-learning` now includes Level 6: Advanced Features covering:
+- Output Styles configuration and usage
+- Agent Memory scopes and behavior
+- Agent Teams setup and team composition
+
+### Output Styles (3)
+
+| Style | File | Best For |
+|-------|------|----------|
+| `bkit-learning` | `output-styles/bkit-learning.md` | Beginners, learning |
+| `bkit-pdca-guide` | `output-styles/bkit-pdca-guide.md` | PDCA workflows |
+| `bkit-enterprise` | `output-styles/bkit-enterprise.md` | Architecture decisions |

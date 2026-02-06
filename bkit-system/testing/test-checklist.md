@@ -299,3 +299,41 @@ echo '{"tool_input":{"file_path":"src/features/auth/login.ts","content":"test"}}
 - [[../scenarios/scenario-write-code]] - Code write scenario
 - [[../scenarios/scenario-new-feature]] - New feature scenario
 - [[../scenarios/scenario-qa]] - QA scenario
+
+---
+
+## v1.5.1 Feature Discovery Tests
+
+### Output Style Discovery Tests (OS-T)
+
+| ID | Test | Expected Result |
+|----|------|-----------------|
+| OS-T01 | Session start with Starter project | "Recommended: bkit-learning" in output |
+| OS-T02 | Session start with Dynamic project | "Recommended: bkit-pdca-guide" in output |
+| OS-T03 | Session start with Enterprise project | "Recommended: bkit-enterprise" in output |
+| OS-T04 | `/starter init` execution | bkit-learning style mentioned |
+| OS-T05 | `/dynamic init` execution | bkit-pdca-guide style mentioned |
+| OS-T06 | `/enterprise init` execution | bkit-enterprise style mentioned |
+| OS-T07 | `/pdca plan` execution | bkit-pdca-guide suggested if not active |
+
+### Agent Teams Discovery Tests (AT-T)
+
+| ID | Test | Expected Result |
+|----|------|-----------------|
+| AT-T01 | Session start with env var + Dynamic | "Team Mode available: 2 teammates" |
+| AT-T02 | Session start with env var + Enterprise | "Team Mode available: 4 teammates" |
+| AT-T03 | Session start without env var + Dynamic | "To enable: set env var" suggestion |
+| AT-T04 | Session start without env var + Starter | No Agent Teams message |
+| AT-T05 | Major feature request + Dynamic | "Try Agent Teams" suggestion |
+| AT-T06 | `/dynamic init` execution | Agent Teams capability mentioned |
+| AT-T07 | `/enterprise init` execution | Agent Teams capability mentioned |
+
+### Agent Memory Awareness Tests (AM-T)
+
+| ID | Test | Expected Result |
+|----|------|-----------------|
+| AM-T01 | Session start (any level) | "Agent Memory auto-active" in output |
+| AM-T02 | Check starter-guide agent | Has `memory: user` in frontmatter |
+| AM-T03 | Check pipeline-guide agent | Has `memory: user` in frontmatter |
+| AM-T04 | Check remaining 9 agents | All have `memory: project` in frontmatter |
+| AM-T05 | `/claude-code-learning learn 6` | Covers memory scopes and behavior |

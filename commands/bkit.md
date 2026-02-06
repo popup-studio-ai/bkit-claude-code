@@ -6,7 +6,10 @@ description: |
 
   Use "/bkit" or just type "bkit help" to see available functions list.
 
-  Triggers: bkit, bkit help, bkit functions, show bkit commands
+  Triggers: bkit, bkit help, bkit functions, show bkit commands,
+  도움말, 기능 목록, ヘルプ, 機能一覧, 帮助, 功能列表,
+  ayuda, lista de funciones, aide, liste des fonctions,
+  Hilfe, Funktionsliste, aiuto, elenco funzioni
 user-invocable: true
 allowed-tools:
   - Read
@@ -21,10 +24,10 @@ Display the following help message:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🧰 bkit - AI Native Development Toolkit (Claude Code Edition)
+  bkit - AI Native Development Toolkit v1.5.1 (Claude Code Edition)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-📋 PDCA (Document-Driven Development)
+PDCA (Document-Driven Development)
   /pdca plan <feature>       Start planning a new feature
   /pdca design <feature>     Create design document
   /pdca do <feature>         Implementation guide
@@ -32,30 +35,38 @@ Display the following help message:
   /pdca iterate <feature>    Auto-improvement iteration
   /pdca report <feature>     Generate completion report
   /pdca archive <feature>    Archive completed PDCA documents
+  /pdca cleanup              Cleanup archived features from status
+  /pdca team <feature>       Start PDCA Team Mode (Agent Teams)
+  /pdca team status          Show Team status
+  /pdca team cleanup         Cleanup Team resources
   /pdca status               Show current PDCA status
   /pdca next                 Guide to next step
 
-🚀 Project Initialization
+Project Initialization
   /starter init <name>       Static web project (HTML/CSS/Next.js)
   /dynamic init <name>       Fullstack app (bkend.ai BaaS)
   /enterprise init <name>    Enterprise system (K8s/Terraform)
 
-📊 Development Pipeline
+Development Pipeline
   /development-pipeline start    Start pipeline
   /development-pipeline next     Proceed to next phase
   /development-pipeline status   Check current phase
 
-🔍 Quality Management
+Quality Management
   /code-review <path>        Code review
   /zero-script-qa            Start Zero Script QA
 
-📚 Learning
+Learning
   /claude-code-learning          Learn Claude Code
   /claude-code-learning setup    Analyze current project setup
 
+Output Styles (v1.5.1)
+  /output-style              Select response style
+  Available: bkit-pdca-guide, bkit-learning, bkit-enterprise
+
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-⚠️  Note: These functions don't have autocomplete in CLI.
-    Type the command directly (e.g., /pdca plan login)
+  Note: These functions don't have autocomplete in CLI.
+  Type the command directly (e.g., /pdca plan login)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
@@ -63,11 +74,11 @@ Display the following help message:
 
 ## Functions Reference
 
-### User-Invocable Functions (10)
+### User-Invocable Skills (12)
 
 | Function | Description |
 |----------|-------------|
-| `/pdca` | PDCA cycle management |
+| `/pdca` | PDCA cycle management (plan, design, do, analyze, iterate, report, archive, cleanup, team, status, next) |
 | `/starter` | Starter project (HTML/CSS/Next.js) |
 | `/dynamic` | Dynamic project (bkend.ai BaaS) |
 | `/enterprise` | Enterprise project (K8s/Terraform) |
@@ -75,13 +86,55 @@ Display the following help message:
 | `/code-review` | Code quality analysis |
 | `/zero-script-qa` | Log-based QA |
 | `/claude-code-learning` | Claude Code learning |
+| `/mobile-app` | Mobile app development (React Native/Flutter/Expo) |
+| `/desktop-app` | Desktop app development (Electron/Tauri) |
 | `/bkit-rules` | Core rules (auto-applied) |
 | `/bkit-templates` | PDCA document templates |
 
-### Claude-Only Functions (11)
+### Phase Skills (9, auto-invoked by pipeline)
 
 | Function | Description |
 |----------|-------------|
-| `/phase-1-schema` ~ `/phase-9-deployment` | 9-phase Pipeline knowledge |
-| `/mobile-app` | Mobile app development |
-| `/desktop-app` | Desktop app development |
+| `/phase-1-schema` | Terminology and data structure definition |
+| `/phase-2-convention` | Coding rules and conventions |
+| `/phase-3-mockup` | UI/UX mockup creation |
+| `/phase-4-api` | Backend API design and implementation |
+| `/phase-5-design-system` | Design system and component library |
+| `/phase-6-ui-integration` | UI implementation and API integration |
+| `/phase-7-seo-security` | SEO optimization and security hardening |
+| `/phase-8-review` | Code review and gap analysis |
+| `/phase-9-deployment` | Production deployment (CI/CD, K8s) |
+
+### Agents (11, auto-triggered by keywords)
+
+| Agent | Trigger Keywords | Model |
+|-------|-----------------|-------|
+| gap-detector | verify, check, gap | opus |
+| pdca-iterator | improve, iterate, fix | sonnet |
+| code-analyzer | analyze, quality, review | opus |
+| report-generator | report, summary, complete | haiku |
+| starter-guide | beginner, help, learn | sonnet |
+| bkend-expert | login, auth, database | sonnet |
+| enterprise-expert | microservices, k8s, architecture | opus |
+| design-validator | validate design, spec check | opus |
+| qa-monitor | QA, docker logs, testing | haiku |
+| pipeline-guide | where to start, what first | sonnet |
+| infra-architect | AWS, terraform, infrastructure | opus |
+
+### Output Styles (3, select via /output-style)
+
+| Style | Best For | Description |
+|-------|----------|-------------|
+| bkit-pdca-guide | Dynamic projects | PDCA badges, gap analysis suggestions, checklists |
+| bkit-learning | Starter projects | Learning points, TODO(learner) markers |
+| bkit-enterprise | Enterprise projects | Architecture tradeoffs, cost analysis |
+
+### v1.5.1 Features
+
+| Feature | Activation | Description |
+|---------|-----------|-------------|
+| Agent Teams | `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` | Multi-agent parallel PDCA execution |
+| Agent Memory | Automatic | Agents remember context across sessions |
+| Output Styles | `/output-style` | Custom response formatting |
+| TaskCompleted Hook | Automatic | Auto-advance PDCA phases on task completion |
+| TeammateIdle Hook | Automatic | Assign work to idle teammates |

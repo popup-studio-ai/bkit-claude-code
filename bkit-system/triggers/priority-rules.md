@@ -155,3 +155,28 @@ Result: phase-4-api skill context + appropriate agent combination
 - [[trigger-matrix]] - Full trigger matrix
 - [[../components/hooks/_hooks-overview]] - Hook event details
 - [[../_GRAPH-INDEX]] - Full index
+
+---
+
+## v1.5.1 Feature Priority
+
+### Output Style Priority
+
+Output styles are suggestions, not requirements:
+- Level-based auto-suggestion is a recommendation
+- User can override with `/output-style` at any time
+- Explicit user choice > Auto-suggestion
+
+### Agent Teams Priority
+
+Agent Teams is opt-in:
+- Requires explicit environment variable
+- Requires explicit `/pdca team` command
+- Never auto-activates without user consent
+
+### Agent Memory Priority
+
+Agent Memory is always-on:
+- No opt-out mechanism (by design)
+- Memory scopes determined by agent configuration
+- Project scope > User scope for overlapping data

@@ -575,3 +575,31 @@ common.outputAllow('Guidance message');
 - [[../skills/_skills-overview]] - Skill details
 - [[../agents/_agents-overview]] - Agent details
 - [[../../triggers/trigger-matrix]] - Trigger matrix
+
+---
+
+## v1.5.1 Script Enhancements
+
+### New Scripts
+
+| Script | Hook Event | Purpose |
+|--------|-----------|---------|
+| `pdca-task-completed.js` | TaskCompleted | Auto-advance PDCA phases |
+| `team-idle-handler.js` | TeammateIdle | Assign work to idle teammates |
+| `team-stop.js` | Stop | Clean up Agent Teams resources |
+
+### Team Module (`lib/team/`)
+
+| File | Exports | Purpose |
+|------|---------|---------|
+| `index.js` | 6 functions | Entry point, re-exports |
+| `strategy.js` | TEAM_STRATEGIES | Level-based team composition |
+| `coordinator.js` | isTeamModeAvailable, formatTeamStatus | Team management |
+| `hooks.js` | assignNextTeammateWork, handleTeammateIdle | Hook handlers |
+
+### Output Styles Directory
+
+3 output style files in `output-styles/`:
+- `bkit-learning.md` - Learning-focused response formatting
+- `bkit-pdca-guide.md` - PDCA workflow response formatting
+- `bkit-enterprise.md` - Enterprise architecture response formatting

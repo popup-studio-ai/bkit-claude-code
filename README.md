@@ -1,8 +1,8 @@
 # bkit - Vibecoding Kit
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Claude Code](https://img.shields.io/badge/Claude%20Code-v2.1.15+-purple.svg)](https://docs.anthropic.com/en/docs/claude-code/getting-started)
-[![Version](https://img.shields.io/badge/Version-1.5.0-green.svg)](CHANGELOG.md)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-v2.1.33+-purple.svg)](https://docs.anthropic.com/en/docs/claude-code/getting-started)
+[![Version](https://img.shields.io/badge/Version-1.5.1-green.svg)](CHANGELOG.md)
 [![Author](https://img.shields.io/badge/Author-POPUP%20STUDIO-orange.svg)](https://popupstudio.ai)
 
 > **PDCA methodology + AI coding assistant mastery for AI-native development**
@@ -36,7 +36,7 @@ bkit implements Context Engineering through three interconnected layers:
 |-------|------------|---------|
 | **Domain Knowledge** | 21 Skills | Structured expert knowledge (phases, levels, specialized domains) |
 | **Behavioral Rules** | 11 Agents | Role-based constraints with model selection (opus/sonnet/haiku) |
-| **State Management** | 86+ Functions | PDCA status, intent detection, ambiguity scoring, multi-feature context |
+| **State Management** | 144+ Functions | PDCA status, intent detection, ambiguity scoring, multi-feature context, team coordination |
 
 ### 5-Layer Hook System
 
@@ -58,8 +58,12 @@ Layer 5: Scripts (39 modules)    → Actual Node.js execution logic with unified
 
 ![bkit Features](images/bkit-features.png)
 
+- **Agent Teams (v1.5.1)** - Parallel PDCA execution with multiple AI agents (Dynamic: 2, Enterprise: 4 teammates)
+- **Output Styles (v1.5.1)** - Level-based response formatting (bkit-learning, bkit-pdca-guide, bkit-enterprise)
+- **Agent Memory (v1.5.1)** - Cross-session context persistence for all 11 agents (auto-active)
+- **Natural Feature Discovery (v1.5.1)** - Auto-trigger integration aligned with "Automation First" philosophy
 - **Task Management + PDCA Integration (v1.4.7)** - Task Chain Auto-Creation, Task ID Persistence, Check↔Act Iteration
-- **Core Modularization (v1.4.7)** - lib/common.js split into 4 modules (lib/core/, lib/pdca/, lib/intent/, lib/task/)
+- **Core Modularization (v1.4.7)** - lib/common.js split into 5 modules (lib/core/, lib/pdca/, lib/intent/, lib/task/, lib/team/)
 - **Context Engineering (v1.4.4)** - Systematic context curation with 7 library modules and unified hook system
 - **PDCA Methodology** - Structured development workflow with automatic documentation
 - **PDCA Skill Integration (v1.4.4)** - Unified `/pdca` skill with 8 actions (plan, design, do, analyze, iterate, report, status, next)
@@ -70,7 +74,7 @@ Layer 5: Scripts (39 modules)    → Actual Node.js execution logic with unified
 - **21 Skills** - Domain-specific knowledge for various development scenarios
 - **11 Agents** - Specialized AI assistants for different tasks
 - **39 Scripts** - Hook execution with unified handlers (hooks-json-integration)
-- **132 Utility Functions** - 4 modular libraries with state management, intent detection, task tracking
+- **144+ Utility Functions** - 5 modular libraries with state management, intent detection, task tracking, team coordination
 - **Check-Act Iteration Loop** - Automatic gap analysis and fix cycles with max 5 iterations (90% threshold)
 
 ---
@@ -158,7 +162,8 @@ bkit-claude-code/
 ├── skills/                  # Domain knowledge
 ├── hooks/                   # Event hooks (hooks.json)
 ├── scripts/                 # Hook execution scripts
-├── lib/                     # Shared utilities (4 modules)
+├── lib/                     # Shared utilities (5 modules)
+├── output-styles/           # Level-based response formatting
 ├── templates/               # Document templates
 └── bkit.config.json         # Centralized configuration
 ```

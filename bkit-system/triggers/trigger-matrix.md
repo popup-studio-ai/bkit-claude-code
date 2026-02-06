@@ -234,3 +234,35 @@ Each Skill is connected to specific Agents:
 - [[priority-rules]] - Priority rules for conflicts
 - [[../scenarios/scenario-write-code]] - Write/Edit scenario details
 - [[../_GRAPH-INDEX]] - Full index
+
+---
+
+## v1.5.1 Feature Triggers
+
+### Output Style Triggers
+
+| Trigger Point | Condition | Suggestion |
+|--------------|-----------|-----------|
+| SessionStart | Level = Starter | Suggest `bkit-learning` |
+| SessionStart | Level = Dynamic | Suggest `bkit-pdca-guide` |
+| SessionStart | Level = Enterprise | Suggest `bkit-enterprise` |
+| Level skill init | `/starter init` | Auto-suggest `bkit-learning` |
+| Level skill init | `/dynamic init` | Auto-suggest `bkit-pdca-guide` |
+| Level skill init | `/enterprise init` | Auto-suggest `bkit-enterprise` |
+| PDCA phase start | Any PDCA command | Suggest `bkit-pdca-guide` if not active |
+
+### Agent Teams Triggers
+
+| Trigger Point | Condition | Suggestion |
+|--------------|-----------|-----------|
+| SessionStart | env var set + Dynamic/Enterprise | "Team Mode available" |
+| SessionStart | env var NOT set + Dynamic/Enterprise | "Enable Agent Teams" |
+| Task classification | Major Feature + Dynamic/Enterprise | "Try Agent Teams" |
+| Match rate | < 70% + Dynamic/Enterprise | "Team mode for faster iteration" |
+
+### Agent Memory Triggers
+
+| Trigger Point | Condition | Action |
+|--------------|-----------|--------|
+| SessionStart | Always | "Agent Memory auto-active" message |
+| Agent invocation | Always | Agent uses persisted memory automatically |

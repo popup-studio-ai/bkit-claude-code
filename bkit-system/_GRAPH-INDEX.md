@@ -102,6 +102,24 @@ The following skills were consolidated:
 - [[../agents/pdca-iterator|pdca-iterator]] - Iteration optimizer (Evaluator-Optimizer pattern)
 - [[../agents/report-generator|report-generator]] - Report generation
 
+## v1.5.1 Features
+
+### Output Styles (3)
+- [[../output-styles/bkit-learning|bkit-learning]] - Learning-focused response formatting
+- [[../output-styles/bkit-pdca-guide|bkit-pdca-guide]] - PDCA workflow response formatting
+- [[../output-styles/bkit-enterprise|bkit-enterprise]] - Enterprise architecture response formatting
+
+### Agent Teams
+- [[../lib/team/index|team module]] - Team coordination (Dynamic: 2, Enterprise: 4 teammates)
+- [[../lib/team/strategy|team strategy]] - Level-based team composition patterns
+- [[../lib/team/coordinator|team coordinator]] - Team availability and configuration
+- [[../lib/team/hooks|team hooks]] - TaskCompleted and TeammateIdle handlers
+
+### Agent Memory
+- All 11 agents configured with `memory:` frontmatter
+- 9 agents: `project` scope, 2 agents: `user` scope
+- Automatic cross-session context persistence
+
 ## Skills - User Invocable (v1.4.5)
 
 > **Note**: Commands deprecated in v1.4.4+. Use Skills instead.

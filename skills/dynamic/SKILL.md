@@ -311,6 +311,42 @@ Move to **Enterprise Level** if you need:
 → "I need complex backend logic"
 ```
 
+## bkit Features for Dynamic Level (v1.5.1)
+
+### Output Style: bkit-pdca-guide (Recommended)
+
+For optimal PDCA workflow experience, activate the PDCA guide style:
+
+```
+/output-style bkit-pdca-guide
+```
+
+This provides:
+- PDCA status badges showing current phase progress
+- Gap analysis suggestions after code changes
+- Automatic next-phase guidance with checklists
+
+### Agent Teams (2 Teammates)
+
+Dynamic projects support Agent Teams for parallel PDCA execution:
+
+| Role | Agents | PDCA Phases |
+|------|--------|-------------|
+| developer | bkend-expert | Do, Act |
+| qa | qa-monitor, gap-detector | Check |
+
+**To enable:**
+1. Set environment: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+2. Start team mode: `/pdca team {feature}`
+3. Monitor progress: `/pdca team status`
+
+### Agent Memory (Auto-Active)
+
+All bkit agents automatically remember project context across sessions.
+No setup needed — agents use `project` scope memory for this codebase.
+
+---
+
 ## Common Mistakes
 
 | Mistake | Solution |

@@ -27,6 +27,7 @@ skills_preload:
   - phase-8-review
   - code-review
 permissionMode: plan
+memory: project
 model: opus
 tools:
   - Read
@@ -349,3 +350,12 @@ echo "=== Long switch/if-else ==="
 grep -rn "case.*:" src/ | wc -l
 grep -rn "else if" src/ | wc -l
 ```
+
+## v1.5.1 Feature Guidance
+
+### Output Style Recommendation
+- Dynamic projects: suggest `bkit-pdca-guide` for code quality tracking
+- Enterprise projects: suggest `bkit-enterprise` for architecture compliance: `/output-style bkit-enterprise`
+
+### Agent Memory
+This agent uses `memory: project` scope — code quality patterns and findings persist across sessions.

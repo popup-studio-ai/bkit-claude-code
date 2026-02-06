@@ -5,6 +5,61 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.1] - 2026-02-06
+
+### Added
+- **Agent Teams Support (Research Preview)**: Parallel PDCA execution with multiple AI agents
+  - New `lib/team/` module (4 files): coordinator, strategy, hooks, index
+  - Team composition: Dynamic (2 teammates), Enterprise (4 teammates)
+  - New hook handlers: `pdca-task-completed.js` (TaskCompleted), `team-idle-handler.js` (TeammateIdle), `team-stop.js`
+  - `team` configuration section in `bkit.config.json`
+  - Requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+
+- **Output Styles System**: Level-based response formatting
+  - 3 styles in `output-styles/` directory:
+    - `bkit-learning` for Starter level (learning points, TODO markers)
+    - `bkit-pdca-guide` for Dynamic level (status badges, checklists)
+    - `bkit-enterprise` for Enterprise level (tradeoff analysis, cost impact)
+  - `outputStyles` configuration in `bkit.config.json` with `levelDefaults`
+
+- **Agent Memory Integration**: Cross-session context persistence
+  - `memory: user` scope for starter-guide, pipeline-guide (cross-project learning)
+  - `memory: project` scope for 9 agents (project-specific context)
+  - No configuration needed — auto-active
+
+- **Natural Feature Discovery**: Philosophy-aligned auto-trigger integration
+  - `bkit-rules/SKILL.md`: 3 new sections (Output Style Auto-Selection, Agent Teams Auto-Suggestion, Agent Memory Awareness)
+  - `session-start.js`: Feature awareness block (styles, teams, memory) at every session start
+  - Level skills: v1.5.1 feature announcements per level (Starter/Dynamic/Enterprise)
+  - All 11 agents: v1.5.1 Feature Guidance sections
+  - `claude-code-learning/SKILL.md`: Level 6 (Advanced Features) curriculum
+  - `pdca/SKILL.md`: Output Style + Agent Teams integration sections
+
+- **PDCA Team Mode**: `/pdca team {feature}` for parallel PDCA execution
+  - `/pdca team status` to monitor teammate progress
+  - `/pdca team cleanup` to end team session
+
+- **New Hook Events**: `TaskCompleted` and `TeammateIdle` support in `hooks/hooks.json`
+
+- **bkit-system Documentation**: v1.5.1 coverage across 16 system docs
+  - Philosophy docs (4): v1.5.1 feature integration sections
+  - Component overviews (4): Agent Memory, Teams, Styles coverage
+  - Trigger docs (2): Output Style, Agent Teams, Agent Memory triggers
+  - New scenario: `scenario-discover-features.md`
+  - Test checklist: 19 new test cases (OS-T:7, AT-T:7, AM-T:5)
+
+### Changed
+- **lib/common.js**: Added Team module re-exports (6 new functions, total 144+ exports)
+- **Plugin metadata**: Updated `plugin.json` version to 1.5.1
+- **Claude Code compatibility**: Minimum v2.1.15, Recommended v2.1.33
+
+### Compatibility
+- **Claude Code**: Minimum v2.1.15, Recommended v2.1.33
+- **Node.js**: Minimum v18.0.0
+- **Agent Teams**: Requires Claude Code v2.1.32+ with `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+
+---
+
 ## [1.5.0] - 2026-02-01
 
 ### Breaking Changes

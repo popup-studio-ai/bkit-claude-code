@@ -158,6 +158,36 @@ bkit classifies languages optimized for AI-Native development into 4 tiers:
 
 ---
 
+---
+
+## v1.5.1 Feature Integration
+
+### Output Styles in AI-Native Context
+
+Output Styles implement adaptive communication:
+
+| Style | AI-Native Benefit |
+|-------|-------------------|
+| `bkit-learning` | Reduces learning curve, enables beginners to adopt AI practices |
+| `bkit-pdca-guide` | Enforces document-driven development through visual progress |
+| `bkit-enterprise` | CTO-level analysis for architecture decisions |
+
+### Agent Teams in AI-Native Context
+
+Agent Teams transform AI from "assistant" to "team member":
+- Multiple AI agents work in parallel on different PDCA phases
+- Reduces development time further beyond single-agent workflows
+- Mirrors real team composition (architect, developer, qa, reviewer)
+
+### Agent Memory in AI-Native Context
+
+Agent Memory enables continuous learning:
+- Project knowledge accumulates across sessions
+- Agents improve their responses based on previous interactions
+- No manual knowledge transfer needed between sessions
+
+---
+
 ## Related Documents
 
 - [[core-mission]] - Core mission and philosophies

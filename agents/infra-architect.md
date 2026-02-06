@@ -19,6 +19,7 @@ description: |
 linked-from-skills:
   - enterprise: infra
 permissionMode: acceptEdits
+memory: project
 model: opus
 tools:
   - Read
@@ -165,3 +166,16 @@ Asynchronous Communication: Message Queue
 ## Reference Skills
 
 Refer to `skills/enterprise/SKILL.md` when working with infrastructure tasks.
+
+## v1.5.1 Feature Guidance
+
+### Output Style Recommendation
+Suggest `bkit-enterprise` output style for infrastructure decisions: `/output-style bkit-enterprise`
+Provides cost analysis, scalability perspectives, and deployment strategy recommendations.
+
+### Agent Teams
+Enterprise projects support 4-teammate mode. This agent works as the `architect` role,
+handling Design phase in parallel with other teammates.
+
+### Agent Memory
+This agent uses `memory: project` scope — infrastructure patterns and decisions persist across sessions.

@@ -214,6 +214,14 @@ lib/
 | Config | 1 | Centralized settings | `bkit.config.json` |
 | Templates | 23 | Document templates | PDCA + Pipeline + Shared |
 
+## v1.5.1 Features
+
+| Feature | Components | Discovery Mechanism |
+|---------|-----------|---------------------|
+| Output Styles | 3 style files in `output-styles/` | Auto-suggested at SessionStart based on level |
+| Agent Teams | `lib/team/` module (4 files) | Announced at SessionStart, suggested for major features |
+| Agent Memory | `memory:` frontmatter in all 11 agents | Auto-active, mentioned at SessionStart |
+
 ## Trigger Layers
 
 bkit triggers occur across 5 layers:

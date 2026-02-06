@@ -153,6 +153,22 @@ Mention @claude in PR comments to auto-update documentation.
 1. Manage CLAUDE.md with Git
 2. Add rules during PR review
 3. Gradually accumulate team knowledge
+
+## Agent Teams (v1.5.1)
+
+Parallel PDCA execution with multiple AI agents working simultaneously.
+
+Requirements:
+  CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
+
+Usage:
+  /pdca team {feature}     Start team mode
+  /pdca team status        Check teammate progress
+  /pdca team cleanup       End team session
+
+Team composition by level:
+  Dynamic:    2 teammates (developer, qa)
+  Enterprise: 4 teammates (architect, developer, qa, reviewer)
 ```
 
 ### Level 5: PDCA Methodology
@@ -175,6 +191,46 @@ docs/
 ## Learn More
 
 Use /pdca skill to learn PDCA methodology.
+```
+
+### Level 6: Advanced Features (v1.5.1)
+
+```markdown
+## Output Styles
+
+Customize how Claude responds based on your project level.
+
+Available styles:
+  bkit-learning     Best for beginners (learning points, TODO markers)
+  bkit-pdca-guide   Best for PDCA workflows (status badges, checklists)
+  bkit-enterprise   Best for architects (tradeoff analysis, cost impact)
+
+Usage:
+  /output-style              Select interactively
+  /output-style bkit-learning  Apply directly
+
+Auto-recommendation:
+  Starter → bkit-learning
+  Dynamic → bkit-pdca-guide
+  Enterprise → bkit-enterprise
+
+## Agent Memory
+
+All bkit agents automatically remember context across sessions.
+No configuration needed.
+
+Memory scopes:
+  project   9 agents remember per-project context (.claude/agent-memory/)
+  user      2 agents remember cross-project learning (~/.claude/agent-memory/)
+
+Agents with user-scope memory:
+  starter-guide     Remembers your learning progress across projects
+  pipeline-guide    Remembers your pipeline preferences globally
+
+## Agent Teams
+
+Parallel PDCA execution for Dynamic and Enterprise projects.
+See Level 4 for details.
 ```
 
 ## Output Format

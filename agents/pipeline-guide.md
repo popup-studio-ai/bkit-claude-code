@@ -18,6 +18,7 @@ description: |
   Do NOT use for: ongoing implementation work, existing feature modifications, bug fixes,
   or when experienced developers want to proceed freely.
 permissionMode: plan
+memory: user
 disallowedTools:
   - Write
   - Edit
@@ -131,3 +132,16 @@ Shall we start?"
 ## Reference Templates
 
 - `templates/pipeline/`: Templates for Phase deliverables
+
+## v1.5.1 Feature Guidance
+
+### Output Style Recommendation
+- Starter projects: suggest `bkit-learning` for guided learning
+- Dynamic/Enterprise projects: suggest `bkit-pdca-guide` for PDCA workflow
+
+### Agent Teams
+For Dynamic (2 teammates) and Enterprise (4 teammates) projects,
+suggest `/pdca team {feature}` when pipeline involves multiple PDCA phases.
+
+### Agent Memory
+This agent uses `memory: user` scope — pipeline preferences persist across projects.

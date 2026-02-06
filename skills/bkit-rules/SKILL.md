@@ -183,3 +183,84 @@ Classify tasks to apply appropriate PDCA level:
 **Minor Change**: improve, refactor, enhance, optimize, update
 **Feature**: add, create, implement, build, new feature
 **Major Feature**: redesign, migrate, architecture, overhaul, rewrite
+
+---
+
+## 6. Output Style Auto-Selection (v1.5.1)
+
+When project level is detected, automatically suggest the matching output style:
+
+| Level | Suggested Style | Trigger Condition |
+|-------|-----------------|-------------------|
+| Starter | `bkit-learning` | Level detected as Starter |
+| Dynamic | `bkit-pdca-guide` | Level detected as Dynamic |
+| Enterprise | `bkit-enterprise` | Level detected as Enterprise |
+
+### Auto-Selection Rules
+
+- On session start: Suggest output style matching detected level
+- On `/starter init`, `/dynamic init`, `/enterprise init`: Auto-suggest style for that level
+- On PDCA phase transitions: Suggest `bkit-pdca-guide` if not already active
+- User can override with `/output-style` at any time
+
+### Available Output Styles
+
+| Style | Best For | Key Features |
+|-------|----------|-------------|
+| `bkit-learning` | Beginners, learning | Learning points, TODO(learner) markers, concept explanations |
+| `bkit-pdca-guide` | PDCA workflows | Status badges, checklists, phase progress, gap analysis suggestions |
+| `bkit-enterprise` | Architecture decisions | Tradeoff analysis, cost impact, deployment strategy, SOLID compliance |
+
+---
+
+## 7. Agent Teams Auto-Suggestion (v1.5.1)
+
+Suggest Agent Teams when conditions are met:
+
+### Suggestion Triggers
+
+| Condition | Suggestion |
+|-----------|-----------|
+| Major Feature (>= 1000 chars) AND Dynamic/Enterprise level | "Agent Teams can parallelize PDCA phases. Try `/pdca team {feature}`" |
+| Match Rate < 70% AND Dynamic/Enterprise level | "Consider Agent Teams for faster parallel Check-Act iteration" |
+| Enterprise project init | "Your project supports 4-teammate Agent Teams mode" |
+| Dynamic project init | "Your project supports 2-teammate Agent Teams mode" |
+
+### Team Availability
+
+| Level | Available | Teammates | Roles |
+|-------|:---------:|:---------:|-------|
+| Starter | No | - | - |
+| Dynamic | Yes | 2 | developer, qa |
+| Enterprise | Yes | 4 | architect, developer, qa, reviewer |
+
+### Requirements
+
+- Environment: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+- If env var not set: Suggest setting it when team mode would be beneficial
+- Command: `/pdca team {feature}` to start team mode
+
+---
+
+## 8. Agent Memory Awareness (v1.5.1)
+
+Agent Memory is automatically active for all bkit agents. No user action required.
+
+### How It Works
+
+- Agents remember project context across sessions via `memory: project` scope
+- Some agents (`starter-guide`, `pipeline-guide`) use `memory: user` for cross-project learning
+- Memory persists in `.claude/agent-memory/` (project) or `~/.claude/agent-memory/` (user)
+
+### Memory Scopes
+
+| Scope | Agents Using | Persistence |
+|-------|-------------|-------------|
+| `project` | 9 agents (code-analyzer, gap-detector, pdca-iterator, etc.) | Per-project, across sessions |
+| `user` | 2 agents (starter-guide, pipeline-guide) | Global, across all projects |
+
+### Proactive Mention
+
+- On session start: "Agent Memory is active — agents remember context across sessions"
+- When agent is invoked: Agent may reference previous session context
+- No configuration needed — fully automatic

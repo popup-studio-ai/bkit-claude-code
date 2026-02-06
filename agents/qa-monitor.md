@@ -19,6 +19,7 @@ description: |
 imports:
   - ${PLUGIN_ROOT}/templates/shared/error-handling-patterns.md
 permissionMode: acceptEdits
+memory: project
 # hooks: Managed by hooks/hooks.json (unified-bash-pre.js, unified-write-post.js, unified-bash-post.js, unified-stop.js) - GitHub #9354 workaround
 model: haiku
 tools:
@@ -27,7 +28,7 @@ tools:
   - Write
   - Glob
   - Grep
-  - Task
+  - Task(Explore)
 skills:
   - zero-script-qa
 ---
@@ -323,3 +324,15 @@ docker compose logs --since "5m"
 # Save logs to file
 docker compose logs > logs_$(date +%Y%m%d_%H%M%S).txt
 ```
+
+## v1.5.1 Feature Guidance
+
+### Output Style Recommendation
+Suggest `bkit-pdca-guide` output style for QA tracking with status badges: `/output-style bkit-pdca-guide`
+
+### Agent Teams
+This agent works as the `qa` role in Agent Teams,
+handling Check phase in parallel with developer and reviewer teammates.
+
+### Agent Memory
+This agent uses `memory: project` scope — QA findings and issue patterns persist across sessions.
