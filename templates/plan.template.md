@@ -106,7 +106,7 @@ variables:
 | Level | Characteristics | Recommended For | Selected |
 |-------|-----------------|-----------------|:--------:|
 | **Starter** | Simple structure (`components/`, `lib/`, `types/`) | Static sites, portfolios, landing pages | ☐ |
-| **Dynamic** | Feature-based modules, services layer | Web apps with backend, SaaS MVPs | ☐ |
+| **Dynamic** | Feature-based modules, BaaS integration (bkend.ai) | Web apps with backend, SaaS MVPs, fullstack apps | ☐ |
 | **Enterprise** | Strict layer separation, DI, microservices | High-traffic systems, complex architectures | ☐ |
 
 ### 6.2 Key Architectural Decisions
@@ -119,6 +119,7 @@ variables:
 | Form Handling | react-hook-form / formik / native | {selected} | {reason} |
 | Styling | Tailwind / CSS Modules / styled-components | {selected} | {reason} |
 | Testing | Jest / Vitest / Playwright | {selected} | {reason} |
+| Backend | BaaS (bkend.ai) / Custom Server / Serverless | {selected} | Dynamic -> bkend.ai recommended |
 
 ### 6.3 Clean Architecture Approach
 
@@ -132,7 +133,7 @@ Folder Structure Preview:
 ├─────────────────────────────────────────────────────┤
 │ Dynamic:                                            │
 │   src/components/, src/features/, src/services/,    │
-│   src/types/, src/lib/                              │
+│   src/types/, src/lib/bkend.ts, .mcp.json           │
 ├─────────────────────────────────────────────────────┤
 │ Enterprise:                                         │
 │   src/presentation/, src/application/,              │

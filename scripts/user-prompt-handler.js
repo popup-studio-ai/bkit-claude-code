@@ -30,6 +30,32 @@ try {
   importResolver = null;
 }
 
+/**
+ * Check if bkend MCP is configured in project
+ * @returns {boolean}
+ */
+function checkBkendMcpConfig() {
+  const mcpJsonPath = path.join(process.cwd(), '.mcp.json');
+  if (fs.existsSync(mcpJsonPath)) {
+    try {
+      const content = fs.readFileSync(mcpJsonPath, 'utf-8');
+      if (content.includes('bkend') || content.includes('api.bkend.ai')) {
+        return true;
+      }
+    } catch (e) { /* ignore */ }
+  }
+  const settingsPath = path.join(process.cwd(), '.claude', 'settings.json');
+  if (fs.existsSync(settingsPath)) {
+    try {
+      const content = fs.readFileSync(settingsPath, 'utf-8');
+      if (content.includes('bkend') || content.includes('api.bkend.ai')) {
+        return true;
+      }
+    } catch (e) { /* ignore */ }
+  }
+  return false;
+}
+
 // Read user prompt from stdin
 let input;
 try {
@@ -69,7 +95,7 @@ try {
 // 2. Implicit Agent Trigger
 try {
   const agentTrigger = matchImplicitAgentTrigger(userPrompt);
-  if (agentTrigger && agentTrigger.confidence > 0.8) {
+  if (agentTrigger && agentTrigger.confidence >= 0.8) {
     contextParts.push(`Suggested agent: ${agentTrigger.agent}`);
     debugLog('UserPrompt', 'Agent trigger matched', {
       agent: agentTrigger.agent,
@@ -92,6 +118,22 @@ try {
   }
 } catch (e) {
   debugLog('UserPrompt', 'Skill trigger detection failed', { error: e.message });
+}
+
+// 3.5: bkend recommendation for backend/DB requests (G-04, G-05)
+try {
+  const skillTriggerForBkend = matchImplicitSkillTrigger(userPrompt);
+  if (skillTriggerForBkend && skillTriggerForBkend.skill === 'dynamic') {
+    const hasBkendMcp = checkBkendMcpConfig();
+    if (!hasBkendMcp) {
+      contextParts.push(
+        'bkend.ai MCP not configured. Suggest: claude mcp add bkend --transport http https://api.bkend.ai/mcp'
+      );
+      debugLog('UserPrompt', 'bkend MCP not configured, suggesting setup');
+    }
+  }
+} catch (e) {
+  debugLog('UserPrompt', 'bkend MCP check failed', { error: e.message });
 }
 
 // 4. Ambiguity Detection

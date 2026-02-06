@@ -1,6 +1,6 @@
 # Agents Overview
 
-> List of 11 Agents defined in bkit and their roles (v1.4.1)
+> List of 16 Agents defined in bkit and their roles (v1.5.2)
 >
 > **v1.4.1**: Added Context Engineering perspective - Role-based Behavioral Rules Layer
 > **v1.5.0**: Claude Code Exclusive
@@ -60,7 +60,7 @@ Agents auto-recommended based on project level:
 | Agent | Target Level | Role | Hooks |
 |-------|--------------|------|-------|
 | [[../../../agents/starter-guide|starter-guide]] | Starter | Beginner-friendly guide | - |
-| [[../../../agents/bkend-expert|bkend-expert]] | Dynamic | BaaS/Fullstack expert | - |
+| [[../../../agents/bkend-expert|bkend-expert]] | Dynamic | BaaS/Fullstack expert (v1.5.2 Enhanced) | - |
 | [[../../../agents/enterprise-expert|enterprise-expert]] | Enterprise | CTO-level architecture guide | - |
 | [[../../../agents/infra-architect|infra-architect]] | Enterprise | AWS/K8s/Terraform expert | - |
 
@@ -224,7 +224,7 @@ bkit-claude-code/
 
 ### Agent Memory
 
-All 11 agents have `memory:` frontmatter for cross-session context persistence:
+All 16 agents have `memory:` frontmatter for cross-session context persistence:
 
 | Scope | Agents |
 |-------|--------|

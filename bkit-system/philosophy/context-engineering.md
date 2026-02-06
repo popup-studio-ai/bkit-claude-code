@@ -97,7 +97,7 @@ v1.4.2 implements 8 functional requirements (FR-01~FR-08) for comprehensive cont
 
 ## bkit's Context Engineering Structure
 
-### 1. Domain Knowledge Layer (21 Skills)
+### 1. Domain Knowledge Layer (26 Skills)
 
 Skills provide **structured domain knowledge**.
 
@@ -131,7 +131,7 @@ Skills provide **structured domain knowledge**.
 | **Checklists** | Clear completion criteria | Enables automation |
 | **Code Examples** | Ready-to-apply references | Consistent implementation |
 
-### 2. Behavioral Rules Layer (11 Agents)
+### 2. Behavioral Rules Layer (16 Agents)
 
 Agents define **role-based behavioral rules**.
 
@@ -225,7 +225,7 @@ Layer 3: Agent Frontmatter
 Layer 4: Description Triggers
          └── "Triggers:" keyword matching (8 languages)
 
-Layer 5: Scripts (39 modules)
+Layer 5: Scripts (43 modules)
          └── Actual Node.js logic execution
 ```
 
@@ -338,11 +338,11 @@ Reports bkit feature usage status at the end of every response.
 
 | Component | Location | Count |
 |-----------|----------|:-----:|
-| Skills | `skills/*/SKILL.md` | 22 |
+| Skills | `skills/*/SKILL.md` | 26 |
 | Agents | `agents/*.md` | 16 |
 | Scripts | `scripts/*.js` | 43 |
-| Templates | `templates/*.md` | 23 |
-| lib/ modules | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/`, `lib/team/` | 160+ functions |
+| Templates | `templates/*.md` | 27 |
+| lib/ modules | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/`, `lib/team/` | 165 functions |
 | Context File | `CLAUDE.md` | 1 |
 | Manifest | `.claude-plugin/plugin.json` | 1 |
 

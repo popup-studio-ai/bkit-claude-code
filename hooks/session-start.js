@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 /**
- * bkit Vibecoding Kit - SessionStart Hook (v1.5.1)
+ * bkit Vibecoding Kit - SessionStart Hook (v1.5.2)
  * Claude Code 전용 플러그인
  *
- * v1.5.1 Changes:
+ * v1.5.2 Changes:
  * - Agent Teams detection and Team Mode integration
  * - Claude Code v2.1.33 compatibility enhancements
  *
@@ -443,6 +443,7 @@ function getTriggerKeywordTable() {
 | analyze, 분석, 分析, 品質, analizar, analyser, analysieren, analizzare | bkit:code-analyzer | Code quality analysis |
 | report, 보고서, 報告, 报告, informe, rapport, Bericht, rapporto | bkit:report-generator | Generate completion report |
 | help, 도움, 助けて, 帮助, ayuda, aide, Hilfe, aiuto | bkit:starter-guide | Beginner guide |
+| bkend, BaaS, backend service, 백엔드 서비스, バックエンドサービス, 后端服务 | bkit:bkend-expert | Backend/BaaS expert |
 
 ### Skill Triggers (Auto-detection)
 | Keywords | Skill | Level |
@@ -481,7 +482,7 @@ const triggerTable = getTriggerKeywordTable();
 
 // Claude Code Output: JSON with Tool Call Prompt
 // Build context based on onboarding type
-let additionalContext = `# bkit Vibecoding Kit v1.5.1 - Session Startup\n\n`;
+let additionalContext = `# bkit Vibecoding Kit v1.5.2 - Session Startup\n\n`;
 
   if (onboardingData.hasExistingWork) {
     additionalContext += `## 🔄 Previous Work Detected\n\n`;
@@ -507,7 +508,7 @@ let additionalContext = `# bkit Vibecoding Kit v1.5.1 - Session Startup\n\n`;
     additionalContext += `- **Start freely** → General conversation mode\n\n`;
   }
 
-  // v1.5.1: Feature Awareness - Agent Teams, Output Styles, Agent Memory
+  // v1.5.2: Feature Awareness - Agent Teams, Output Styles, Agent Memory
   const detectedLevel = detectLevel();
 
   // Agent Teams detection and suggestion
@@ -545,7 +546,7 @@ let additionalContext = `# bkit Vibecoding Kit v1.5.1 - Session Startup\n\n`;
     'Enterprise': 'bkit-enterprise'
   };
   const suggestedStyle = levelStyleMap[detectedLevel] || 'bkit-pdca-guide';
-  additionalContext += `## Output Styles (v1.5.1)\n`;
+  additionalContext += `## Output Styles (v1.5.2)\n`;
   additionalContext += `- Recommended for ${detectedLevel} level: \`${suggestedStyle}\`\n`;
   additionalContext += `- Change anytime with \`/output-style\`\n`;
   additionalContext += `- Available: bkit-learning (beginners), bkit-pdca-guide (PDCA workflow), bkit-enterprise (architecture)\n\n`;
@@ -555,6 +556,32 @@ let additionalContext = `# bkit Vibecoding Kit v1.5.1 - Session Startup\n\n`;
   additionalContext += `- All bkit agents remember context across sessions automatically\n`;
   additionalContext += `- 9 agents use project scope, 2 agents (starter-guide, pipeline-guide) use user scope\n`;
   additionalContext += `- No configuration needed\n\n`;
+
+  // bkend MCP status check (G-09)
+  if (detectedLevel === 'Dynamic') {
+    try {
+      const mcpJsonPath = path.join(process.cwd(), '.mcp.json');
+      let bkendMcpConnected = false;
+      if (fs.existsSync(mcpJsonPath)) {
+        const mcpContent = fs.readFileSync(mcpJsonPath, 'utf-8');
+        if (mcpContent.includes('bkend') || mcpContent.includes('api.bkend.ai')) {
+          bkendMcpConnected = true;
+        }
+      }
+      if (bkendMcpConnected) {
+        additionalContext += `## bkend.ai MCP Status\n`;
+        additionalContext += `- Status: Connected\n`;
+        additionalContext += `- Use natural language to manage backend (DB, Auth, Storage)\n\n`;
+      } else {
+        additionalContext += `## bkend.ai MCP Status\n`;
+        additionalContext += `- Status: Not configured\n`;
+        additionalContext += `- Setup: \`claude mcp add bkend --transport http https://api.bkend.ai/mcp\`\n`;
+        additionalContext += `- bkend.ai provides Database, Auth, Storage as BaaS\n\n`;
+      }
+    } catch (e) {
+      debugLog('SessionStart', 'bkend MCP check skipped', { error: e.message });
+    }
+  }
 
   additionalContext += `## PDCA Core Rules (Always Apply)\n`;
   additionalContext += `- New feature request → Check/create Plan/Design documents first\n`;
@@ -575,7 +602,7 @@ let additionalContext = `# bkit Vibecoding Kit v1.5.1 - Session Startup\n\n`;
   // ============================================================
   additionalContext += `
 
-## 📊 bkit Feature Usage Report (v1.5.1 - Required for all responses)
+## 📊 bkit Feature Usage Report (v1.5.2 - Required for all responses)
 
 **Rule: Include the following format at the end of every response to report bkit feature usage.**
 
@@ -631,7 +658,7 @@ AskUserQuestion, SessionStart Hook, Read, Write, Edit, Bash
 `;
 
 const response = {
-  systemMessage: `bkit Vibecoding Kit v1.5.1 activated (Claude Code)`,
+  systemMessage: `bkit Vibecoding Kit v1.5.2 activated (Claude Code)`,
   hookSpecificOutput: {
     hookEventName: "SessionStart",
     onboardingType: onboardingData.type,

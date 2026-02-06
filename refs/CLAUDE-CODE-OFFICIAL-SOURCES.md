@@ -215,16 +215,16 @@ hooks: hooks.json
 
 ## 8. bkit Plugin Compatibility
 
-### Current bkit Version: 1.3.0
+### Current bkit Version: 1.5.2
 
 | Component | Count | Claude Code Compatibility |
 |-----------|-------|--------------------------|
-| Commands | 20 | v2.1.x ✅ |
-| Agents | 11 | v2.1.x ✅ |
-| Skills | 18 | v2.1.x ✅ |
-| Scripts | 19 | v2.1.x ✅ |
-| Templates | 20 | v2.1.x ✅ |
-| Hooks | 3 events | v2.1.x ✅ |
+| Commands | DEPRECATED | Migrated to Skills (v1.4.4+) |
+| Agents | 16 | v2.1.x ✅ |
+| Skills | 26 | v2.1.x ✅ |
+| Scripts | 43 | v2.1.x ✅ |
+| Templates | 27 | v2.1.x ✅ |
+| Hooks | 8 events | v2.1.x ✅ |
 
 ### v1.3.0 Changes
 

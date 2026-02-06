@@ -59,6 +59,14 @@ variables:
 └─────────────┘     └─────────────┘     └─────────────┘
 ```
 
+### BaaS Architecture (Dynamic Level)
+
+```
+Client (Next.js) -> bkend.ai Service API (REST) -> MongoDB
+                 <-> MCP (schema management)
+              Claude Code
+```
+
 ### 2.2 Data Flow
 
 ```
@@ -105,9 +113,24 @@ CREATE TABLE {table_name} (
 );
 ```
 
+### MongoDB Collection Schema (Dynamic Level - bkend.ai)
+
+| Field | Type | Required | Unique | Description |
+|-------|------|----------|--------|-------------|
+| _id | ObjectId | auto | auto | System generated |
+| createdBy | String | auto | - | Creator user ID |
+| createdAt | Date | auto | - | Creation timestamp |
+| updatedAt | Date | auto | - | Update timestamp |
+
 ---
 
 ## 4. API Specification
+
+### BaaS API (Dynamic Level)
+
+Dynamic level uses bkend.ai auto-generated REST API.
+CRUD endpoints are auto-generated when tables are created (no separate API implementation needed).
+Reference: MCP tool `4_howto_implement_data_crud`
 
 ### 4.1 Endpoint List
 

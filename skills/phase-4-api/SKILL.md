@@ -72,8 +72,42 @@ docs/03-analysis/
 | Level | Application Method |
 |-------|-------------------|
 | Starter | Skip this Phase (no API) |
-| Dynamic | Use bkend.ai BaaS |
+| Dynamic | Use bkend.ai BaaS (see below) |
 | Enterprise | Implement APIs directly |
+
+### Dynamic Level: bkend.ai BaaS API Implementation
+
+#### Step 1: MCP Setup
+
+```bash
+claude mcp add bkend --transport http https://api.bkend.ai/mcp
+```
+
+#### Step 2: Table Design (via MCP tools)
+
+Natural language request: "Create a users table with name(required), email(required, unique), age fields"
+-> MCP `backend_table_create` auto-invoked
+
+#### Step 3: Service API Integration
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | /v1/data/{table} | List (filter, sort, page) |
+| POST | /v1/data/{table} | Create data |
+| GET | /v1/data/{table}/{id} | Get single |
+| PATCH | /v1/data/{table}/{id} | Partial update |
+| DELETE | /v1/data/{table}/{id} | Delete |
+
+Required Headers: x-project-id, x-environment, Authorization
+
+#### Step 4: Auth Implementation
+
+Reference MCP tools `3_howto_implement_auth` and `6_code_examples_auth`
+
+#### Step 5: Zero Script QA
+
+- Check bkend REST API call logs in browser DevTools Network tab
+- Verify API behavior via response code/body
 
 ## What is Zero Script QA?
 

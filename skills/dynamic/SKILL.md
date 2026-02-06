@@ -150,7 +150,7 @@ project/
 │   ├── 03-analysis/
 │   └── 04-report/
 │
-├── .mcp.json                   # bkend.ai MCP config
+├── .mcp.json                   # bkend.ai MCP config (type: http)
 ├── .env.local                  # Environment variables
 ├── package.json
 └── README.md
@@ -161,13 +161,43 @@ project/
 ### bkend.ai Client Setup
 
 ```typescript
-// lib/bkend.ts
-import { createClient } from '@bkend/client';
+// lib/bkend.ts - REST Service API Client
+const API_BASE = process.env.NEXT_PUBLIC_BKEND_API_URL || 'https://api.bkend.ai/v1';
+const PROJECT_ID = process.env.NEXT_PUBLIC_BKEND_PROJECT_ID!;
+const ENVIRONMENT = process.env.NEXT_PUBLIC_BKEND_ENV || 'dev';
 
-export const bkend = createClient({
-  apiKey: process.env.NEXT_PUBLIC_BKEND_API_KEY!,
-  projectId: process.env.NEXT_PUBLIC_BKEND_PROJECT_ID!,
-});
+async function bkendFetch(path: string, options: RequestInit = {}) {
+  const token = localStorage.getItem('bkend_access_token');
+  const res = await fetch(`${API_BASE}${path}`, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      'x-project-id': PROJECT_ID,
+      'x-environment': ENVIRONMENT,
+      ...(token && { Authorization: `Bearer ${token}` }),
+      ...options.headers,
+    },
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+export const bkend = {
+  auth: {
+    signup: (body: {email: string; password: string}) => bkendFetch('/auth/email/signup', {method: 'POST', body: JSON.stringify(body)}),
+    signin: (body: {email: string; password: string}) => bkendFetch('/auth/email/signin', {method: 'POST', body: JSON.stringify(body)}),
+    me: () => bkendFetch('/auth/me'),
+    refresh: (refreshToken: string) => bkendFetch('/auth/refresh', {method: 'POST', body: JSON.stringify({refreshToken})}),
+    signout: () => bkendFetch('/auth/signout', {method: 'POST'}),
+  },
+  data: {
+    list: (table: string, params?: Record<string,string>) => bkendFetch(`/data/${table}?${new URLSearchParams(params)}`),
+    get: (table: string, id: string) => bkendFetch(`/data/${table}/${id}`),
+    create: (table: string, body: any) => bkendFetch(`/data/${table}`, {method: 'POST', body: JSON.stringify(body)}),
+    update: (table: string, id: string, body: any) => bkendFetch(`/data/${table}/${id}`, {method: 'PATCH', body: JSON.stringify(body)}),
+    delete: (table: string, id: string) => bkendFetch(`/data/${table}/${id}`, {method: 'DELETE'}),
+  },
+};
 ```
 
 ### Authentication Hook
@@ -274,22 +304,45 @@ interface Post extends BaseDocument {
 }
 ```
 
-## MCP Integration (.mcp.json)
+## MCP Integration
+
+### Claude Code CLI (Recommended)
+
+```bash
+claude mcp add bkend --transport http https://api.bkend.ai/mcp
+```
+
+### .mcp.json (Per Project)
 
 ```json
 {
   "mcpServers": {
     "bkend": {
-      "command": "npx",
-      "args": ["@bkend/mcp-server"],
-      "env": {
-        "BKEND_API_KEY": "${BKEND_API_KEY}",
-        "BKEND_PROJECT_ID": "${BKEND_PROJECT_ID}"
-      }
+      "type": "http",
+      "url": "https://api.bkend.ai/mcp"
     }
   }
 }
 ```
+
+### Authentication
+
+- OAuth 2.1 + PKCE (browser auto-auth)
+- No API Key/env vars needed
+- First MCP request opens browser -> login to bkend console -> select Organization -> approve permissions
+- Verify: "Show my bkend projects"
+```
+
+## Environment Variables (.env.local)
+
+```
+NEXT_PUBLIC_BKEND_API_URL=https://api.bkend.ai/v1
+NEXT_PUBLIC_BKEND_PROJECT_ID=your-project-id
+NEXT_PUBLIC_BKEND_ENV=dev
+```
+
+Note: Project ID is found in bkend console (console.bkend.ai).
+Via MCP: "Show my project list" -> backend_project_list
 
 ## Limitations
 

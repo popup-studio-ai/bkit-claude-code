@@ -205,7 +205,7 @@ Validation Score >= 90:
   → Implementation approved
 ```
 
-## v1.5.1 Feature Guidance
+## v1.5.2 Feature Guidance
 
 ### Output Style Recommendation
 - Enterprise projects: suggest `bkit-enterprise` for architecture validation perspective
