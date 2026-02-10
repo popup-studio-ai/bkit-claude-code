@@ -100,6 +100,21 @@ Layer 5: Scripts (45 modules)    → Actual Node.js execution logic with unified
 
 ---
 
+## Requirements
+
+| Requirement | Minimum Version | Notes |
+|-------------|:---------------:|-------|
+| **Claude Code** | **v2.1.33+** | Required. bkit uses hook events (`TeammateIdle`, `TaskCompleted`) introduced in v2.1.33. Older versions will fail to load `hooks.json` with a validation error. |
+| Node.js | v18+ | For hook script execution |
+| Agent Teams (optional) | Set `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` | Required only for CTO-Led Agent Teams feature |
+
+> **Troubleshooting**: If you see `"Failed to load hooks"` error after installation, update Claude Code to the latest version:
+> ```bash
+> claude update
+> ```
+
+---
+
 ## Quick Start
 
 > **Note**: bkit is designed for **Claude Code**. For Gemini CLI, see [bkit-gemini](https://github.com/popup-studio-ai/bkit-gemini).
