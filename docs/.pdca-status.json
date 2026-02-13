@@ -13,7 +13,7 @@
     "tmp",
     "task"
   ],
-  "primaryFeature": "pdca",
+  "primaryFeature": "bkit-v1.5.4-doc-sync",
   "features": {
     "pdca": {
       "phase": "do",
@@ -151,6 +151,24 @@
         "lastUpdated": "2026-02-13T18:45:34.394Z"
       },
       "lastFile": "/Users/popup-kay/Documents/GitHub/popup/bkit-claude-code/lib/task/index.js"
+    },
+    "bkit-v1.5.4-doc-sync": {
+      "phase": "completed",
+      "phaseNumber": 5,
+      "matchRate": 100,
+      "iterationCount": 0,
+      "requirements": ["version-strings", "changelog", "readme", "customization-guide", "lib-comments", "bkit-system-docs"],
+      "documents": {
+        "plan": "docs/01-plan/features/bkend-mcp-accuracy-fix.plan.md",
+        "design": "docs/02-design/features/bkit-v1.5.4-doc-sync.design.md"
+      },
+      "timestamps": {
+        "started": "2026-02-14T19:00:00.000Z",
+        "lastUpdated": "2026-02-14T20:00:00.000Z",
+        "completedAt": "2026-02-14T20:00:00.000Z"
+      },
+      "previousPhase": "check",
+      "autoAdvanced": true
     }
   },
   "pipeline": {
