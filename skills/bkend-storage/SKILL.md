@@ -67,6 +67,19 @@ imports:
 
 images, documents, media, attachments
 
+## MCP Storage Workflow
+
+bkend MCP does NOT have dedicated storage tools. Use this workflow:
+
+1. **Search docs**: `search_docs` with query "file upload presigned url"
+2. **Get examples**: `search_docs` with query "file upload code examples"
+3. **Generate code**: AI generates REST API code for file operations
+
+### Searchable Storage Docs
+| Doc ID | Content |
+|--------|---------|
+| `7_code_examples_data` | CRUD + file upload code examples |
+
 ## REST Storage API
 
 | Method | Endpoint | Description |
@@ -74,16 +87,19 @@ images, documents, media, attachments
 | POST | /v1/files/presigned-url | Generate presigned URL |
 | POST | /v1/files | Register metadata (complete upload) |
 | GET | /v1/files | File list |
-| GET | /v1/files/{id} | File detail |
-| PATCH | /v1/files/{id} | Update metadata |
-| DELETE | /v1/files/{id} | Delete file |
-| GET | /v1/files/{id}/download-url | Generate download URL |
+| GET | /v1/files/:fileId | File detail |
+| PATCH | /v1/files/:fileId | Update metadata |
+| DELETE | /v1/files/:fileId | Delete file |
+| POST | /v1/files/:fileId/download-url | Generate download URL |
 
-## MCP Storage Tool
+## Multipart Upload (Large Files)
 
-| Tool | Purpose |
-|------|---------|
-| 7_code_examples_data | CRUD + file upload code examples |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | /v1/files/multipart/init | Initialize multipart upload |
+| POST | /v1/files/multipart/presigned-url | Get part upload URL |
+| POST | /v1/files/multipart/complete | Complete multipart upload |
+| POST | /v1/files/multipart/abort | Abort multipart upload |
 
 ## Upload Flow (Single File)
 
@@ -97,7 +113,7 @@ images, documents, media, attachments
 
 ```
 1. POST /v1/files/multipart/init -> { uploadId }
-2. POST /v1/files/multipart/urls -> [{ partNumber, url }]
+2. POST /v1/files/multipart/presigned-url -> [{ partNumber, url }]
 3. PUT each part URL with file chunk
 4. POST /v1/files/multipart/complete -> { file }
 ```
@@ -105,5 +121,6 @@ images, documents, media, attachments
 ## Official Documentation (Live Reference)
 
 For the latest storage documentation, use WebFetch:
+- Storage Overview: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/en/storage/01-overview.md
+- MCP Storage Guide: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/en/mcp/07-storage-tools.md
 - Full TOC: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/SUMMARY.md
-- Storage: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/src/storage/

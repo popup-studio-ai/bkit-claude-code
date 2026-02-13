@@ -55,34 +55,61 @@ imports:
 
 | Field | Type | Description |
 |-------|------|-------------|
-| _id | ObjectId | Auto-generated unique ID |
+| id | String | Auto-generated unique ID |
 | createdBy | String | Creator user ID |
 | createdAt | Date | Creation timestamp |
 | updatedAt | Date | Last update timestamp |
 
-## MCP Database Tools
+**Important**: bkend uses `id` (NOT `_id`) in all API responses.
+
+## MCP Table Management Tools
 
 | Tool | Purpose | Scope |
 |------|---------|-------|
-| backend_table_create | Create table | table:create |
-| backend_table_list | List tables | table:read |
-| backend_table_get | Get table detail + schema | table:read |
-| backend_table_update | Update table settings | table:update |
-| backend_table_delete | Delete table | table:delete |
-| backend_field_manage | Add/modify/delete fields | table:update |
-| backend_schema_version_list | Schema version history | table:read |
-| backend_schema_rollback | Rollback schema | table:update |
-| backend_index_manage | Manage indexes | table:update |
-| backend_index_version_list | Index version history | table:read |
-| backend_index_rollback | Rollback index | table:update |
+| `backend_table_create` | Create table | table:create |
+| `backend_table_list` | List tables | table:read |
+| `backend_table_get` | Get table detail + schema | table:read |
+| `backend_table_delete` | Delete table | table:delete |
+| `backend_field_manage` | Add/modify/delete fields | table:update |
+| `backend_index_manage` | Manage indexes | table:update |
+| `backend_schema_version_list` | Schema version history | table:read |
+| `backend_schema_version_get` | Schema version detail | table:read |
+| `backend_schema_version_apply` | Apply schema version (rollback) | table:update |
+| `backend_index_version_list` | Index version history | table:read |
+| `backend_index_version_get` | Index version detail | table:read |
 
-## MCP Guide Tools
+## MCP Data CRUD Tools
 
-| Tool | Purpose |
-|------|---------|
-| 4_howto_implement_data_crud | CRUD implementation patterns |
-| 5_get_operation_schema | API operation schema reference |
-| 7_code_examples_data | CRUD + file upload code examples |
+| Tool | Purpose | Key Parameters |
+|------|---------|----------------|
+| `backend_data_list` | List records (filter, sort, paginate) | tableId, page?, limit?, sortBy?, sortDirection?, andFilters?, orFilters? |
+| `backend_data_get` | Get single record | tableId, recordId |
+| `backend_data_create` | Create record | tableId, data: { field: value } |
+| `backend_data_update` | Partial update record | tableId, recordId, data: { field: value } |
+| `backend_data_delete` | Delete record | tableId, recordId |
+
+All Data CRUD tools require: organizationId, projectId, environmentId (from `get_context`).
+
+### Filter Operators
+
+| Operator | Meaning | Example |
+|----------|---------|---------|
+| `$eq` | Equal | `{ "status": { "$eq": "active" } }` |
+| `$ne` | Not equal | `{ "role": { "$ne": "admin" } }` |
+| `$gt` / `$gte` | Greater than / >= | `{ "age": { "$gt": 18 } }` |
+| `$lt` / `$lte` | Less than / <= | `{ "price": { "$lt": 100 } }` |
+| `$in` / `$nin` | In / Not in array | `{ "tag": { "$in": ["a","b"] } }` |
+
+## MCP Guide Docs (via search_docs)
+
+Use `search_docs` tool to access these guides:
+
+| Doc ID | Content |
+|--------|---------|
+| `4_howto_implement_data_crud` | CRUD implementation patterns |
+| `7_code_examples_data` | CRUD + file upload code examples |
+
+Use `get_operation_schema` to get any tool's input/output schema.
 
 ## REST Data API
 
@@ -98,7 +125,7 @@ imports:
 
 - Text search: `?search=keyword`
 - AND filter: `?filter[field1]=value1&filter[field2]=value2`
-- Comparison operators: eq, ne, gt, gte, lt, lte, in, nin
+- Comparison operators: `$eq`, `$ne`, `$gt`, `$gte`, `$lt`, `$lte`, `$in`, `$nin`
 - Sort: `?sort=field:asc` (or desc)
 - Pagination: `?page=1&limit=20` (default 20, max 100)
 
@@ -116,6 +143,7 @@ imports:
 ## Official Documentation (Live Reference)
 
 For the latest database documentation, use WebFetch:
+- MCP Data Tools: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/en/mcp/05-data-tools.md
+- MCP Table Tools: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/en/mcp/04-table-tools.md
+- Database Guide: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/en/database/01-overview.md
 - Full TOC: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/SUMMARY.md
-- Database: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/src/database/
-- Guides: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/src/guides/

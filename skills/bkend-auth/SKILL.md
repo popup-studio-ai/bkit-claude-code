@@ -52,14 +52,31 @@ imports:
 
 8+ characters, uppercase + lowercase + numbers + special characters
 
-## MCP Auth Tools
+## MCP Auth Workflow
 
-| Tool | Purpose |
-|------|---------|
-| 3_howto_implement_auth | Authentication implementation patterns |
-| 6_code_examples_auth | Authentication code examples |
+bkend MCP does NOT have dedicated auth tools. Use this workflow:
 
-## REST Auth API (18 endpoints)
+1. **Search docs**: `search_docs` with query "email signup" or "social login"
+2. **Get examples**: `search_docs` with query "auth code examples"
+3. **Generate code**: AI generates REST API code based on search results
+
+### Searchable Auth Docs
+| Doc ID | Content |
+|--------|---------|
+| `3_howto_implement_auth` | Signup, login, token management guide |
+| `6_code_examples_auth` | Email, social, magic link code examples |
+
+### Key Pattern
+```
+User: "Add social login"
+  → search_docs(query: "social login implementation")
+  → Returns auth guide with REST API patterns
+  → AI generates social login code
+```
+
+## REST Auth API (Core Endpoints)
+
+For the complete endpoint list, use `search_docs` or check Live Reference.
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -68,19 +85,15 @@ imports:
 | GET | /v1/auth/me | Current user |
 | POST | /v1/auth/refresh | Refresh token |
 | POST | /v1/auth/signout | Sign out |
-| GET | /v1/auth/{provider}/authorize | Social login URL |
-| POST | /v1/auth/{provider}/callback | Social callback |
-| POST | /v1/auth/password/reset/request | Password reset request |
-| POST | /v1/auth/password/reset/confirm | Password reset confirm |
+| GET/POST | /v1/auth/:provider/callback | Social login callback |
+| POST | /v1/auth/password/reset/request | Password reset |
+| POST | /v1/auth/password/reset/confirm | Confirm reset |
 | POST | /v1/auth/password/change | Change password |
-| POST | /v1/auth/email/verify/send | Send email verification |
-| POST | /v1/auth/email/verify/confirm | Confirm email verification |
 | GET | /v1/auth/sessions | List sessions |
-| DELETE | /v1/auth/sessions/{id} | Delete session |
-| POST | /v1/auth/social/link | Link social account |
-| POST | /v1/auth/social/unlink | Unlink social account |
-| GET | /v1/auth/exists | Check account existence |
-| DELETE | /v1/auth/account | Delete account |
+| DELETE | /v1/auth/sessions/:sessionId | Remove session |
+| DELETE | /v1/auth/withdraw | Delete account |
+
+**Additional endpoints** (MFA, invitations, user management): use `search_docs` or Live Reference.
 
 ## RBAC (Role-Based Access Control)
 
@@ -101,17 +114,12 @@ imports:
 
 - Per-device session tracking
 - `GET /v1/auth/sessions` - List sessions
-- `DELETE /v1/auth/sessions/{id}` - Remove session
-
-## Account Lifecycle
-
-- Social account link/unlink
-- Account existence check
-- Account deletion (GDPR compliance)
+- `DELETE /v1/auth/sessions/:sessionId` - Remove session
 
 ## Official Documentation (Live Reference)
 
 For the latest authentication documentation, use WebFetch:
+- Auth Overview: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/en/authentication/01-overview.md
+- MCP Auth Guide: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/en/mcp/06-auth-tools.md
+- Security: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/en/security/01-overview.md
 - Full TOC: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/SUMMARY.md
-- Authentication: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/src/authentication/
-- Security: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/src/security/

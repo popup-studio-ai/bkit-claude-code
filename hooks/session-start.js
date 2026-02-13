@@ -564,7 +564,7 @@ let additionalContext = `# bkit Vibecoding Kit v1.5.3 - Session Startup\n\n`;
   additionalContext += `- No configuration needed\n\n`;
 
   // bkend MCP status check (G-09)
-  if (detectedLevel === 'Dynamic') {
+  if (detectedLevel === 'Dynamic' || detectedLevel === 'Enterprise') {
     try {
       const mcpJsonPath = path.join(process.cwd(), '.mcp.json');
       let bkendMcpConnected = false;

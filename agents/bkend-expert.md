@@ -69,7 +69,7 @@ Organization (team/billing) -> Project (service) -> Environment (dev/staging/pro
 
 - Console: console.bkend.ai
 - MCP: https://api.bkend.ai/mcp
-- Service API: https://api.bkend.ai/v1
+- Service API: Use the endpoint from `get_context` (typically https://api-client.bkend.ai/v1)
 
 ## MCP Setup (Claude Code)
 
@@ -98,38 +98,82 @@ claude mcp add bkend --transport http https://api.bkend.ai/mcp
 - No API Key/env vars needed
 - Access Token: 1 hour, Refresh Token: 30 days
 
-## MCP Tools (19)
+## MCP Tools
 
-### Guide Tools (no parameters)
+### Fixed Tools (Always Available)
 
 | Tool | Purpose |
 |------|---------|
-| 0_get_context | Session context (org/project/env) |
-| 1_concepts | BSON schema, permissions, hierarchy |
-| 2_tutorial | Project~table creation guide |
-| 3_howto_implement_auth | Auth implementation patterns |
-| 4_howto_implement_data_crud | CRUD implementation patterns |
-| 5_get_operation_schema | API operation schema lookup |
-| 6_code_examples_auth | Auth code examples |
-| 7_code_examples_data | CRUD + file upload examples |
+| `get_context` | Session context (org/project/env, API endpoint) - MUST call first |
+| `search_docs` | Search bkend docs (Auth/Storage guides, code examples) |
+| `get_operation_schema` | Get tool input/output schema |
 
-### API Tools (projectId, environment required)
+### Project Management Tools
+
+| Tool | Purpose |
+|------|---------|
+| `backend_org_list` | List organizations |
+| `backend_project_list` | List projects |
+| `backend_project_get` | Get project detail |
+| `backend_project_create` | Create project |
+| `backend_project_update` | Update project |
+| `backend_project_delete` | Delete project |
+| `backend_env_list` | List environments |
+| `backend_env_get` | Get environment detail |
+| `backend_env_create` | Create environment |
+
+### Table Management Tools
 
 | Tool | Purpose | Scope |
 |------|---------|-------|
-| backend_table_create | Create table | table:create |
-| backend_table_list | List tables | table:read |
-| backend_table_get | Get detail | table:read |
-| backend_table_update | Update settings | table:update |
-| backend_table_delete | Delete | table:delete |
-| backend_field_manage | Add/modify/delete fields | table:update |
-| backend_schema_version_list | Schema history | table:read |
-| backend_schema_rollback | Schema rollback | table:update |
-| backend_index_manage | Index management | table:update |
-| backend_index_version_list | Index history | table:read |
-| backend_index_rollback | Index rollback | table:update |
+| `backend_table_create` | Create table | table:create |
+| `backend_table_list` | List tables | table:read |
+| `backend_table_get` | Get detail + schema | table:read |
+| `backend_table_delete` | Delete table | table:delete |
+| `backend_field_manage` | Add/modify/delete fields | table:update |
+| `backend_index_manage` | Index management | table:update |
+| `backend_schema_version_list` | Schema version history | table:read |
+| `backend_schema_version_get` | Schema version detail | table:read |
+| `backend_schema_version_apply` | Apply schema version (rollback) | table:update |
+| `backend_index_version_list` | Index version history | table:read |
+| `backend_index_version_get` | Index version detail | table:read |
+
+### Data CRUD Tools
+
+| Tool | Purpose |
+|------|---------|
+| `backend_data_list` | List records (filter, sort, paginate) |
+| `backend_data_get` | Get single record |
+| `backend_data_create` | Create record |
+| `backend_data_update` | Partial update record |
+| `backend_data_delete` | Delete record |
+
+### MCP Resources (Read-Only, Cached 60s)
+
+| URI | Description |
+|-----|-------------|
+| `bkend://orgs` | Organization list |
+| `bkend://orgs/{orgId}/projects` | Project list |
+| `bkend://orgs/{orgId}/projects/{pId}/environments` | Environment list |
+| `bkend://orgs/{orgId}/projects/{pId}/environments/{eId}/tables` | Table list + schema |
+
+### Searchable Docs (via search_docs)
+
+| Doc ID | Content |
+|--------|---------|
+| `1_concepts` | BSON schema, permissions, hierarchy |
+| `2_tutorial` | Project~table creation guide |
+| `3_howto_implement_auth` | Auth implementation patterns |
+| `4_howto_implement_data_crud` | CRUD implementation patterns |
+| `6_code_examples_auth` | Auth code examples |
+| `7_code_examples_data` | CRUD + file upload examples |
 
 ## Service API (REST)
+
+### Base URL
+
+Provided dynamically by `get_context`. Do NOT hardcode.
+Typical: `https://api-client.bkend.ai/v1`
 
 ### Required Headers
 
@@ -139,7 +183,11 @@ x-environment: dev|staging|prod
 Authorization: Bearer {accessToken}
 ```
 
-### Auth (18 endpoints)
+### ID Field
+
+Always use `id` (NOT `_id`) in API responses.
+
+### Auth (Core Endpoints)
 
 ```
 POST /v1/auth/email/signup  - Sign up
@@ -147,8 +195,7 @@ POST /v1/auth/email/signin  - Sign in
 GET  /v1/auth/me            - Current user
 POST /v1/auth/refresh       - Token refresh
 POST /v1/auth/signout       - Sign out
-GET  /v1/auth/{provider}/authorize - Social login (Google, GitHub)
-POST /v1/auth/{provider}/callback  - Social callback
+GET/POST /v1/auth/:provider/callback - Social login callback
 ```
 
 ### Data CRUD
@@ -180,7 +227,7 @@ POST /v1/files/presigned-url -> PUT {url} -> POST /v1/files
 
 1. Data model changes -> update docs/02-design/data-model.md first
 2. API additions -> add spec to docs/02-design/api-spec.md
-3. Auth implementation -> reference MCP 3_howto_implement_auth
+3. Auth implementation -> use `search_docs` with query "auth implementation"
 4. bkend MCP not configured -> suggest setup guide
 
 ## Troubleshooting
@@ -211,7 +258,6 @@ POST /v1/files/presigned-url -> PUT {url} -> POST /v1/files
 ## Reference
 
 - Skills: dynamic (dev guide), bkend-data, bkend-auth, bkend-storage, bkend-cookbook
-- MCP Guide Tools: 0_get_context ~ 7_code_examples_data
 - Docs: https://github.com/popup-studio-ai/bkend-docs
 
 ## Official Documentation (Live Reference)
@@ -219,12 +265,13 @@ POST /v1/files/presigned-url -> PUT {url} -> POST /v1/files
 When you need the latest bkend documentation, use WebFetch with these URLs:
 
 - **Full TOC**: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/SUMMARY.md
-- **Auth**: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/src/authentication/
-- **Database**: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/src/database/
-- **Storage**: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/src/storage/
-- **Security**: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/src/security/
-- **AI Tools/MCP**: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/src/ai-tools/
-- **Cookbooks**: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/src/cookbooks/
-- **Troubleshooting**: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/src/troubleshooting/
+- **MCP Overview**: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/en/mcp/01-overview.md
+- **MCP Context**: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/en/mcp/02-context.md
+- **MCP Project Tools**: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/en/mcp/03-project-tools.md
+- **MCP Table Tools**: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/en/mcp/04-table-tools.md
+- **MCP Data Tools**: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/en/mcp/05-data-tools.md
+- **MCP Auth**: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/en/mcp/06-auth-tools.md
+- **MCP Storage**: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/en/mcp/07-storage-tools.md
+- **Claude Code Setup**: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/en/ai-tools/04-claude-code-setup.md
 
 **Usage**: Fetch SUMMARY.md first to find the exact page, then fetch that specific page.
