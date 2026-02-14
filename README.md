@@ -83,21 +83,21 @@ Layer 5: Scripts (45 modules)    → Actual Node.js execution logic with unified
 
 ---
 
-### 🚀 초보자라면?
+### New to Claude Code?
 
-> **Claude Code가 처음이신가요?**
+> **First time using Claude Code?**
 >
-> [bkit-starter](https://github.com/popup-studio-ai/bkit-starter)로 시작하세요!
+> Start with [bkit-starter](https://github.com/popup-studio-ai/bkit-starter)!
 >
-> - 완전한 한글 가이드
-> - 프로그래밍 경험 없이도 시작 가능
-> - 첫 프로젝트 만들기 체험
+> - Beginner-friendly guide
+> - No programming experience required
+> - Build your first project hands-on
 >
 > ```bash
 > /plugin enable bkit-starter
 > ```
 >
-> bkit은 bkit-starter를 마스터한 후 사용하는 고급 확장 버전입니다.
+> bkit is the advanced extension designed for users who have mastered bkit-starter.
 
 ---
 
