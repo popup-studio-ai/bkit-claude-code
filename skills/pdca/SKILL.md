@@ -83,6 +83,10 @@ task-template: "[PDCA] {feature}"
 
 **Output Path**: `docs/01-plan/features/{feature}.plan.md`
 
+> **Tip**: For features with ambiguous requirements or multiple implementation approaches,
+> use `/plan-plus {feature}` instead. Plan Plus adds brainstorming phases (intent discovery,
+> alternatives exploration, YAGNI review) before document generation for higher-quality plans.
+
 ### design (Design Phase)
 
 1. Verify Plan document exists (required - suggest running plan first if missing)
