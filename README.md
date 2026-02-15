@@ -30,6 +30,8 @@ Context Engineering:
 
 ### bkit's Context Engineering Architecture
 
+![bkit Context Engineering Architecture](images/bkit-architecture.png)
+
 bkit implements Context Engineering through three interconnected layers:
 
 | Layer | Components | Purpose |
