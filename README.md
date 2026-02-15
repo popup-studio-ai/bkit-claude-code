@@ -226,8 +226,7 @@ git commit -m "feat: customize bkit starter skill"
 
 | Component | Location | Description |
 |-----------|----------|-------------|
-| **Skills** | `~/.claude/plugins/bkit/skills/` | Domain knowledge and slash commands (e.g., `/pdca plan`) |
-| **Skills** | `~/.claude/plugins/bkit/skills/` | Domain knowledge and context |
+| **Skills** | `~/.claude/plugins/bkit/skills/` | Domain knowledge, context and slash commands (e.g., `/pdca plan`) |
 | **Agents** | `~/.claude/plugins/bkit/agents/` | Specialized AI assistants |
 | **Templates** | `~/.claude/plugins/bkit/templates/` | Document templates |
 | **Scripts** | `~/.claude/plugins/bkit/scripts/` | Hook scripts |
