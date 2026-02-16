@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.5] - 2026-02-17
+
+### Added
+- **Plan Plus Skill** (Community Contribution by @wankiKim — PR #34)
+  - New skill: `skills/plan-plus/SKILL.md` — Brainstorming-enhanced PDCA planning
+  - 6-phase process: Context Exploration → Intent Discovery → Alternatives Exploration → YAGNI Review → Incremental Validation → Plan Document Generation
+  - HARD-GATE enforcement: No code before plan approval
+  - New template: `templates/plan-plus.template.md` with User Intent, Alternatives, YAGNI sections
+  - 8-language trigger support (EN, KO, JA, ZH, ES, FR, DE, IT)
+  - Seamless PDCA integration: `/plan-plus {feature}` → `/pdca design {feature}`
+
+### Changed
+- **Skills count**: 26 → 27 (+1 plan-plus)
+- **Templates count**: 27 → 28 (+1 plan-plus.template.md)
+- **skills/pdca/SKILL.md**: Added Plan Plus tip in plan action section (PR #34)
+- **README.md**: Fixed duplicate Skills rows in Customization table (Community Contribution by @sungpeo — PR #33)
+
+### Compatibility
+- Claude Code: Minimum v2.1.33, Recommended v2.1.42
+- Node.js: Minimum v18.0.0
+- Agent Teams: Requires Claude Code v2.1.32+ with `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+
+---
+
 ## [1.5.4] - 2026-02-14
 
 ### Added

@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-v2.1.33+-purple.svg)](https://docs.anthropic.com/en/docs/claude-code/getting-started)
-[![Version](https://img.shields.io/badge/Version-1.5.4-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-1.5.5-green.svg)](CHANGELOG.md)
 [![Author](https://img.shields.io/badge/Author-POPUP%20STUDIO-orange.svg)](https://popupstudio.ai)
 
 > **PDCA methodology + CTO-Led Agent Teams + AI coding assistant mastery for AI-native development**
@@ -36,7 +36,7 @@ bkit implements Context Engineering through three interconnected layers:
 
 | Layer | Components | Purpose |
 |-------|------------|---------|
-| **Domain Knowledge** | 26 Skills | Structured expert knowledge (phases, levels, specialized domains) |
+| **Domain Knowledge** | 27 Skills | Structured expert knowledge (phases, levels, specialized domains) |
 | **Behavioral Rules** | 16 Agents | Role-based constraints with model selection (opus/sonnet/haiku) |
 | **State Management** | 241 Functions | PDCA status, intent detection, ambiguity scoring, multi-feature context, team coordination |
 
@@ -60,6 +60,7 @@ Layer 5: Scripts (45 modules)    → Actual Node.js execution logic with unified
 
 ![bkit Features](images/bkit-features.png)
 
+- **Plan Plus Skill (v1.5.5)** - Brainstorming-enhanced PDCA planning with intent discovery, alternatives exploration, and YAGNI review
 - **bkend MCP Accuracy Fix (v1.5.4)** - MCP tool coverage 19→28+, accurate tool names, dynamic Base URL, search_docs workflow
 - **Team Visibility & State Writer (v1.5.3)** - Agent Teams state management with `.bkit/agent-state.json` for Studio IPC
 - **SubagentStart/SubagentStop Hooks (v1.5.3)** - 2 new hook events for agent lifecycle tracking (10 hook events total)
@@ -77,7 +78,7 @@ Layer 5: Scripts (45 modules)    → Actual Node.js execution logic with unified
 - **9-Stage Development Pipeline** - From schema design to deployment
 - **3 Project Levels** - Starter (static), Dynamic (fullstack), Enterprise (microservices)
 - **Multilingual Support** - 8 languages (EN, KO, JA, ZH, ES, FR, DE, IT)
-- **26 Skills** - Domain-specific knowledge for various development scenarios
+- **27 Skills** - Domain-specific knowledge for various development scenarios
 - **16 Agents** - Specialized AI assistants including CTO-Led Team agents
 - **45 Scripts** - Hook execution with unified handlers (hooks-json-integration)
 - **241 Utility Functions** - 5 modular libraries with state management, intent detection, task tracking, team coordination
@@ -353,7 +354,7 @@ bkit is **primarily designed for software development**. However, some component
 ### Component Reference
 
 - [Development Pipeline](skills/development-pipeline/SKILL.md) - 9-stage pipeline skill
-- [Skills Reference](skills/) - 26 domain skills (Commands deprecated in v1.4.4)
+- [Skills Reference](skills/) - 27 domain skills (Commands deprecated in v1.4.4)
 - [Agents Reference](agents/) - 16 specialized agents (including 5 CTO Team agents)
 
 ### PDCA Documents

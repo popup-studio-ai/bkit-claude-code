@@ -128,15 +128,15 @@ For deeper understanding, explore the `bkit-system/` folder:
 
 bkit is not just a collection of prompts—it's a **production-grade plugin architecture** with carefully designed components that work together as a cohesive system.
 
-### Component Inventory (v1.5.4)
+### Component Inventory (v1.5.5)
 
 | Component | Count | Purpose |
 |-----------|-------|---------|
 | **Agents** | 16 | Specialized AI subagents with memory persistence |
-| **Skills** | 26 | Domain knowledge and slash commands (Commands deprecated) |
+| **Skills** | 27 | Domain knowledge and slash commands (Commands deprecated) |
 | **Commands** | DEPRECATED | Migrated to Skills in v1.4.4+ |
 | **Scripts** | 45 | Hook execution scripts with unified handlers |
-| **Templates** | 27 | Document templates (PDCA + 9 phases + shared) |
+| **Templates** | 28 | Document templates (PDCA + 9 phases + shared) |
 | **Hooks** | 10 events | Event-driven automation (centralized in hooks.json) |
 | **lib/** | 5 modules (241 functions) | Modular utility library (v1.5.3) |
 | **Output Styles** | 4 | Level-based response formatting (v1.5.3) |
@@ -198,7 +198,7 @@ const { classifyTask } = require('./lib/task');
 const { debugLog, getConfig } = require('./lib/common');
 ```
 
-> **v1.5.4**: Claude Code Exclusive with CTO-Led Agent Teams (16 agents), bkend MCP Accuracy Fix (28+ tools), Output Styles, Agent Memory, and Team Visibility
+> **v1.5.5**: Claude Code Exclusive with CTO-Led Agent Teams (16 agents), Plan Plus skill (brainstorming-enhanced planning), bkend MCP Accuracy Fix (28+ tools), Output Styles, Agent Memory, and Team Visibility
 
 ### Context Engineering Architecture (v1.5.3)
 
@@ -211,7 +211,7 @@ bkit is a **practical implementation of Context Engineering**—the art of curat
 │                                                                 │
 │  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────┐  │
 │  │ Domain Knowledge │  │ Behavioral Rules │  │ State Mgmt   │  │
-│  │    (26 Skills)   │  │   (16 Agents)    │  │(lib/common)  │  │
+│  │    (27 Skills)   │  │   (16 Agents)    │  │(lib/common)  │  │
 │  │                  │  │                  │  │              │  │
 │  │ • 9-Phase Guide  │  │ • Role Def.      │  │ • PDCA v2.0  │  │
 │  │ • 3 Levels       │  │ • Constraints    │  │ • Multi-Feat │  │
@@ -265,7 +265,7 @@ For detailed Context Engineering documentation, see [bkit-system/philosophy/cont
 │               bkit Component Architecture (v1.5.3)               │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
-│  Knowledge Layer    │ Skills (26)      │ Domain expertise       │
+│  Knowledge Layer    │ Skills (27)      │ Domain expertise       │
 │  ─────────────────────────────────────────────────────────────  │
 │  Execution Layer    │ Agents (16)      │ Autonomous task work   │
 │  ─────────────────────────────────────────────────────────────  │
@@ -331,8 +331,9 @@ Layer 5: Scripts (45 Node.js scripts)
 
 bkit provides templates for the **entire development lifecycle**:
 
-**PDCA Templates (5):**
+**PDCA Templates (6):**
 - `plan.template.md` - Feature planning
+- `plan-plus.template.md` - Brainstorming-enhanced planning (v1.5.5)
 - `design.template.md` - Technical design
 - `design-starter.template.md` - Simplified for beginners
 - `design-enterprise.template.md` - MSA architecture
@@ -729,7 +730,7 @@ A Claude Code plugin like bkit consists of these components:
 | **Templates** | Document templates for standardization | `templates/` |
 | **Scripts** | Helper scripts for automation | `scripts/` |
 
-### bkit Plugin Structure Example (v1.5.4 - Claude Code Exclusive)
+### bkit Plugin Structure Example (v1.5.5 - Claude Code Exclusive)
 
 ```
 bkit-claude-code/
@@ -746,8 +747,9 @@ bkit-claude-code/
 │   ├── qa-strategist.md            # QA strategy coordinator
 │   ├── security-architect.md       # Security & vulnerability expert
 │   └── ... (16 total)
-├── skills/                         # Domain knowledge (26 skills)
+├── skills/                         # Domain knowledge (27 skills)
 │   ├── bkit-rules/SKILL.md         # Core PDCA rules
+│   ├── plan-plus/SKILL.md          # Brainstorming-enhanced planning (v1.5.5)
 │   ├── development-pipeline/SKILL.md
 │   └── phase-*/SKILL.md            # 9-phase pipeline skills
 ├── commands/
@@ -769,8 +771,9 @@ bkit-claude-code/
 │   ├── intent/                     # Intent analysis (4 files)
 │   ├── task/                       # Task management (5 files)
 │   └── team/                       # CTO-Led Agent Teams (9 files, v1.5.3)
-└── templates/                      # Document templates (27 templates)
+└── templates/                      # Document templates (28 templates)
     ├── plan.template.md
+    ├── plan-plus.template.md       # Brainstorming-enhanced plan (v1.5.5)
     └── design.template.md
 ```
 

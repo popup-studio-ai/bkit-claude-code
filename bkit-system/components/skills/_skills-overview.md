@@ -1,6 +1,6 @@
 # Skills Overview
 
-> 26 Skills defined in bkit (v1.5.3)
+> 27 Skills defined in bkit (v1.5.5)
 >
 > **v1.4.1**: Added Context Engineering perspective - Domain Knowledge Layer
 > **v1.5.0**: Claude Code Exclusive
@@ -38,6 +38,7 @@ Skills form bkit's **Domain Knowledge Layer**, designed according to [[../../phi
 │  │  Core (2)     → Global rules, template standards         │   │
 │  │  Level (3)    → Starter/Dynamic/Enterprise               │   │
 │  │  Pipeline(10) → 9-Phase step-by-step guides              │   │
+│  │  PDCA (2)     → pdca + plan-plus (brainstorming)         │   │
 │  │  Specialized(3) → QA, Mobile, Desktop special domains    │   │
 │  └──────────────────────────────────────────────────────────┘   │
 │                                                                  │
@@ -54,7 +55,12 @@ Skills form bkit's **Domain Knowledge Layer**, designed according to [[../../phi
 | **Code Examples** | Ready-to-apply references | Consistent implementation |
 | **Few-shot Examples** | Conversation/output patterns | Predictable responses |
 
-## Skill List (26)
+## Skill List (27)
+
+### New Skills (v1.5.5)
+| Skill | Purpose | Hooks |
+|-------|---------|-------|
+| [[../../../skills/plan-plus/SKILL|plan-plus]] | Brainstorming-enhanced PDCA planning (6-phase process) | Stop |
 
 ### New Skills (v1.4.4)
 | Skill | Purpose | Hooks |

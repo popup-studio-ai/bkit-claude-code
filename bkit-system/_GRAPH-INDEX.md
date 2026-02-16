@@ -39,7 +39,7 @@ bkit is a practical implementation of **Context Engineering**:
 ┌─────────────────────────────────────────────────────────────────┐
 │              bkit Context Engineering Components                 │
 ├─────────────────────────────────────────────────────────────────┤
-│  Domain Knowledge (26 Skills)  → Structured domain knowledge     │
+│  Domain Knowledge (27 Skills)  → Structured domain knowledge     │
 │  Behavioral Rules (16 Agents)  → Role-based behavioral rules     │
 │  State Management (lib/common) → State management 76+ functions  │
 │  5-Layer Hook System           → Context injection timing ctrl   │
@@ -55,7 +55,11 @@ Core design principles and methodology:
 - [[philosophy/ai-native-principles|ai-native-principles]] - AI-Native development & 3 core competencies
 - [[philosophy/pdca-methodology|pdca-methodology]] - PDCA cycle & 9-stage pipeline relationship
 
-## Skills (26)
+## Skills (27)
+
+### PDCA Skills (2)
+- [[../skills/pdca/SKILL|pdca]] - Unified PDCA cycle management (8 actions)
+- [[../skills/plan-plus/SKILL|plan-plus]] - Brainstorming-enhanced PDCA planning (v1.5.5)
 
 ### Core Skills (2)
 - [[../skills/bkit-rules/SKILL|bkit-rules]] - PDCA rules + auto-triggering + code quality standards
@@ -335,7 +339,7 @@ bkit supports languages and frameworks organized by tier:
 > **v1.5.0**: bkit is now Claude Code exclusive. Gemini CLI support was removed for simplified architecture.
 
 **Components**:
-- `skills/` - 26 skills
+- `skills/` - 27 skills
 - `agents/` - 16 agents
 - `scripts/` - 45 scripts (Node.js)
 - `lib/` - 5 modules (241 functions)

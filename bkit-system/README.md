@@ -21,6 +21,8 @@
 > **v1.5.0**: Claude Code Exclusive - Gemini CLI support removed, simplified architecture
 >
 > **v1.5.4**: bkend MCP Accuracy Fix - MCP tools 19→28+, accurate tool names, dynamic Base URL
+>
+> **v1.5.5**: Plan Plus skill - Brainstorming-enhanced PDCA planning (community contribution)
 
 ## Purpose of This Document
 
@@ -47,7 +49,7 @@ bkit is a practical implementation of **Context Engineering**. Context Engineeri
 │                                                                 │
 │  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────┐  │
 │  │ Domain Knowledge │  │ Behavioral Rules │  │ State Mgmt   │  │
-│  │    (26 Skills)   │  │   (16 Agents)    │  │ (4 modules)  │  │
+│  │    (27 Skills)   │  │   (16 Agents)    │  │ (4 modules)  │  │
 │  │                  │  │                  │  │              │  │
 │  │ • 9-Phase Guide  │  │ • Role Def.      │  │ • PDCA v2.0  │  │
 │  │ • 3 Levels       │  │ • Constraints    │  │ • Multi-Feat │  │
@@ -185,7 +187,7 @@ lib/
 │                                                                 │
 │  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐      │
 │  │   Skills     │───▶│   Agents     │───▶│   Scripts    │      │
-│  │  (26)        │    │  (16)        │    │  (45)        │      │
+│  │  (27)        │    │  (16)        │    │  (45)        │      │
 │  └──────────────┘    └──────────────┘    └──────────────┘      │
 │         │                   │                   │               │
 │         ▼                   ▼                   ▼               │
@@ -208,14 +210,14 @@ lib/
 
 | Component | Count | Role | Details |
 |-----------|-------|------|---------|
-| Skills | 26 | Domain knowledge + Slash commands | [[components/skills/_skills-overview]] |
+| Skills | 27 | Domain knowledge + Slash commands | [[components/skills/_skills-overview]] |
 | Agents | 16 | Specialized task execution | [[components/agents/_agents-overview]] |
 | Commands | DEPRECATED | Migrated to Skills (v1.4.4) | - |
 | Hooks | 10 events | Event-based triggers (unified) | [[components/hooks/_hooks-overview]] |
 | Scripts | 45 | Actual logic execution | [[components/scripts/_scripts-overview]] |
 | Lib | 5 modules | Shared utilities | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/`, `lib/team/` (241 functions) |
 | Config | 1 | Centralized settings | `bkit.config.json` |
-| Templates | 27 | Document templates | PDCA + Pipeline + Shared |
+| Templates | 28 | Document templates | PDCA + Pipeline + Shared |
 
 ## v1.5.1 Features
 
@@ -324,4 +326,4 @@ The `bkit-system/.obsidian/` folder includes shared settings:
 | `workspace.json` | Personal workspace state | No |
 | `app.json` | Personal app settings | No |
 
-> **Tip**: The graph settings are pre-configured for optimal visualization of bkit's 26 skills, 16 agents, 45 scripts, and their relationships.
+> **Tip**: The graph settings are pre-configured for optimal visualization of bkit's 27 skills, 16 agents, 45 scripts, and their relationships.

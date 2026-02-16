@@ -1,7 +1,12 @@
 #!/usr/bin/env node
 /**
- * bkit Vibecoding Kit - SessionStart Hook (v1.5.4)
+ * bkit Vibecoding Kit - SessionStart Hook (v1.5.5)
  * Claude Code 전용 플러그인
+ *
+ * v1.5.5 Changes:
+ * - Plan Plus skill: brainstorming-enhanced PDCA planning (community PR #34)
+ * - Skills 26 -> 27, Templates 27 -> 28
+ * - README duplicate Skills rows fix (community PR #33)
  *
  * v1.5.4 Changes:
  * - bkend MCP accuracy fix: 19 -> 28+ tools, accurate tool names
@@ -492,7 +497,7 @@ const triggerTable = getTriggerKeywordTable();
 
 // Claude Code Output: JSON with Tool Call Prompt
 // Build context based on onboarding type
-let additionalContext = `# bkit Vibecoding Kit v1.5.4 - Session Startup\n\n`;
+let additionalContext = `# bkit Vibecoding Kit v1.5.5 - Session Startup\n\n`;
 
   if (onboardingData.hasExistingWork) {
     additionalContext += `## 🔄 Previous Work Detected\n\n`;
@@ -556,7 +561,7 @@ let additionalContext = `# bkit Vibecoding Kit v1.5.4 - Session Startup\n\n`;
     'Enterprise': 'bkit-enterprise'
   };
   const suggestedStyle = levelStyleMap[detectedLevel] || 'bkit-pdca-guide';
-  additionalContext += `## Output Styles (v1.5.4)\n`;
+  additionalContext += `## Output Styles (v1.5.5)\n`;
   additionalContext += `- Recommended for ${detectedLevel} level: \`${suggestedStyle}\`\n`;
   additionalContext += `- Change anytime with \`/output-style\`\n`;
   additionalContext += `- Available: bkit-learning, bkit-pdca-guide, bkit-enterprise, bkit-pdca-enterprise\n`;
@@ -613,7 +618,7 @@ let additionalContext = `# bkit Vibecoding Kit v1.5.4 - Session Startup\n\n`;
   // ============================================================
   additionalContext += `
 
-## 📊 bkit Feature Usage Report (v1.5.4 - Required for all responses)
+## 📊 bkit Feature Usage Report (v1.5.5 - Required for all responses)
 
 **Rule: Include the following format at the end of every response to report bkit feature usage.**
 
@@ -669,7 +674,7 @@ AskUserQuestion, SessionStart Hook, Read, Write, Edit, Bash
 `;
 
 const response = {
-  systemMessage: `bkit Vibecoding Kit v1.5.4 activated (Claude Code)`,
+  systemMessage: `bkit Vibecoding Kit v1.5.5 activated (Claude Code)`,
   hookSpecificOutput: {
     hookEventName: "SessionStart",
     onboardingType: onboardingData.type,
