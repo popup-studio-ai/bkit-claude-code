@@ -15,6 +15,8 @@
 > **v1.5.3**: Agent Teams with team/ module (9 files, 40 exports), state-writer, SubagentStart/Stop hooks
 >
 > **v1.5.4**: lib/ modularization (5 subdirs, 180 exports), 10 hook events, bkend MCP accuracy fix
+>
+> **v1.5.3-gemini**: Tool Registry centralization, 17 built-in tool names verified from Gemini CLI source, "Tool Name Accuracy" as Context Engineering principle
 
 ## What is Context Engineering?
 
