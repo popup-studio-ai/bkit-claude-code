@@ -2,8 +2,8 @@
 /**
  * Skill Post-execution Hook (v1.4.4)
  *
- * PostToolUse(Skill) 훅에서 호출됨
- * skill-orchestrator를 사용하여 다음 단계를 제안
+ * Called from PostToolUse(Skill) hook.
+ * Uses skill-orchestrator to suggest next steps.
  *
  * @version 1.4.4
  * @module scripts/skill-post
@@ -69,22 +69,44 @@ function formatNextStepMessage(suggestions, skillName) {
   lines.push(`\n--- Skill Post-execution: ${skillName} ---\n`);
 
   if (suggestions.nextSkill) {
-    lines.push(`\n💡 다음 단계 제안:`);
+    lines.push(`\nSuggested next step:`);
     lines.push(`   /${suggestions.nextSkill.name}`);
     lines.push(`   ${suggestions.nextSkill.message}`);
   }
 
   if (suggestions.suggestedAgent) {
-    lines.push(`\n🤖 추천 Agent:`);
+    lines.push(`\nRecommended Agent:`);
     lines.push(`   ${suggestions.suggestedAgent}`);
     lines.push(`   ${suggestions.suggestedMessage}`);
   }
 
   if (!suggestions.nextSkill && !suggestions.suggestedAgent) {
-    lines.push(`\n✅ Skill 실행 완료. 다음 작업을 진행하세요.`);
+    lines.push(`\nSkill execution complete. Proceed to the next task.`);
   }
 
   return lines.join('\n');
+}
+
+/**
+ * v1.5.6: Determine if a skill generates code.
+ * List of skills eligible for /copy command guidance.
+ * @param {string} skillName - Skill name
+ * @returns {boolean}
+ */
+const CODE_GENERATION_SKILLS = [
+  'phase-4-api',
+  'phase-5-design-system',
+  'phase-6-ui-integration',
+  'code-review',
+  'starter',
+  'dynamic',
+  'enterprise',
+  'mobile-app',
+  'desktop-app'
+];
+
+function shouldSuggestCopy(skillName) {
+  return CODE_GENERATION_SKILLS.includes(skillName);
 }
 
 /**
@@ -107,6 +129,11 @@ function generateJsonOutput(suggestions, skillName) {
   if (suggestions.suggestedAgent) {
     output.suggestedAgent = suggestions.suggestedAgent;
     output.suggestedAgentMessage = suggestions.suggestedMessage;
+  }
+
+  // v1.5.6: /copy command guidance (on code generation skill completion)
+  if (shouldSuggestCopy(skillName)) {
+    output.copyHint = 'Use /copy to select and copy code blocks to clipboard';
   }
 
   return output;

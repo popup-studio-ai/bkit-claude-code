@@ -1,7 +1,14 @@
 #!/usr/bin/env node
 /**
- * bkit Vibecoding Kit - SessionStart Hook (v1.5.5)
- * Claude Code 전용 플러그인
+ * bkit Vibecoding Kit - SessionStart Hook (v1.5.6)
+ * Dedicated plugin for Claude Code
+ *
+ * v1.5.6 Changes:
+ * - Auto-Memory Integration: CC auto-memory status + /memory guidance (ENH-48)
+ * - /copy Command Guidance: skill completion copy hints (ENH-49)
+ * - CTO Team Memory Guide: multi-agent memory best practices (ENH-50)
+ * - Remote Control Compatibility: pre-check documentation (ENH-51)
+ * - CC recommended version: v2.1.42 -> v2.1.59
  *
  * v1.5.5 Changes:
  * - Plan Plus skill: brainstorming-enhanced PDCA planning (community PR #34)
@@ -23,7 +30,7 @@
  * - Claude Code v2.1.33 compatibility enhancements
  *
  * v1.5.0 Changes:
- * - Gemini CLI 지원 제거 (Claude Code 전용으로 단순화)
+ * - Remove Gemini CLI support (simplified to Claude Code only)
  *
  * v1.4.7 Changes:
  * - Task Management + PDCA Integration (Task Chain Auto-Creation)
@@ -497,7 +504,7 @@ const triggerTable = getTriggerKeywordTable();
 
 // Claude Code Output: JSON with Tool Call Prompt
 // Build context based on onboarding type
-let additionalContext = `# bkit Vibecoding Kit v1.5.5 - Session Startup\n\n`;
+let additionalContext = `# bkit Vibecoding Kit v1.5.6 - Session Startup\n\n`;
 
   if (onboardingData.hasExistingWork) {
     additionalContext += `## 🔄 Previous Work Detected\n\n`;
@@ -561,17 +568,22 @@ let additionalContext = `# bkit Vibecoding Kit v1.5.5 - Session Startup\n\n`;
     'Enterprise': 'bkit-enterprise'
   };
   const suggestedStyle = levelStyleMap[detectedLevel] || 'bkit-pdca-guide';
-  additionalContext += `## Output Styles (v1.5.5)\n`;
+  additionalContext += `## Output Styles (v1.5.6)\n`;
   additionalContext += `- Recommended for ${detectedLevel} level: \`${suggestedStyle}\`\n`;
   additionalContext += `- Change anytime with \`/output-style\`\n`;
   additionalContext += `- Available: bkit-learning, bkit-pdca-guide, bkit-enterprise, bkit-pdca-enterprise\n`;
   additionalContext += `- If styles not visible in /output-style menu, run \`/output-style-setup\`\n\n`;
 
-  // Agent Memory awareness
-  additionalContext += `## Agent Memory (Auto-Active)\n`;
-  additionalContext += `- All bkit agents remember context across sessions automatically\n`;
-  additionalContext += `- 9 agents use project scope, 2 agents (starter-guide, pipeline-guide) use user scope\n`;
-  additionalContext += `- No configuration needed\n\n`;
+  // Memory Systems (v1.5.6: auto-memory integration ENH-48)
+  additionalContext += `## Memory Systems (v1.5.6)\n`;
+  additionalContext += `### bkit Agent Memory (Auto-Active)\n`;
+  additionalContext += `- 14 agents use project scope, 2 agents (starter-guide, pipeline-guide) use user scope\n`;
+  additionalContext += `- No configuration needed\n`;
+  additionalContext += `### Claude Code Auto-Memory\n`;
+  additionalContext += `- Claude automatically saves useful context to \`~/.claude/projects/*/memory/MEMORY.md\`\n`;
+  additionalContext += `- Manage with \`/memory\` command (view, edit, delete entries)\n`;
+  additionalContext += `- bkit memory (\`docs/.bkit-memory.json\`) and CC auto-memory are separate systems with no collision\n`;
+  additionalContext += `- Tip: After PDCA completion, use \`/memory\` to save key learnings for future sessions\n\n`;
 
   // bkend MCP status check (G-09)
   if (detectedLevel === 'Dynamic' || detectedLevel === 'Enterprise') {
@@ -618,7 +630,7 @@ let additionalContext = `# bkit Vibecoding Kit v1.5.5 - Session Startup\n\n`;
   // ============================================================
   additionalContext += `
 
-## 📊 bkit Feature Usage Report (v1.5.5 - Required for all responses)
+## 📊 bkit Feature Usage Report (v1.5.6 - Required for all responses)
 
 **Rule: Include the following format at the end of every response to report bkit feature usage.**
 
@@ -674,7 +686,7 @@ AskUserQuestion, SessionStart Hook, Read, Write, Edit, Bash
 `;
 
 const response = {
-  systemMessage: `bkit Vibecoding Kit v1.5.5 activated (Claude Code)`,
+  systemMessage: `bkit Vibecoding Kit v1.5.6 activated (Claude Code)`,
   hookSpecificOutput: {
     hookEventName: "SessionStart",
     onboardingType: onboardingData.type,

@@ -60,6 +60,10 @@ Learning
   /claude-code-learning          Learn Claude Code
   /claude-code-learning setup    Analyze current project setup
 
+Memory & Clipboard (v1.5.6)
+  /memory                    Manage Claude auto-memory (view/edit entries)
+  /copy                      Copy code blocks to clipboard (interactive picker)
+
 Output Styles (v1.5.3)
   /output-style              Select response style
   /output-style-setup        Install bkit styles to .claude/
