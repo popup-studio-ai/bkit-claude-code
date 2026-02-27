@@ -5,7 +5,7 @@
  * Called from PostToolUse(Skill) hook.
  * Uses skill-orchestrator to suggest next steps.
  *
- * @version 1.4.4
+ * @version 1.5.6
  * @module scripts/skill-post
  */
 

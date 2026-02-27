@@ -126,7 +126,7 @@
 | 26 | bkend-quickstart | bkend | false |
 | 27 | bkend-cookbook | bkend | false |
 
-**Distribution**: 22 core + 5 bkend | 12 user-invocable / 15 auto-invoked
+**Distribution**: 22 core + 5 bkend | 12 user-invocable / 13 false / 2 unspecified
 
 ### 2.3 Hook Registry Reference (10 events, 13 entries)
 

@@ -351,7 +351,7 @@ grep -rn "case.*:" src/ | wc -l
 grep -rn "else if" src/ | wc -l
 ```
 
-## v1.5.2 Feature Guidance
+## v1.5.6 Feature Guidance
 
 ### Output Style Recommendation
 - Dynamic projects: suggest `bkit-pdca-guide` for code quality tracking

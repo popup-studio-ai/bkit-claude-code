@@ -341,7 +341,7 @@ Reports to:
 └── report-generator (creates final PDCA report)
 ```
 
-## v1.5.2 Feature Guidance
+## v1.5.6 Feature Guidance
 
 ### Output Style Recommendation
 Suggest `bkit-pdca-guide` output style for iteration tracking: `/output-style bkit-pdca-guide`
