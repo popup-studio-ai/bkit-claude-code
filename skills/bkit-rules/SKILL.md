@@ -17,6 +17,7 @@ description: |
 imports:
   - ${PLUGIN_ROOT}/templates/shared/naming-conventions.md
 # hooks: Managed by hooks/hooks.json (pre-write.js, unified-write-post.js) - GitHub #9354 workaround
+user-invocable: false
 ---
 
 # bkit Core Rules

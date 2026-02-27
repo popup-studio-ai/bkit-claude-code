@@ -4,7 +4,7 @@
  *
  * 코드 리뷰 완료 후 다음 단계 안내
  *
- * @version 1.4.4
+ * @version 1.5.6
  */
 
 const path = require('path');

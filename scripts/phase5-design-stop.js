@@ -5,7 +5,7 @@
  * Design System 구축 완료 후 다음 단계 제안
  * Phase 5 (Design System) → Phase 6 (UI Integration)
  *
- * @version 1.4.4
+ * @version 1.5.6
  * @module scripts/phase5-design-stop
  */
 

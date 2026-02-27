@@ -22,7 +22,7 @@ allowed-tools:
   - Grep
   - Bash
   - WebSearch
-user-invocable: false
+user-invocable: true
 ---
 
 # Mobile App Development Expertise

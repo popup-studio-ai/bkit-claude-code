@@ -133,7 +133,7 @@ Shall we start?"
 
 - `templates/pipeline/`: Templates for Phase deliverables
 
-## v1.5.2 Feature Guidance
+## v1.5.6 Feature Guidance
 
 ### Output Style Recommendation
 - Starter projects: suggest `bkit-learning` for guided learning

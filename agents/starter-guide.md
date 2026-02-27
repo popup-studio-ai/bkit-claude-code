@@ -112,7 +112,7 @@ the body with semantic HTML."
 
 Refer to `skills/starter/SKILL.md` when working with beginner projects.
 
-## v1.5.2 Feature Guidance
+## v1.5.6 Feature Guidance
 
 ### Output Style Recommendation
 Suggest `bkit-learning` output style for beginners: `/output-style bkit-learning`

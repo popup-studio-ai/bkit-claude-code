@@ -1,11 +1,51 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-02-17T12:00:00.000Z",
+  "lastUpdated": "2026-02-27T02:14:17.286Z",
   "activeFeatures": [
-    "bkit-claude-code"
+    "bkit-v1.5.6-comprehensive-test",
+    "bkit-claude-code",
+    "scripts",
+    "core",
+    "pdca",
+    "intent",
+    "team",
+    "task"
   ],
-  "primaryFeature": "bkit-claude-code",
+  "primaryFeature": "bkit-v1.5.6-doc-sync",
   "features": {
+    "bkit-v1.5.6-doc-sync": {
+      "phase": "completed",
+      "phaseNumber": 6,
+      "matchRate": 100,
+      "iterationCount": 2,
+      "requirements": [],
+      "documents": {
+        "plan": "docs/01-plan/features/bkit-v1.5.6-doc-sync.plan.md",
+        "analysis": "docs/03-analysis/features/bkit-v1.5.6-doc-sync.analysis.md",
+        "report": "docs/04-report/features/bkit-v1.5.6-doc-sync.report.md"
+      },
+      "timestamps": {
+        "started": "2026-02-27T13:00:00.000Z",
+        "lastUpdated": "2026-02-27T14:30:00.000Z"
+      }
+    },
+    "bkit-v1.5.6-comprehensive-test": {
+      "phase": "completed",
+      "phaseNumber": 6,
+      "matchRate": 100,
+      "iterationCount": 1,
+      "requirements": [],
+      "documents": {
+        "plan": "docs/01-plan/features/bkit-v1.5.6-comprehensive-test.plan.md",
+        "design": "docs/02-design/features/bkit-v1.5.6-comprehensive-test.design.md",
+        "analysis": "docs/03-analysis/features/bkit-v1.5.6-comprehensive-test.analysis.md",
+        "report": "docs/04-report/features/bkit-v1.5.6-comprehensive-test.report.md"
+      },
+      "timestamps": {
+        "started": "2026-02-27T00:00:00.000Z",
+        "lastUpdated": "2026-02-27T12:30:00.000Z"
+      }
+    },
     "bkit-claude-code": {
       "phase": "do",
       "phaseNumber": 3,
@@ -15,9 +55,87 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-16T16:17:54.455Z",
-        "lastUpdated": "2026-02-16T16:18:08.729Z"
+        "lastUpdated": "2026-02-27T02:06:28.531Z"
       },
-      "lastFile": "/Users/popup-kay/Documents/GitHub/popup/bkit-claude-code/hooks/session-start.js"
+      "lastFile": "/Users/popup-kay/Documents/GitHub/popup/bkit-claude-code/lib/permission-manager.js"
+    },
+    "scripts": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-26T01:48:20.327Z",
+        "lastUpdated": "2026-02-27T02:05:12.141Z"
+      },
+      "lastFile": "/Users/popup-kay/Documents/GitHub/popup/bkit-claude-code/scripts/user-prompt-handler.js"
+    },
+    "core": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-27T02:04:54.215Z",
+        "lastUpdated": "2026-02-27T02:14:16.341Z"
+      },
+      "lastFile": "/Users/popup-kay/Documents/GitHub/popup/bkit-claude-code/lib/core/io.js"
+    },
+    "pdca": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-27T02:04:54.984Z",
+        "lastUpdated": "2026-02-27T02:14:14.260Z"
+      },
+      "lastFile": "/Users/popup-kay/Documents/GitHub/popup/bkit-claude-code/lib/pdca/automation.js"
+    },
+    "intent": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-27T02:04:56.059Z",
+        "lastUpdated": "2026-02-27T02:14:11.314Z"
+      },
+      "lastFile": "/Users/popup-kay/Documents/GitHub/popup/bkit-claude-code/lib/intent/ambiguity.js"
+    },
+    "team": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-27T02:04:56.715Z",
+        "lastUpdated": "2026-02-27T02:14:17.286Z"
+      },
+      "lastFile": "/Users/popup-kay/Documents/GitHub/popup/bkit-claude-code/lib/team/state-writer.js"
+    },
+    "task": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-27T02:04:57.571Z",
+        "lastUpdated": "2026-02-27T02:14:06.400Z"
+      },
+      "lastFile": "/Users/popup-kay/Documents/GitHub/popup/bkit-claude-code/lib/task/classification.js"
     }
   },
   "pipeline": {
@@ -37,7 +155,7 @@
   "session": {
     "startedAt": "2026-02-01T07:00:00.000Z",
     "onboardingCompleted": true,
-    "lastActivity": "2026-02-16T16:18:08.729Z"
+    "lastActivity": "2026-02-27T02:14:17.286Z"
   },
   "history": [
     {
@@ -87,6 +205,396 @@
       "feature": "bkit-v1.5.4-comprehensive-test",
       "phase": "archived",
       "action": "Archived to docs/archive/2026-02/bkit-v1.5.4-comprehensive-test/"
+    },
+    {
+      "timestamp": "2026-02-26T01:48:02.969Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-26T01:48:11.248Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-26T01:48:19.894Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-26T01:48:20.327Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-26T01:48:23.179Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-26T01:48:24.725Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-26T01:48:26.307Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-26T01:48:29.399Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-26T01:48:32.703Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-26T01:48:34.459Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-26T02:20:38.526Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-26T02:20:42.938Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-26T02:20:45.759Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-26T02:20:47.173Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-26T02:20:48.994Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-26T02:21:07.682Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-26T02:21:08.964Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-26T02:56:51.105Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:04:53.140Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:04:54.215Z",
+      "feature": "core",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:04:54.984Z",
+      "feature": "pdca",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:04:56.059Z",
+      "feature": "intent",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:04:56.715Z",
+      "feature": "team",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:04:57.571Z",
+      "feature": "task",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:04:58.649Z",
+      "feature": "pdca",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:04:59.696Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:05:05.159Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:05:05.919Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:05:06.800Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:05:07.698Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:05:08.566Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:05:09.426Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:05:10.294Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:05:11.239Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:05:12.141Z",
+      "feature": "scripts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:06:24.136Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:06:25.305Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:06:26.280Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:06:27.508Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:06:28.531Z",
+      "feature": "bkit-claude-code",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:14:03.804Z",
+      "feature": "task",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:14:04.589Z",
+      "feature": "task",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:14:05.429Z",
+      "feature": "task",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:14:06.400Z",
+      "feature": "task",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:14:07.094Z",
+      "feature": "pdca",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:14:07.960Z",
+      "feature": "pdca",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:14:07.992Z",
+      "feature": "team",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:14:08.792Z",
+      "feature": "pdca",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:14:08.811Z",
+      "feature": "team",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:14:09.667Z",
+      "feature": "team",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:14:09.685Z",
+      "feature": "intent",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:14:10.504Z",
+      "feature": "intent",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:14:10.595Z",
+      "feature": "team",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:14:11.308Z",
+      "feature": "team",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:14:11.314Z",
+      "feature": "intent",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:14:12.157Z",
+      "feature": "core",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:14:12.166Z",
+      "feature": "team",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:14:12.969Z",
+      "feature": "core",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:14:12.999Z",
+      "feature": "team",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:14:13.800Z",
+      "feature": "core",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:14:14.260Z",
+      "feature": "pdca",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:14:14.810Z",
+      "feature": "core",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:14:15.498Z",
+      "feature": "core",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:14:16.341Z",
+      "feature": "core",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-27T02:14:17.286Z",
+      "feature": "team",
+      "phase": "do",
+      "action": "updated"
     }
   ]
 }

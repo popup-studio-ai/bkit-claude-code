@@ -5,6 +5,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.6] - 2026-02-26
+
+### Added
+- **Auto-Memory Integration** (ENH-48)
+  - Add CC auto-memory guidance to SessionStart hook (Memory Systems section)
+  - Add `/memory` command reference to bkit help (`commands/bkit.md`)
+  - Clarify role separation between bkit memory-store and CC auto-memory
+  - Fix agent memory count (9 -> 14 project scope agents)
+- **CTO Team Memory Management Guide** (ENH-50)
+  - New guide: `docs/guides/cto-team-memory-guide.md`
+  - v2.1.50 + v2.1.59 multi-agent memory optimization best practices
+  - Agent count recommendations and long session management tips
+- **Remote Control Compatibility Pre-check** (ENH-51)
+  - New guide: `docs/guides/remote-control-compatibility.md`
+  - 27 skills + 16 agents RC compatibility matrix
+  - Pre-check document for #28379 resolution
+
+### Changed
+- **Skill Completion /copy Guidance** (ENH-49)
+  - `scripts/skill-post.js`: Add `copyHint` field on code generation skill completion
+  - `scripts/unified-stop.js`: Add conditional `/copy` tip on Stop event
+  - Target skills: phase-4~6, code-review, starter, dynamic, enterprise, mobile-app, desktop-app
+- **Version**: 1.5.5 -> 1.5.6
+  - `plugin.json`, `bkit.config.json`, `session-start.js`, `CHANGELOG.md`
+
+### Compatibility
+- Claude Code: Minimum v2.1.33, Recommended v2.1.59
+- Node.js: Minimum v18.0.0
+- Agent Teams: Requires Claude Code v2.1.32+ with `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+
+---
+
 ## [1.5.5] - 2026-02-17
 
 ### Added

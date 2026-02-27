@@ -7,7 +7,7 @@
  *
  * Pipeline의 마지막 단계로, 전체 개발 사이클 완료 처리
  *
- * @version 1.4.4
+ * @version 1.5.6
  * @module scripts/phase9-deploy-stop
  */
 

@@ -228,7 +228,9 @@ if (!handled) {
 // Default output if no handler matched
 if (!handled) {
   debugLog('UnifiedStop', 'No handler matched, using default output');
-  outputAllow('Stop event processed.', 'Stop');
+  // v1.5.6: Conditionally add /copy tip (when session was a code generation skill)
+  const copyTip = activeSkill ? '\nTip: Use /copy to copy code blocks from this session.' : '';
+  outputAllow(`Stop event processed.${copyTip}`, 'Stop');
 }
 
 debugLog('UnifiedStop', 'Hook completed', {

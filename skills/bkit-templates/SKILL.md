@@ -14,6 +14,7 @@ description: |
   modello, documento di piano, documento di progettazione, documento di analisi, rapporto
 
   Do NOT use for: code implementation, deployment, or non-documentation tasks.
+user-invocable: false
 ---
 
 # bkit Document Templates
