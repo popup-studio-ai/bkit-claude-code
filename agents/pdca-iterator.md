@@ -341,7 +341,9 @@ Reports to:
 └── report-generator (creates final PDCA report)
 ```
 
-## v1.5.7 Feature Guidance
+## v1.5.8 Feature Guidance
+
+- **v1.5.8 Studio Support**: Path Registry centralizes state file paths. State files moved to `.bkit/{state,runtime,snapshots}/`. Auto-migration handles v1.5.7 → v1.5.8 transition.
 
 ### Output Style Recommendation
 Suggest `bkit-pdca-guide` output style for iteration tracking: `/output-style bkit-pdca-guide`

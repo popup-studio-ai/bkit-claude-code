@@ -1,6 +1,6 @@
 # Scripts Overview
 
-> 45 Node.js Scripts used by bkit hooks (v1.5.7)
+> 45 Node.js Scripts used by bkit hooks (v1.5.8)
 >
 > **v1.5.0**: Claude Code Exclusive - Gemini CLI support removed, simplified architecture
 > **v1.4.7**: Core Modularization - lib/ split into 4 modules, Task Management Integration
@@ -8,6 +8,7 @@
 > **v1.5.5**: Plan Plus skill (brainstorming-enhanced planning)
 > **v1.5.6**: Auto-memory integration, 182 exports
 > **v1.5.7**: /simplify + /batch PDCA integration, CC_COMMAND_PATTERNS, English conversion (3 stop scripts)
+> **v1.5.8**: Path Registry in lib/core/paths.js, auto-migration in session-start.js, 186 exports
 > **v1.4.6**: Sub-agent call stability with `bkit:` prefix
 > **v1.4.5**: `/pdca archive` action, 8-language trigger completion
 > **v1.4.4**: hooks-json-integration, unified handlers (unified-stop.js, unified-bash-pre.js, etc.)
@@ -72,7 +73,7 @@ All scripts are at root level (not in .claude/):
 
 ```
 bkit-claude-code/
-├── lib/                       # Modular Library (v1.5.3, 241 functions)
+├── lib/                       # Modular Library (v1.5.8, 186 exports)
 │   ├── common.js              # Migration Bridge (re-exports all modules)
 │   ├── core/                  # Core utilities (7 files, 40 exports)
 │   │   ├── index.js           # Entry point

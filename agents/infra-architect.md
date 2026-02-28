@@ -167,7 +167,9 @@ Asynchronous Communication: Message Queue
 
 Refer to `skills/enterprise/SKILL.md` when working with infrastructure tasks.
 
-## v1.5.7 Feature Guidance
+## v1.5.8 Feature Guidance
+
+- **v1.5.8 Studio Support**: Path Registry centralizes state file paths. State files moved to `.bkit/{state,runtime,snapshots}/`. Auto-migration handles v1.5.7 → v1.5.8 transition.
 
 ### Output Style Recommendation
 Suggest `bkit-enterprise` output style for infrastructure decisions: `/output-style bkit-enterprise`
