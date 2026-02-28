@@ -15,6 +15,7 @@
 const fs = require('fs');
 const path = require('path');
 const { PROJECT_DIR } = require('../lib/common.js');
+const { resolveDocPaths, getArchivePath } = require('../lib/core/paths');
 const { deleteFeatureFromStatus, updatePdcaStatus, archiveFeatureToSummary } = require('../lib/pdca/status');
 
 // FR-04: Parse --preserve-summary option
@@ -39,36 +40,31 @@ if (!feature) {
 
 // Set up paths
 const now = new Date();
-const archiveDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-const archiveDir = path.join(PROJECT_DIR, 'docs', 'archive', archiveDate, feature);
+const archiveDir = getArchivePath(feature, now);
 
-// Document paths to check
-const docPaths = {
-  plan: path.join(PROJECT_DIR, `docs/01-plan/features/${feature}.plan.md`),
-  design: path.join(PROJECT_DIR, `docs/02-design/features/${feature}.design.md`),
-  analysis: path.join(PROJECT_DIR, `docs/03-analysis/${feature}.analysis.md`),
-  analysisAlt: path.join(PROJECT_DIR, `docs/03-analysis/${feature}.gap-analysis.md`),
-  report: path.join(PROJECT_DIR, `docs/04-report/${feature}.report.md`),
-  reportAlt: path.join(PROJECT_DIR, `docs/04-report/${feature}.completion-report.md`)
-};
-
-// Count existing documents
+// Resolve doc paths from config registry for all 4 PDCA phases
+const phases = ['plan', 'design', 'analysis', 'report'];
 const existingDocs = [];
-if (fs.existsSync(docPaths.plan)) existingDocs.push({ type: 'plan', path: docPaths.plan });
-if (fs.existsSync(docPaths.design)) existingDocs.push({ type: 'design', path: docPaths.design });
-if (fs.existsSync(docPaths.analysis)) existingDocs.push({ type: 'analysis', path: docPaths.analysis });
-else if (fs.existsSync(docPaths.analysisAlt)) existingDocs.push({ type: 'gap-analysis', path: docPaths.analysisAlt });
-if (fs.existsSync(docPaths.report)) existingDocs.push({ type: 'report', path: docPaths.report });
-else if (fs.existsSync(docPaths.reportAlt)) existingDocs.push({ type: 'completion-report', path: docPaths.reportAlt });
+const checkedPaths = {};
+
+for (const phase of phases) {
+  const candidates = resolveDocPaths(phase, feature);
+  checkedPaths[phase] = candidates[0] || ''; // first candidate for error display
+  for (const p of candidates) {
+    if (fs.existsSync(p)) {
+      existingDocs.push({ type: path.basename(p, '.md'), path: p });
+      break;
+    }
+  }
+}
 
 if (existingDocs.length === 0) {
   console.log(`Error: No PDCA documents found for feature '${feature}'`);
   console.log('');
   console.log('Checked paths:');
-  console.log(`  - ${docPaths.plan}`);
-  console.log(`  - ${docPaths.design}`);
-  console.log(`  - ${docPaths.analysis}`);
-  console.log(`  - ${docPaths.report}`);
+  for (const phase of phases) {
+    console.log(`  - ${checkedPaths[phase]}`);
+  }
   process.exit(1);
 }
 
