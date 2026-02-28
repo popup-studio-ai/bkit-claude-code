@@ -237,7 +237,7 @@ Also update `docs/04-report/changelog.md` when generating reports:
 - {bug fix}
 ```
 
-## v1.5.6 Feature Guidance
+## v1.5.7 Feature Guidance
 
 ### Output Style Recommendation
 Suggest `bkit-pdca-guide` output style for formatted completion reports: `/output-style bkit-pdca-guide`

@@ -325,7 +325,7 @@ docker compose logs --since "5m"
 docker compose logs > logs_$(date +%Y%m%d_%H%M%S).txt
 ```
 
-## v1.5.6 Feature Guidance
+## v1.5.7 Feature Guidance
 
 ### Output Style Recommendation
 Suggest `bkit-pdca-guide` output style for QA tracking with status badges: `/output-style bkit-pdca-guide`

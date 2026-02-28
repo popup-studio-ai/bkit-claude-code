@@ -8,7 +8,7 @@
  * 중요: UI 구현 완료 시점은 기능 검증이 필요한 시점
  * Zero Script QA 제안 또는 gap-detector 실행 권장
  *
- * @version 1.5.6
+ * @version 1.5.7
  * @module scripts/phase6-ui-stop
  */
 

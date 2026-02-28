@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "bkit-marketplace",
-  "version": "1.5.6",
+  "version": "1.5.7",
   "description": "POPUP STUDIO's Vibecoding Kit marketplace - PDCA methodology and AI-native development tools",
   "owner": {
     "name": "POPUP STUDIO PTE. LTD.",
@@ -34,7 +34,7 @@
     {
       "name": "bkit",
       "description": "Vibecoding Kit - PDCA methodology + CTO-Led Agent Teams + Claude Code mastery for AI-native development. Includes 27 skills, 16 agents, 45 scripts, 10 hook events, and 4 output styles for structured development workflows.",
-      "version": "1.5.6",
+      "version": "1.5.7",
       "author": {
         "name": "POPUP STUDIO PTE. LTD.",
         "email": "contact@popupstudio.ai"

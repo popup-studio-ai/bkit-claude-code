@@ -3,7 +3,7 @@
  * user-prompt-handler.js - UserPromptSubmit Hook (FR-04)
  * Process user input before AI processing
  *
- * @version 1.5.6
+ * @version 1.5.7
  * @module scripts/user-prompt-handler
  */
 
@@ -118,6 +118,23 @@ try {
   }
 } catch (e) {
   debugLog('UserPrompt', 'Skill trigger detection failed', { error: e.message });
+}
+
+// 3.3: v1.5.7 CC Built-in Command Detection (simplify/batch awareness)
+try {
+  const { CC_COMMAND_PATTERNS, matchMultiLangPattern } = require('../lib/intent/language');
+  if (CC_COMMAND_PATTERNS) {
+    if (matchMultiLangPattern(userPrompt, CC_COMMAND_PATTERNS['simplify'])) {
+      contextParts.push('CC /simplify command detected. Suggest after Check ≥90% or code review.');
+      debugLog('UserPrompt', 'CC simplify command detected');
+    }
+    if (matchMultiLangPattern(userPrompt, CC_COMMAND_PATTERNS['batch'])) {
+      contextParts.push('CC /batch command detected. Useful for multi-feature PDCA (Enterprise).');
+      debugLog('UserPrompt', 'CC batch command detected');
+    }
+  }
+} catch (e) {
+  debugLog('UserPrompt', 'CC command detection failed', { error: e.message });
 }
 
 // 3.5: bkend recommendation for backend/DB requests (G-04, G-05)

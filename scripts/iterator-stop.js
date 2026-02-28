@@ -95,16 +95,16 @@ let userPrompt = null;
 // Check if completed successfully
 if (completionPattern.test(inputText) || matchRate >= threshold) {
   status = 'completed';
-  guidance = `✅ pdca-iterator 완료!
+  guidance = `✅ pdca-iterator complete!
 
-설계-구현 일치도가 목표(${threshold}%)에 도달했습니다.
+Design-implementation match rate reached target (${threshold}%).
 
-다음 단계:
-1. /pdca-report ${feature || ''} 로 완료 보고서 생성
-2. 변경사항 리뷰 후 커밋
-3. Archive 진행 (선택)
+Next steps:
+1. Generate completion report with /pdca-report ${feature || ''}
+2. Review changes and commit
+3. Archive (optional)
 
-🎉 Check-Act 반복 성공! (${currentIteration}회 반복)`;
+🎉 Check-Act iteration succeeded! (${currentIteration} iterations)`;
 
   // Mark feature as completed if match rate >= threshold
   if (feature && matchRate >= threshold) {
@@ -114,12 +114,13 @@ if (completionPattern.test(inputText) || matchRate >= threshold) {
   // v1.4.0: Generate completion prompt
   userPrompt = emitUserPrompt({
     questions: [{
-      question: `개선 완료! (${matchRate}%) 보고서를 생성할까요?`,
+      question: `Improvement complete! (${matchRate}%) Generate report?`,
       header: 'Completed',
       options: [
-        { label: '보고서 생성 (권장)', description: `/pdca-report ${feature || ''} 실행` },
-        { label: '추가 검토', description: '코드 리뷰 후 커밋' },
-        { label: 'Archive', description: '문서 보관 처리' }
+        { label: 'Generate report (Recommended)', description: `Run /pdca-report ${feature || ''}` },
+        { label: '/simplify code cleanup', description: 'Improve code quality then generate report' },
+        { label: 'Additional review', description: 'Code review then commit' },
+        { label: 'Archive', description: 'Archive documents' }
       ],
       multiSelect: false
     }]
@@ -128,27 +129,27 @@ if (completionPattern.test(inputText) || matchRate >= threshold) {
 } else if (maxIterationPattern.test(inputText) || currentIteration >= maxIterations) {
   status = 'max_iterations';
   // Max iterations reached
-  guidance = `⚠️ pdca-iterator: 최대 반복 횟수 도달 (${currentIteration}/${maxIterations}회)
+  guidance = `⚠️ pdca-iterator: Maximum iterations reached (${currentIteration}/${maxIterations})
 
-자동 개선이 반복되었지만 목표에 도달하지 못했습니다.
-현재 매치율: ${matchRate}%
+Auto-improvement repeated but target not reached.
+Current match rate: ${matchRate}%
 
-권장 조치:
-1. 수동으로 남은 차이점 수정
-2. 또는 설계 문서를 현재 구현에 맞게 업데이트
-3. /pdca-analyze ${feature || ''} 로 현재 상태 재확인
+Recommended actions:
+1. Manually fix remaining differences
+2. Or update design document to match current implementation
+3. Re-check current state with /pdca-analyze ${feature || ''}
 
-💡 복잡한 차이는 수동 개입이 필요할 수 있습니다.`;
+💡 Complex differences may require manual intervention.`;
 
   // v1.4.0: Generate max iterations prompt
   userPrompt = emitUserPrompt({
     questions: [{
-      question: `최대 반복 횟수 도달 (${matchRate}%). 어떻게 진행할까요?`,
+      question: `Maximum iterations reached (${matchRate}%). How to proceed?`,
       header: 'Max Iterations',
       options: [
-        { label: '수동 수정', description: '직접 코드 수정 후 재분석' },
-        { label: '현재 상태로 완료', description: '경고와 함께 보고서 생성' },
-        { label: '설계 업데이트', description: '구현에 맞게 설계 수정' }
+        { label: 'Manual fix', description: 'Fix code manually then re-analyze' },
+        { label: 'Complete as-is', description: 'Generate report with warning' },
+        { label: 'Update design', description: 'Update design to match implementation' }
       ],
       multiSelect: false
     }]
@@ -157,26 +158,26 @@ if (completionPattern.test(inputText) || matchRate >= threshold) {
 } else if (improvedPattern.test(inputText) || changedFiles > 0) {
   status = 'improved';
   // Improvement made but not complete
-  guidance = `✅ 개선 완료: ${changedFiles > 0 ? `${changedFiles}개 파일 수정됨` : '수정 적용됨'}
+  guidance = `✅ Improvement complete: ${changedFiles > 0 ? `${changedFiles} files modified` : 'Changes applied'}
 
-반복 횟수: ${currentIteration}/${maxIterations}
-현재 매치율: ${matchRate}%
+Iterations: ${currentIteration}/${maxIterations}
+Current match rate: ${matchRate}%
 
-다음 단계:
-1. /pdca-analyze ${feature || ''} 로 재분석 실행
-2. 매치율 확인 후 필요시 반복
+Next steps:
+1. Run re-analysis with /pdca-analyze ${feature || ''}
+2. Repeat if needed after checking match rate
 
-💡 ${threshold}% 이상 도달까지 Check-Act를 반복하세요.`;
+💡 Repeat Check-Act until reaching ${threshold}%+.`;
 
   // v1.4.0: Generate re-analyze prompt
   userPrompt = emitUserPrompt({
     questions: [{
-      question: `${changedFiles > 0 ? `${changedFiles}개 파일 수정됨.` : '개선 완료.'} 재분석을 진행할까요?`,
+      question: `${changedFiles > 0 ? `${changedFiles} files modified.` : 'Improvement complete.'} Run re-analysis?`,
       header: 'Re-Analyze',
       options: [
-        { label: '재분석 (권장)', description: `/pdca-analyze ${feature || ''} 실행` },
-        { label: '추가 수정', description: '계속 수정 후 재분석' },
-        { label: '완료', description: '현재 상태로 완료' }
+        { label: 'Re-analyze (Recommended)', description: `Run /pdca-analyze ${feature || ''}` },
+        { label: 'Continue fixing', description: 'Continue fixing then re-analyze' },
+        { label: 'Complete', description: 'Complete with current state' }
       ],
       multiSelect: false
     }]
@@ -185,25 +186,25 @@ if (completionPattern.test(inputText) || matchRate >= threshold) {
 } else {
   status = 'unknown';
   // Default: suggest re-evaluation
-  guidance = `🔄 pdca-iterator 작업 완료 (${currentIteration}회차)
+  guidance = `🔄 pdca-iterator work complete (iteration ${currentIteration})
 
-수정 작업이 완료되었습니다.
-현재 매치율: ${matchRate}%
+Modifications complete.
+Current match rate: ${matchRate}%
 
-다음 단계:
-1. /pdca-analyze ${feature || ''} 로 재평가하여 매치율 확인
-2. ${threshold}% 미만이면 /pdca-iterate 재실행
-3. ${threshold}% 이상이면 /pdca-report 로 완료 보고서 생성`;
+Next steps:
+1. Re-evaluate with /pdca-analyze ${feature || ''} to check match rate
+2. If below ${threshold}%, re-run /pdca-iterate
+3. If ${threshold}%+, generate completion report with /pdca-report`;
 
   // v1.4.0: Generate default prompt
   userPrompt = emitUserPrompt({
     questions: [{
-      question: '수정 작업이 완료되었습니다. 다음 단계를 선택하세요.',
+      question: 'Modifications complete. Select next step.',
       header: 'Next Step',
       options: [
-        { label: '재분석 (권장)', description: `/pdca-analyze ${feature || ''} 실행` },
-        { label: '추가 반복', description: `/pdca-iterate ${feature || ''} 실행` },
-        { label: '완료 처리', description: `/pdca-report ${feature || ''} 실행` }
+        { label: 'Re-analyze (Recommended)', description: `Run /pdca-analyze ${feature || ''}` },
+        { label: 'Continue iterating', description: `Run /pdca-iterate ${feature || ''}` },
+        { label: 'Complete', description: `Run /pdca-report ${feature || ''}` }
       ],
       multiSelect: false
     }]
@@ -334,16 +335,16 @@ const response = {
   // v1.4.0: Include user prompt for AskUserQuestion
   userPrompt: userPrompt,
   // v1.4.0: Stop hooks use systemMessage instead of additionalContext (not supported)
-  systemMessage: `Iterator 완료. 반복: ${currentIteration}/${maxIterations}, 매치율: ${matchRate}%\n\n` +
-    `## 🚨 MANDATORY: AskUserQuestion 호출\n\n` +
-    `아래 AskUserQuestion 파라미터로 사용자에게 다음 단계를 질문하세요:\n\n` +
+  systemMessage: `Iterator complete. Iterations: ${currentIteration}/${maxIterations}, Match rate: ${matchRate}%\n\n` +
+    `## 🚨 MANDATORY: Call AskUserQuestion\n\n` +
+    `Ask the user about next steps using the AskUserQuestion parameters below:\n\n` +
     `${userPrompt}\n\n` +
-    `### 선택별 동작:\n` +
+    `### Actions by selection:\n` +
     (status === 'completed'
-      ? `- **보고서 생성** → /pdca-report ${feature || ''} 실행\n- **추가 검토** → 코드 리뷰 진행\n- **Archive** → /archive 실행`
+      ? `- **Generate report** → Run /pdca-report ${feature || ''}\n- **/simplify code cleanup** → Run /simplify then generate report\n- **Additional review** → Code review\n- **Archive** → Run /archive`
       : status === 'improved'
-        ? `- **재분석** → /pdca-analyze ${feature || ''} 실행\n- **추가 수정** → 가이드 제공\n- **완료** → /pdca-report 실행`
-        : `- **재분석** → /pdca-analyze ${feature || ''} 실행\n- **추가 반복** → /pdca-iterate ${feature || ''} 실행\n- **완료 처리** → /pdca-report 실행`)
+        ? `- **Re-analyze** → Run /pdca-analyze ${feature || ''}\n- **Continue fixing** → Provide guidance\n- **Complete** → Run /pdca-report`
+        : `- **Re-analyze** → Run /pdca-analyze ${feature || ''}\n- **Continue iterating** → Run /pdca-iterate ${feature || ''}\n- **Complete** → Run /pdca-report`)
 };
 
 console.log(JSON.stringify(response));

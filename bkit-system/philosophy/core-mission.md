@@ -117,16 +117,19 @@ After:  /learn-claude-code → Systematic training
 
 ---
 
-## Current Implementation (v1.5.4)
+## Current Implementation (v1.5.7)
 
 > **v1.5.3**: CTO-Led Agent Teams + Team Visibility + Claude Code Exclusive
-> **v1.5.4**: bkend MCP Accuracy Fix - embodying "No Guessing" philosophy through exact MCP tool names (19→28+), eliminating numbered tool references in favor of precise named tools
+> **v1.5.4**: bkend MCP Accuracy Fix - embodying "No Guessing" philosophy through exact MCP tool names (19→28+)
+> **v1.5.5**: Plan Plus - Brainstorming-enhanced PDCA planning
+> **v1.5.6**: Auto-Memory Integration - CC v2.1.59 auto-memory, ENH-48~51, 182 exports
+> **v1.5.7**: /simplify + /batch PDCA Integration - CC v2.1.63 HTTP hooks, CC_COMMAND_PATTERNS, English conversion
 
 ### Component Counts
 
 | Component | Count | Location |
 |-----------|-------|----------|
-| Skills | 26 | `skills/*/SKILL.md` |
+| Skills | 27 | `skills/*/SKILL.md` |
 | Agents | 16 | `agents/*.md` |
 | Commands | DEPRECATED | Migrated to Skills |
 | Scripts | 45 | `scripts/*.js` |
