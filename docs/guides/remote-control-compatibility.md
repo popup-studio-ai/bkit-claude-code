@@ -1,6 +1,6 @@
 # Remote Control Compatibility Pre-check
 
-> bkit v1.5.6 | Claude Code v2.1.58+ (Remote Control 확대)
+> bkit v1.5.7 | Claude Code v2.1.58+ (Remote Control 확대)
 > #28379 해결 대비 bkit skills RC 호환성 사전 점검
 
 ---

@@ -1,10 +1,13 @@
 # Scripts Overview
 
-> 45 Node.js Scripts used by bkit hooks (v1.5.3)
+> 45 Node.js Scripts used by bkit hooks (v1.5.7)
 >
 > **v1.5.0**: Claude Code Exclusive - Gemini CLI support removed, simplified architecture
 > **v1.4.7**: Core Modularization - lib/ split into 4 modules, Task Management Integration
-> **v1.5.3**: lib/ expanded to 5 modules (241 functions), Team module added
+> **v1.5.3**: lib/ expanded to 5 modules, Team module added
+> **v1.5.5**: Plan Plus skill (brainstorming-enhanced planning)
+> **v1.5.6**: Auto-memory integration, 182 exports
+> **v1.5.7**: /simplify + /batch PDCA integration, CC_COMMAND_PATTERNS, English conversion (3 stop scripts)
 > **v1.4.6**: Sub-agent call stability with `bkit:` prefix
 > **v1.4.5**: `/pdca archive` action, 8-language trigger completion
 > **v1.4.4**: hooks-json-integration, unified handlers (unified-stop.js, unified-bash-pre.js, etc.)

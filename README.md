@@ -1,8 +1,8 @@
 # bkit - Vibecoding Kit
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Claude Code](https://img.shields.io/badge/Claude%20Code-v2.1.33+-purple.svg)](https://docs.anthropic.com/en/docs/claude-code/getting-started)
-[![Version](https://img.shields.io/badge/Version-1.5.6-green.svg)](CHANGELOG.md)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-v2.1.59+-purple.svg)](https://docs.anthropic.com/en/docs/claude-code/getting-started)
+[![Version](https://img.shields.io/badge/Version-1.5.7-green.svg)](CHANGELOG.md)
 [![Author](https://img.shields.io/badge/Author-POPUP%20STUDIO-orange.svg)](https://popupstudio.ai)
 
 > **PDCA methodology + CTO-Led Agent Teams + AI coding assistant mastery for AI-native development**
@@ -60,6 +60,8 @@ Layer 5: Scripts (45 modules)    → Actual Node.js execution logic with unified
 
 ![bkit Features](images/bkit-features.png)
 
+- **/simplify + /batch PDCA Integration (v1.5.7)** - CC built-in /simplify and /batch commands integrated into PDCA Check→Report flow, CC_COMMAND_PATTERNS 8-language awareness, HTTP Hooks documentation, English conversion for 3 stop scripts
+- **Auto-Memory Integration (v1.5.6)** - CC v2.1.59 auto-memory official support, /copy guidance, multi-agent memory optimization, ENH-48~51 enhancements, 182 exports
 - **Plan Plus Skill (v1.5.5)** - Brainstorming-enhanced PDCA planning with intent discovery, alternatives exploration, and YAGNI review
 - **bkend MCP Accuracy Fix (v1.5.4)** - MCP tool coverage 19→28+, accurate tool names, dynamic Base URL, search_docs workflow
 - **Team Visibility & State Writer (v1.5.3)** - Agent Teams state management with `.bkit/agent-state.json` for Studio IPC
@@ -108,7 +110,7 @@ Layer 5: Scripts (45 modules)    → Actual Node.js execution logic with unified
 
 | Requirement | Minimum Version | Notes |
 |-------------|:---------------:|-------|
-| **Claude Code** | **v2.1.33+** | Required. bkit uses hook events (`TeammateIdle`, `TaskCompleted`) introduced in v2.1.33. Older versions will fail to load `hooks.json` with a validation error. |
+| **Claude Code** | **v2.1.59+** | Required (v2.1.63+ recommended). bkit uses hook events (`TeammateIdle`, `TaskCompleted`) introduced in v2.1.33, auto-memory (v2.1.59), and benefits from 13 memory leak fixes (v2.1.63). |
 | Node.js | v18+ | For hook script execution |
 | Agent Teams (optional) | Set `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` | Required only for CTO-Led Agent Teams feature |
 
@@ -441,6 +443,34 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guid
 - Only `admin` team members can merge to `main`
 - All changes require pull request review
 - Version releases are managed through Git tags
+
+---
+
+## Design Philosophy
+
+bkit is not a productivity hack. It is an attempt to bring **engineering discipline** to AI-native development.
+
+The software industry has spent decades refining how humans write code—version control, code review, CI/CD, testing pyramids. But when AI enters the development loop, most of that discipline evaporates. Developers prompt, accept, and ship. The feedback loop disappears. Documentation becomes an afterthought. Quality becomes a matter of luck.
+
+**bkit exists because we believe AI-assisted development deserves the same rigor as traditional engineering.**
+
+### What we optimize for
+
+- **Process over output.** A single feature built through proper planning, design, implementation, and verification is worth more than ten features hacked together. The PDCA cycle is not overhead—it is the product.
+
+- **Verification over trust.** AI generates plausible code. Plausible is not correct. Every implementation goes through gap analysis against its design document. If the match rate falls below 90%, the system iterates automatically. We do not ship hope.
+
+- **Context over prompts.** A well-structured prompt helps once. A well-structured context system helps every time. bkit's 241 functions, 27 skills, and 16 agents exist to ensure the AI receives the right context at the right moment—not through clever prompting, but through systematic engineering.
+
+- **Constraints over features.** We intentionally limit what bkit does. Three project levels, not infinite configuration. A fixed 9-stage pipeline, not a customizable workflow builder. Opinionated defaults, not a framework for frameworks. Constraints eliminate decision fatigue and make the system learnable.
+
+### What this means in practice
+
+When you use bkit, you will write a plan document before writing code. You will generate a design specification before implementation. You will run gap analysis after every feature. You will produce a completion report that captures what was built, what was verified, and what was learned.
+
+This is slower than prompting and shipping. It is also how software that lasts gets built.
+
+> *"We do not offer a hundred features. We engineer each one through proper design and verification. That is the difference between a tool and a discipline."*
 
 ---
 

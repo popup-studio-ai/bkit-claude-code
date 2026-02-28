@@ -21,6 +21,28 @@
 > **v1.5.0 Claude Code Exclusive**: Gemini CLI support removed, simplified architecture
 >
 > **v1.5.4 bkend MCP Accuracy Fix**: MCP tools 19→28+, accurate tool names, dynamic Base URL
+>
+> **v1.5.5 Plan Plus**: Brainstorming-enhanced PDCA planning (community contribution)
+>
+> **v1.5.6 Auto-Memory Integration**: CC v2.1.59 auto-memory, ENH-48~51, 182 exports
+>
+> **v1.5.7 /simplify + /batch PDCA Integration**: CC v2.1.63 HTTP hooks, CC_COMMAND_PATTERNS, English conversion
+
+### v1.5.7 (2026-02-28) - /simplify + /batch PDCA Integration
+- CC v2.1.63 /simplify and /batch commands integrated into PDCA Check→Report flow
+- CC_COMMAND_PATTERNS: 8-language CC built-in command awareness
+- HTTP hooks documentation and awareness
+- English conversion for 3 stop scripts
+- 182 exports (common.js bridge)
+
+### v1.5.6 (2026-02-26) - Auto-Memory Integration
+- CC v2.1.59 auto-memory official support
+- ENH-48~51 enhancements (/copy guidance, multi-agent guide)
+- 182 exports (+readBkitMemory, +writeBkitMemory → +generateBatchTrigger, +shouldSuggestBatch)
+
+### v1.5.5 (2026-02-22) - Plan Plus
+- Brainstorming-enhanced PDCA planning with 6-phase process
+- Community contribution
 
 ### v1.5.4 (2026-02-14) - bkend MCP Accuracy Fix
 - bkend MCP tool coverage: 19 → 28+ (Fixed 3 + Project 9 + Table 11 + Data CRUD 5)

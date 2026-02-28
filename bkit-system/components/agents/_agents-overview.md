@@ -1,10 +1,12 @@
 # Agents Overview
 
-> List of 16 Agents defined in bkit and their roles (v1.5.4)
+> List of 16 Agents defined in bkit and their roles (v1.5.7)
 >
 > **v1.4.1**: Added Context Engineering perspective - Role-based Behavioral Rules Layer
 > **v1.5.0**: Claude Code Exclusive
 > **v1.5.4**: Model distribution verified: 7 opus / 7 sonnet / 2 haiku, 9 acceptEdits / 7 plan
+> **v1.5.6**: Auto-memory integration, multi-agent memory optimization (CC v2.1.59)
+> **v1.5.7**: /simplify + /batch PDCA flow integration, English conversion for stop script outputs
 
 ## What are Agents?
 

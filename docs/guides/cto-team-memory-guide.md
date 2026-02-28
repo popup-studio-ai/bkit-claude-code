@@ -1,6 +1,6 @@
 # CTO Team Memory Management Guide
 
-> bkit v1.5.6 | Claude Code v2.1.59+ 권장
+> bkit v1.5.7 | Claude Code v2.1.59+ 권장
 > CTO-Led Agent Teams 패턴에서의 multi-agent 메모리 관리 best practice
 
 ---

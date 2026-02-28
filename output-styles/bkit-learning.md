@@ -42,3 +42,8 @@ keep-coding-instructions: true
    - Starter: Explain all concepts in detail
    - Dynamic: Focus on key concepts
    - Enterprise: Explain architecture decision rationale
+
+6. After Check phase passes (≥90%), explain the /simplify command:
+   > **Learning Point**: The /simplify command reviews your code for reuse opportunities,
+   > quality improvements, and efficiency gains. Using it after Check phase ensures
+   > clean code before generating the completion report.

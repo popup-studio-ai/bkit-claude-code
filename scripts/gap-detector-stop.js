@@ -121,27 +121,28 @@ let nextStep = '';
 let userPrompt = null;
 
 if (matchRate >= threshold) {
-  // 90% 이상: 완료 제안
+  // >= threshold: Suggest completion
   nextStep = 'pdca-report';
-  guidance = `✅ Gap Analysis 완료: ${matchRate}% 매치
+  guidance = `✅ Gap Analysis complete: ${matchRate}% match
 
-설계-구현이 잘 일치합니다.
+Design-implementation alignment is good.
 
-다음 단계:
-1. /pdca-report ${feature || ''} 로 완료 보고서 생성
-2. Archive 진행 가능 (docs/archive/로 이동)
+Next steps:
+1. Generate completion report with /pdca-report ${feature || ''}
+2. Archive available (move to docs/archive/)
 
-🎉 PDCA Check 단계 통과!`;
+🎉 PDCA Check phase passed!`;
 
   // v1.4.0: Generate AskUserQuestion prompt for completion
   userPrompt = emitUserPrompt({
     questions: [{
-      question: `매치율 ${matchRate}%입니다. 완료 보고서를 생성할까요?`,
+      question: `Match rate ${matchRate}%. Generate completion report?`,
       header: 'Complete',
       options: [
-        { label: '보고서 생성 (권장)', description: `/pdca-report ${feature || ''} 실행` },
-        { label: '추가 개선', description: `/pdca-iterate ${feature || ''} 실행` },
-        { label: '나중에', description: '현재 상태 유지' }
+        { label: 'Generate report (Recommended)', description: `Run /pdca-report ${feature || ''}` },
+        { label: '/simplify code cleanup', description: 'Improve code quality then generate report' },
+        { label: 'Continue improving', description: `Run /pdca-iterate ${feature || ''}` },
+        { label: 'Later', description: 'Keep current state' }
       ],
       multiSelect: false
     }]
@@ -150,83 +151,83 @@ if (matchRate >= threshold) {
 } else if (iterCount >= maxIterations) {
   // v1.4.0: Max iterations reached
   nextStep = 'manual';
-  guidance = `⚠️ Gap Analysis 완료: ${matchRate}% 매치
+  guidance = `⚠️ Gap Analysis complete: ${matchRate}% match
 
-최대 반복 횟수(${maxIterations})에 도달했습니다.
-수동 검토가 필요합니다.
+Maximum iterations (${maxIterations}) reached.
+Manual review required.
 
-현재 상태:
-- 반복 횟수: ${iterCount}/${maxIterations}
-- 매치율: ${matchRate}%
+Current state:
+- Iterations: ${iterCount}/${maxIterations}
+- Match rate: ${matchRate}%
 
-권장 조치:
-1. 수동으로 코드 검토 및 수정
-2. 설계 문서 업데이트 검토
-3. 의도적 차이 문서화`;
+Recommended actions:
+1. Manually review and fix code
+2. Review design document updates
+3. Document intentional differences`;
 
   userPrompt = emitUserPrompt({
     questions: [{
-      question: `최대 반복 횟수 도달. 어떻게 진행할까요?`,
+      question: `Maximum iterations reached. How to proceed?`,
       header: 'Max Iterations',
       options: [
-        { label: '수동 수정', description: '직접 코드 검토 후 수정' },
-        { label: '현재 상태로 완료', description: '경고와 함께 보고서 생성' },
-        { label: '설계 업데이트', description: '구현에 맞게 설계 수정' }
+        { label: 'Manual fix', description: 'Review and fix code manually' },
+        { label: 'Complete as-is', description: 'Generate report with warning' },
+        { label: 'Update design', description: 'Update design to match implementation' }
       ],
       multiSelect: false
     }]
   });
 
 } else if (matchRate >= 70) {
-  // 70-89%: 자동 개선 제안
+  // 70-89%: Suggest auto-improvement
   nextStep = 'pdca-iterate';
-  guidance = `⚠️ Gap Analysis 완료: ${matchRate}% 매치
+  guidance = `⚠️ Gap Analysis complete: ${matchRate}% match
 
-일부 차이가 있습니다.
+Some differences found.
 
-선택 옵션:
-1. 자동 개선 (권장): /pdca-iterate ${feature || ''}
-2. 수동 수정: 직접 차이점 수정
-3. 설계 업데이트: 구현에 맞게 설계 문서 수정
+Options:
+1. Auto-improve (Recommended): /pdca-iterate ${feature || ''}
+2. Manual fix: Fix differences manually
+3. Update design: Update design document to match implementation
 
-💡 ${threshold}% 이상 도달 시 완료 보고서 생성 가능
-📊 반복 횟수: ${iterCount}/${maxIterations}`;
+💡 Completion report available when reaching ${threshold}%+
+📊 Iterations: ${iterCount}/${maxIterations}`;
 
   userPrompt = emitUserPrompt({
     questions: [{
-      question: `매치율 ${matchRate}%입니다. 자동 개선할까요?`,
+      question: `Match rate ${matchRate}%. Auto-improve?`,
       header: 'Auto-Fix',
       options: [
-        { label: '자동 개선 (권장)', description: `/pdca-iterate 실행 (${iterCount + 1}/${maxIterations})` },
-        { label: '수동 수정', description: '직접 코드 수정 후 재분석' },
-        { label: '현재 상태로 완료', description: '경고와 함께 진행' }
+        { label: 'Auto-improve (Recommended)', description: `Run /pdca-iterate (${iterCount + 1}/${maxIterations})` },
+        { label: 'Manual fix', description: 'Fix code manually then re-analyze' },
+        { label: 'Complete as-is', description: 'Proceed with warning' }
       ],
       multiSelect: false
     }]
   });
 
 } else {
-  // 70% 미만: 강력한 개선 권장
+  // Below 70%: Strongly recommend improvement
   nextStep = 'pdca-iterate';
-  guidance = `🔴 Gap Analysis 완료: ${matchRate}% 매치
+  guidance = `🔴 Gap Analysis complete: ${matchRate}% match
 
-설계-구현 차이가 큽니다.
+Significant design-implementation gap detected.
 
-권장 조치:
-1. /pdca-iterate ${feature || ''} 실행하여 자동 개선 (강력 권장)
-2. 또는 설계 문서를 현재 구현에 맞게 전면 업데이트
+Recommended actions:
+1. Run /pdca-iterate ${feature || ''} for auto-improvement (Strongly recommended)
+2. Or fully update design document to match current implementation
 
-⚠️ Check-Act 반복이 필요합니다. ${threshold}% 이상 도달까지 반복하세요.
-📊 반복 횟수: ${iterCount}/${maxIterations}`;
+⚠️ Check-Act iteration required. Repeat until reaching ${threshold}%+.
+📊 Iterations: ${iterCount}/${maxIterations}`;
 
   userPrompt = emitUserPrompt({
     questions: [{
-      question: `매치율 ${matchRate}%로 낮습니다. 자동 개선을 진행할까요?`,
+      question: `Match rate ${matchRate}% is low. Proceed with auto-improvement?`,
       header: 'Low Match',
       options: [
-        { label: '자동 개선 (강력 권장)', description: `/pdca-iterate 실행 (${iterCount + 1}/${maxIterations})` },
-        { label: '설계 전면 업데이트', description: '구현에 맞게 설계 재작성' },
-        { label: '수동 수정', description: '직접 코드 수정' }
+        { label: 'Auto-improve (Strongly recommended)', description: `Run /pdca-iterate (${iterCount + 1}/${maxIterations})` },
+        { label: 'Full design update', description: 'Rewrite design to match implementation' },
+        { label: 'Manual fix', description: 'Fix code manually' }
       ],
       multiSelect: false
     }]
@@ -361,14 +362,14 @@ const response = {
   // v1.4.7 FR-04, FR-05, FR-06: Auto-trigger for Check↔Act iteration
   autoTrigger: autoTrigger,
   // v1.4.0: Stop hooks use systemMessage instead of additionalContext (not supported)
-  systemMessage: `Gap Analysis 완료. 매치율: ${matchRate}%\n\n` +
-    `## 🚨 MANDATORY: AskUserQuestion 호출\n\n` +
-    `아래 AskUserQuestion 파라미터로 사용자에게 다음 단계를 질문하세요:\n\n` +
+  systemMessage: `Gap Analysis complete. Match rate: ${matchRate}%\n\n` +
+    `## 🚨 MANDATORY: Call AskUserQuestion\n\n` +
+    `Ask the user about next steps using the AskUserQuestion parameters below:\n\n` +
     `${userPrompt}\n\n` +
-    `### 선택별 동작:\n` +
+    `### Actions by selection:\n` +
     (matchRate >= threshold
-      ? `- **보고서 생성** → /pdca-report ${feature || ''} 실행\n- **추가 개선** → /pdca-iterate ${feature || ''} 실행\n- **나중에** → 현재 상태 유지`
-      : `- **자동 개선** → /pdca-iterate ${feature || ''} 실행\n- **수동 수정** → 가이드 제공\n- **현재 상태로 완료** → 경고와 함께 /pdca-report 실행`)
+      ? `- **Generate report** → Run /pdca-report ${feature || ''}\n- **/simplify code cleanup** → Run /simplify then generate report\n- **Continue improving** → Run /pdca-iterate ${feature || ''}\n- **Later** → Keep current state`
+      : `- **Auto-improve** → Run /pdca-iterate ${feature || ''}\n- **Manual fix** → Provide guidance\n- **Complete as-is** → Run /pdca-report with warning`)
 };
 
 console.log(JSON.stringify(response));

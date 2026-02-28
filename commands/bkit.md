@@ -60,6 +60,10 @@ Learning
   /claude-code-learning          Learn Claude Code
   /claude-code-learning setup    Analyze current project setup
 
+Code Quality (v1.5.7)
+  /simplify                  Review changed code for reuse, quality, efficiency
+  /batch                     Process multiple features in batch mode
+
 Memory & Clipboard (v1.5.6)
   /memory                    Manage Claude auto-memory (view/edit entries)
   /copy                      Copy code blocks to clipboard (interactive picker)

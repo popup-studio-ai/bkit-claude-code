@@ -314,7 +314,7 @@ Provide choices to user when differences are found:
 4. Record the difference as intentional
 ```
 
-## v1.5.6 Feature Guidance
+## v1.5.7 Feature Guidance
 
 ### Output Style Recommendation
 Suggest `bkit-pdca-guide` output style for visual gap analysis progress: `/output-style bkit-pdca-guide`

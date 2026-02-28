@@ -17,6 +17,12 @@
 > **v1.5.4**: lib/ modularization (5 subdirs, 180 exports), 10 hook events, bkend MCP accuracy fix
 >
 > **v1.5.3-gemini**: Tool Registry centralization, 17 built-in tool names verified from Gemini CLI source, "Tool Name Accuracy" as Context Engineering principle
+>
+> **v1.5.6**: CC v2.1.59 auto-memory integration, ENH-48~51, 182 exports
+>
+> **v1.5.6-gemini**: Gemini CLI v0.31.0 migration - RuntimeHook preparation, Tool Annotations, Project-level Policy, 18 feature flags
+>
+> **v1.5.7**: CC_COMMAND_PATTERNS (8-lang CC command awareness), /simplify + /batch PDCA integration, 182 exports, English conversion (3 stop scripts)
 
 ## What is Context Engineering?
 
@@ -105,7 +111,7 @@ bkit v1.5.4 builds on the original 8 functional requirements (FR-01~FR-08) with 
 └──────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Library Modules (14 modules across 5 subdirectories, 180 exports)
+### Library Modules (14 modules across 5 subdirectories, 182 exports)
 
 **Modular subdirectories** (v1.5.4 — refactored from monolithic common.js):
 
@@ -128,7 +134,7 @@ bkit v1.5.4 builds on the original 8 functional requirements (FR-01~FR-08) with 
 | `lib/permission-manager.js` | FR-05 | Permission hierarchy | `checkPermission()`, `getToolPermission()` |
 | `lib/memory-store.js` | FR-08 | Session persistence | `setMemory()`, `getMemory()`, `deleteMemory()` |
 | `lib/skill-orchestrator.js` | — | Skill routing | `orchestrateSkillPre()`, `getAgentForAction()` |
-| `lib/common.js` | All | **Bridge layer** | Re-exports all 180 functions for backward compatibility |
+| `lib/common.js` | All | **Bridge layer** | Re-exports all 182 functions for backward compatibility |
 
 ---
 
@@ -208,7 +214,7 @@ Agents define **role-based behavioral rules**.
 
 ### 3. State Management Layer (5-Module Architecture)
 
-A **modular state management system** composed of 180 exports across 5 subdirectories, with `lib/common.js` as a backward-compatible bridge layer.
+A **modular state management system** composed of 182 exports across 5 subdirectories, with `lib/common.js` as a backward-compatible bridge layer.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
@@ -232,7 +238,7 @@ A **modular state management system** composed of 180 exports across 5 subdirect
 │  │  5 files, 26 exp │  │  9 files, 40 exp │  │  (Bridge Layer)  │  │
 │  │                  │  │                  │  │                  │  │
 │  │  • Classification│  │  • Coordinator   │  │  Re-exports all  │  │
-│  │  • Context       │  │  • Strategy      │  │  180 functions   │  │
+│  │  • Context       │  │  • Strategy      │  │  182 functions   │  │
 │  │  • Creator       │  │  • CTO Logic     │  │  from 5 modules  │  │
 │  │  • Tracker       │  │  • State-Writer  │  │  for backward    │  │
 │  │                  │  │  • Communication │  │  compatibility   │  │
@@ -243,7 +249,7 @@ A **modular state management system** composed of 180 exports across 5 subdirect
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-> **Migration Note**: As of v1.5.4, `lib/common.js` is a pure bridge layer. All 180 functions originate in subdirectory modules. Existing scripts that `require('./lib/common.js')` continue to work without changes.
+> **Migration Note**: As of v1.5.4, `lib/common.js` is a pure bridge layer. All 182 functions originate in subdirectory modules. Existing scripts that `require('./lib/common.js')` continue to work without changes.
 
 ---
 
@@ -393,7 +399,7 @@ Reports bkit feature usage status at the end of every response.
 | Agents | `agents/*.md` | 16 |
 | Scripts | `scripts/*.js` | 47 |
 | Templates | `templates/*.md` + `pipeline/` + `shared/` | 13 + subdirs |
-| lib/ modules | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/`, `lib/team/` | 5 dirs, 180 exports |
+| lib/ modules | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/`, `lib/team/` | 5 dirs, 182 exports |
 | lib/ top-level | `context-hierarchy`, `import-resolver`, `context-fork`, `permission-manager`, `memory-store`, `skill-orchestrator`, `common` (bridge) | 7 modules |
 | Output Styles | `output-styles/*.md` | 4 |
 | Context File | `CLAUDE.md` | 1 |
@@ -853,6 +859,42 @@ MCP tool accuracy is a critical Context Engineering concern. Providing exact too
 - bkend MCP tools expanded: 19 → 28+ tools
 - Accurate naming across 4 categories (auth, data, storage, management)
 - Each tool documented with exact name, parameters, and examples
+
+### Gemini CLI v0.31.0 Migration (v1.5.6-gemini)
+
+v1.5.6 extends bkit-gemini with Gemini CLI v0.31.0 stable support, adding 3 major context engineering capabilities:
+
+**1. RuntimeHook Function Preparation** (`lib/adapters/gemini/hook-adapter.js`):
+- SDK-based `HookSystem.registerHook()` abstraction layer
+- `HOOK_EVENT_MAP`: 10 entries mapping PascalCase (hooks.json) to snake_case (SDK) event names
+- `supportsRuntimeHookFunctions()`, `getRuntimeHookTemplate()` for version-gated detection
+- Actual SDK transition deferred to v1.6.0 pending stable `@anthropic-ai/gemini-cli-sdk`
+
+**2. Tool Annotation Metadata** (`lib/adapters/gemini/tool-registry.js`):
+- `TOOL_ANNOTATIONS`: All 17 built-in tools with `readOnlyHint`, `destructiveHint`, `idempotentHint`
+- `getToolAnnotations(toolName)`: Query annotations for trust-model-aware tool selection
+- `isReadOnlyTool(toolName)`, `getStrictReadOnlyTools()`: Annotation-based read-only classification
+- `getReadOnlyTools()` kept hardcoded for backward compatibility
+
+**3. Project-level Policy (Tier 3)** (`lib/adapters/gemini/policy-migrator.js`):
+- `LEVEL_POLICY_TEMPLATES`: Starter (10 rules, restrictive), Dynamic (7 rules, balanced), Enterprise (5 rules, permissive)
+- All templates use `tier: 3` (workspace level) which allows `allow` decisions
+- Extension tier (Tier 2) blocks `allow` — only Tier 3+ can grant full permissions
+- `generateLevelPolicy(level, projectDir)`: Auto-generates workspace policy when `hasProjectLevelPolicy` flag is true
+
+**Version Detector Expansion** (9 → 18 feature flags):
+```
+v0.31.0 flags: hasRuntimeHookFunctions, hasBrowserAgent, hasProjectLevelPolicy,
+               hasMcpProgress, hasParallelReadCalls, hasPlanModeCustomStorage,
+               hasToolAnnotations, hasExtensionFolderTrust, hasAllowMultipleReplace
+```
+
+**Breaking Change Awareness** (tracked, no code changes required):
+- `read_file`: `offset/limit` → `start_line/end_line` (1-based line numbers)
+- `replace`: `expected_replacements` → `allow_multiple` (boolean)
+
+**Context Engineering Pattern: Version-Gated Features**
+All new capabilities are guarded by `getFeatureFlags()` checks, ensuring backward compatibility with v0.29.0+ while enabling progressive enhancement on v0.31.0+.
 
 ---
 
