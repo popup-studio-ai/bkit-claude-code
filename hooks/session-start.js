@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * bkit Vibecoding Kit - SessionStart Hook (v1.5.7)
+ * bkit Vibecoding Kit - SessionStart Hook (v1.5.8)
  * Dedicated plugin for Claude Code
  *
  * v1.5.7 Changes:
@@ -150,6 +150,52 @@ debugLog('SessionStart', 'Hook executed', {
   platform: BKIT_PLATFORM
 });
 
+// v1.5.8: Auto-migration from docs/ flat paths to .bkit/ structured paths
+try {
+  const { STATE_PATHS, LEGACY_PATHS, ensureBkitDirs } = require('../lib/core/paths');
+  ensureBkitDirs();
+
+  const migrations = [
+    { from: LEGACY_PATHS.pdcaStatus(), to: STATE_PATHS.pdcaStatus(), name: 'pdca-status', type: 'file' },
+    { from: LEGACY_PATHS.memory(), to: STATE_PATHS.memory(), name: 'memory', type: 'file' },
+    { from: LEGACY_PATHS.agentState(), to: STATE_PATHS.agentState(), name: 'agent-state', type: 'file' },
+    { from: LEGACY_PATHS.snapshots(), to: STATE_PATHS.snapshots(), name: 'snapshots', type: 'directory' },
+  ];
+
+  for (const m of migrations) {
+    try {
+      if (!fs.existsSync(m.from)) continue;
+
+      if (m.type === 'directory' && fs.existsSync(m.to)) {
+        if (fs.readdirSync(m.to).length > 0) continue;
+        fs.rmdirSync(m.to);
+      } else if (fs.existsSync(m.to)) {
+        continue;
+      }
+
+      try {
+        fs.renameSync(m.from, m.to);
+      } catch (renameErr) {
+        if (renameErr.code === 'EXDEV') {
+          if (m.type === 'directory') {
+            fs.cpSync(m.from, m.to, { recursive: true });
+          } else {
+            fs.copyFileSync(m.from, m.to);
+          }
+          fs.rmSync(m.from, { recursive: true, force: true });
+        } else {
+          throw renameErr;
+        }
+      }
+      debugLog('SessionStart', `Migrated ${m.name}`, { from: m.from, to: m.to });
+    } catch (fileErr) {
+      debugLog('SessionStart', `Migration failed: ${m.name}`, { error: fileErr.message });
+    }
+  }
+} catch (e) {
+  debugLog('SessionStart', 'Path migration skipped', { error: e.message });
+}
+
 // Initialize PDCA status file if not exists
 initPdcaStatusIfNotExists();
 
@@ -208,9 +254,10 @@ if (importResolver) {
     const startupImports = config.startupImports || [];
 
     if (startupImports.length > 0) {
+      const { CONFIG_PATHS } = require('../lib/core/paths');
       const { content, errors } = importResolver.resolveImports(
         { imports: startupImports },
-        path.join(process.cwd(), 'bkit.config.json')
+        CONFIG_PATHS.bkitConfig()
       );
 
       if (errors.length > 0) {
@@ -331,20 +378,10 @@ preloadCommonImports();
  * @returns {string} Phase number as string
  */
 function detectPdcaPhase() {
-  const statusPath = path.join(process.cwd(), 'docs/.pdca-status.json');
-
-  if (fs.existsSync(statusPath)) {
-    try {
-      const content = fs.readFileSync(statusPath, 'utf8');
-      const match = content.match(/"currentPhase"\s*:\s*(\d+)/);
-      if (match && match[1]) {
-        return match[1];
-      }
-    } catch (e) {
-      // Ignore read errors
-    }
+  const pdcaStatus = getPdcaStatusFull();
+  if (pdcaStatus && pdcaStatus.pipeline && pdcaStatus.pipeline.currentPhase) {
+    return String(pdcaStatus.pipeline.currentPhase);
   }
-
   return '1';
 }
 
@@ -495,7 +532,7 @@ function getTriggerKeywordTable() {
 
 💡 Use natural language and the appropriate tool will be activated automatically.
 
-### CC Built-in Command Integration (v1.5.7)
+### CC Built-in Command Integration (v1.5.8)
 | Command | When to Use | PDCA Phase |
 |---------|-------------|------------|
 | /simplify | After Check ≥90% or code review | Check → Report |
@@ -528,7 +565,7 @@ const triggerTable = getTriggerKeywordTable();
 
 // Claude Code Output: JSON with Tool Call Prompt
 // Build context based on onboarding type
-let additionalContext = `# bkit Vibecoding Kit v1.5.7 - Session Startup\n\n`;
+let additionalContext = `# bkit Vibecoding Kit v1.5.8 - Session Startup\n\n`;
 
   if (onboardingData.hasExistingWork) {
     additionalContext += `## 🔄 Previous Work Detected\n\n`;
@@ -592,21 +629,21 @@ let additionalContext = `# bkit Vibecoding Kit v1.5.7 - Session Startup\n\n`;
     'Enterprise': 'bkit-enterprise'
   };
   const suggestedStyle = levelStyleMap[detectedLevel] || 'bkit-pdca-guide';
-  additionalContext += `## Output Styles (v1.5.7)\n`;
+  additionalContext += `## Output Styles (v1.5.8)\n`;
   additionalContext += `- Recommended for ${detectedLevel} level: \`${suggestedStyle}\`\n`;
   additionalContext += `- Change anytime with \`/output-style\`\n`;
   additionalContext += `- Available: bkit-learning, bkit-pdca-guide, bkit-enterprise, bkit-pdca-enterprise\n`;
   additionalContext += `- If styles not visible in /output-style menu, run \`/output-style-setup\`\n\n`;
 
-  // Memory Systems (v1.5.7: auto-memory integration ENH-48)
-  additionalContext += `## Memory Systems (v1.5.7)\n`;
+  // Memory Systems (v1.5.8: auto-memory integration ENH-48)
+  additionalContext += `## Memory Systems (v1.5.8)\n`;
   additionalContext += `### bkit Agent Memory (Auto-Active)\n`;
   additionalContext += `- 14 agents use project scope, 2 agents (starter-guide, pipeline-guide) use user scope\n`;
   additionalContext += `- No configuration needed\n`;
   additionalContext += `### Claude Code Auto-Memory\n`;
   additionalContext += `- Claude automatically saves useful context to \`~/.claude/projects/*/memory/MEMORY.md\`\n`;
   additionalContext += `- Manage with \`/memory\` command (view, edit, delete entries)\n`;
-  additionalContext += `- bkit memory (\`docs/.bkit-memory.json\`) and CC auto-memory are separate systems with no collision\n`;
+  additionalContext += `- bkit memory (\`.bkit/state/memory.json\`) and CC auto-memory are separate systems with no collision\n`;
   additionalContext += `- Tip: After PDCA completion, use \`/memory\` to save key learnings for future sessions\n\n`;
 
   // bkend MCP status check (G-09)
@@ -641,7 +678,7 @@ let additionalContext = `# bkit Vibecoding Kit v1.5.7 - Session Startup\n\n`;
       const pdcaStatusForBatch = getPdcaStatusFull();
       const activeFeatures = pdcaStatusForBatch?.activeFeatures || [];
       if (activeFeatures.length >= 2) {
-        additionalContext += `## Multi-Feature PDCA (v1.5.7)\n`;
+        additionalContext += `## Multi-Feature PDCA (v1.5.8)\n`;
         additionalContext += `- Active features: ${activeFeatures.join(', ')}\n`;
         additionalContext += `- Use \`/batch\` for parallel processing of multiple features\n`;
         additionalContext += `- Enterprise batch supports concurrent Check/Act iterations\n\n`;
@@ -666,8 +703,16 @@ let additionalContext = `# bkit Vibecoding Kit v1.5.7 - Session Startup\n\n`;
   additionalContext += `- 🔄 Automatic PDCA phase progression\n\n`;
   additionalContext += `💡 Important: AI Agent is not perfect. Always verify important decisions.\n`;
 
+  // v1.5.8: Studio Support enhancements
+  additionalContext += `\n## v1.5.8 Enhancements (Studio Support)\n`;
+  additionalContext += `- Path Registry: centralized state file path management (lib/core/paths.js)\n`;
+  additionalContext += `- State files migrated to \`.bkit/{state,runtime,snapshots}/\` structured directory\n`;
+  additionalContext += `- Auto-migration from v1.5.7 legacy paths on SessionStart\n`;
+  additionalContext += `- bkit memory path: \`.bkit/state/memory.json\` (was \`docs/.bkit-memory.json\`)\n`;
+  additionalContext += `\n`;
+
   // v1.5.7: Enhancements awareness
-  additionalContext += `\n## v1.5.7 Enhancements\n`;
+  additionalContext += `## v1.5.7 Enhancements\n`;
   additionalContext += `- CC v2.1.63 HTTP hooks support: \`type: "http"\` in hooks config\n`;
   additionalContext += `- 13 memory leak fixes for stable long CTO Team sessions\n`;
   additionalContext += `- /simplify integration in PDCA Check→Report flow\n`;
@@ -681,7 +726,7 @@ let additionalContext = `# bkit Vibecoding Kit v1.5.7 - Session Startup\n\n`;
   // ============================================================
   additionalContext += `
 
-## 📊 bkit Feature Usage Report (v1.5.7 - Required for all responses)
+## 📊 bkit Feature Usage Report (v1.5.8 - Required for all responses)
 
 **Rule: Include the following format at the end of every response to report bkit feature usage.**
 
@@ -737,7 +782,7 @@ AskUserQuestion, SessionStart Hook, Read, Write, Edit, Bash
 `;
 
 const response = {
-  systemMessage: `bkit Vibecoding Kit v1.5.7 activated (Claude Code)`,
+  systemMessage: `bkit Vibecoding Kit v1.5.8 activated (Claude Code)`,
   hookSpecificOutput: {
     hookEventName: "SessionStart",
     onboardingType: onboardingData.type,

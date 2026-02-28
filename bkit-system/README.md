@@ -27,6 +27,8 @@
 > **v1.5.6**: CC v2.1.59 auto-memory integration, ENH-48~51, 182 exports
 >
 > **v1.5.7**: CC v2.1.63 /simplify + /batch + HTTP hooks PDCA integration, CC_COMMAND_PATTERNS 8-lang, English conversion
+>
+> **v1.5.8**: Studio Support - Path Registry (lib/core/paths.js), state directory migration (.bkit/{state,runtime,snapshots}/), auto-migration with EXDEV fallback, 186 exports
 
 ## Purpose of This Document
 
@@ -186,7 +188,7 @@ lib/
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                bkit Trigger System (v1.5.7)                      │
+│                bkit Trigger System (v1.5.8)                      │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
 │  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐      │

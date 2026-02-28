@@ -5,6 +5,75 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.8] - 2026-03-01
+
+### Added
+- **Studio Support: Path Registry** (`lib/core/paths.js`)
+  - Centralized state file path management replacing 11+ hardcoded path references
+  - STATE_PATHS (7 keys): root, state, runtime, snapshots, pdcaStatus, memory, agentState
+  - LEGACY_PATHS (4 keys): pdcaStatus, memory, snapshots, agentState (deprecated, v1.6.0 removal)
+  - CONFIG_PATHS (3 keys): bkitConfig, pluginJson, hooksJson
+  - `ensureBkitDirs()` for recursive directory creation
+- **State Directory Migration**
+  - `docs/.pdca-status.json` → `.bkit/state/pdca-status.json`
+  - `docs/.bkit-memory.json` → `.bkit/state/memory.json`
+  - `.bkit/agent-state.json` → `.bkit/runtime/agent-state.json`
+  - `docs/.pdca-snapshots/` → `.bkit/snapshots/`
+- **Auto-Migration on SessionStart**
+  - Automatic v1.5.7 → v1.5.8 state file migration
+  - EXDEV cross-filesystem fallback (copy + delete)
+  - Per-file try-catch isolation for resilience
+  - Idempotent operation (safe to re-run)
+
+### Changed
+- **lib/core/index.js**: Added paths module (+4 exports: STATE_PATHS, LEGACY_PATHS, CONFIG_PATHS, ensureBkitDirs)
+- **lib/common.js**: Bridge updated (182 → 186 exports, +4 path re-exports)
+- **lib/pdca/status.js**: `getPdcaStatusPath()`, `readBkitMemory()`, `writeBkitMemory()` use STATE_PATHS
+- **lib/memory-store.js**: `getMemoryFilePath()` uses STATE_PATHS.memory()
+- **lib/task/tracker.js**: `findPdcaStatus()` uses getPdcaStatusPath() via lazy require
+- **lib/team/state-writer.js**: `getAgentStatePath()` uses STATE_PATHS.agentState()
+- **scripts/context-compaction.js**: snapshotDir uses STATE_PATHS.snapshots()
+- **hooks/session-start.js**: Auto-migration logic (+45 lines), v1.5.8 context sections
+- **bkit.config.json**: `pdca.statusFile` updated to `.bkit/state/pdca-status.json`
+
+### Quality
+- Comprehensive Test: 865 TC, 815 PASS, 0 FAIL, 50 SKIP (100%)
+- 5 QA agents parallel execution, 1 iteration (hooks.json version fix)
+- Design match rate: 100% (37/37 items)
+
+### Compatibility
+- Claude Code: Minimum v2.1.33, Recommended v2.1.63
+- Node.js: Minimum v18.0.0
+- Agent Teams: Requires Claude Code v2.1.32+ with `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+
+---
+
+## [1.5.7] - 2026-02-28
+
+### Added
+- **/simplify + /batch PDCA Integration** (ENH-52~55)
+  - CC built-in /simplify command integrated into PDCA Check→Report flow
+  - /batch multi-feature PDCA for Enterprise parallel processing
+  - CC_COMMAND_PATTERNS: 8-language CC command awareness
+  - HTTP Hooks documentation and guidance (type "http" in hooks config)
+- **English Conversion**
+  - 3 stop scripts converted to English output (code-review-stop, learning-stop, pdca-skill-stop)
+
+### Changed
+- **CC recommended version**: v2.1.59 → v2.1.63
+- **Version**: 1.5.6 → 1.5.7
+  - `plugin.json`, `bkit.config.json`, `hooks.json`, `session-start.js`
+
+### Quality
+- Comprehensive Test: 754 TC, 100% pass rate
+- Doc-sync: 42 JS files + 5 doc files synchronized
+
+### Compatibility
+- Claude Code: Minimum v2.1.33, Recommended v2.1.63
+- Node.js: Minimum v18.0.0
+
+---
+
 ## [1.5.6] - 2026-02-26
 
 ### Added

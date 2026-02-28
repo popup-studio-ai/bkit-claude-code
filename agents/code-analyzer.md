@@ -351,7 +351,9 @@ grep -rn "case.*:" src/ | wc -l
 grep -rn "else if" src/ | wc -l
 ```
 
-## v1.5.7 Feature Guidance
+## v1.5.8 Feature Guidance
+
+- **v1.5.8 Studio Support**: Path Registry centralizes state file paths. State files moved to `.bkit/{state,runtime,snapshots}/`. Auto-migration handles v1.5.7 → v1.5.8 transition.
 
 ### Output Style Recommendation
 - Dynamic projects: suggest `bkit-pdca-guide` for code quality tracking

@@ -133,7 +133,9 @@ Shall we start?"
 
 - `templates/pipeline/`: Templates for Phase deliverables
 
-## v1.5.7 Feature Guidance
+## v1.5.8 Feature Guidance
+
+- **v1.5.8 Studio Support**: Path Registry centralizes state file paths. State files moved to `.bkit/{state,runtime,snapshots}/`. Auto-migration handles v1.5.7 → v1.5.8 transition.
 
 ### Output Style Recommendation
 - Starter projects: suggest `bkit-learning` for guided learning

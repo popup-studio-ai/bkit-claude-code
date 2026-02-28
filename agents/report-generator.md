@@ -237,7 +237,9 @@ Also update `docs/04-report/changelog.md` when generating reports:
 - {bug fix}
 ```
 
-## v1.5.7 Feature Guidance
+## v1.5.8 Feature Guidance
+
+- **v1.5.8 Studio Support**: Path Registry centralizes state file paths. State files moved to `.bkit/{state,runtime,snapshots}/`. Auto-migration handles v1.5.7 → v1.5.8 transition.
 
 ### Output Style Recommendation
 Suggest `bkit-pdca-guide` output style for formatted completion reports: `/output-style bkit-pdca-guide`

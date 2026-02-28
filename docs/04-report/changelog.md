@@ -2,6 +2,63 @@
 
 All notable changes and reports are documented here.
 
+## [2026-03-01] - bkit v1.5.8 Studio Support - Path Registry & State File Integration
+
+### Added
+- Path Registry module: `lib/core/paths.js` (centralized path management)
+- STATE_PATHS constant (7 paths for new .bkit/ structure)
+- LEGACY_PATHS constant (4 paths for v1.5.7 migration)
+- CONFIG_PATHS constant (3 immutable config file paths)
+- Auto-migration logic in SessionStart hook (5 scenarios: S1-S5)
+- EXDEV fallback for cross-device file transfers
+
+### Changed
+- Migrated state files to `.bkit/` directory structure
+  - `docs/.pdca-status.json` → `.bkit/state/pdca-status.json`
+  - `docs/.bkit-memory.json` → `.bkit/state/memory.json`
+  - `.bkit/agent-state.json` → `.bkit/runtime/agent-state.json`
+  - `docs/.pdca-snapshots/` → `.bkit/snapshots/`
+- Refactored 7 consumer files to use Path Registry
+  - `lib/pdca/status.js`: getPdcaStatusPath, readBkitMemory, writeBkitMemory
+  - `lib/memory-store.js`: getMemoryFilePath
+  - `lib/task/tracker.js`: findPdcaStatus
+  - `scripts/context-compaction.js`: snapshotDir
+  - `lib/team/state-writer.js`: getAgentStatePath
+  - `hooks/session-start.js`: detectPdcaPhase, importResolver paths
+  - `lib/core/index.js`: added paths export
+- Extended common.js bridge: 180 → 184 exports (+4 path exports)
+- Updated version to 1.5.8 in `bkit.config.json` and `plugin.json`
+
+### Fixed
+- HIGH risk process.cwd() in detectPdcaPhase eliminated (getPdcaStatusFull)
+- Path hardcoding: 0 functional references (11→0)
+- Circular dependency prevention with lazy require in paths.js
+
+### Test Results
+- **Design Match Rate**: 100% (37/37 items)
+- **Migration Scenarios**: 5/5 PASS (S1-S5)
+- **Error Handling**: 4/4 PASS
+- **Regression Prevention**: 6/6 PASS
+- **Overall Coverage**: 100%
+
+### Files Modified
+- New: `lib/core/paths.js` (~50 LOC)
+- Modified: lib/pdca/status.js, lib/memory-store.js, lib/task/tracker.js, scripts/context-compaction.js, lib/team/state-writer.js, hooks/session-start.js, lib/core/index.js, lib/common.js, bkit.config.json, plugin.json
+- Total: 11 files, ~151 lines changed
+
+### Documentation
+- Completion report: `docs/04-report/features/bkit-v1.5.8-studio-support.report.md`
+- Design reference: `docs/02-design/features/bkit-v1.5.8-studio-support.design.md`
+- Plan reference: `docs/01-plan/features/bkit-v1.5.8-studio-support.plan.md`
+- Analysis reference: `docs/03-analysis/features/bkit-v1.5.8-studio-support.analysis.md`
+
+### Status
+- **PDCA Cycle**: Complete (1 iteration, 100% first-time pass)
+- **Deployment**: Ready for merge to main
+- **Next**: v1.6.x customization layer & Studio audit log integration
+
+---
+
 ## [2026-02-09] - Team Visibility Feature (v1.5.3) Completion
 
 ### Added

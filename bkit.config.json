@@ -1,143 +1,80 @@
 {
   "$schema": "./bkit.config.schema.json",
-  "version": "1.5.7",
-  "sourceDirectories": [
-    "src",
-    "lib",
-    "app",
-    "components",
-    "pages",
-    "features",
-    "services"
-  ],
-  "codeExtensions": [
-    ".ts",
-    ".tsx",
-    ".js",
-    ".jsx",
-    ".py",
-    ".go",
-    ".rs",
-    ".java"
-  ],
+  "version": "1.5.8",
   "pdca": {
-    "designDocPaths": [
-      "docs/02-design/features/{feature}.design.md",
-      "docs/02-design/{feature}.design.md",
-      "docs/design/{feature}.md"
-    ],
-    "planDocPaths": [
-      "docs/01-plan/features/{feature}.plan.md",
-      "docs/01-plan/{feature}.plan.md",
-      "docs/plan/{feature}.md"
-    ],
-    "statusFile": "docs/.pdca-status.json",
+    "docPaths": {
+      "plan": [
+        "docs/01-plan/features/{feature}.plan.md",
+        "docs/01-plan/{feature}.plan.md",
+        "docs/plan/{feature}.md"
+      ],
+      "design": [
+        "docs/02-design/features/{feature}.design.md",
+        "docs/02-design/{feature}.design.md",
+        "docs/design/{feature}.md"
+      ],
+      "analysis": [
+        "docs/03-analysis/{feature}.analysis.md",
+        "docs/03-analysis/features/{feature}.analysis.md",
+        "docs/03-analysis/{feature}.gap-analysis.md"
+      ],
+      "report": [
+        "docs/04-report/features/{feature}.report.md",
+        "docs/04-report/{feature}.report.md",
+        "docs/04-report/{feature}.completion-report.md"
+      ],
+      "archive": "docs/archive/{date}/{feature}"
+    },
     "matchRateThreshold": 90,
     "autoIterate": true,
-    "maxIterations": 5
-  },
-  "taskClassification": {
-    "thresholds": {
-      "quickFix": 50,
-      "minorChange": 200,
-      "feature": 1000
-    },
-    "labels": {
-      "quickFix": "Quick Fix",
-      "minorChange": "Minor Change",
-      "feature": "Feature",
-      "majorFeature": "Major Feature"
+    "maxIterations": 5,
+    "requireDesignDoc": true,
+    "automationLevel": "semi-auto",
+    "autoStartThreshold": 100,
+    "fullAuto": {
+      "reviewCheckpoints": ["design"]
     }
   },
-  "levelDetection": {
-    "enterprise": {
-      "directories": [
-        "kubernetes",
-        "terraform",
-        "k8s",
-        "infra"
-      ],
-      "files": []
-    },
-    "dynamic": {
-      "directories": [
-        "lib/bkend",
-        "supabase",
-        "api",
-        "backend"
-      ],
-      "files": [
-        ".mcp.json",
-        "docker-compose.yml"
-      ],
-      "packagePatterns": [
-        "bkend",
-        "@supabase",
-        "firebase"
-      ]
-    },
-    "default": "Starter"
+  "triggers": {
+    "implicitEnabled": true,
+    "confidenceThreshold": 0.7,
+    "clarifyAmbiguity": true
   },
-  "templates": {
-    "directory": "templates",
-    "types": {
-      "plan": "plan.template.md",
-      "design": "design.template.md",
-      "analysis": "analysis.template.md",
-      "report": "report.template.md"
-    },
-    "levelVariants": {
-      "starter": "{type}-starter.template.md",
-      "enterprise": "{type}-enterprise.template.md"
-    }
+  "pipeline": {
+    "autoTransition": false,
+    "skipConfirmation": false
   },
-  "conventions": {
-    "naming": {
-      "components": "PascalCase",
-      "functions": "camelCase",
-      "constants": "UPPER_SNAKE_CASE",
-      "files": "kebab-case"
-    },
-    "envPrefixes": {
-      "client": "NEXT_PUBLIC_",
-      "database": "DB_",
-      "api": "API_",
-      "auth": "AUTH_",
-      "smtp": "SMTP_",
-      "storage": "STORAGE_"
-    }
+  "multiFeature": {
+    "maxActiveFeatures": 5,
+    "autoSwitch": true
   },
-  "agents": {
-    "levelBased": {
-      "Starter": "starter-guide",
-      "Dynamic": "bkend-expert",
-      "Enterprise": "enterprise-expert"
-    },
-    "taskBased": {
-      "code review": "code-analyzer",
-      "security scan": "security-architect",
-      "security review": "security-architect",
-      "design review": "design-validator",
-      "spec check": "design-validator",
-      "gap analysis": "gap-detector",
-      "report": "report-generator",
-      "summary": "report-generator",
-      "QA": "qa-strategist",
-      "test strategy": "qa-strategist",
-      "log analysis": "qa-monitor",
-      "pipeline": "pipeline-guide",
-      "requirements": "product-manager",
-      "feature spec": "product-manager",
-      "frontend": "frontend-architect",
-      "UI architecture": "frontend-architect",
-      "team": "cto-lead",
-      "project lead": "cto-lead"
-    }
+  "featurePatterns": [
+    "features",
+    "modules",
+    "packages",
+    "apps",
+    "services",
+    "domains"
+  ],
+  "fileDetection": {
+    "sourceExtensions": [],
+    "excludePatterns": [
+      "node_modules",
+      ".git",
+      "dist",
+      "build",
+      ".next",
+      "__pycache__",
+      "vendor",
+      "target",
+      ".cache",
+      ".turbo",
+      "coverage"
+    ]
   },
-  "output": {
-    "jsonEscaping": true,
-    "maxContextLength": 500,
-    "format": "compact"
+  "cache": {
+    "enabled": true,
+    "ttl": 5000
   },
   "permissions": {
     "Write": "allow",
@@ -148,42 +85,6 @@
     "Bash(rm -r*)": "ask",
     "Bash(git push --force*)": "deny",
     "Bash(git reset --hard*)": "ask"
-  },
-  "context": {
-    "defaultForkBehavior": "shared",
-    "importCacheTTL": 30000,
-    "hierarchyCacheTTL": 5000
-  },
-  "automation": {
-    "intentDetection": true,
-    "ambiguityThreshold": 50,
-    "supportedLanguages": [
-      "en",
-      "ko",
-      "ja",
-      "zh",
-      "es",
-      "fr",
-      "de",
-      "it"
-    ]
-  },
-  "hooks": {
-    "userPromptSubmit": {
-      "enabled": true,
-      "timeout": 3000
-    },
-    "contextCompaction": {
-      "enabled": true,
-      "snapshotLimit": 10
-    },
-    "taskCompleted": {
-      "enabled": true,
-      "autoAdvance": true
-    },
-    "teammateIdle": {
-      "enabled": true
-    }
   },
   "team": {
     "enabled": true,
@@ -210,20 +111,6 @@
         "check": "council",
         "act": "watchdog"
       }
-    }
-  },
-  "outputStyles": {
-    "directory": "output-styles",
-    "available": [
-      "bkit-pdca-guide",
-      "bkit-learning",
-      "bkit-enterprise",
-      "bkit-pdca-enterprise"
-    ],
-    "levelDefaults": {
-      "Starter": "bkit-learning",
-      "Dynamic": "bkit-pdca-guide",
-      "Enterprise": "bkit-enterprise"
     }
   }
 }

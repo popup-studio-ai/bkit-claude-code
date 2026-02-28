@@ -325,7 +325,9 @@ docker compose logs --since "5m"
 docker compose logs > logs_$(date +%Y%m%d_%H%M%S).txt
 ```
 
-## v1.5.7 Feature Guidance
+## v1.5.8 Feature Guidance
+
+- **v1.5.8 Studio Support**: Path Registry centralizes state file paths. State files moved to `.bkit/{state,runtime,snapshots}/`. Auto-migration handles v1.5.7 → v1.5.8 transition.
 
 ### Output Style Recommendation
 Suggest `bkit-pdca-guide` output style for QA tracking with status badges: `/output-style bkit-pdca-guide`

@@ -3,7 +3,7 @@
  * context-compaction.js - Context Compaction Hook (FR-07)
  * Preserves PDCA state before context compression
  *
- * @version 1.5.7
+ * @version 1.5.8
  * @module scripts/context-compaction
  */
 
@@ -43,7 +43,8 @@ if (pdcaStatus) {
   };
 
   // Save snapshot
-  const snapshotDir = path.join(PROJECT_DIR, 'docs', '.pdca-snapshots');
+  const { STATE_PATHS } = require('../lib/core/paths');
+  const snapshotDir = STATE_PATHS.snapshots();
   try {
     if (!fs.existsSync(snapshotDir)) {
       fs.mkdirSync(snapshotDir, { recursive: true });

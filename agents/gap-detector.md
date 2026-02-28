@@ -314,7 +314,9 @@ Provide choices to user when differences are found:
 4. Record the difference as intentional
 ```
 
-## v1.5.7 Feature Guidance
+## v1.5.8 Feature Guidance
+
+- **v1.5.8 Studio Support**: Path Registry centralizes state file paths. State files moved to `.bkit/{state,runtime,snapshots}/`. Auto-migration handles v1.5.7 → v1.5.8 transition.
 
 ### Output Style Recommendation
 Suggest `bkit-pdca-guide` output style for visual gap analysis progress: `/output-style bkit-pdca-guide`

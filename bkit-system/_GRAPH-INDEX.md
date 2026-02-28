@@ -27,18 +27,33 @@
 > **v1.5.6 Auto-Memory Integration**: CC v2.1.59 auto-memory, ENH-48~51, 182 exports
 >
 > **v1.5.7 /simplify + /batch PDCA Integration**: CC v2.1.63 HTTP hooks, CC_COMMAND_PATTERNS, English conversion
+>
+> **v1.5.8 Studio Support**: Path Registry, state directory migration, 186 exports (+STATE_PATHS, +LEGACY_PATHS, +CONFIG_PATHS, +ensureBkitDirs)
 
 ### v1.5.7 (2026-02-28) - /simplify + /batch PDCA Integration
 - CC v2.1.63 /simplify and /batch commands integrated into PDCA Check→Report flow
 - CC_COMMAND_PATTERNS: 8-language CC built-in command awareness
 - HTTP hooks documentation and awareness
 - English conversion for 3 stop scripts
-- 182 exports (common.js bridge)
+- 184 exports (common.js bridge)
+
+### v1.5.8 (2026-03-01) - Studio Support
+- Path Registry (lib/core/paths.js) - centralized state file paths
+- State directory migration (.bkit/{state,runtime,snapshots}/)
+- Auto-migration with EXDEV fallback
+- 186 exports (+STATE_PATHS, +LEGACY_PATHS, +CONFIG_PATHS, +ensureBkitDirs)
+
+### v1.5.7 (2026-02-28) - /simplify + /batch PDCA Integration
+- CC v2.1.63 /simplify and /batch commands integrated into PDCA Check→Report flow
+- CC_COMMAND_PATTERNS: 8-language CC built-in command awareness
+- HTTP hooks documentation and awareness
+- English conversion for 3 stop scripts
+- 184 exports (+generateBatchTrigger, +shouldSuggestBatch)
 
 ### v1.5.6 (2026-02-26) - Auto-Memory Integration
 - CC v2.1.59 auto-memory official support
 - ENH-48~51 enhancements (/copy guidance, multi-agent guide)
-- 182 exports (+readBkitMemory, +writeBkitMemory → +generateBatchTrigger, +shouldSuggestBatch)
+- 182 exports (+readBkitMemory, +writeBkitMemory)
 
 ### v1.5.5 (2026-02-22) - Plan Plus
 - Brainstorming-enhanced PDCA planning with 6-phase process
@@ -239,7 +254,7 @@ The following skills were consolidated:
 ## Infrastructure
 
 ### Shared Library
-- `lib/common.js` - Shared utility functions (v1.5.3, **241 functions**)
+- `lib/common.js` - Shared utility functions (v1.5.8, **186 exports** via bridge)
 
 #### Platform Detection (v1.5.0 - Claude Code Exclusive)
   - `isClaudeCode()` - Check if running in Claude Code
