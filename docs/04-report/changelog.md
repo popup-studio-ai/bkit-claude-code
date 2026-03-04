@@ -2,6 +2,37 @@
 
 All notable changes and reports are documented here.
 
+## [2026-03-04] - bkit v1.5.9 InstructionsLoaded Hook & CTO Team Enhancement
+
+### Added
+- InstructionsLoaded hook handler: CLAUDE.md context injection (CC v2.1.64+)
+- Hook handler agent_id/agent_type: precise agent identification in 4 handlers
+- CTO Team continue:false: automatic teammate termination
+- 5 background analysis agents, code-analyzer Analysis Triad (context:fork)
+
+### Changed
+- Hook events: 10 → 11 (InstructionsLoaded added)
+- Scripts: 45 → 46 (instructions-loaded-handler.js added)
+- common.js exports: 186 → 190
+- CC recommended: v2.1.63 → v2.1.66
+- Official docs: code.claude.com
+
+### Test Results
+- **936 TC**: 926 PASS, 5 FAIL (edge case), 5 SKIP (by design)
+- **Pass Rate**: 99.5%
+- **Design Match Rate**: 100% (25/25 FR)
+
+### Files Modified
+- New: `scripts/instructions-loaded-handler.js` (~85 LOC)
+- Modified: hooks.json, 4 hook scripts, 5 agent .md files, session-start.js, README.md, bkit.config.json, plugin.json, lib/common.js, lib/pdca/index.js
+- Total: 18 files, ~148 lines added, ~24 lines deleted
+
+### Documentation
+- Completion report: `docs/04-report/features/claude-code-v2166-enhancement.report.md`
+- Test report: `docs/04-report/features/bkit-v1.5.9-comprehensive-test.report.md`
+
+---
+
 ## [2026-03-01] - bkit v1.5.8 Studio Support - Path Registry & State File Integration
 
 ### Added

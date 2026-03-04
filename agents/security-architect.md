@@ -1,4 +1,5 @@
 ---
+background: true
 name: security-architect
 description: |
   Security architecture expert agent for vulnerability analysis, authentication

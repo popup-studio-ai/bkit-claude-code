@@ -1,6 +1,6 @@
 # Agents Overview
 
-> List of 16 Agents defined in bkit and their roles (v1.5.8)
+> List of 16 Agents defined in bkit and their roles (v1.5.9)
 >
 > **v1.4.1**: Added Context Engineering perspective - Role-based Behavioral Rules Layer
 > **v1.5.0**: Claude Code Exclusive
@@ -8,6 +8,7 @@
 > **v1.5.6**: Auto-memory integration, multi-agent memory optimization (CC v2.1.59)
 > **v1.5.7**: /simplify + /batch PDCA flow integration, English conversion for stop script outputs
 > **v1.5.8**: Studio Support awareness - Path Registry, state directory migration, 186 exports
+> **v1.5.9**: InstructionsLoaded hook, agent_id/agent_type, 5 background agents (gap-detector, design-validator, code-analyzer, security-architect, report-generator), code-analyzer Analysis Triad (context:fork + mergeResult:false)
 
 ## What are Agents?
 

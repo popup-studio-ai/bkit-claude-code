@@ -122,4 +122,4 @@ For the latest authentication documentation, use WebFetch:
 - Auth Overview: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/en/authentication/01-overview.md
 - MCP Auth Guide: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/en/mcp/06-auth-tools.md
 - Security: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/en/security/01-overview.md
-- Full TOC: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/SUMMARY.md
+- Full TOC: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/en/SUMMARY.md

@@ -1,4 +1,5 @@
 ---
+background: true
 name: gap-detector
 description: |
   Agent that detects gaps between design documents and actual implementation.

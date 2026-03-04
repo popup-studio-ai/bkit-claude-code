@@ -29,6 +29,8 @@
 > **v1.5.7**: CC v2.1.63 /simplify + /batch + HTTP hooks PDCA integration, CC_COMMAND_PATTERNS 8-lang, English conversion
 >
 > **v1.5.8**: Studio Support - Path Registry (lib/core/paths.js), state directory migration (.bkit/{state,runtime,snapshots}/), auto-migration with EXDEV fallback, 186 exports
+>
+> **v1.5.9**: InstructionsLoaded Hook & CTO Team Enhancement - agent_id/agent_type, continue:false auto-termination, background agents, Analysis Triad, 190 exports, 11 hook events
 
 ## Purpose of This Document
 
@@ -219,9 +221,9 @@ lib/
 | Skills | 27 | Domain knowledge + Slash commands | [[components/skills/_skills-overview]] |
 | Agents | 16 | Specialized task execution | [[components/agents/_agents-overview]] |
 | Commands | DEPRECATED | Migrated to Skills (v1.4.4) | - |
-| Hooks | 10 events | Event-based triggers (unified) | [[components/hooks/_hooks-overview]] |
-| Scripts | 45 | Actual logic execution | [[components/scripts/_scripts-overview]] |
-| Lib | 5 modules | Shared utilities | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/`, `lib/team/` (241 functions) |
+| Hooks | 11 events | Event-based triggers (unified) | [[components/hooks/_hooks-overview]] |
+| Scripts | 46 | Actual logic execution | [[components/scripts/_scripts-overview]] |
+| Lib | 5 modules | Shared utilities | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/`, `lib/team/` (190 exports) |
 | Config | 1 | Centralized settings | `bkit.config.json` |
 | Templates | 28 | Document templates | PDCA + Pipeline + Shared |
 
@@ -332,4 +334,4 @@ The `bkit-system/.obsidian/` folder includes shared settings:
 | `workspace.json` | Personal workspace state | No |
 | `app.json` | Personal app settings | No |
 
-> **Tip**: The graph settings are pre-configured for optimal visualization of bkit's 27 skills, 16 agents, 45 scripts, and their relationships.
+> **Tip**: The graph settings are pre-configured for optimal visualization of bkit's 27 skills, 16 agents, 46 scripts, and their relationships.

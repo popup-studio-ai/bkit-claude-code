@@ -1,4 +1,7 @@
 ---
+background: true
+context: fork
+mergeResult: false
 name: code-analyzer
 description: |
   Agent that analyzes code quality and architecture compliance.

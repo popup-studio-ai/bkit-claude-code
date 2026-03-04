@@ -1,7 +1,19 @@
 #!/usr/bin/env node
 /**
- * bkit Vibecoding Kit - SessionStart Hook (v1.5.8)
+ * bkit Vibecoding Kit - SessionStart Hook (v1.5.9)
  * Dedicated plugin for Claude Code
+ *
+ * v1.5.9 Changes:
+ * - ENH-60: InstructionsLoaded hook handler (bkit context injection)
+ * - ENH-62: agent_id/agent_type in all hook handlers
+ * - ENH-63: continue:false in TeammateIdle/TaskCompleted hooks
+ * - ENH-64: /reload-plugins workflow documentation
+ * - ENH-65: includeGitInstructions setting awareness
+ * - ENH-66: CLAUDE_CODE_AUTO_MEMORY_PATH env var documentation
+ * - ENH-68: Official docs URL update (code.claude.com)
+ * - ENH-69: background:true for 5 analysis agents
+ * - ENH-70: context:fork for code-analyzer
+ * - CC recommended version: v2.1.63 -> v2.1.66
  *
  * v1.5.7 Changes:
  * - /simplify PDCA Integration: Check ≥90% → /simplify → Report flow (ENH-52)
@@ -532,7 +544,7 @@ function getTriggerKeywordTable() {
 
 💡 Use natural language and the appropriate tool will be activated automatically.
 
-### CC Built-in Command Integration (v1.5.8)
+### CC Built-in Command Integration (v1.5.9)
 | Command | When to Use | PDCA Phase |
 |---------|-------------|------------|
 | /simplify | After Check ≥90% or code review | Check → Report |
@@ -565,7 +577,7 @@ const triggerTable = getTriggerKeywordTable();
 
 // Claude Code Output: JSON with Tool Call Prompt
 // Build context based on onboarding type
-let additionalContext = `# bkit Vibecoding Kit v1.5.8 - Session Startup\n\n`;
+let additionalContext = `# bkit Vibecoding Kit v1.5.9 - Session Startup\n\n`;
 
   if (onboardingData.hasExistingWork) {
     additionalContext += `## 🔄 Previous Work Detected\n\n`;
@@ -629,14 +641,14 @@ let additionalContext = `# bkit Vibecoding Kit v1.5.8 - Session Startup\n\n`;
     'Enterprise': 'bkit-enterprise'
   };
   const suggestedStyle = levelStyleMap[detectedLevel] || 'bkit-pdca-guide';
-  additionalContext += `## Output Styles (v1.5.8)\n`;
+  additionalContext += `## Output Styles (v1.5.9)\n`;
   additionalContext += `- Recommended for ${detectedLevel} level: \`${suggestedStyle}\`\n`;
   additionalContext += `- Change anytime with \`/output-style\`\n`;
   additionalContext += `- Available: bkit-learning, bkit-pdca-guide, bkit-enterprise, bkit-pdca-enterprise\n`;
   additionalContext += `- If styles not visible in /output-style menu, run \`/output-style-setup\`\n\n`;
 
   // Memory Systems (v1.5.8: auto-memory integration ENH-48)
-  additionalContext += `## Memory Systems (v1.5.8)\n`;
+  additionalContext += `## Memory Systems (v1.5.9)\n`;
   additionalContext += `### bkit Agent Memory (Auto-Active)\n`;
   additionalContext += `- 14 agents use project scope, 2 agents (starter-guide, pipeline-guide) use user scope\n`;
   additionalContext += `- No configuration needed\n`;
@@ -678,7 +690,7 @@ let additionalContext = `# bkit Vibecoding Kit v1.5.8 - Session Startup\n\n`;
       const pdcaStatusForBatch = getPdcaStatusFull();
       const activeFeatures = pdcaStatusForBatch?.activeFeatures || [];
       if (activeFeatures.length >= 2) {
-        additionalContext += `## Multi-Feature PDCA (v1.5.8)\n`;
+        additionalContext += `## Multi-Feature PDCA (v1.5.9)\n`;
         additionalContext += `- Active features: ${activeFeatures.join(', ')}\n`;
         additionalContext += `- Use \`/batch\` for parallel processing of multiple features\n`;
         additionalContext += `- Enterprise batch supports concurrent Check/Act iterations\n\n`;
@@ -703,8 +715,21 @@ let additionalContext = `# bkit Vibecoding Kit v1.5.8 - Session Startup\n\n`;
   additionalContext += `- 🔄 Automatic PDCA phase progression\n\n`;
   additionalContext += `💡 Important: AI Agent is not perfect. Always verify important decisions.\n`;
 
+  // v1.5.9: CC v2.1.66 Enhancement Integration
+  additionalContext += `\n## v1.5.9 Enhancements (CC v2.1.66)\n`;
+  additionalContext += `- InstructionsLoaded hook: bkit context auto-injection on CLAUDE.md load\n`;
+  additionalContext += `- Hook agent_id/agent_type: agent identification in all hooks (CC v2.1.64+)\n`;
+  additionalContext += `- TeammateIdle/TaskCompleted continue:false: CTO Team auto-termination control\n`;
+  additionalContext += `- \${CLAUDE_SKILL_DIR}: skill self-directory reference (CC v2.1.64+)\n`;
+  additionalContext += `- /reload-plugins: apply plugin changes without session restart (CC v2.1.64+)\n`;
+  additionalContext += `- includeGitInstructions: git instruction inclusion setting\n`;
+  additionalContext += `- CLAUDE_CODE_AUTO_MEMORY_PATH: auto-memory path customization via env var\n`;
+  additionalContext += `- Official docs: code.claude.com (docs.anthropic.com auto-redirects)\n`;
+  additionalContext += `- CC recommended version: v2.1.63 -> v2.1.66\n`;
+  additionalContext += `\n`;
+
   // v1.5.8: Studio Support enhancements
-  additionalContext += `\n## v1.5.8 Enhancements (Studio Support)\n`;
+  additionalContext += `## v1.5.8 Enhancements (Studio Support)\n`;
   additionalContext += `- Path Registry: centralized state file path management (lib/core/paths.js)\n`;
   additionalContext += `- State files migrated to \`.bkit/{state,runtime,snapshots}/\` structured directory\n`;
   additionalContext += `- Auto-migration from v1.5.7 legacy paths on SessionStart\n`;
@@ -726,7 +751,7 @@ let additionalContext = `# bkit Vibecoding Kit v1.5.8 - Session Startup\n\n`;
   // ============================================================
   additionalContext += `
 
-## 📊 bkit Feature Usage Report (v1.5.8 - Required for all responses)
+## 📊 bkit Feature Usage Report (v1.5.9 - Required for all responses)
 
 **Rule: Include the following format at the end of every response to report bkit feature usage.**
 
@@ -782,7 +807,7 @@ AskUserQuestion, SessionStart Hook, Read, Write, Edit, Bash
 `;
 
 const response = {
-  systemMessage: `bkit Vibecoding Kit v1.5.8 activated (Claude Code)`,
+  systemMessage: `bkit Vibecoding Kit v1.5.9 activated (Claude Code)`,
   hookSpecificOutput: {
     hookEventName: "SessionStart",
     onboardingType: onboardingData.type,

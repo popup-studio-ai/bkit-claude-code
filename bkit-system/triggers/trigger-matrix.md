@@ -18,8 +18,9 @@
 | `SubagentStop` | Subagent completed | v1.5.3 |
 | `TaskCompleted` | Task completion | v1.5.1 |
 | `TeammateIdle` | Teammate idle detection | v1.5.1 |
+| `InstructionsLoaded` | CLAUDE.md/rules loaded | v1.5.9 |
 
-> **Note (v1.5.3)**: SubagentStart and SubagentStop added for Team Visibility. TaskCompleted and TeammateIdle added in v1.5.1 for Agent Teams support. Total: 10 hook events.
+> **Note (v1.5.9)**: InstructionsLoaded added in v1.5.9. SubagentStart and SubagentStop added in v1.5.3. TaskCompleted and TeammateIdle added in v1.5.1. Total: 11 hook events.
 
 ---
 

@@ -2,6 +2,11 @@
 /**
  * unified-write-post.js - Unified Write PostToolUse Handler (v1.4.4)
  *
+ * v1.5.9: Monitor #30586 PostToolUse duplication
+ * If this handler fires twice per single tool use, check:
+ * https://github.com/anthropics/claude-code/issues/30586
+ * Workaround: idempotency guard with invocation timestamp if needed
+ *
  * GitHub Issue #9354 Workaround:
  * Consolidates Write PostToolUse hooks from:
  * - bkit-rules: pdca-post-write.js (always runs)

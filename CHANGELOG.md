@@ -5,6 +5,48 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.9] - 2026-03-04
+
+### Added
+- **InstructionsLoaded Hook Handler** (`scripts/instructions-loaded-handler.js`)
+  - Auto-inject bkit PDCA context on CLAUDE.md load (CC v2.1.64+)
+  - Display primaryFeature, matchRate, activeCount
+  - agent_id extraction with error fallback
+- **Hook Handler agent_id/agent_type Support** (ENH-62)
+  - Direct agent_id/agent_type usage in subagent-start-handler, subagent-stop-handler, team-idle-handler, pdca-task-completed
+  - Added agentId/agentType fields to hookSpecificOutput
+- **CTO Team continue:false Auto-Termination** (ENH-63)
+  - team-idle-handler: return continue:false when primary feature completed
+  - pdca-task-completed: return continue:false when report phase done + no unassigned tasks
+  - Safety guard: catch → shouldContinue = true (fail-safe fallback)
+- **Background Analysis Agents** (ENH-69)
+  - 5 agents: gap-detector, design-validator, code-analyzer, security-architect, report-generator
+  - `background: true` frontmatter for parallel execution
+- **Analysis Triad** (ENH-70)
+  - code-analyzer: `context: fork` + `mergeResult: false` for isolated analysis
+  - gap-detector + design-validator + code-analyzer parallel execution pattern
+
+### Changed
+- **hooks.json**: InstructionsLoaded event registered (hook events 10 → 11, entries 13 → 14)
+- **lib/common.js**: Bridge exports 186 → 190 (+4 from export count corrections)
+- **CC Recommended Version**: v2.1.63 → v2.1.66
+- **Official Docs URL**: docs.anthropic.com → code.claude.com
+- **session-start.js**: Added v1.5.9 Enhancements section (9 items)
+- **README.md**: CC badge v2.1.66+, URL code.claude.com
+
+### Quality
+- Comprehensive Test: 936 TC, 926 PASS, 5 FAIL (edge case), 5 SKIP (by design), 99.5%
+- 4 QA agents parallel execution (CTO Team)
+- Design match rate: 100% (25/25 FR)
+
+### Compatibility
+- Claude Code: Minimum v2.1.33, Recommended v2.1.66
+- Node.js: Minimum v18.0.0
+- Agent Teams: Requires Claude Code v2.1.32+ with `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+- v2.1.63 graceful fallback: InstructionsLoaded event not dispatched, agent_id falls back, continue:false ignored
+
+---
+
 ## [1.5.8] - 2026-03-01
 
 ### Added

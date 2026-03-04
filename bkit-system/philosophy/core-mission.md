@@ -117,7 +117,7 @@ After:  /learn-claude-code → Systematic training
 
 ---
 
-## Current Implementation (v1.5.8)
+## Current Implementation (v1.5.9)
 
 > **v1.5.3**: CTO-Led Agent Teams + Team Visibility + Claude Code Exclusive
 > **v1.5.4**: bkend MCP Accuracy Fix - embodying "No Guessing" philosophy through exact MCP tool names (19→28+)
@@ -125,6 +125,7 @@ After:  /learn-claude-code → Systematic training
 > **v1.5.6**: Auto-Memory Integration - CC v2.1.59 auto-memory, ENH-48~51, 182 exports
 > **v1.5.7**: /simplify + /batch PDCA Integration - CC v2.1.63 HTTP hooks, CC_COMMAND_PATTERNS, English conversion
 > **v1.5.8**: Studio Support - Path Registry (centralized state paths), state directory migration, auto-migration, 186 exports
+> **v1.5.9**: InstructionsLoaded Hook & CTO Team Enhancement - agent_id/agent_type, continue:false, background agents, 190 exports, 11 hook events
 
 ### Component Counts
 
@@ -133,9 +134,9 @@ After:  /learn-claude-code → Systematic training
 | Skills | 27 | `skills/*/SKILL.md` |
 | Agents | 16 | `agents/*.md` |
 | Commands | DEPRECATED | Migrated to Skills |
-| Scripts | 45 | `scripts/*.js` |
+| Scripts | 46 | `scripts/*.js` |
 | Templates | 27 | `templates/*.md` |
-| lib/ | 5 modules (241 functions) | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/`, `lib/team/` |
+| lib/ | 5 modules (190 exports) | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/`, `lib/team/` |
 
 ### Key Features
 

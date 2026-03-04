@@ -63,7 +63,7 @@ Layer 1: hooks.json          → SessionStart, PreToolUse, PostToolUse hooks
 Layer 2: Skill Frontmatter   → hooks: PreToolUse, PostToolUse, Stop
 Layer 3: Agent Frontmatter   → hooks: PreToolUse, PostToolUse
 Layer 4: Description Triggers → "Triggers:" keyword matching
-Layer 5: Scripts             → Actual Node.js logic execution (45 modules)
+Layer 5: Scripts             → Actual Node.js logic execution (46 modules)
 ```
 
 This separation allows fine-grained control over when and how automation triggers.
@@ -135,10 +135,10 @@ bkit is not just a collection of prompts—it's a **production-grade plugin arch
 | **Agents** | 16 | Specialized AI subagents with memory persistence |
 | **Skills** | 27 | Domain knowledge and slash commands (Commands deprecated) |
 | **Commands** | DEPRECATED | Migrated to Skills in v1.4.4+ |
-| **Scripts** | 45 | Hook execution scripts with unified handlers |
+| **Scripts** | 46 | Hook execution scripts with unified handlers |
 | **Templates** | 28 | Document templates (PDCA + 9 phases + shared) |
-| **Hooks** | 10 events | Event-driven automation (centralized in hooks.json) |
-| **lib/** | 5 modules (241 functions) | Modular utility library (v1.5.3) |
+| **Hooks** | 11 events | Event-driven automation (centralized in hooks.json) |
+| **lib/** | 5 modules (190 exports) | Modular utility library (v1.5.9) |
 | **Output Styles** | 4 | Level-based response formatting (v1.5.3) |
 
 **Total: 100+ components** working in harmony.
@@ -226,7 +226,7 @@ bkit is a **practical implementation of Context Engineering**—the art of curat
 │  │  L2: Skill Frontmatter (PreToolUse/PostToolUse/Stop)     │  │
 │  │  L3: Agent Frontmatter (PreToolUse/PostToolUse)          │  │
 │  │  L4: Description Triggers (keyword matching)             │  │
-│  │  L5: Scripts (45 Node.js modules)                        │  │
+│  │  L5: Scripts (46 Node.js modules)                        │  │
 │  └──────────────────────────────────────────────────────────┘  │
 │                                 │                               │
 │                                 ▼                               │
@@ -323,7 +323,7 @@ Layer 3: Agent Frontmatter
 Layer 4: Description Triggers
    └─ "Triggers:" keywords for auto-activation
 
-Layer 5: Scripts (45 Node.js scripts)
+Layer 5: Scripts (46 Node.js scripts)
    └─ Actual logic execution
 ```
 
@@ -755,9 +755,9 @@ bkit-claude-code/
 ├── commands/
 │   └── *.md                        # Claude Code commands
 ├── hooks/
-│   ├── hooks.json                  # Claude Code hook configuration (10 events)
+│   ├── hooks.json                  # Claude Code hook configuration (11 events)
 │   └── session-start.js            # Session initialization (Node.js)
-├── scripts/                        # Hook execution scripts (45 scripts)
+├── scripts/                        # Hook execution scripts (46 scripts)
 │   └── *.js
 ├── output-styles/                  # Level-based response formatting (v1.5.3)
 │   ├── bkit-learning.md            # Starter level style

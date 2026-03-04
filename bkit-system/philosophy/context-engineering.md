@@ -14,7 +14,7 @@
 >
 > **v1.5.3**: Agent Teams with team/ module (9 files, 40 exports), state-writer, SubagentStart/Stop hooks
 >
-> **v1.5.4**: lib/ modularization (5 subdirs, 180 exports), 10 hook events, bkend MCP accuracy fix
+> **v1.5.4**: lib/ modularization (5 subdirs, 180 exports), 10 hook events (→11 in v1.5.9), bkend MCP accuracy fix
 >
 > **v1.5.3-gemini**: Tool Registry centralization, 17 built-in tool names verified from Gemini CLI source, "Tool Name Accuracy" as Context Engineering principle
 >
@@ -25,6 +25,8 @@
 > **v1.5.7**: CC_COMMAND_PATTERNS (8-lang CC command awareness), /simplify + /batch PDCA integration, 182 exports, English conversion (3 stop scripts)
 >
 > **v1.5.8**: Path Registry (lib/core/paths.js), state directory migration (.bkit/{state,runtime,snapshots}/), 186 exports, auto-migration with EXDEV fallback
+>
+> **v1.5.9**: InstructionsLoaded hook, agent_id/agent_type, continue:false, background agents, Analysis Triad, 190 exports, 11 hook events
 
 ## What is Context Engineering?
 
@@ -113,7 +115,7 @@ bkit v1.5.4 builds on the original 8 functional requirements (FR-01~FR-08) with 
 └──────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Library Modules (15 modules across 5 subdirectories, 186 exports)
+### Library Modules (15 modules across 5 subdirectories, 190 exports)
 
 **Modular subdirectories** (v1.5.4 — refactored from monolithic common.js):
 
@@ -216,7 +218,7 @@ Agents define **role-based behavioral rules**.
 
 ### 3. State Management Layer (5-Module Architecture)
 
-A **modular state management system** composed of 186 exports across 5 subdirectories, with `lib/common.js` as a backward-compatible bridge layer.
+A **modular state management system** composed of 190 exports across 5 subdirectories, with `lib/common.js` as a backward-compatible bridge layer.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
@@ -255,9 +257,9 @@ A **modular state management system** composed of 186 exports across 5 subdirect
 
 ---
 
-## 6-Layer Hook System (10 Events)
+## 6-Layer Hook System (11 Events)
 
-bkit's context injection occurs at **6 layers** with **10 hook events**.
+bkit's context injection occurs at **6 layers** with **11 hook events**.
 
 ```
 Layer 1: hooks.json (Global)
@@ -401,7 +403,7 @@ Reports bkit feature usage status at the end of every response.
 | Agents | `agents/*.md` | 16 |
 | Scripts | `scripts/*.js` | 47 |
 | Templates | `templates/*.md` + `pipeline/` + `shared/` | 13 + subdirs |
-| lib/ modules | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/`, `lib/team/` | 5 dirs, 186 exports |
+| lib/ modules | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/`, `lib/team/` | 5 dirs, 190 exports |
 | lib/ top-level | `context-hierarchy`, `import-resolver`, `context-fork`, `permission-manager`, `memory-store`, `skill-orchestrator`, `common` (bridge) | 7 modules |
 | Output Styles | `output-styles/*.md` | 4 |
 | Context File | `CLAUDE.md` | 1 |

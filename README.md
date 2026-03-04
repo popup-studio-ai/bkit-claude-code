@@ -1,8 +1,8 @@
 # bkit - Vibecoding Kit
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Claude Code](https://img.shields.io/badge/Claude%20Code-v2.1.63+-purple.svg)](https://docs.anthropic.com/en/docs/claude-code/getting-started)
-[![Version](https://img.shields.io/badge/Version-1.5.8-green.svg)](CHANGELOG.md)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-v2.1.66+-purple.svg)](https://code.claude.com/docs/en/quickstart)
+[![Version](https://img.shields.io/badge/Version-1.5.9-green.svg)](CHANGELOG.md)
 [![Author](https://img.shields.io/badge/Author-POPUP%20STUDIO-orange.svg)](https://popupstudio.ai)
 
 > **PDCA methodology + CTO-Led Agent Teams + AI coding assistant mastery for AI-native development**
@@ -38,7 +38,7 @@ bkit implements Context Engineering through three interconnected layers:
 |-------|------------|---------|
 | **Domain Knowledge** | 27 Skills | Structured expert knowledge (phases, levels, specialized domains) |
 | **Behavioral Rules** | 16 Agents | Role-based constraints with model selection (opus/sonnet/haiku) |
-| **State Management** | 241 Functions | PDCA status, intent detection, ambiguity scoring, multi-feature context, team coordination |
+| **State Management** | 190 Exports | PDCA status, intent detection, ambiguity scoring, multi-feature context, team coordination |
 
 ### 5-Layer Hook System
 
@@ -49,7 +49,7 @@ Layer 1: hooks.json (Global)     → SessionStart, UserPromptSubmit, PreCompact,
 Layer 2: Skill Frontmatter       → Domain-specific hooks (deprecated in v1.4.4, use hooks.json)
 Layer 3: Agent Frontmatter       → Task-specific hooks with constraints
 Layer 4: Description Triggers    → Semantic matching in 8 languages
-Layer 5: Scripts (45 modules)    → Actual Node.js execution logic with unified handlers
+Layer 5: Scripts (46 modules)    → Actual Node.js execution logic with unified handlers
 ```
 
 > **Learn more**: See [Context Engineering Principles](bkit-system/philosophy/context-engineering.md) for detailed implementation.
@@ -60,13 +60,14 @@ Layer 5: Scripts (45 modules)    → Actual Node.js execution logic with unified
 
 ![bkit Features](images/bkit-features.png)
 
+- **InstructionsLoaded Hook & CTO Team Enhancement (v1.5.9)** - Auto-inject bkit context on CLAUDE.md load (CC v2.1.64+), precise agent_id/agent_type identification in hook handlers, CTO Team continue:false auto-termination, 5 background analysis agents parallel execution, code-analyzer Analysis Triad (context:fork), 11 hook events, 190 exports
 - **Studio Support & Path Registry (v1.5.8)** - Centralized state file path management (`lib/core/paths.js`), PDCA doc path registry, config cleanup (dead keys removed, missing keys added), state directory migration to `.bkit/{state,runtime,snapshots}/`, auto-migration with EXDEV fallback, 190 exports
 - **/simplify + /batch PDCA Integration (v1.5.7)** - CC built-in /simplify and /batch commands integrated into PDCA Check→Report flow, CC_COMMAND_PATTERNS 8-language awareness, HTTP Hooks documentation, English conversion for 3 stop scripts
 - **Auto-Memory Integration (v1.5.6)** - CC v2.1.59 auto-memory official support, /copy guidance, multi-agent memory optimization, ENH-48~51 enhancements, 186 exports
 - **Plan Plus Skill (v1.5.5)** - Brainstorming-enhanced PDCA planning with intent discovery, alternatives exploration, and YAGNI review
 - **bkend MCP Accuracy Fix (v1.5.4)** - MCP tool coverage 19→28+, accurate tool names, dynamic Base URL, search_docs workflow
 - **Team Visibility & State Writer (v1.5.3)** - Agent Teams state management with `.bkit/agent-state.json` for Studio IPC
-- **SubagentStart/SubagentStop Hooks (v1.5.3)** - 2 new hook events for agent lifecycle tracking (10 hook events total)
+- **SubagentStart/SubagentStop Hooks (v1.5.3)** - 2 new hook events for agent lifecycle tracking (11 hook events total, InstructionsLoaded added in v1.5.9)
 - **Output Styles Auto-Discovery (v1.5.3)** - `outputStyles` in plugin.json + 4th style `bkit-pdca-enterprise`
 - **CTO-Led Agent Teams (v1.5.1)** - CTO agent orchestrates parallel PDCA execution with multi-agent teams (Dynamic: 3, Enterprise: 5 teammates)
 - **Output Styles (v1.5.1)** - Level-based response formatting (bkit-learning, bkit-pdca-guide, bkit-enterprise, bkit-pdca-enterprise)
@@ -83,8 +84,8 @@ Layer 5: Scripts (45 modules)    → Actual Node.js execution logic with unified
 - **Multilingual Support** - 8 languages (EN, KO, JA, ZH, ES, FR, DE, IT)
 - **27 Skills** - Domain-specific knowledge for various development scenarios
 - **16 Agents** - Specialized AI assistants including CTO-Led Team agents
-- **45 Scripts** - Hook execution with unified handlers (hooks-json-integration)
-- **241 Utility Functions** - 5 modular libraries with state management, intent detection, task tracking, team coordination
+- **46 Scripts** - Hook execution with unified handlers (hooks-json-integration)
+- **190+ Utility Functions** - 5 modular libraries (190 common.js exports) with state management, intent detection, task tracking, team coordination
 - **Check-Act Iteration Loop** - Automatic gap analysis and fix cycles with max 5 iterations (90% threshold)
 
 ---
@@ -111,7 +112,7 @@ Layer 5: Scripts (45 modules)    → Actual Node.js execution logic with unified
 
 | Requirement | Minimum Version | Notes |
 |-------------|:---------------:|-------|
-| **Claude Code** | **v2.1.63+** | Required. bkit uses hook events (`TeammateIdle`, `TaskCompleted`) introduced in v2.1.33, auto-memory (v2.1.59), and benefits from 13 memory leak fixes (v2.1.63). |
+| **Claude Code** | **v2.1.63+** | Required. Recommended v2.1.66+. bkit uses hook events introduced in v2.1.33, auto-memory (v2.1.59), InstructionsLoaded (v2.1.64), and benefits from 13 memory leak fixes (v2.1.63). |
 | Node.js | v18+ | For hook script execution |
 | Agent Teams (optional) | Set `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` | Required only for CTO-Led Agent Teams feature |
 
@@ -461,7 +462,7 @@ The software industry has spent decades refining how humans write code—version
 
 - **Verification over trust.** AI generates plausible code. Plausible is not correct. Every implementation goes through gap analysis against its design document. If the match rate falls below 90%, the system iterates automatically. We do not ship hope.
 
-- **Context over prompts.** A well-structured prompt helps once. A well-structured context system helps every time. bkit's 241 functions, 27 skills, and 16 agents exist to ensure the AI receives the right context at the right moment—not through clever prompting, but through systematic engineering.
+- **Context over prompts.** A well-structured prompt helps once. A well-structured context system helps every time. bkit's 190 exports, 27 skills, and 16 agents exist to ensure the AI receives the right context at the right moment—not through clever prompting, but through systematic engineering.
 
 - **Constraints over features.** We intentionally limit what bkit does. Three project levels, not infinite configuration. A fixed 9-stage pipeline, not a customizable workflow builder. Opinionated defaults, not a framework for frameworks. Constraints eliminate decision fatigue and make the system learnable.
 

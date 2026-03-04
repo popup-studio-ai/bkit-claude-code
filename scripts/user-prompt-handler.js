@@ -3,7 +3,7 @@
  * user-prompt-handler.js - UserPromptSubmit Hook (FR-04)
  * Process user input before AI processing
  *
- * @version 1.5.8
+ * @version 1.5.9
  * @module scripts/user-prompt-handler
  */
 

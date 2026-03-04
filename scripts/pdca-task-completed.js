@@ -45,6 +45,10 @@ function main() {
     return;
   }
 
+  // v1.5.9: agent_id/agent_type (CC v2.1.64+)
+  const agentId = hookContext.agent_id || null;
+  const agentType = hookContext.agent_type || null;
+
   // Task subject에서 PDCA phase 감지
   const taskSubject = hookContext.task_subject
     || hookContext.tool_input?.subject
@@ -83,6 +87,29 @@ function main() {
     const result = autoAdvancePdcaPhase(featureName, detectedPhase, { matchRate });
 
     if (result) {
+      // v1.5.9: continue:false — auto-terminate teammate when PDCA complete (ENH-63)
+      let shouldContinue = true;
+
+      // Condition 1: report phase completed (final PDCA step)
+      if (detectedPhase === 'report') {
+        shouldContinue = false;
+        debugLog('TaskCompleted', 'Report phase completed, setting continue:false');
+      }
+
+      // Condition 2: feature completed/archived
+      if (shouldContinue) {
+        try {
+          const currentStatus = getPdcaStatusFull();
+          const featureData = currentStatus?.features?.[featureName];
+          if (featureData && (featureData.phase === 'completed' || featureData.phase === 'archived')) {
+            shouldContinue = false;
+            debugLog('TaskCompleted', 'Feature completed, setting continue:false');
+          }
+        } catch (e) {
+          shouldContinue = true; // Safety
+        }
+      }
+
       const response = {
         systemMessage: `PDCA auto-advance: ${detectedPhase} → ${result.phase}`,
         hookSpecificOutput: {
@@ -91,6 +118,9 @@ function main() {
           nextPhase: result.phase,
           feature: featureName,
           autoAdvanced: true,
+          agentId,           // v1.5.9: CC v2.1.64+
+          agentType,         // v1.5.9: CC v2.1.64+
+          continue: shouldContinue,  // v1.5.9: ENH-63
           additionalContext: `\n## PDCA Auto-Advance\n` +
             `Task [${detectedPhase.toUpperCase()}] ${featureName} completed.\n` +
             `Next phase: ${result.phase}\n` +

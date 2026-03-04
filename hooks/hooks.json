@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-hooks.json",
-  "description": "bkit Vibecoding Kit v1.5.8 - Claude Code",
+  "description": "bkit Vibecoding Kit v1.5.9 - Claude Code",
   "hooks": {
     "SessionStart": [
       {
@@ -142,6 +142,17 @@
             "type": "command",
             "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/team-idle-handler.js",
             "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "InstructionsLoaded": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/instructions-loaded-handler.js",
+            "timeout": 3000
           }
         ]
       }

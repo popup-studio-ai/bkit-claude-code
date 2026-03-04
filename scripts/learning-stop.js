@@ -4,7 +4,7 @@
  *
  * 학습 완료 후 다음 단계 제안
  *
- * @version 1.5.8
+ * @version 1.5.9
  * @module scripts/learning-stop
  */
 

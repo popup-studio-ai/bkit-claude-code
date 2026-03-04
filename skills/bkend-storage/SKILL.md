@@ -123,4 +123,4 @@ bkend MCP does NOT have dedicated storage tools. Use this workflow:
 For the latest storage documentation, use WebFetch:
 - Storage Overview: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/en/storage/01-overview.md
 - MCP Storage Guide: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/en/mcp/07-storage-tools.md
-- Full TOC: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/SUMMARY.md
+- Full TOC: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/en/SUMMARY.md

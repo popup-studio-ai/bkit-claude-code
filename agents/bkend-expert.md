@@ -264,7 +264,7 @@ POST /v1/files/presigned-url -> PUT {url} -> POST /v1/files
 
 When you need the latest bkend documentation, use WebFetch with these URLs:
 
-- **Full TOC**: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/SUMMARY.md
+- **Full TOC**: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/en/SUMMARY.md
 - **MCP Overview**: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/en/mcp/01-overview.md
 - **MCP Context**: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/en/mcp/02-context.md
 - **MCP Project Tools**: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/en/mcp/03-project-tools.md

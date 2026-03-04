@@ -97,4 +97,4 @@ imports:
 For the latest cookbook and troubleshooting, use WebFetch:
 - Cookbooks: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/en/cookbooks/blog/01-quick-start.md
 - Troubleshooting: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/en/troubleshooting/01-common-errors.md
-- Full TOC: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/SUMMARY.md
+- Full TOC: https://raw.githubusercontent.com/popup-studio-ai/bkend-docs/main/en/SUMMARY.md

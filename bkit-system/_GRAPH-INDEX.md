@@ -29,6 +29,8 @@
 > **v1.5.7 /simplify + /batch PDCA Integration**: CC v2.1.63 HTTP hooks, CC_COMMAND_PATTERNS, English conversion
 >
 > **v1.5.8 Studio Support**: Path Registry, state directory migration, 186 exports (+STATE_PATHS, +LEGACY_PATHS, +CONFIG_PATHS, +ensureBkitDirs)
+>
+> **v1.5.9 InstructionsLoaded & CTO Team**: InstructionsLoaded hook, agent_id/agent_type, continue:false, background agents, 190 exports, 11 hook events
 
 ### v1.5.7 (2026-02-28) - /simplify + /batch PDCA Integration
 - CC v2.1.63 /simplify and /batch commands integrated into PDCA Check→Report flow
@@ -36,6 +38,13 @@
 - HTTP hooks documentation and awareness
 - English conversion for 3 stop scripts
 - 184 exports (common.js bridge)
+
+### v1.5.9 (2026-03-04) - InstructionsLoaded Hook & CTO Team Enhancement
+- InstructionsLoaded hook handler (CLAUDE.md context injection, CC v2.1.64+)
+- Hook handler agent_id/agent_type in 4 handlers
+- CTO Team continue:false auto-termination (2 handlers)
+- 5 background analysis agents, code-analyzer Analysis Triad (context:fork)
+- 190 exports, 11 hook events, 46 scripts
 
 ### v1.5.8 (2026-03-01) - Studio Support
 - Path Registry (lib/core/paths.js) - centralized state file paths
@@ -254,7 +263,7 @@ The following skills were consolidated:
 ## Infrastructure
 
 ### Shared Library
-- `lib/common.js` - Shared utility functions (v1.5.8, **186 exports** via bridge)
+- `lib/common.js` - Shared utility functions (v1.5.9, **190 exports** via bridge)
 
 #### Platform Detection (v1.5.0 - Claude Code Exclusive)
   - `isClaudeCode()` - Check if running in Claude Code
@@ -378,8 +387,8 @@ bkit supports languages and frameworks organized by tier:
 **Components**:
 - `skills/` - 27 skills
 - `agents/` - 16 agents
-- `scripts/` - 45 scripts (Node.js)
-- `lib/` - 5 modules (241 functions)
+- `scripts/` - 46 scripts (Node.js)
+- `lib/` - 5 modules (190 exports)
 - `templates/` - 27 templates
 
 ## Templates (27)
