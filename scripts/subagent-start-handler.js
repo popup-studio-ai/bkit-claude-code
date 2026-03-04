@@ -46,10 +46,8 @@ function main() {
   }
 
   // Hook context에서 agent 정보 추출
-  // v1.5.9: agent_id priority (CC v2.1.64+ official field), fallback chain preserved
-  const agentId = hookContext.agent_id || null;
-  const agentName = agentId
-    || hookContext.agent_name
+  const agentName = hookContext.agent_name
+    || hookContext.agent_id
     || hookContext.tool_input?.name
     || 'unknown';
   const agentType = hookContext.agent_type
@@ -106,7 +104,6 @@ function main() {
       agentName,
       agentType,
       teamName,
-      agentId,    // v1.5.9: CC v2.1.64+
     }
   };
 

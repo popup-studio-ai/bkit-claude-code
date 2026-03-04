@@ -1,5 +1,4 @@
 ---
-background: true
 name: report-generator
 description: |
   Agent that automatically generates PDCA cycle completion reports.

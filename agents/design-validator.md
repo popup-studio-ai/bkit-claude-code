@@ -1,5 +1,4 @@
 ---
-background: true
 name: design-validator
 description: |
   Agent that validates design document completeness and consistency.

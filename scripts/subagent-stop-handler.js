@@ -37,11 +37,8 @@ function main() {
     return;
   }
 
-  // v1.5.9: agent_id priority (CC v2.1.64+ official field), fallback chain preserved
-  const agentId = hookContext.agent_id || null;
-  const agentType = hookContext.agent_type || null;
-  const agentName = agentId
-    || hookContext.agent_name
+  const agentName = hookContext.agent_name
+    || hookContext.agent_id
     || 'unknown';
 
   // 종료 상태 결정 (transcript_path 존재 = 정상 종료)
@@ -73,9 +70,7 @@ function main() {
     hookSpecificOutput: {
       hookEventName: "SubagentStop",
       agentName,
-      agentType,    // v1.5.9: CC v2.1.64+
       status,
-      agentId,      // v1.5.9: CC v2.1.64+
     }
   };
 
