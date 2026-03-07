@@ -1,6 +1,6 @@
 name: phase-4-api
 classification: capability
-version: 1.6.0
+version: 1.6.1
 description: "phase-4-api output quality evaluation"
 
 evals:

@@ -1,6 +1,6 @@
 name: phase-5-design-system
 classification: capability
-version: 1.6.0
+version: 1.6.1
 description: "phase-5-design-system output quality evaluation"
 
 evals:

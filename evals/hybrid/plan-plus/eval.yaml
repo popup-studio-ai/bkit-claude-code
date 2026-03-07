@@ -1,6 +1,6 @@
 name: plan-plus
 classification: hybrid
-version: 1.6.0
+version: 1.6.1
 description: "plan-plus workflow compliance and output quality evaluation"
 
 evals:

@@ -189,9 +189,9 @@ The PM Agent Team (v1.6.0) extends AI-Native development into the **pre-developm
 ### Skill Classification in AI-Native Context
 
 Skill Classification (v1.6.0) reflects AI-Native maturity:
-- **Workflow skills (10)**: Process automation that remains valuable regardless of model capability — PDCA, pipeline, rules, QA, PM discovery
-- **Capability skills (16)**: Domain guidance that may become redundant as models improve — data-driven deprecation via Skill Evals
-- **Hybrid skills (2)**: Bridge between process and capability
+- **Workflow skills (9)**: Process automation that remains valuable regardless of model capability — PDCA, pipeline, rules, QA, PM discovery
+- **Capability skills (18)**: Domain guidance that may become redundant as models improve — data-driven deprecation via Skill Evals
+- **Hybrid skills (1)**: Bridge between process and capability (plan-plus)
 
 ## v1.5.4 Agent Distribution
 

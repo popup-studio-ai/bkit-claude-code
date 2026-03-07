@@ -1,6 +1,6 @@
 name: development-pipeline
 classification: workflow
-version: 1.6.0
+version: 1.6.1
 description: "development-pipeline process compliance evaluation"
 
 evals:

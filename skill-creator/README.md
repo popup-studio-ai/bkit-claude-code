@@ -1,6 +1,6 @@
 # bkit Skill Creator
 
-> v1.6.0 ENH-97: Integrated skill creation and testing workflow
+> v1.6.1 ENH-97: Integrated skill creation and testing workflow
 
 ## Overview
 

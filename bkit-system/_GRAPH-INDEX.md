@@ -30,14 +30,27 @@
 >
 > **v1.5.8 Studio Support**: Path Registry, state directory migration, 186 exports (+STATE_PATHS, +LEGACY_PATHS, +CONFIG_PATHS, +ensureBkitDirs)
 >
-> **v1.6.0 Skills 2.0**: Skill Classification (10W/16C/2H), PM Agent Team (5 agents), Skill Evals (28 defs), Skill Creator + A/B Testing, 241 exports, CC v2.1.71
+> **v1.6.0 Skills 2.0**: Skill Classification (9W/18C/1H), PM Agent Team (5 agents), Skill Evals (28 defs), Skill Creator + A/B Testing
+>
+> **v1.6.1 Quality Hardening**: CTO Orchestration Redesign, P0 Bug Fixes (4), Config-Code Sync, 3-Tier Agent Security, 1073 TC (99.6%), CE-5 (88/100), 208 exports, CC v2.1.71
+
+### v1.6.1 (2026-03-08) - CTO Orchestration Redesign + Quality Hardening
+- CTO/PM Orchestration Redesign: Main Session as CTO pattern (CC v2.1.69+ compatibility, Issue #41 fix)
+- P0 Bug Fixes (4): ambiguity.shouldClarify, trigger.confidenceThreshold, creator.phases, agent disallowedTools
+- Config-Code Synchronization: PHASE_PATTERN_MAP from bkit.config.json at runtime
+- 3-Tier Agent Security Model: 9 acceptEdits agents with tiered disallowedTools
+- Skill Evals 28/28: Full implementation with real evaluation engine (56 content files)
+- Comprehensive Test Suite: 1073 TC, 99.6% pass rate, 8 perspectives
+- CE Level Assessment: CE-5 Master (88/100), 252 components inventoried
+- 208 exports (common.js bridge, corrected from documented 241)
+- 72 files, ~1,400 LOC changed
 
 ### v1.6.0 (2026-03-07) - Skills 2.0 + PM Agent Team
-- Skills 2.0 integration: Skill Classification (10 Workflow / 16 Capability / 2 Hybrid), Skill Evals (28 definitions), Skill Creator + A/B Testing
+- Skills 2.0 integration: Skill Classification (9 Workflow / 18 Capability / 1 Hybrid), Skill Evals (28 definitions), Skill Creator + A/B Testing
 - PM Agent Team: 5 new agents (pm-lead, pm-discovery, pm-strategy, pm-research, pm-prd) for pre-Plan product discovery
 - pm-discovery skill added (28 total skills)
 - 21 agents (16 core + 5 PM Team)
-- 241 exports (common.js bridge)
+- 208 exports (common.js bridge)
 - CC recommended version: v2.1.71
 
 ### v1.5.7 (2026-02-28) - /simplify + /batch PDCA Integration
@@ -280,7 +293,7 @@ The following skills were consolidated:
 ## Infrastructure
 
 ### Shared Library
-- `lib/common.js` - Shared utility functions (v1.6.0, **241 exports** via bridge)
+- `lib/common.js` - Shared utility functions (v1.6.1, **208 exports** via bridge)
 
 #### Platform Detection (v1.5.0 - Claude Code Exclusive)
   - `isClaudeCode()` - Check if running in Claude Code
@@ -405,7 +418,7 @@ bkit supports languages and frameworks organized by tier:
 - `skills/` - 28 skills
 - `agents/` - 21 agents
 - `scripts/` - 45 scripts (Node.js)
-- `lib/` - 5 modules (241 functions)
+- `lib/` - 5 modules (208 functions)
 - `templates/` - 27 templates
 
 ## Templates (27)

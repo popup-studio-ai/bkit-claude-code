@@ -117,7 +117,7 @@ After:  /learn-claude-code → Systematic training
 
 ---
 
-## Current Implementation (v1.6.0)
+## Current Implementation (v1.6.1)
 
 > **v1.5.3**: CTO-Led Agent Teams + Team Visibility + Claude Code Exclusive
 > **v1.5.4**: bkend MCP Accuracy Fix - embodying "No Guessing" philosophy through exact MCP tool names (19→28+)
@@ -126,19 +126,21 @@ After:  /learn-claude-code → Systematic training
 > **v1.5.7**: /simplify + /batch PDCA Integration - CC v2.1.63 HTTP hooks, CC_COMMAND_PATTERNS, English conversion
 > **v1.5.8**: Studio Support - Path Registry (centralized state paths), state directory migration, auto-migration, 186 exports
 > **v1.5.9**: Executive Summary module, AskUserQuestion Preview UX, ENH-74~81, 199 exports
-> **v1.6.0**: Skills 2.0 - Skill Classification (10W/16C/2H), PM Agent Team (5 agents), Skill Evals (28 defs), 241 exports
+> **v1.6.0**: Skills 2.0 - Skill Classification (9W/18C/1H), PM Agent Team (5 agents), Skill Evals (28 defs)
+> **v1.6.1**: CTO Orchestration Redesign, P0 Bug Fixes (4), Config-Code Sync, 3-Tier Agent Security, 1073 TC, CE-5 (88/100), 208 exports
 
 ### Component Counts
 
 | Component | Count | Location |
 |-----------|-------|----------|
-| Skills | 28 (10 Workflow / 16 Capability / 2 Hybrid) | `skills/*/SKILL.md` |
+| Skills | 28 (9 Workflow / 18 Capability / 1 Hybrid) | `skills/*/SKILL.md` |
 | Agents | 21 (16 core + 5 PM Team) | `agents/*.md` |
 | Commands | DEPRECATED | Migrated to Skills |
 | Scripts | 45 | `scripts/*.js` |
 | Templates | 28 | `templates/*.md` |
-| lib/ | 5 modules (241 functions) | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/`, `lib/team/` |
-| Evals | 28 definitions | Skill quality measurement |
+| lib/ | 5 modules (208 functions) | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/`, `lib/team/` |
+| Evals | 28 definitions (56 content files) | Skill quality measurement |
+| Tests | 39 files (1073 TC) | 8 perspectives, 99.6% pass |
 
 ### Key Features
 
@@ -194,7 +196,7 @@ bkit v1.6.0 integrates CC 2.1.0 Skills 2.0 with three major capabilities:
 
 | Feature | Philosophy Alignment | Impact |
 |---------|---------------------|--------|
-| **Skill Classification** | Automation First | 10 Workflow skills = permanent core; 16 Capability skills = data-driven lifecycle |
+| **Skill Classification** | Automation First | 9 Workflow skills = permanent core; 18 Capability skills = data-driven lifecycle |
 | **Skill Evals** | No Guessing | 28 eval definitions measure skill quality objectively |
 | **PM Agent Team** | Docs = Code | 5 PM agents ensure product discovery documents before Plan |
 
@@ -211,9 +213,9 @@ PM Team embodies "Direction Setting" by ensuring structured product discovery be
 
 | Classification | Count | Core Philosophy |
 |:---:|:---:|---|
-| **Workflow** | 10 | Automation First — permanent value regardless of model advancement |
-| **Capability** | 16 | No Guessing — guidance that models may eventually internalize |
-| **Hybrid** | 2 | Both workflow and capability characteristics |
+| **Workflow** | 9 | Automation First — permanent value regardless of model advancement |
+| **Capability** | 18 | No Guessing — guidance that models may eventually internalize |
+| **Hybrid** | 1 | Both workflow and capability characteristics |
 
 ---
 

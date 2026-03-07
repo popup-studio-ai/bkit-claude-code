@@ -1,6 +1,6 @@
 name: phase-9-deployment
 classification: capability
-version: 1.6.0
+version: 1.6.1
 description: "phase-9-deployment output quality evaluation"
 
 evals:

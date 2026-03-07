@@ -329,7 +329,7 @@ CC v2.1.71 `/loop` command enables automated PDCA monitoring:
 | Check | zero-script-qa, phase-8-review, code-review | phase-7 guide |
 | Act | bkit-rules | (iteration guidance) |
 
-Workflow skills (10) remain permanent PDCA infrastructure; Capability skills (16) may be deprecated as models improve.
+Workflow skills (9) remain permanent PDCA infrastructure; Capability skills (18) may be deprecated as models improve.
 
 ---
 

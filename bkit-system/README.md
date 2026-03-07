@@ -32,7 +32,9 @@
 >
 > **v1.5.9**: Executive Summary module, AskUserQuestion Preview UX, ENH-74~81, 199 exports
 >
-> **v1.6.0**: Skills 2.0 - Skill Classification (10 Workflow / 16 Capability / 2 Hybrid), PM Agent Team (5 agents), Skill Evals (28 definitions), Skill Creator + A/B Testing, 241 exports
+> **v1.6.0**: Skills 2.0 - Skill Classification (9 Workflow / 18 Capability / 1 Hybrid), PM Agent Team (5 agents), Skill Evals (28 definitions), Skill Creator + A/B Testing
+>
+> **v1.6.1**: CTO Orchestration Redesign (Main Session as CTO), P0 Bug Fixes (4), Config-Code Sync, 3-Tier Agent Security, Skill Evals 28/28, 1073 TC comprehensive test, CE-5 (88/100), 208 exports
 
 ## Purpose of This Document
 
@@ -192,7 +194,7 @@ lib/
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                bkit Trigger System (v1.6.0)                      │
+│                bkit Trigger System (v1.6.1)                      │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
 │  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐      │
@@ -225,7 +227,7 @@ lib/
 | Commands | DEPRECATED | Migrated to Skills (v1.4.4) | - |
 | Hooks | 10 events | Event-based triggers (unified) | [[components/hooks/_hooks-overview]] |
 | Scripts | 45 | Actual logic execution | [[components/scripts/_scripts-overview]] |
-| Lib | 5 modules | Shared utilities | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/`, `lib/team/` (241 exports) |
+| Lib | 5 modules | Shared utilities | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/`, `lib/team/` (208 exports) |
 | Evals | 28 | Skill evaluation definitions (v1.6.0) | Skill Creator + A/B Testing |
 | Config | 1 | Centralized settings | `bkit.config.json` |
 | Templates | 28 | Document templates | PDCA + Pipeline + Shared |
@@ -346,7 +348,7 @@ The `bkit-system/.obsidian/` folder includes shared settings:
 ### Skills 2.0 Integration
 
 bkit v1.6.0 integrates CC 2.1.0 Skills 2.0 features:
-- **Skill Classification**: 10 Workflow / 16 Capability / 2 Hybrid — Workflow skills are bkit's permanent core value
+- **Skill Classification**: 9 Workflow / 18 Capability / 1 Hybrid — Workflow skills are bkit's permanent core value
 - **Skill Evals**: 28 eval definitions for data-driven skill quality measurement
 - **Skill Creator + A/B Testing**: Create and compare skill variants systematically
 - **Skill Hot Reload**: Live skill updates without session restart
@@ -360,15 +362,16 @@ bkit v1.6.0 integrates CC 2.1.0 Skills 2.0 features:
 - `pm-research` — Competitive analysis and data gathering
 - `pm-prd` — PRD document generation
 
-### Component Counts (v1.6.0)
+### Component Counts (v1.6.1)
 
 | Component | Count |
 |-----------|-------|
-| Skills | 28 (10 Workflow / 16 Capability / 2 Hybrid) |
+| Skills | 28 (9 Workflow / 18 Capability / 1 Hybrid) |
 | Agents | 21 (16 core + 5 PM Team) |
-| Library Functions | 241 |
+| Library Functions | 208 |
 | Scripts | 45 |
 | Hook Events | 10 |
 | Output Styles | 4 |
-| Evals | 28 |
+| Evals | 28 (56 content files) |
+| Tests | 39 files (1073 TC) |
 | CC Recommended | v2.1.71 |

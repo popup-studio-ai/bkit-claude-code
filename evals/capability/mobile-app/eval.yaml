@@ -1,6 +1,6 @@
 name: mobile-app
 classification: capability
-version: 1.6.0
+version: 1.6.1
 description: "mobile-app output quality evaluation"
 
 evals:

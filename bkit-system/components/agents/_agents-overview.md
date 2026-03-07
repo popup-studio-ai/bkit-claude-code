@@ -1,6 +1,6 @@
 # Agents Overview
 
-> List of 21 Agents defined in bkit and their roles (v1.6.0)
+> List of 21 Agents defined in bkit and their roles (v1.6.1)
 >
 > **v1.4.1**: Added Context Engineering perspective - Role-based Behavioral Rules Layer
 > **v1.5.0**: Claude Code Exclusive
@@ -9,7 +9,8 @@
 > **v1.5.7**: /simplify + /batch PDCA flow integration, English conversion for stop script outputs
 > **v1.5.8**: Studio Support awareness - Path Registry, state directory migration, 186 exports
 > **v1.5.9**: Executive Summary module, AskUserQuestion Preview UX, ENH-74~81, 199 exports
-> **v1.6.0**: PM Agent Team (5 agents), 21 total agents, 241 exports, CC v2.1.71
+> **v1.6.0**: PM Agent Team (5 agents), 21 total agents
+> **v1.6.1**: 3-Tier Agent Security Model (9 acceptEdits agents with tiered disallowedTools), CTO Orchestration Redesign, 208 exports, CC v2.1.71
 
 ## What are Agents?
 

@@ -140,7 +140,7 @@ Context Engineering is the **systematic design of information flow to LLMs**—g
 ```
 Domain Knowledge (27 Skills) ─┐
 Behavioral Rules (16 Agents) ─┼─→ Unified Hook System ─→ Dynamic Context Injection
-State Management (241 funcs) ─┘
+State Management (208 funcs) ─┘
 ```
 
 See [bkit-system/philosophy/context-engineering.md](bkit-system/philosophy/context-engineering.md) for detailed implementation.
@@ -178,7 +178,7 @@ bkit implements **Context Engineering**—the systematic curation of context tok
 | **CLAUDE.md Files** | Project-specific AI instructions |
 | **Skill System (28 skills)** | Domain-specific knowledge |
 | **Unified Hook System (v1.4.5)** | Centralized context injection via hooks.json |
-| **lib/*.js (241 functions)** | State management, intent detection, ambiguity handling |
+| **lib/*.js (208 functions)** | State management, intent detection, ambiguity handling |
 
 **Context Engineering Architecture**:
 ```

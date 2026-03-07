@@ -1,6 +1,6 @@
 name: phase-1-schema
 classification: capability
-version: 1.6.0
+version: 1.6.1
 description: "phase-1-schema output quality evaluation"
 
 evals:

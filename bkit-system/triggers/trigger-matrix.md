@@ -1,11 +1,12 @@
 # Trigger Matrix
 
-> Core matrix showing which components trigger on each event (v1.6.0)
+> Core matrix showing which components trigger on each event (v1.6.1)
 >
 > **v1.5.0**: Claude Code Exclusive
 > **v1.6.0**: PM Agent Team triggers, Skills 2.0, 28 skills, 21 agents
+> **v1.6.1**: CTO Orchestration Redesign, 3-Tier Agent Security Model
 
-## Hook Event Reference (v1.6.0)
+## Hook Event Reference (v1.6.1)
 
 | Hook Event | Description | Added |
 |------------|-------------|:-----:|

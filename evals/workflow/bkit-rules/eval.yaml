@@ -1,6 +1,6 @@
 name: bkit-rules
 classification: workflow
-version: 1.6.0
+version: 1.6.1
 description: "bkit-rules process compliance evaluation"
 
 evals:

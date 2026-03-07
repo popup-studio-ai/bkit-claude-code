@@ -1,6 +1,6 @@
 name: bkend-cookbook
 classification: capability
-version: 1.6.0
+version: 1.6.1
 description: "bkend-cookbook output quality evaluation"
 
 evals:

@@ -1,6 +1,6 @@
 name: phase-8-review
 classification: workflow
-version: 1.6.0
+version: 1.6.1
 description: "phase-8-review process compliance evaluation"
 
 evals:

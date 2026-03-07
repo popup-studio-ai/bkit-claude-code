@@ -26,7 +26,8 @@
 >
 > **v1.5.8**: Path Registry (lib/core/paths.js), state directory migration (.bkit/{state,runtime,snapshots}/), 186 exports, auto-migration with EXDEV fallback
 > **v1.5.9**: Executive Summary, AskUserQuestion Preview UX, ENH-74~81, 199 exports
-> **v1.6.0**: Skills 2.0 - Skill Classification (10W/16C/2H), PM Agent Team (5 agents), Skill Evals (28 defs), 241 exports
+> **v1.6.0**: Skills 2.0 - Skill Classification (9W/18C/1H), PM Agent Team (5 agents), Skill Evals (28 defs)
+> **v1.6.1**: CTO Orchestration Redesign, P0 Bug Fixes (4), Config-Code Sync, 3-Tier Agent Security, 1073 TC, CE-5 (88/100), 208 exports
 
 ## What is Context Engineering?
 
@@ -115,7 +116,7 @@ bkit v1.5.4 builds on the original 8 functional requirements (FR-01~FR-08) with 
 └──────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Library Modules (15 modules across 5 subdirectories, 241 exports)
+### Library Modules (15 modules across 5 subdirectories, 208 exports)
 
 **Modular subdirectories** (v1.5.4 — refactored from monolithic common.js):
 
@@ -126,7 +127,7 @@ bkit v1.5.4 builds on the original 8 functional requirements (FR-01~FR-08) with 
 | `lib/intent/` | 4 | 19 | 8-language detection, trigger matching, ambiguity analysis |
 | `lib/task/` | 5 | 26 | Task classification, context, creation, tracking |
 | `lib/team/` | 9 | 40 | Coordinator, strategy, CTO logic, state-writer, communication |
-| **Subtotal** | **31+** | **241** | |
+| **Subtotal** | **31+** | **208** | |
 
 **Top-level modules** (FR implementations, unchanged):
 
@@ -138,7 +139,7 @@ bkit v1.5.4 builds on the original 8 functional requirements (FR-01~FR-08) with 
 | `lib/permission-manager.js` | FR-05 | Permission hierarchy | `checkPermission()`, `getToolPermission()` |
 | `lib/memory-store.js` | FR-08 | Session persistence | `setMemory()`, `getMemory()`, `deleteMemory()` |
 | `lib/skill-orchestrator.js` | — | Skill routing | `orchestrateSkillPre()`, `getAgentForAction()` |
-| `lib/common.js` | All | **Bridge layer** | Re-exports all 241 functions for backward compatibility |
+| `lib/common.js` | All | **Bridge layer** | Re-exports all 208 functions for backward compatibility |
 
 ---
 
@@ -218,7 +219,7 @@ Agents define **role-based behavioral rules**.
 
 ### 3. State Management Layer (5-Module Architecture)
 
-A **modular state management system** composed of 241 exports across 5 subdirectories, with `lib/common.js` as a backward-compatible bridge layer.
+A **modular state management system** composed of 208 exports across 5 subdirectories, with `lib/common.js` as a backward-compatible bridge layer.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
@@ -242,7 +243,7 @@ A **modular state management system** composed of 241 exports across 5 subdirect
 │  │  5 files, 26 exp │  │  9 files, 40 exp │  │  (Bridge Layer)  │  │
 │  │                  │  │                  │  │                  │  │
 │  │  • Classification│  │  • Coordinator   │  │  Re-exports all  │  │
-│  │  • Context       │  │  • Strategy      │  │  241 functions   │  │
+│  │  • Context       │  │  • Strategy      │  │  208 functions   │  │
 │  │  • Creator       │  │  • CTO Logic     │  │  from 5 modules  │  │
 │  │  • Tracker       │  │  • State-Writer  │  │  for backward    │  │
 │  │                  │  │  • Communication │  │  compatibility   │  │
@@ -253,7 +254,7 @@ A **modular state management system** composed of 241 exports across 5 subdirect
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-> **Migration Note**: As of v1.5.4, `lib/common.js` is a pure bridge layer. All 241 functions originate in subdirectory modules. Existing scripts that `require('./lib/common.js')` continue to work without changes.
+> **Migration Note**: As of v1.5.4, `lib/common.js` is a pure bridge layer. All 208 functions originate in subdirectory modules. Existing scripts that `require('./lib/common.js')` continue to work without changes.
 
 ---
 
@@ -403,7 +404,7 @@ Reports bkit feature usage status at the end of every response.
 | Agents | `agents/*.md` | 21 |
 | Scripts | `scripts/*.js` | 47 |
 | Templates | `templates/*.md` + `pipeline/` + `shared/` | 13 + subdirs |
-| lib/ modules | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/`, `lib/team/` | 5 dirs, 241 exports |
+| lib/ modules | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/`, `lib/team/` | 5 dirs, 208 exports |
 | lib/ top-level | `context-hierarchy`, `import-resolver`, `context-fork`, `permission-manager`, `memory-store`, `skill-orchestrator`, `common` (bridge) | 7 modules |
 | Output Styles | `output-styles/*.md` | 4 |
 | Context File | `CLAUDE.md` | 1 |
@@ -910,9 +911,9 @@ All 28 bkit skills are classified into three categories:
 
 | Classification | Count | Description | Deprecation Risk |
 |:---:|:---:|---|---|
-| **Workflow** | 10 | Process automation, model-independent | none |
-| **Capability** | 16 | Guidance that may become redundant as models improve | low~high |
-| **Hybrid** | 2 | Combines workflow and capability features | low |
+| **Workflow** | 9 | Process automation, model-independent | none |
+| **Capability** | 18 | Guidance that may become redundant as models improve | low~high |
+| **Hybrid** | 1 | Combines workflow and capability features | low |
 
 Key principle: **Workflow skills are bkit's core value** — PDCA methodology, pipeline management, coding rules, QA processes persist regardless of model advancement.
 

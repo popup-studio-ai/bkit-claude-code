@@ -5,6 +5,67 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.1] - 2026-03-08
+
+### Added
+- **CTO/PM Orchestration Redesign** (Issue #41 fix)
+  - Main Session as CTO pattern to bypass CC v2.1.69+ nested spawn restriction
+  - `lib/team/coordinator.js`: 7 new exports (buildAgentTeamPlan, getFileOwnership, generateTeammatePrompt, etc.)
+  - Agent Teams TeamCreate integration for CTO/PM team composition
+- **Skill Evals 28/28 Full Implementation**
+  - `evals/runner.js`: parseEvalYaml(), evaluateAgainstCriteria(), runEval() (real evaluation engine)
+  - `evals/reporter.js`: formatDetailedReport() with skill category breakdown
+  - 56 content files: 28 × prompt-1.md + 28 × expected-1.md
+  - `node evals/runner.js --benchmark` achieves 28/28 PASS (100% coverage)
+- **Agent Security Hardening**
+  - 3-Tier Security Model for 9 acceptEdits agents
+  - Tier 1 (Starter Guide): disallowedTools [Bash]
+  - Tier 2 (5 Expert Agents): disallowedTools [Bash(rm -rf), Bash(git push), Bash(git reset --hard)]
+  - Tier 3 (QA/Iterator): unchanged (Bash required)
+- **Comprehensive Test Suite** (1073 TC, 8 perspectives)
+  - Unit (503), Integration (120), Security (80), Regression (156), Performance (70), Philosophy (58), UX (60), E2E (26)
+  - 99.6% pass rate, 0 failures, 4 skips (environment-dependent)
+- **CE Level Assessment** — CE-5 Master (88/100)
+  - 10-Agent CTO Team evaluation from 10 perspectives
+  - 252 total components inventoried (28 Skills + 21 Agents + 41 lib + 46 Scripts + 15 Templates + 4 Styles + 56 Evals + 39 Tests)
+
+### Changed
+- **P0 Bug Fixes** (4 items)
+  - `ambiguity.js`: shouldClarify property added for automatic clarification detection
+  - `trigger.js`: confidenceThreshold hardcoded 0.8 removed, reads from config
+  - `creator.js`: PDCA phases array unified (includes act phase), imports fixed
+  - Agent `disallowedTools` settings applied to 6 experts + 1 guide
+- **Config-Code Synchronization**
+  - `lib/team/orchestrator.js`: PHASE_PATTERN_MAP loads from bkit.config.json at runtime
+  - selectOrchestrationPattern() with config fallback logic
+- **Skills PDCA Enhancement**
+  - `skills/pdca/SKILL.md`: agents.team = null, agents.pm = null (Main Session as Team Lead)
+- **Library Export Count**: 208 exports (corrected from v1.6.0 documented 241)
+
+### Fixed
+- **Critical Issue #41**: CC v2.1.69+ nested subagent spawn restriction broke `/pdca team`
+- **Config Read Failure**: confidenceThreshold not reflected in trigger decisions
+- **Array Inconsistency**: PDCA phases missing 'act' phase in task creation
+- **Security Gaps**: 8 acceptEdits agents without explicit tool restrictions
+- **Stub System**: Evals always returned true (non-functional quality validation)
+
+### Test Results
+- **1073 TC**: 1069 passed, 0 failed, 4 skipped (99.6%)
+- **Evals Coverage**: 28/28 PASS (100%)
+- **Design Match Rate**: 100% (26/26 items)
+
+### Files Modified
+- 72 files, ~1,400 LOC changed
+- New: 56 content files (evals/), 35 test files (test/)
+- Core: lib/team/coordinator.js, lib/team/orchestrator.js, lib/intent/ambiguity.js, lib/intent/trigger.js, lib/task/creator.js
+- Agents: 7 agents updated with disallowedTools
+- Skills: skills/pdca/SKILL.md
+
+### Breaking Changes
+- None (backward compatible)
+
+---
+
 ## [1.6.0] - 2026-03-07
 
 ### Added

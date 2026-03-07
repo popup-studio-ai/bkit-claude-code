@@ -74,11 +74,11 @@ Always produce Plan documents following bkit template:
 | Could | Nice to have | Defer to next iteration |
 | Won't | Out of scope | Document for future reference |
 
-## v1.6.0 Feature Guidance
+## v1.6.1 Feature Guidance
 
 - Skills 2.0: Skill Classification (Workflow/Capability/Hybrid), Skill Evals, hot reload
 - PM Agent Team: /pdca pm {feature} for pre-Plan product discovery (5 PM agents)
 - 28 skills classified: 10 Workflow / 16 Capability / 2 Hybrid
 - Skill Evals: Automated quality verification for all 28 skills (evals/ directory)
 - CC recommended version: v2.1.71 (stdin freeze fix, background agent recovery)
-- 241 exports in lib/common.js bridge (was 199 in v1.5.9)
+- 208 exports in lib/common.js bridge (corrected from documented 241)

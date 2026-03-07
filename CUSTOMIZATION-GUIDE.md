@@ -138,7 +138,7 @@ bkit is not just a collection of prompts—it's a **production-grade plugin arch
 | **Scripts** | 45 | Hook execution scripts with unified handlers |
 | **Templates** | 28 | Document templates (PDCA + 9 phases + shared) |
 | **Hooks** | 10 events | Event-driven automation (centralized in hooks.json) |
-| **lib/** | 5 modules (241 functions) | Modular utility library (v1.5.3) |
+| **lib/** | 5 modules (208 functions) | Modular utility library (v1.5.3) |
 | **Output Styles** | 4 | Level-based response formatting (v1.5.3) |
 
 **Total: 100+ components** working in harmony.
@@ -198,7 +198,9 @@ const { classifyTask } = require('./lib/task');
 const { debugLog, getConfig } = require('./lib/common');
 ```
 
-> **v1.6.0**: Skills 2.0 Complete Integration (19 ENH items), PM Agent Team (5 agents), Skill Evals Framework, Skill Classification (10 Workflow / 16 Capability / 2 Hybrid), A/B Testing, Skill Creator, template-validator, 28 skills, 21 agents, 241 exports, CC v2.1.71 recommended
+> **v1.6.1**: CTO Orchestration Redesign (Main Session as CTO), 3-Tier Agent Security Model, Config-Code Sync, P0 Bug Fixes (4), Skill Evals 28/28, CE-5 Master (88/100), 1073 TC (99.6%), 28 skills, 21 agents, 208 exports, CC v2.1.69+ required
+>
+> **v1.6.0**: Skills 2.0 Complete Integration (19 ENH items), PM Agent Team (5 agents), Skill Evals Framework, Skill Classification (9 Workflow / 18 Capability / 1 Hybrid), A/B Testing, Skill Creator, template-validator, 28 skills, 21 agents, 208 exports, CC v2.1.71 recommended
 
 > **v1.5.9**: Executive Summary module (3 exports), AskUserQuestion Preview UX, ENH-74~81 (agent_id/agent_type, continue:false), 199 exports
 
@@ -279,7 +281,7 @@ For detailed Context Engineering documentation, see [bkit-system/philosophy/cont
 │  ─────────────────────────────────────────────────────────────  │
 │  Template Layer     │ Templates (27)   │ Document standards     │
 │  ─────────────────────────────────────────────────────────────  │
-│  Shared Library     │ lib/ (241 funcs)    │ Modular utilities     │
+│  Shared Library     │ lib/ (208 funcs)    │ Modular utilities     │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -734,7 +736,7 @@ A Claude Code plugin like bkit consists of these components:
 | **Templates** | Document templates for standardization | `templates/` |
 | **Scripts** | Helper scripts for automation | `scripts/` |
 
-### bkit Plugin Structure Example (v1.6.0 - Claude Code Exclusive)
+### bkit Plugin Structure Example (v1.6.1 - Claude Code Exclusive)
 
 ```
 bkit-claude-code/

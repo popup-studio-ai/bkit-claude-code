@@ -1,6 +1,6 @@
 name: phase-3-mockup
 classification: capability
-version: 1.6.0
+version: 1.6.1
 description: "phase-3-mockup output quality evaluation"
 
 evals:

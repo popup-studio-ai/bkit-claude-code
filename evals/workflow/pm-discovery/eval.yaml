@@ -1,6 +1,6 @@
 name: pm-discovery
 classification: workflow
-version: 1.6.0
+version: 1.6.1
 description: "PM Agent Team process compliance evaluation"
 
 evals:

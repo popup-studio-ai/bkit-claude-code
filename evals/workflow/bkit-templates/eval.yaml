@@ -1,6 +1,6 @@
 name: bkit-templates
 classification: workflow
-version: 1.6.0
+version: 1.6.1
 description: "bkit-templates process compliance evaluation"
 
 evals:

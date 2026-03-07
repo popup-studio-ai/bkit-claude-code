@@ -60,7 +60,7 @@ Hooks are the core of bkit's **context injection system**, organized into 5 laye
 | **PreCompact** | Before context compaction (v1.4.2) | PDCA state snapshot, context preservation |
 | **Stop** | Agent termination | State transition, user choice prompt |
 
-## Hook Events (v1.6.0 - Claude Code Exclusive)
+## Hook Events (v1.6.1 - Claude Code Exclusive)
 
 | Hook Event | Description | Added |
 |------------|-------------|:-----:|
@@ -461,7 +461,7 @@ The SessionStart hook now includes:
 
 ---
 
-## v1.6.0 Hook Notes
+## v1.6.1 Hook Notes
 
 ### PM Agent Team Hook Integration
 
@@ -472,7 +472,7 @@ PM Team agents (5) use the existing hook infrastructure:
 
 ### Skills 2.0 Compatibility
 
-bkit v1.6.0 continues using `command` type hooks exclusively (10 hook events).
+bkit v1.6.1 continues using `command` type hooks exclusively (10 hook events).
 CC 2.1.0 adds `type: "http"`, `type: "prompt"`, and `type: "agent"` hook types — bkit may adopt these in future versions.
 
 ### CC v2.1.71 Hook Improvements

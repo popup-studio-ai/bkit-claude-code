@@ -1,6 +1,6 @@
 name: phase-2-convention
 classification: workflow
-version: 1.6.0
+version: 1.6.1
 description: "phase-2-convention process compliance evaluation"
 
 evals:

@@ -1,6 +1,6 @@
 name: phase-6-ui-integration
 classification: capability
-version: 1.6.0
+version: 1.6.1
 description: "phase-6-ui-integration output quality evaluation"
 
 evals:

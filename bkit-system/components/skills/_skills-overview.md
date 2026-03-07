@@ -1,13 +1,14 @@
 # Skills Overview
 
-> 28 Skills defined in bkit (v1.6.0)
+> 28 Skills defined in bkit (v1.6.1)
 >
 > **v1.4.1**: Added Context Engineering perspective - Domain Knowledge Layer
 > **v1.5.0**: Claude Code Exclusive
 > **v1.5.7**: /simplify, /batch CC command awareness in skills, CC_COMMAND_PATTERNS integration
 > **v1.5.8**: Studio Support - state file path references updated in PDCA skills
 > **v1.5.9**: Executive Summary module, AskUserQuestion Preview UX, ENH-74~81, 199 exports
-> **v1.6.0**: Skills 2.0 - Skill Classification (10W/16C/2H), pm-discovery skill, Skill Evals (28 defs), 241 exports
+> **v1.6.0**: Skills 2.0 - Skill Classification (9W/18C/1H), pm-discovery skill, Skill Evals (28 defs)
+> **v1.6.1**: CTO Orchestration Redesign, P0 Bug Fixes (4), 3-Tier Agent Security, Skill Evals 28/28 full implementation, 1073 TC, 208 exports
 
 ## What are Skills?
 
@@ -61,9 +62,9 @@ Skills form bkit's **Domain Knowledge Layer**, designed according to [[../../phi
 
 ## Skill Classification (v1.6.0)
 
-All 28 skills are classified into three categories based on CC 2.1.0 Skills 2.0:
+All 28 skills are classified into three categories based on CC 2.1.0 Skills 2.0 (per `evals/config.json` SSOT):
 
-### Workflow Skills (10) — Permanent Core Value
+### Workflow Skills (9) — Permanent Core Value
 
 Process automation skills that remain valuable regardless of model advancement:
 
@@ -80,7 +81,7 @@ Process automation skills that remain valuable regardless of model advancement:
 | code-review | Code review and quality analysis |
 | zero-script-qa | Log-based QA |
 
-### Capability Skills (16) — Model-Dependent Guidance
+### Capability Skills (18) — Model-Dependent Guidance
 
 Domain knowledge that may become redundant as models improve:
 
@@ -102,18 +103,16 @@ Domain knowledge that may become redundant as models improve:
 | bkend-quickstart | medium |
 | bkend-data | medium |
 | bkend-auth | medium |
+| bkend-cookbook | medium |
+| bkend-storage | medium |
 
-> Note: bkend-storage and bkend-cookbook are sub-skills of bkend, counted within the 16 Capability total.
-
-### Hybrid Skills (2)
+### Hybrid Skills (1)
 
 Skills combining workflow and capability characteristics:
 
 | Skill | Workflow Aspect | Capability Aspect |
 |-------|----------------|-------------------|
 | plan-plus | PDCA planning process | Brainstorming methodology guidance |
-
-> Note: plan-plus is counted in both Workflow (10) and Hybrid (2) totals.
 
 ---
 
