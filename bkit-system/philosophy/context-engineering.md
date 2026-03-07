@@ -26,6 +26,7 @@
 >
 > **v1.5.8**: Path Registry (lib/core/paths.js), state directory migration (.bkit/{state,runtime,snapshots}/), 186 exports, auto-migration with EXDEV fallback
 > **v1.5.9**: Executive Summary, AskUserQuestion Preview UX, ENH-74~81, 199 exports
+> **v1.6.0**: Skills 2.0 - Skill Classification (10W/16C/2H), PM Agent Team (5 agents), Skill Evals (28 defs), 241 exports
 
 ## What is Context Engineering?
 
@@ -114,7 +115,7 @@ bkit v1.5.4 builds on the original 8 functional requirements (FR-01~FR-08) with 
 └──────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Library Modules (15 modules across 5 subdirectories, 199 exports)
+### Library Modules (15 modules across 5 subdirectories, 241 exports)
 
 **Modular subdirectories** (v1.5.4 — refactored from monolithic common.js):
 
@@ -125,7 +126,7 @@ bkit v1.5.4 builds on the original 8 functional requirements (FR-01~FR-08) with 
 | `lib/intent/` | 4 | 19 | 8-language detection, trigger matching, ambiguity analysis |
 | `lib/task/` | 5 | 26 | Task classification, context, creation, tracking |
 | `lib/team/` | 9 | 40 | Coordinator, strategy, CTO logic, state-writer, communication |
-| **Subtotal** | **31** | **199** | |
+| **Subtotal** | **31+** | **241** | |
 
 **Top-level modules** (FR implementations, unchanged):
 
@@ -137,13 +138,13 @@ bkit v1.5.4 builds on the original 8 functional requirements (FR-01~FR-08) with 
 | `lib/permission-manager.js` | FR-05 | Permission hierarchy | `checkPermission()`, `getToolPermission()` |
 | `lib/memory-store.js` | FR-08 | Session persistence | `setMemory()`, `getMemory()`, `deleteMemory()` |
 | `lib/skill-orchestrator.js` | — | Skill routing | `orchestrateSkillPre()`, `getAgentForAction()` |
-| `lib/common.js` | All | **Bridge layer** | Re-exports all 199 functions for backward compatibility |
+| `lib/common.js` | All | **Bridge layer** | Re-exports all 241 functions for backward compatibility |
 
 ---
 
 ## bkit's Context Engineering Structure
 
-### 1. Domain Knowledge Layer (27 Skills)
+### 1. Domain Knowledge Layer (28 Skills)
 
 Skills provide **structured domain knowledge**.
 
@@ -217,7 +218,7 @@ Agents define **role-based behavioral rules**.
 
 ### 3. State Management Layer (5-Module Architecture)
 
-A **modular state management system** composed of 199 exports across 5 subdirectories, with `lib/common.js` as a backward-compatible bridge layer.
+A **modular state management system** composed of 241 exports across 5 subdirectories, with `lib/common.js` as a backward-compatible bridge layer.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
@@ -241,7 +242,7 @@ A **modular state management system** composed of 199 exports across 5 subdirect
 │  │  5 files, 26 exp │  │  9 files, 40 exp │  │  (Bridge Layer)  │  │
 │  │                  │  │                  │  │                  │  │
 │  │  • Classification│  │  • Coordinator   │  │  Re-exports all  │  │
-│  │  • Context       │  │  • Strategy      │  │  199 functions   │  │
+│  │  • Context       │  │  • Strategy      │  │  241 functions   │  │
 │  │  • Creator       │  │  • CTO Logic     │  │  from 5 modules  │  │
 │  │  • Tracker       │  │  • State-Writer  │  │  for backward    │  │
 │  │                  │  │  • Communication │  │  compatibility   │  │
@@ -252,7 +253,7 @@ A **modular state management system** composed of 199 exports across 5 subdirect
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-> **Migration Note**: As of v1.5.4, `lib/common.js` is a pure bridge layer. All 199 functions originate in subdirectory modules. Existing scripts that `require('./lib/common.js')` continue to work without changes.
+> **Migration Note**: As of v1.5.4, `lib/common.js` is a pure bridge layer. All 241 functions originate in subdirectory modules. Existing scripts that `require('./lib/common.js')` continue to work without changes.
 
 ---
 
@@ -398,11 +399,11 @@ Reports bkit feature usage status at the end of every response.
 
 | Component | Location | Count |
 |-----------|----------|:-----:|
-| Skills | `skills/*/SKILL.md` | 26 |
-| Agents | `agents/*.md` | 16 |
+| Skills | `skills/*/SKILL.md` | 28 |
+| Agents | `agents/*.md` | 21 |
 | Scripts | `scripts/*.js` | 47 |
 | Templates | `templates/*.md` + `pipeline/` + `shared/` | 13 + subdirs |
-| lib/ modules | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/`, `lib/team/` | 5 dirs, 199 exports |
+| lib/ modules | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/`, `lib/team/` | 5 dirs, 241 exports |
 | lib/ top-level | `context-hierarchy`, `import-resolver`, `context-fork`, `permission-manager`, `memory-store`, `skill-orchestrator`, `common` (bridge) | 7 modules |
 | Output Styles | `output-styles/*.md` | 4 |
 | Context File | `CLAUDE.md` | 1 |
@@ -905,11 +906,11 @@ All new capabilities are guarded by `getFeatureFlags()` checks, ensuring backwar
 
 ### Skill Classification System (ENH-90)
 
-All 27 bkit skills are classified into three categories:
+All 28 bkit skills are classified into three categories:
 
 | Classification | Count | Description | Deprecation Risk |
 |:---:|:---:|---|---|
-| **Workflow** | 9 | Process automation, model-independent | none |
+| **Workflow** | 10 | Process automation, model-independent | none |
 | **Capability** | 16 | Guidance that may become redundant as models improve | low~high |
 | **Hybrid** | 2 | Combines workflow and capability features | low |
 
@@ -943,10 +944,10 @@ active → candidate (parity data) → deprecated (v1.6.x) → removed (v1.7.0+)
 | context:fork (native) | FR-03 custom (228 lines) | Native frontmatter | Deprecated, fallback retained |
 | Frontmatter hooks | N/A (hooks.json only) | 21 agents + 10 skills | Gradual migration |
 | Skill hot reload | Supported (passive) | Documented + guided | ENH-87 |
-| / invoke | Supported (27 skills) | Documented | ENH-96 |
+| / invoke | Supported (28 skills) | Documented | ENH-96 |
 | Wildcard permissions | Not documented | Guided in bkit-rules | ENH-95 |
 | Skill Creator | N/A | Integrated workflow | ENH-97 |
-| Skill Evals | N/A | 27 evals + A/B testing | ENH-88, ENH-89 |
+| Skill Evals | N/A | 28 evals + A/B testing | ENH-88, ENH-89 |
 | Skill Classification | N/A | 28 skills classified | ENH-90 |
 | /loop + Cron | N/A | PDCA auto-monitoring | ENH-100 |
 
@@ -958,6 +959,37 @@ Breaking Changes: 0 (across all 37 releases)
 CC 2.1.0 (Skills 2.0): 100% backward compatible (additive features)
 Recommended version: v2.1.71 (stdin freeze fix, background agent recovery)
 ```
+
+### PM Agent Team (ENH-102 derived)
+
+5 PM Team agents provide structured pre-Plan product discovery:
+- **pm-lead**: Orchestrates PM workflow, delegates to specialists
+- **pm-discovery**: Market research, user interviews, pain point analysis
+- **pm-strategy**: Product positioning, go-to-market, competitive advantage
+- **pm-research**: Data gathering, trend analysis, competitive landscape
+- **pm-prd**: PRD generation with user stories, acceptance criteria
+
+PM Team triggers: `pm`, `PRD`, `product discovery`, `market research`
+
+### Skill Evals (ENH-88)
+
+28 eval definitions enable data-driven skill quality measurement:
+- Each skill has a paired eval definition
+- Evals measure skill output quality against ground truth
+- Supports automated regression testing of skill changes
+
+### Skill Creator + A/B Testing (ENH-89, ENH-97)
+
+- Skill Creator workflow guides creation of new skills following bkit conventions
+- A/B Testing compares skill variants using eval metrics
+- Data-driven deprecation: 3 consecutive parity passes trigger deprecation candidate
+
+### Skill Hot Reload (ENH-87)
+
+Skills can be updated live without session restart:
+- CC 2.1.0 native hot reload support
+- `/reload-plugins` command refreshes skill content
+- Enables iterative skill development within active sessions
 
 ---
 

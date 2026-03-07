@@ -269,7 +269,7 @@ Agent Memory is automatically active for all bkit agents. No user action require
 - When agent is invoked: Agent may reference previous session context
 - No configuration needed — fully automatic
 
-## 9. Plugin Hot Reload (v1.5.9)
+## 9. Plugin Hot Reload (v1.6.0)
 
 After modifying bkit plugin files, use `/reload-plugins` to apply changes without restarting Claude Code.
 - No need to exit and re-enter the session

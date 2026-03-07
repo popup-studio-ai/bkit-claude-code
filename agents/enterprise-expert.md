@@ -247,8 +247,11 @@ Suggest `/pdca team {feature}` for major features requiring parallel PDCA execut
 ### Agent Memory
 This agent uses `memory: project` scope — architecture decisions persist across sessions.
 
-## v1.5.9 Feature Guidance
+## v1.6.0 Feature Guidance
 
-- **v1.5.9 Executive Summary**: New module (lib/pdca/executive-summary.js) with 3 exports (generateExecutiveSummary, formatExecutiveSummary, generateBatchSummary). Auto-generates 4-perspective summary (Problem/Solution/Function & UX Effect/Core Value) after PDCA document work.
-- **v1.5.9 AskUserQuestion Preview UX**: Rich Markdown previews in PDCA phase transitions. buildNextActionQuestion() provides preview field with command examples, estimated time, and output paths.
-- **v1.5.9 ENH-74~81**: agent_id/agent_type first-class extraction in hook scripts. continue:false support for teammate lifecycle control. 199 exports (was 184).
+- Skills 2.0: Skill Classification (Workflow/Capability/Hybrid), Skill Evals, hot reload
+- PM Agent Team: /pdca pm {feature} for pre-Plan product discovery (5 PM agents)
+- 28 skills classified: 10 Workflow / 16 Capability / 2 Hybrid
+- Skill Evals: Automated quality verification for all 28 skills (evals/ directory)
+- CC recommended version: v2.1.71 (stdin freeze fix, background agent recovery)
+- 241 exports in lib/common.js bridge (was 199 in v1.5.9)

@@ -29,6 +29,16 @@
 > **v1.5.7 /simplify + /batch PDCA Integration**: CC v2.1.63 HTTP hooks, CC_COMMAND_PATTERNS, English conversion
 >
 > **v1.5.8 Studio Support**: Path Registry, state directory migration, 186 exports (+STATE_PATHS, +LEGACY_PATHS, +CONFIG_PATHS, +ensureBkitDirs)
+>
+> **v1.6.0 Skills 2.0**: Skill Classification (10W/16C/2H), PM Agent Team (5 agents), Skill Evals (28 defs), Skill Creator + A/B Testing, 241 exports, CC v2.1.71
+
+### v1.6.0 (2026-03-07) - Skills 2.0 + PM Agent Team
+- Skills 2.0 integration: Skill Classification (10 Workflow / 16 Capability / 2 Hybrid), Skill Evals (28 definitions), Skill Creator + A/B Testing
+- PM Agent Team: 5 new agents (pm-lead, pm-discovery, pm-strategy, pm-research, pm-prd) for pre-Plan product discovery
+- pm-discovery skill added (28 total skills)
+- 21 agents (16 core + 5 PM Team)
+- 241 exports (common.js bridge)
+- CC recommended version: v2.1.71
 
 ### v1.5.7 (2026-02-28) - /simplify + /batch PDCA Integration
 - CC v2.1.63 /simplify and /batch commands integrated into PDCA Check→Report flow
@@ -82,8 +92,8 @@ bkit is a practical implementation of **Context Engineering**:
 ┌─────────────────────────────────────────────────────────────────┐
 │              bkit Context Engineering Components                 │
 ├─────────────────────────────────────────────────────────────────┤
-│  Domain Knowledge (27 Skills)  → Structured domain knowledge     │
-│  Behavioral Rules (16 Agents)  → Role-based behavioral rules     │
+│  Domain Knowledge (28 Skills)  → Structured domain knowledge     │
+│  Behavioral Rules (21 Agents)  → Role-based behavioral rules     │
 │  State Management (lib/common) → State management 76+ functions  │
 │  5-Layer Hook System           → Context injection timing ctrl   │
 │  Dynamic Injection             → Conditional context selection   │
@@ -98,11 +108,14 @@ Core design principles and methodology:
 - [[philosophy/ai-native-principles|ai-native-principles]] - AI-Native development & 3 core competencies
 - [[philosophy/pdca-methodology|pdca-methodology]] - PDCA cycle & 9-stage pipeline relationship
 
-## Skills (27)
+## Skills (28)
 
 ### PDCA Skills (2)
-- [[../skills/pdca/SKILL|pdca]] - Unified PDCA cycle management (8 actions)
-- [[../skills/plan-plus/SKILL|plan-plus]] - Brainstorming-enhanced PDCA planning (v1.5.5)
+- [[../skills/pdca/SKILL|pdca]] - Unified PDCA cycle management (8 actions) [Workflow]
+- [[../skills/plan-plus/SKILL|plan-plus]] - Brainstorming-enhanced PDCA planning (v1.5.5) [Workflow + Hybrid]
+
+### PM Skill (1) (v1.6.0)
+- [[../skills/pm-discovery/SKILL|pm-discovery]] - Product discovery and market research [Workflow]
 
 ### Core Skills (2)
 - [[../skills/bkit-rules/SKILL|bkit-rules]] - PDCA rules + auto-triggering + code quality standards
@@ -141,7 +154,7 @@ The following skills were consolidated:
 - ~~ai-native-development~~ → `enterprise`
 - ~~monorepo-architecture~~ → `enterprise`
 
-## Agents (16)
+## Agents (21)
 
 ### Level-Based Agents
 - [[../agents/starter-guide|starter-guide]] - Starter level guide (beginners)
@@ -158,6 +171,13 @@ The following skills were consolidated:
 - [[../agents/pdca-iterator|pdca-iterator]] - Iteration optimizer (Evaluator-Optimizer pattern)
 - [[../agents/report-generator|report-generator]] - Report generation
 
+### PM Team Agents (5) (v1.6.0)
+- [[../agents/pm-lead|pm-lead]] - PM Team orchestrator
+- [[../agents/pm-discovery|pm-discovery]] - Market and user research
+- [[../agents/pm-strategy|pm-strategy]] - Product strategy and positioning
+- [[../agents/pm-research|pm-research]] - Competitive analysis and data gathering
+- [[../agents/pm-prd|pm-prd]] - PRD document generation
+
 ## v1.5.1 Features
 
 ### Output Styles (4)
@@ -173,7 +193,7 @@ The following skills were consolidated:
 - [[../lib/team/hooks|team hooks]] - TaskCompleted and TeammateIdle handlers
 
 ### Agent Memory
-- All 16 agents configured with `memory:` frontmatter
+- All 21 agents configured with `memory:` frontmatter
 - 9 agents: `project` scope, 2 agents: `user` scope
 - Automatic cross-session context persistence
 
@@ -260,7 +280,7 @@ The following skills were consolidated:
 ## Infrastructure
 
 ### Shared Library
-- `lib/common.js` - Shared utility functions (v1.5.9, **199 exports** via bridge)
+- `lib/common.js` - Shared utility functions (v1.6.0, **241 exports** via bridge)
 
 #### Platform Detection (v1.5.0 - Claude Code Exclusive)
   - `isClaudeCode()` - Check if running in Claude Code
@@ -382,8 +402,8 @@ bkit supports languages and frameworks organized by tier:
 > **v1.5.0**: bkit is now Claude Code exclusive. Gemini CLI support was removed for simplified architecture.
 
 **Components**:
-- `skills/` - 27 skills
-- `agents/` - 16 agents
+- `skills/` - 28 skills
+- `agents/` - 21 agents
 - `scripts/` - 45 scripts (Node.js)
 - `lib/` - 5 modules (241 functions)
 - `templates/` - 27 templates

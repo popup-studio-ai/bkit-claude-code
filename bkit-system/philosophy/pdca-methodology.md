@@ -285,6 +285,54 @@ All PDCA-related agents use `memory: project` scope:
 
 ---
 
+---
+
+## v1.6.0 PDCA Enhancements
+
+### PM Agent Team (pre-Plan Phase)
+
+v1.6.0 introduces a structured pre-Plan phase via PM Agent Team:
+
+```
+PM Discovery ──► Plan ──► Design ──► Do ──► Check ──► Act
+     │
+     ├── pm-discovery: Market research, user needs
+     ├── pm-strategy: Product positioning
+     ├── pm-research: Competitive analysis
+     └── pm-prd: PRD document → feeds into /pdca plan
+```
+
+PM Team ensures that PDCA Plan starts with validated product requirements rather than assumptions.
+
+### /loop + Cron Integration (ENH-100)
+
+CC v2.1.71 `/loop` command enables automated PDCA monitoring:
+- `/loop 5m check deploy` — periodic deployment status monitoring
+- Cron scheduling tool for automated Check phase repetition
+- Integration with PDCA auto-monitoring for continuous quality gates
+
+### Skill Evals for PDCA Quality
+
+28 Skill Evals definitions enable quality measurement across PDCA phases:
+- Plan phase evals: validate plan completeness and structure
+- Check phase evals: verify gap analysis accuracy
+- Report phase evals: ensure report comprehensiveness
+- Data-driven PDCA improvement through eval metrics
+
+### Skill Classification Impact on PDCA
+
+| PDCA Phase | Workflow Skills | Capability Skills |
+|------------|----------------|-------------------|
+| Plan | pdca, plan-plus, pm-discovery | starter, dynamic, enterprise |
+| Design | bkit-templates, phase-2-convention | phase-1~5 guides |
+| Do | development-pipeline | phase-4~6 guides |
+| Check | zero-script-qa, phase-8-review, code-review | phase-7 guide |
+| Act | bkit-rules | (iteration guidance) |
+
+Workflow skills (10) remain permanent PDCA infrastructure; Capability skills (16) may be deprecated as models improve.
+
+---
+
 ## Related Documents
 
 - [[core-mission]] - Core mission and philosophies

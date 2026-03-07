@@ -1,10 +1,11 @@
 # Trigger Matrix
 
-> Core matrix showing which components trigger on each event (v1.5.0)
+> Core matrix showing which components trigger on each event (v1.6.0)
 >
 > **v1.5.0**: Claude Code Exclusive
+> **v1.6.0**: PM Agent Team triggers, Skills 2.0, 28 skills, 21 agents
 
-## Hook Event Reference (v1.5.4)
+## Hook Event Reference (v1.6.0)
 
 | Hook Event | Description | Added |
 |------------|-------------|:-----:|
@@ -207,6 +208,16 @@ Skills and Agents are activated by semantic matching on their description field.
 | [[../agents/qa-monitor|qa-monitor]] | zero script qa, QA, testing, log analysis, docker logs |
 | [[../agents/pdca-iterator|pdca-iterator]] | iterate, optimize, auto-fix, automatically fix |
 | [[../agents/report-generator|report-generator]] | PDCA report, completion report, summary, progress report |
+
+### PM Team Agent Triggers (v1.6.0)
+
+| Agent | Trigger Keywords |
+|-------|------------------|
+| [[../agents/pm-lead|pm-lead]] | pm, PRD, product discovery, market research, product strategy |
+| [[../agents/pm-discovery|pm-discovery]] | user research, market analysis, pain points, user needs |
+| [[../agents/pm-strategy|pm-strategy]] | product positioning, go-to-market, competitive advantage |
+| [[../agents/pm-research|pm-research]] | competitive analysis, market trends, data research |
+| [[../agents/pm-prd|pm-prd]] | PRD, product requirements, user stories, acceptance criteria |
 
 ---
 

@@ -161,10 +161,42 @@ bkit classifies languages optimized for AI-Native development into 4 tiers:
 
 ---
 
+## v1.6.0 PM Agent Team in AI-Native Development
+
+### PM Team Role
+
+The PM Agent Team (v1.6.0) extends AI-Native development into the **pre-development phase**:
+
+| Phase | As-Is (Traditional) | To-Be (With PM Team) |
+|-------|---------------------|---------------------|
+| **Market Research** | Manual competitor analysis, weeks of work | pm-research + pm-discovery automate in hours |
+| **Product Strategy** | PM writes strategy docs alone | pm-strategy generates data-driven positioning |
+| **PRD Creation** | 1-2 weeks manual writing | pm-prd generates structured PRD with user stories |
+| **Requirements Handoff** | Meetings, slides, miscommunication | PRD flows directly into PDCA Plan phase |
+
+### Updated Team Composition
+
+| Role | As-Is (10-person) | To-Be (bkit v1.6.0) | bkit Agent | Change |
+|------|-------------------|---------------------|------------|--------|
+| **PM** | 1 | 0.3 | pm-lead + PM Team (5 agents) | AI-driven product discovery |
+| **Senior Dev** | 2 | 1 | cto-lead (CTO) | AI guides architecture |
+| **Junior Dev** | 4 | 2 | bkend-expert, frontend-architect | 3x productivity with AI |
+| **QA** | 2 | 0.5 | qa-strategist, qa-monitor | Zero Script QA |
+| **Security** | 1 | 0 | security-architect | AI-automated review |
+| **Tech Writer** | 1 | 0 | report-generator | Auto-generated docs |
+| **Total** | **11** | **3.8** | **21 AI agents** | **65% reduction** |
+
+### Skill Classification in AI-Native Context
+
+Skill Classification (v1.6.0) reflects AI-Native maturity:
+- **Workflow skills (10)**: Process automation that remains valuable regardless of model capability — PDCA, pipeline, rules, QA, PM discovery
+- **Capability skills (16)**: Domain guidance that may become redundant as models improve — data-driven deprecation via Skill Evals
+- **Hybrid skills (2)**: Bridge between process and capability
+
 ## v1.5.4 Agent Distribution
 
-**Model distribution**: 7 opus / 7 sonnet / 2 haiku (16 total)
-**Permission modes**: 9 acceptEdits / 7 plan
+**Model distribution**: 7 opus / 7 sonnet / 2 haiku (16 core) + 5 PM Team (21 total)
+**Permission modes**: 9 acceptEdits / 7 plan (core), PM Team uses plan mode
 
 ---
 

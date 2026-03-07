@@ -187,3 +187,29 @@ When bkend-related keywords are detected:
 - bkend-expert agent activation priority for Dynamic level projects
 - bkend specialist skills (5) activated based on specific domain (auth, data, storage, quickstart, cookbook)
 - MCP tool names in skills use exact named tools (28+) for accurate invocation
+
+---
+
+## v1.6.0 Feature Priority
+
+### PM Team Trigger Priority
+
+PM Team activation follows these rules:
+- Keywords "pm", "PRD", "product discovery", "market research" trigger pm-lead
+- pm-lead orchestrates delegation to pm-discovery, pm-strategy, pm-research, pm-prd
+- PM Team operates in pre-Plan phase; completion transitions to PDCA Plan
+- PM Team does NOT activate during active PDCA cycles (Plan already started)
+
+### Skill Classification Priority
+
+Skill activation priority considers classification:
+1. **Workflow skills** (10): Always active when relevant — process-critical
+2. **Capability skills** (16): Active by default, may be deprecated via Skill Evals data
+3. **Hybrid skills** (2): Treated as Workflow for activation priority
+
+### Skill Evals Priority
+
+Skill Evals run in non-blocking mode:
+- Eval results inform deprecation decisions, never block skill activation
+- A/B testing results are advisory to CTO, not automatic
+- 3 consecutive parity passes required before deprecation candidate status

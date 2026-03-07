@@ -198,6 +198,8 @@ const { classifyTask } = require('./lib/task');
 const { debugLog, getConfig } = require('./lib/common');
 ```
 
+> **v1.6.0**: Skills 2.0 Complete Integration (19 ENH items), PM Agent Team (5 agents), Skill Evals Framework, Skill Classification (10 Workflow / 16 Capability / 2 Hybrid), A/B Testing, Skill Creator, template-validator, 28 skills, 21 agents, 241 exports, CC v2.1.71 recommended
+
 > **v1.5.9**: Executive Summary module (3 exports), AskUserQuestion Preview UX, ENH-74~81 (agent_id/agent_type, continue:false), 199 exports
 
 > **v1.5.8**: Claude Code Exclusive with CTO-Led Agent Teams (16 agents), Plan Plus skill, bkend MCP Accuracy Fix (28+ tools), Output Styles, Agent Memory, Team Visibility, /simplify + /batch PDCA integration, auto-memory support, HTTP hooks awareness, Studio Support (Path Registry, state directory migration)
@@ -732,14 +734,14 @@ A Claude Code plugin like bkit consists of these components:
 | **Templates** | Document templates for standardization | `templates/` |
 | **Scripts** | Helper scripts for automation | `scripts/` |
 
-### bkit Plugin Structure Example (v1.5.9 - Claude Code Exclusive)
+### bkit Plugin Structure Example (v1.6.0 - Claude Code Exclusive)
 
 ```
 bkit-claude-code/
 ├── .claude-plugin/
 │   ├── plugin.json                 # Claude Code plugin metadata
 │   └── marketplace.json            # Marketplace registration
-├── agents/                         # AI subagents (16 total, with memory)
+├── agents/                         # AI subagents (21 total, with memory)
 │   ├── starter-guide.md            # Beginner-friendly agent
 │   ├── enterprise-expert.md        # Enterprise architecture agent
 │   ├── code-analyzer.md            # Code review agent
@@ -748,8 +750,8 @@ bkit-claude-code/
 │   ├── product-manager.md          # Requirements & feature prioritization
 │   ├── qa-strategist.md            # QA strategy coordinator
 │   ├── security-architect.md       # Security & vulnerability expert
-│   └── ... (16 total)
-├── skills/                         # Domain knowledge (27 skills)
+│   └── ... (21 total, including 5 PM Team agents)
+├── skills/                         # Domain knowledge (28 skills)
 │   ├── bkit-rules/SKILL.md         # Core PDCA rules
 │   ├── plan-plus/SKILL.md          # Brainstorming-enhanced planning (v1.5.5)
 │   ├── development-pipeline/SKILL.md

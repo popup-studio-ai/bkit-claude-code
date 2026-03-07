@@ -117,7 +117,7 @@ After:  /learn-claude-code → Systematic training
 
 ---
 
-## Current Implementation (v1.5.9)
+## Current Implementation (v1.6.0)
 
 > **v1.5.3**: CTO-Led Agent Teams + Team Visibility + Claude Code Exclusive
 > **v1.5.4**: bkend MCP Accuracy Fix - embodying "No Guessing" philosophy through exact MCP tool names (19→28+)
@@ -126,17 +126,19 @@ After:  /learn-claude-code → Systematic training
 > **v1.5.7**: /simplify + /batch PDCA Integration - CC v2.1.63 HTTP hooks, CC_COMMAND_PATTERNS, English conversion
 > **v1.5.8**: Studio Support - Path Registry (centralized state paths), state directory migration, auto-migration, 186 exports
 > **v1.5.9**: Executive Summary module, AskUserQuestion Preview UX, ENH-74~81, 199 exports
+> **v1.6.0**: Skills 2.0 - Skill Classification (10W/16C/2H), PM Agent Team (5 agents), Skill Evals (28 defs), 241 exports
 
 ### Component Counts
 
 | Component | Count | Location |
 |-----------|-------|----------|
-| Skills | 27 | `skills/*/SKILL.md` |
-| Agents | 16 | `agents/*.md` |
+| Skills | 28 (10 Workflow / 16 Capability / 2 Hybrid) | `skills/*/SKILL.md` |
+| Agents | 21 (16 core + 5 PM Team) | `agents/*.md` |
 | Commands | DEPRECATED | Migrated to Skills |
 | Scripts | 45 | `scripts/*.js` |
-| Templates | 27 | `templates/*.md` |
+| Templates | 28 | `templates/*.md` |
 | lib/ | 5 modules (241 functions) | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/`, `lib/team/` |
+| Evals | 28 definitions | Skill quality measurement |
 
 ### Key Features
 
@@ -179,8 +181,39 @@ CTO Lead (opus) orchestrates specialized teams for PDCA execution:
 
 ### Agent Memory
 
-Automatic cross-session context persistence for all 16 agents.
-Scopes: `project` (9 agents), `user` (2 agents: starter-guide, pipeline-guide)
+Automatic cross-session context persistence for all 21 agents.
+Scopes: `project` (14 agents), `user` (2 agents: starter-guide, pipeline-guide)
+
+---
+
+## v1.6.0 Features
+
+### Skills 2.0 Integration
+
+bkit v1.6.0 integrates CC 2.1.0 Skills 2.0 with three major capabilities:
+
+| Feature | Philosophy Alignment | Impact |
+|---------|---------------------|--------|
+| **Skill Classification** | Automation First | 10 Workflow skills = permanent core; 16 Capability skills = data-driven lifecycle |
+| **Skill Evals** | No Guessing | 28 eval definitions measure skill quality objectively |
+| **PM Agent Team** | Docs = Code | 5 PM agents ensure product discovery documents before Plan |
+
+### PM Agent Team (pre-Plan Product Discovery)
+
+PM Team embodies "Direction Setting" by ensuring structured product discovery before PDCA:
+- pm-lead orchestrates the discovery workflow
+- pm-discovery conducts market and user research
+- pm-strategy defines product positioning
+- pm-research gathers competitive intelligence
+- pm-prd generates PRD documents
+
+### Skill Classification
+
+| Classification | Count | Core Philosophy |
+|:---:|:---:|---|
+| **Workflow** | 10 | Automation First — permanent value regardless of model advancement |
+| **Capability** | 16 | No Guessing — guidance that models may eventually internalize |
+| **Hybrid** | 2 | Both workflow and capability characteristics |
 
 ---
 

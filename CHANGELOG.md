@@ -5,6 +5,59 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - 2026-03-07
+
+### Added
+- **Skills 2.0 Complete Integration** (19 ENH items: ENH-85~103)
+  - Skill Classification: All 28 skills classified as Workflow (10) / Capability (16) / Hybrid (2) with deprecation-risk scoring
+  - Skill Evals Framework: `evals/runner.js` with benchmark mode, 28 pre-built eval definitions
+  - A/B Testing: `evals/ab-tester.js` for model comparison and parity testing
+  - Skill Creator: `skill-creator/generator.js` + `skill-creator/validator.js` for skill scaffolding
+  - Template Validator: PostToolUse hook validation for PDCA document required sections (ENH-103)
+  - Frontmatter hooks migration: hooks.json Layer 2/3 consolidation
+  - context:fork deprecation: CC native context:fork replaces FR-03 custom implementation
+  - Hot reload: SKILL.md changes reflect without session restart
+  - Wildcard permissions: `Bash(npm *)`, `Bash(git log*)` patterns
+- **PM Agent Team** (5 new agents for pre-Plan product discovery)
+  - pm-lead (opus): PM Team orchestration, PRD synthesis
+  - pm-discovery (sonnet): Opportunity Solution Tree analysis
+  - pm-strategy (sonnet): Value Proposition, Lean Canvas
+  - pm-research (sonnet): Personas, competitors, market sizing (TAM/SAM/SOM)
+  - pm-prd (sonnet): PRD document generation at `docs/00-pm/{feature}.prd.md`
+  - New skill: `pm-discovery` for PM workflow automation
+  - New template: `pm-prd.template.md` for PRD output
+  - Integration: `/pdca pm {feature}` triggers PM Team before Plan phase
+- **Skill Evals Directory Structure**
+  - `evals/config.json`: Global eval configuration (thresholds, classifications)
+  - `evals/runner.js`: Eval execution engine (CLI + module)
+  - `evals/reporter.js`: Markdown/JSON result reporting
+  - `evals/ab-tester.js`: Model comparison + parity testing
+  - `evals/workflow/`, `evals/capability/`, `evals/hybrid/`: Eval definitions by classification
+- **CC v2.1.71 Compatibility**
+  - /loop + Cron PDCA auto-monitoring
+  - Background agent recovery (output file path fix)
+  - stdin freeze fix for long CTO Team sessions
+
+### Changed
+- **Skills**: 27 → 28 (+1 pm-discovery)
+- **Agents**: 16 → 21 (+5 PM Team: pm-lead, pm-discovery, pm-strategy, pm-research, pm-prd)
+- **lib/common.js exports**: 199 → 241 (+42 from executive-summary, template-validator, PM team modules)
+- **CC recommended version**: v2.1.66 → v2.1.71
+- **All 28 skills**: Added `classification`, `classification-reason`, `deprecation-risk` frontmatter fields
+- **Documentation**: Full v1.6.0 doc-sync across 60+ files (versions, counts, architecture descriptions)
+
+### Quality
+- Comprehensive Test: 631 TC, 100% pass rate
+- PM Team Integration: 16 GAPs, 100% match rate
+- Doc-sync: 60+ files synchronized
+
+### Compatibility
+- Claude Code: Minimum v2.1.63, Recommended v2.1.71
+- Node.js: Minimum v18.0.0
+- Agent Teams: Requires Claude Code v2.1.32+ with `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+
+---
+
 ## [1.5.9] - 2026-03-05
 
 ### Added

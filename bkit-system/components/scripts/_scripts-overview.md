@@ -1,6 +1,6 @@
 # Scripts Overview
 
-> 47 Node.js Scripts used by bkit hooks (v1.5.9)
+> 45 Node.js Scripts used by bkit hooks (v1.6.0)
 >
 > **v1.5.0**: Claude Code Exclusive - Gemini CLI support removed, simplified architecture
 > **v1.4.7**: Core Modularization - lib/ split into 4 modules, Task Management Integration
@@ -10,6 +10,7 @@
 > **v1.5.7**: /simplify + /batch PDCA integration, CC_COMMAND_PATTERNS, English conversion (3 stop scripts)
 > **v1.5.8**: Path Registry in lib/core/paths.js, auto-migration in session-start.js, 186 exports
 > **v1.5.9**: Executive Summary module, AskUserQuestion Preview UX, ENH-74~81, 199 exports
+> **v1.6.0**: Skills 2.0 integration, PM Agent Team, 241 exports, CC v2.1.71
 > **v1.4.6**: Sub-agent call stability with `bkit:` prefix
 > **v1.4.5**: `/pdca archive` action, 8-language trigger completion
 > **v1.4.4**: hooks-json-integration, unified handlers (unified-stop.js, unified-bash-pre.js, etc.)
@@ -74,7 +75,7 @@ All scripts are at root level (not in .claude/):
 
 ```
 bkit-claude-code/
-├── lib/                       # Modular Library (v1.5.9, 199 exports)
+├── lib/                       # Modular Library (v1.6.0, 241 exports)
 │   ├── common.js              # Migration Bridge (re-exports all modules)
 │   ├── core/                  # Core utilities (7 files, 40 exports)
 │   │   ├── index.js           # Entry point
@@ -219,12 +220,12 @@ bkit-claude-code/
 
 ## Shared Library: lib/ (v1.5.3)
 
-> **v1.5.3**: 5 module directories with 241 functions total (team module added)
+> **v1.6.0**: 5 module directories with 241 exports total
 > **v1.4.7**: Core Modularization - 4 module directories with 132 functions total
 > **v1.4.2**: 6 library modules with 86+ functions total
 > **v1.4.0**: Expanded from 38 to 80+ functions with dual platform support
 
-### Library Modules (v1.5.3)
+### Library Modules (v1.6.0)
 
 | Module | Files | Exports | Purpose |
 |--------|:-----:|:-------:|---------|
@@ -233,9 +234,9 @@ bkit-claude-code/
 | `lib/intent/` | 4 | 19 | Language detection, triggers, ambiguity scoring |
 | `lib/task/` | 5 | 26 | Task classification, context, creation, tracking |
 | `lib/team/` | 9 | 40 | Team coordination, strategy, state-writer |
-| `lib/common.js` | 1 | 199 | Migration Bridge (re-exports all modules) |
+| `lib/common.js` | 1 | 241 | Migration Bridge (re-exports all modules) |
 
-**Export summary**: core:41 + pdca:57 + intent:19 + task:26 + team:40 + executive-summary:3 + automation:13 = bridge 199
+**Export summary**: 241 total exports via bridge (core + pdca + intent + task + team + executive-summary + PM team + skills 2.0)
 
 ### Import Options
 

@@ -105,3 +105,12 @@ Based on create-prd, beachhead-segment, and gtm-strategy from
 - PRD Template: 8-section (Pawel Huryn)
 - Beachhead Segment: Geoffrey Moore, *Crossing the Chasm*
 - GTM Strategy: Product Compass methodology
+
+## v1.6.0 Feature Guidance
+
+- Skills 2.0: Skill Classification (Workflow/Capability/Hybrid), Skill Evals, hot reload
+- PM Agent Team: /pdca pm {feature} for pre-Plan product discovery (5 PM agents)
+- 28 skills classified: 10 Workflow / 16 Capability / 2 Hybrid
+- Skill Evals: Automated quality verification for all 28 skills (evals/ directory)
+- CC recommended version: v2.1.71 (stdin freeze fix, background agent recovery)
+- 241 exports in lib/common.js bridge (was 199 in v1.5.9)

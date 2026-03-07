@@ -60,7 +60,7 @@ Hooks are the core of bkit's **context injection system**, organized into 5 laye
 | **PreCompact** | Before context compaction (v1.4.2) | PDCA state snapshot, context preservation |
 | **Stop** | Agent termination | State transition, user choice prompt |
 
-## Hook Events (v1.5.3 - Claude Code Exclusive)
+## Hook Events (v1.6.0 - Claude Code Exclusive)
 
 | Hook Event | Description | Added |
 |------------|-------------|:-----:|
@@ -458,3 +458,25 @@ The SessionStart hook now includes:
 | TaskCompleted | `pdca-task-completed.js` | Auto-advance PDCA phases on task completion |
 | TeammateIdle | `team-idle-handler.js` | Assign work to idle Agent Team teammates |
 | Stop (team) | `team-stop.js` | Clean up team resources on session end |
+
+---
+
+## v1.6.0 Hook Notes
+
+### PM Agent Team Hook Integration
+
+PM Team agents (5) use the existing hook infrastructure:
+- SessionStart announces PM Team availability for product discovery
+- SubagentStart/SubagentStop track PM Team agent lifecycle
+- TaskCompleted triggers transition from PM discovery to PDCA Plan
+
+### Skills 2.0 Compatibility
+
+bkit v1.6.0 continues using `command` type hooks exclusively (10 hook events).
+CC 2.1.0 adds `type: "http"`, `type: "prompt"`, and `type: "agent"` hook types — bkit may adopt these in future versions.
+
+### CC v2.1.71 Hook Improvements
+
+- Fixed stdin freeze in long sessions (direct benefit for CTO Team + PM Team)
+- Background agent output recovery (ensures PM Team agents return results to pm-lead)
+- CC official hook events total: 18 (bkit uses 10/18 = 56%)

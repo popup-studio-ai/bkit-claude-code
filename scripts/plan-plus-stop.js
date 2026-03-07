@@ -6,7 +6,7 @@
  * 1. Output Executive Summary via systemMessage
  * 2. Present Next Action via AskUserQuestion (with preview)
  *
- * @version 1.5.9
+ * @version 1.6.0
  * @module scripts/plan-plus-stop
  */
 

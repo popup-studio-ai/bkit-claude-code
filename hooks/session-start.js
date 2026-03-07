@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * bkit Vibecoding Kit - SessionStart Hook (v1.5.9)
+ * bkit Vibecoding Kit - SessionStart Hook (v1.6.0)
  * Dedicated plugin for Claude Code
  *
  * v1.5.7 Changes:

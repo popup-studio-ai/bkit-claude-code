@@ -3,7 +3,7 @@
  * context-compaction.js - Context Compaction Hook (FR-07)
  * Preserves PDCA state before context compression
  *
- * @version 1.5.9
+ * @version 1.6.0
  * @module scripts/context-compaction
  */
 

@@ -5,7 +5,7 @@
  * @version 1.6.0
  *
  * Executes skill evaluations and reports results.
- * ENH-88: Full eval framework for 27 bkit skills.
+ * ENH-88: Full eval framework for 28 bkit skills.
  */
 
 const fs = require('fs');

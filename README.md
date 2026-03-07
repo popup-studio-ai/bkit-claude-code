@@ -72,7 +72,7 @@ Layer 5: Scripts (45 modules)    → Actual Node.js execution logic with unified
 - **Output Styles Auto-Discovery (v1.5.3)** - `outputStyles` in plugin.json + 4th style `bkit-pdca-enterprise`
 - **CTO-Led Agent Teams (v1.5.1)** - CTO agent orchestrates parallel PDCA execution with multi-agent teams (Dynamic: 3, Enterprise: 5 teammates)
 - **Output Styles (v1.5.1)** - Level-based response formatting (bkit-learning, bkit-pdca-guide, bkit-enterprise, bkit-pdca-enterprise)
-- **Agent Memory (v1.5.1)** - Cross-session context persistence for all 16 agents (auto-active)
+- **Agent Memory (v1.5.1)** - Cross-session context persistence for all 21 agents (auto-active)
 - **Natural Feature Discovery (v1.5.1)** - Auto-trigger integration aligned with "Automation First" philosophy
 - **Task Management + PDCA Integration (v1.4.7)** - Task Chain Auto-Creation, Task ID Persistence, Check↔Act Iteration
 - **Core Modularization (v1.4.7)** - lib/common.js split into 5 modules (lib/core/, lib/pdca/, lib/intent/, lib/task/, lib/team/)
@@ -105,9 +105,9 @@ bkit builds three layers on top of Claude Code's native Evals:
 
 | Layer | Claude Code Native | bkit Enhancement |
 |-------|-------------------|------------------|
-| **Eval Execution** | Basic eval runner | `evals/runner.js` with benchmark mode, 27 pre-built eval definitions |
+| **Eval Execution** | Basic eval runner | `evals/runner.js` with benchmark mode, 28 pre-built eval definitions |
 | **A/B Testing** | Not available | `evals/ab-tester.js` compares skill performance across models (e.g., Sonnet 4.6 vs Opus 4.6) |
-| **Skill Classification** | Not available | All 27 skills classified as Workflow (9) / Capability (16) / Hybrid (2) with deprecation-risk scoring |
+| **Skill Classification** | Not available | All 28 skills classified as Workflow (10) / Capability (16) / Hybrid (2) with deprecation-risk scoring |
 
 ```
 evals/
@@ -115,8 +115,8 @@ evals/
 ├── runner.js                # Eval execution engine (CLI + module)
 ├── reporter.js              # Markdown/JSON result reporting
 ├── ab-tester.js             # Model comparison + parity testing
-├── workflow/{8 skills}/     # Eval definitions for permanent skills
-├── capability/{18 skills}/  # Eval definitions for model-dependent skills
+├── workflow/{10 skills}/    # Eval definitions for permanent skills
+├── capability/{16 skills}/  # Eval definitions for model-dependent skills
 └── hybrid/{1 skill}/        # Eval definitions for dual-purpose skills
 ```
 
@@ -126,7 +126,7 @@ Not all skills age the same way. bkit classifies each skill to manage its lifecy
 
 | Classification | Count | Purpose | What Evals Measure |
 |---------------|:-----:|---------|-------------------|
-| **Workflow** | 9 | Process automation (PDCA, pipelines) | Quality regression only—these skills are permanent |
+| **Workflow** | 10 | Process automation (PDCA, pipelines) | Quality regression only—these skills are permanent |
 | **Capability** | 16 | Model ability augmentation (mockups, APIs) | **Parity testing**—can the model match this skill's output without it? |
 | **Hybrid** | 2 | Both process + capability | Both regression and parity |
 
@@ -139,7 +139,7 @@ node evals/ab-tester.js --parity phase-3-mockup --model claude-opus-4-6
 # Compare skill performance between two models
 node evals/ab-tester.js --skill pdca --modelA claude-sonnet-4-6 --modelB claude-opus-4-6
 
-# Run all 27 skill evaluations
+# Run all 28 skill evaluations
 node evals/runner.js --benchmark
 ```
 
@@ -147,7 +147,7 @@ node evals/runner.js --benchmark
 
 | Before (v1.5.9) | After (v1.6.0 with Evals) |
 |-----------------|--------------------------|
-| 27 skills, no quality measurement | 27 skills, each with automated eval definitions |
+| 28 skills, no quality measurement | 28 skills, each with automated eval definitions |
 | No way to know if a skill degraded after model update | Benchmark detects regression across all skills |
 | Manual judgment on skill usefulness | Data-driven deprecation recommendations |
 | Skills accumulate indefinitely | Skill lifecycle: create → eval → deprecate → remove |
@@ -458,8 +458,8 @@ bkit is **primarily designed for software development**. However, some component
 ### Component Reference
 
 - [Development Pipeline](skills/development-pipeline/SKILL.md) - 9-stage pipeline skill
-- [Skills Reference](skills/) - 27 domain skills (Commands deprecated in v1.4.4)
-- [Agents Reference](agents/) - 16 specialized agents (including 5 CTO Team agents)
+- [Skills Reference](skills/) - 28 domain skills (Commands deprecated in v1.4.4)
+- [Agents Reference](agents/) - 21 specialized agents (including 5 CTO Team + 5 PM Team agents)
 
 ### PDCA Documents
 
@@ -562,7 +562,7 @@ The software industry has spent decades refining how humans write code—version
 
 - **Verification over trust.** AI generates plausible code. Plausible is not correct. Every implementation goes through gap analysis against its design document. If the match rate falls below 90%, the system iterates automatically. We do not ship hope.
 
-- **Context over prompts.** A well-structured prompt helps once. A well-structured context system helps every time. bkit's 241 functions, 27 skills, and 16 agents exist to ensure the AI receives the right context at the right moment—not through clever prompting, but through systematic engineering.
+- **Context over prompts.** A well-structured prompt helps once. A well-structured context system helps every time. bkit's 241 functions, 28 skills, and 21 agents exist to ensure the AI receives the right context at the right moment—not through clever prompting, but through systematic engineering.
 
 - **Constraints over features.** We intentionally limit what bkit does. Three project levels, not infinite configuration. A fixed 9-stage pipeline, not a customizable workflow builder. Opinionated defaults, not a framework for frameworks. Constraints eliminate decision fatigue and make the system learnable.
 

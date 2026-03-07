@@ -4,8 +4,8 @@
 
 ## Overview
 
-The evals framework provides automated testing for all 27 bkit skills, organized by classification:
-- **Workflow** (9 skills): Process compliance tests
+The evals framework provides automated testing for all 28 bkit skills, organized by classification:
+- **Workflow** (10 skills): Process compliance tests
 - **Capability** (16 skills): Output quality + model parity tests
 - **Hybrid** (2 skills): Both test types
 
