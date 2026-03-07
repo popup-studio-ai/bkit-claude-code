@@ -182,8 +182,8 @@ try {
     });
     if (teamSuggestion && teamSuggestion.suggest) {
       contextParts.push(
-        `CTO Team Mode recommended for ${teamSuggestion.level} level. ` +
-        `Use \`/pdca team {feature}\` for parallel PDCA with CTO-Led orchestration.`
+        `CTO Agent Team recommended for ${teamSuggestion.level} level. ` +
+        `Use \`/pdca team {feature}\` for parallel PDCA with Agent Teams orchestration.`
       );
       debugLog('UserPrompt', 'Team mode suggested', {
         level: teamSuggestion.level,

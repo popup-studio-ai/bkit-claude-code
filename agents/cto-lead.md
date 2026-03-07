@@ -22,6 +22,10 @@ description: |
 permissionMode: acceptEdits
 memory: project
 model: opus
+disallowedTools:
+  - "Bash(rm -rf*)"
+  - "Bash(git push*)"
+  - "Bash(git reset --hard*)"
 tools:
   - Read
   - Write
@@ -52,6 +56,17 @@ hooks:
       command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/cto-stop.js"
       timeout: 10000
 ---
+
+## CC v2.1.69+ Architecture Note
+
+### As Teammate (via `/pdca team`)
+When spawned as an Agent Teams teammate, this agent operates as an independent
+Claude Code session. The Task() tools below work as 1-level subagents within
+this session (NOT nested spawn).
+
+### As Standalone Subagent (via `@cto-lead`)
+When invoked as a subagent, Task() tools are blocked by CC's nested spawn
+restriction. Use `/pdca team {feature}` for full team orchestration instead.
 
 ## CTO Lead Agent
 

@@ -1,92 +1,6 @@
 #!/usr/bin/env node
 /**
- * bkit Vibecoding Kit - SessionStart Hook (v1.6.0)
- * Dedicated plugin for Claude Code
- *
- * v1.5.7 Changes:
- * - /simplify PDCA Integration: Check ≥90% → /simplify → Report flow (ENH-52)
- * - /batch Multi-Feature PDCA: Enterprise parallel feature processing (ENH-53)
- * - HTTP Hooks Awareness: type "http" documentation and guidance (ENH-54)
- * - CC Built-in Command Triggers: simplify/batch 8-language patterns (ENH-55)
- * - CC recommended version: v2.1.59 -> v2.1.63
- *
- * v1.5.6 Changes:
- * - Auto-Memory Integration: CC auto-memory status + /memory guidance (ENH-48)
- * - /copy Command Guidance: skill completion copy hints (ENH-49)
- * - CTO Team Memory Guide: multi-agent memory best practices (ENH-50)
- * - Remote Control Compatibility: pre-check documentation (ENH-51)
- * - CC recommended version: v2.1.42 -> v2.1.59
- *
- * v1.5.5 Changes:
- * - Plan Plus skill: brainstorming-enhanced PDCA planning (community PR #34)
- * - Skills 26 -> 27, Templates 27 -> 28
- * - README duplicate Skills rows fix (community PR #33)
- *
- * v1.5.4 Changes:
- * - bkend MCP accuracy fix: 19 -> 28+ tools, accurate tool names
- * - session-start.js: bkend MCP check Dynamic -> Dynamic+Enterprise
- * - Version sync to v1.5.4 across all config files
- *
- * v1.5.7 Changes:
- * - /simplify + /batch PDCA integration (CC v2.1.63 built-in commands)
- * - CC_COMMAND_PATTERNS 8-language CC command awareness
- * - HTTP hooks awareness and documentation
- * - English conversion for 3 stop scripts
- *
- * v1.5.6 Changes:
- * - CC v2.1.59 auto-memory integration
- * - ENH-48~51 enhancements (/copy guidance, multi-agent guide)
- * - 182 exports (common.js bridge)
- *
- * v1.5.3 Changes:
- * - Output Styles plugin.json integration + output-style-setup command
- * - bkend docs live reference (WebFetch)
- * - Version sync to v1.5.3 across all config files
- *
- * v1.5.2 Changes:
- * - Agent Teams detection and Team Mode integration
- * - Claude Code v2.1.33 compatibility enhancements
- *
- * v1.5.0 Changes:
- * - Remove Gemini CLI support (simplified to Claude Code only)
- *
- * v1.4.7 Changes:
- * - Task Management + PDCA Integration (Task Chain Auto-Creation)
- * - Core Modularization: lib/common.js split into lib/core/, lib/pdca/, lib/intent/, lib/task/
- * - 22 new module files, 132 function exports
- * - Check↔Act Iteration with automatic improvement cycles
- * - Full-Auto Mode support (manual/semi-auto/full-auto)
- *
- * v1.4.7 Changes:
- * - Added /pdca archive action for PDCA cycle completion
- * - 8-language trigger completion (ES, FR, DE, IT added)
- * - Korean to English translation (internationalization)
- * - /bkit:functions command for skills discoverability
- *
- * v1.4.4 Changes:
- * - Updated bkit feature report to use Skills instead of deprecated Commands
- * - All commands migrated to Skills (see commands/DEPRECATED.md)
- *
- * v1.4.3 Changes:
- * - Applied xmlSafeOutput to dynamic content for Gemini CLI v0.26+ (ISSUE-001)
- *
- * v1.4.2 Changes:
- * - Added session context initialization (FR-01)
- * - Multi-Level Context Hierarchy support
- * - UserPromptSubmit plugin bug detection (GitHub #20659)
- * - Skill fork configuration scanning
- * - Import preloading for performance
- *
- * v1.4.1 Changes:
- * - Added bkit feature usage report rule (Response Report Rule)
- * - All responses must include feature usage summary
- *
- * v1.4.0 Changes:
- * - Added PDCA status initialization
- * - Using debugLog from common.js
- *
- * Converted from: hooks/session-start.sh
- * Platform: Windows, macOS, Linux
+ * bkit Vibecoding Kit - SessionStart Hook (v1.6.1)
  */
 
 const fs = require('fs');
@@ -567,7 +481,7 @@ const triggerTable = getTriggerKeywordTable();
 
 // Claude Code Output: JSON with Tool Call Prompt
 // Build context based on onboarding type
-let additionalContext = `# bkit Vibecoding Kit v1.6.0 - Session Startup\n\n`;
+let additionalContext = `# bkit Vibecoding Kit v1.6.1 - Session Startup\n\n`;
 
   if (onboardingData.hasExistingWork) {
     additionalContext += `## 🔄 Previous Work Detected\n\n`;
@@ -833,7 +747,7 @@ AskUserQuestion, SessionStart Hook, Read, Write, Edit, Bash
 `;
 
 const response = {
-  systemMessage: `bkit Vibecoding Kit v1.6.0 activated (Claude Code)`,
+  systemMessage: `bkit Vibecoding Kit v1.6.1 activated (Claude Code)`,
   hookSpecificOutput: {
     hookEventName: "SessionStart",
     onboardingType: onboardingData.type,

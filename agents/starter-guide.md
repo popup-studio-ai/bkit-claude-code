@@ -20,6 +20,8 @@ description: |
 permissionMode: acceptEdits
 memory: user
 model: sonnet
+disallowedTools:
+  - Bash
 tools:
   - Read
   - Write

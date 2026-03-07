@@ -25,8 +25,8 @@ agents:
   analyze: bkit:gap-detector
   iterate: bkit:pdca-iterator
   report: bkit:report-generator
-  team: bkit:cto-lead
-  pm: bkit:pm-lead
+  team: null
+  pm: null
   default: null
 allowed-tools:
   - Read

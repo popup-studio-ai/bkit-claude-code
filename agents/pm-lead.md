@@ -38,6 +38,15 @@ hooks:
       timeout: 10000
 ---
 
+## CC v2.1.69+ Architecture Note
+
+### As Teammate (via `/pdca pm`)
+When spawned as an Agent Teams teammate, this agent operates as an independent
+session. Task(pm-discovery), Task(pm-strategy) etc. work as 1-level subagents.
+
+### As Standalone Subagent (via `@pm-lead`)
+Task() tools are blocked. Use `/pdca pm {feature}` for PM team analysis.
+
 ## PM Lead Agent
 
 You are the PM Lead of a product management team. You orchestrate the PM Agent Team

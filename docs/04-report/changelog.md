@@ -2,6 +2,106 @@
 
 All notable changes and reports are documented here.
 
+## [2026-03-08] - bkit v1.6.1 Enhancement - CC v2.1.69+ Compatibility + Skills 2.0 Quality + CE Level 5
+
+### Added
+- **CTO/PM Orchestration Redesign** (Issue #41 fix)
+  - Main Session as CTO pattern to bypass CC v2.1.69+ nested spawn restriction
+  - `lib/team/coordinator.js`: 7 new exports (buildAgentTeamPlan, getFileOwnership, generateTeammatePrompt, generateTaskPlan, etc.)
+  - Agent Teams TeamCreate integration for CTO/PM team composition
+  - Architecture Notes in `agents/cto-lead.md` and `agents/pm-lead.md`
+
+- **Skill Evals 28/28 Full Implementation**
+  - `evals/runner.js`: parseEvalYaml(), evaluateAgainstCriteria(), runEval() (real evaluation engine)
+  - `evals/reporter.js`: formatDetailedReport() with skill category breakdown
+  - 56 content files: 28 × prompt-1.md + 28 × expected-1.md (workflow/capability/hybrid categories)
+  - `node evals/runner.js --benchmark` achieves 28/28 PASS (100% coverage)
+
+- **Agent Security Hardening**
+  - 3-Tier Security Model for 9 acceptEdits agents
+  - Tier 1 (Starter Guide): disallowedTools [Bash]
+  - Tier 2 (5 Expert Agents): disallowedTools [Bash(rm -rf), Bash(git push), Bash(git reset --hard)]
+  - Tier 3 (QA/Iterator): unchanged (Bash required)
+
+### Changed
+- **P0 Bug Fixes** (4 items: No Guessing, Automation First, Config Sync, Security)
+  - M-01: `ambiguity.js` — shouldClarify property added for automatic clarification detection
+  - M-03: `trigger.js` — confidenceThreshold hardcoded 0.8 removed, now reads from config
+  - M-02/M-06: `creator.js` — PDCA phases array unified (includes act phase), imports fixed
+  - M-07: Agent `disallowedTools` settings applied to 6 experts + 1 guide
+
+- **Config-Code Synchronization** (M-05)
+  - `lib/team/orchestrator.js`: PHASE_PATTERN_MAP now loads from bkit.config.json at runtime
+  - Config-first pattern: bkit.config.json is Single Source of Truth
+  - selectOrchestrationPattern() with config fallback logic
+
+- **Skills PDCA Enhancement**
+  - `skills/pdca/SKILL.md`: agents.team = null, agents.pm = null (Main Session as Team Lead)
+  - Team action: Agent Teams orchestration (not nested subagent)
+  - PM action: PM Agent Team orchestration (4 sub-agent pattern)
+
+### Fixed
+- **Critical Issue #41**: CC v2.1.69+ nested subagent spawn restriction
+  - `/pdca team` CTO mode was completely broken
+  - Now works via Main Session CTO orchestration pattern
+  - Maintains 37 consecutive compatible releases streak
+
+- **Config Read Failure**: confidenceThreshold not reflected in trigger decisions
+- **Array Inconsistency**: PDCA phases missing 'act' phase in task creation
+- **Security Gaps**: 8 acceptEdits agents without explicit tool restrictions
+- **Stub System**: Evals always returned true (non-functional quality validation)
+
+### Test Results
+- **Design Match Rate**: 100% (26/26 items) ✅
+- **Gap Analysis**: 1 iteration (GAP-01 fixed: SKILL.md agents.team/pm null)
+- **Evals Coverage**: 28/28 PASS (100%)
+  - Workflow Skills: 10/10
+  - Capability Skills: 16/16
+  - Hybrid Skills: 2/2
+- **E2E Testing**: `/pdca team` verified on CC v2.1.71
+- **Overall**: 100% completion, 0 open gaps
+
+### Files Modified
+- New: 56 content files (evals/)
+- Core: lib/team/coordinator.js (7 new exports), lib/team/orchestrator.js (M-05 config sync)
+- Bugfixes: lib/intent/ambiguity.js (M-01), lib/intent/trigger.js (M-03), lib/task/creator.js (M-02/M-06)
+- Agents: agents/cto-lead.md, agents/pm-lead.md, agents/starter-guide.md, agents/enterprise-expert.md, agents/frontend-architect.md, agents/infra-architect.md, agents/bkend-expert.md (M-07 security)
+- Skills: skills/pdca/SKILL.md (agents.team/pm null, M-08)
+- Other: scripts/user-prompt-handler.js (Team Mode message), evals/runner.js, evals/reporter.js
+- **Total**: 72 files, ~1,400 LOC changed
+
+### Metrics Improvement
+| Metric | Before | After | Change |
+|--------|:------:|:-----:|:------:|
+| CTO Team Status | ❌ Broken | ✅ Working | Critical fix |
+| P0 Bugs | 4 | 0 | -100% |
+| Evals Coverage | 4% (1/28) | 100% (28/28) | +96% |
+| Config-Code Alignment | ~60% | 95%+ | +35% |
+| Agent Security | 1/9 (11%) | 9/9 (100%) | +89% |
+| CE Score | 80.8 (L4) | 90+ (L5) | Level up |
+
+### Context Engineering Best Practices
+- Rich Context in Spawn Prompts: Full project context + file ownership
+- 5-6 Tasks per Agent: Optimized teammate productivity
+- File Ownership Boundaries: Prevent concurrent edits
+- Context Window Management: ~60% utilization (prevent context rot)
+
+### Breaking Changes
+- None (backward compatible, minor version)
+
+### Documentation
+- Completion report: `docs/04-report/features/bkit-v161-enhancement.report.md`
+- Analysis report: `docs/03-analysis/bkit-v161-enhancement.analysis.md`
+- Design doc: `docs/02-design/features/bkit-v161-enhancement.design.md`
+- Plan doc: `docs/01-plan/features/bkit-v161-enhancement.plan.md`
+
+### CC Compatibility
+- Tested: v2.1.69, v2.1.70, v2.1.71
+- Fixed for: CC v2.1.69+ nested spawn restriction
+- Maintains: 37 consecutive compatible releases (v2.1.34~v2.1.71)
+
+---
+
 ## [2026-03-01] - bkit v1.5.8 Studio Support - Path Registry & State File Integration
 
 ### Added

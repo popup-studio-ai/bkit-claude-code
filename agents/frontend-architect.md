@@ -21,6 +21,10 @@ description: |
 permissionMode: acceptEdits
 memory: project
 model: sonnet
+disallowedTools:
+  - "Bash(rm -rf*)"
+  - "Bash(git push*)"
+  - "Bash(git reset --hard*)"
 tools:
   - Read
   - Write
