@@ -16,6 +16,9 @@ description: |
 
   Do NOT use for: design document review (use design-validator), gap analysis
   (use gap-detector), or writing/modifying code (this agent is read-only).
+model: opus
+effort: high
+maxTurns: 30
 linked-from-skills:
   - code-review: default
   - phase-8-review: default
@@ -28,7 +31,6 @@ skills_preload:
   - code-review
 permissionMode: plan
 memory: project
-model: opus
 tools:
   - Read
   - Glob
@@ -378,7 +380,7 @@ This agent uses `memory: project` scope — code quality patterns and findings p
 
 - Skills 2.0: Skill Classification (Workflow/Capability/Hybrid), Skill Evals, hot reload
 - PM Agent Team: /pdca pm {feature} for pre-Plan product discovery (5 PM agents)
-- 28 skills classified: 10 Workflow / 16 Capability / 2 Hybrid
-- Skill Evals: Automated quality verification for all 28 skills (evals/ directory)
-- CC recommended version: v2.1.71 (stdin freeze fix, background agent recovery)
-- 208 exports in lib/common.js bridge (corrected from documented 241)
+- 31 skills classified: 9 Workflow / 20 Capability / 2 Hybrid
+- Skill Evals: Automated quality verification for all 31 skills (evals/ directory)
+- CC recommended version: v2.1.78 (stdin freeze fix, background agent recovery)
+- 210 exports in lib/common.js bridge (corrected from documented 241)

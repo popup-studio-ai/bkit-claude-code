@@ -1,6 +1,6 @@
 # Scripts Overview
 
-> 45 Node.js Scripts used by bkit hooks (v1.6.1)
+> 49 Node.js Scripts used by bkit hooks (v1.6.2)
 >
 > **v1.5.0**: Claude Code Exclusive - Gemini CLI support removed, simplified architecture
 > **v1.4.7**: Core Modularization - lib/ split into 4 modules, Task Management Integration
@@ -12,6 +12,7 @@
 > **v1.5.9**: Executive Summary module, AskUserQuestion Preview UX, ENH-74~81, 199 exports
 > **v1.6.0**: Skills 2.0 integration, PM Agent Team
 > **v1.6.1**: CTO Orchestration Redesign, P0 Bug Fixes (4), Config-Code Sync, 3-Tier Agent Security, 208 exports, CC v2.1.71
+> **v1.6.2**: CC v2.1.78 Integration, 210 exports, 49 scripts
 > **v1.4.6**: Sub-agent call stability with `bkit:` prefix
 > **v1.4.5**: `/pdca archive` action, 8-language trigger completion
 > **v1.4.4**: hooks-json-integration, unified handlers (unified-stop.js, unified-bash-pre.js, etc.)
@@ -76,7 +77,7 @@ All scripts are at root level (not in .claude/):
 
 ```
 bkit-claude-code/
-├── lib/                       # Modular Library (v1.6.1, 208 exports)
+├── lib/                       # Modular Library (v1.6.2, 210 exports)
 │   ├── common.js              # Migration Bridge (re-exports all modules)
 │   ├── core/                  # Core utilities (7 files, 40 exports)
 │   │   ├── index.js           # Entry point
@@ -221,7 +222,7 @@ bkit-claude-code/
 
 ## Shared Library: lib/ (v1.5.3)
 
-> **v1.6.1**: 5 module directories with 208 exports total (corrected from documented 241)
+> **v1.6.2**: 5 module directories with 210 exports total
 > **v1.4.7**: Core Modularization - 4 module directories with 132 functions total
 > **v1.4.2**: 6 library modules with 86+ functions total
 > **v1.4.0**: Expanded from 38 to 80+ functions with dual platform support
@@ -235,9 +236,9 @@ bkit-claude-code/
 | `lib/intent/` | 4 | 19 | Language detection, triggers, ambiguity scoring |
 | `lib/task/` | 5 | 26 | Task classification, context, creation, tracking |
 | `lib/team/` | 9 | 40 | Team coordination, strategy, state-writer |
-| `lib/common.js` | 1 | 208 | Migration Bridge (re-exports all modules) |
+| `lib/common.js` | 1 | 210 | Migration Bridge (re-exports all modules) |
 
-**Export summary**: 208 total exports via bridge (core + pdca + intent + task + team + executive-summary + PM team + skills 2.0)
+**Export summary**: 210 total exports via bridge (core + pdca + intent + task + team + executive-summary + PM team + skills 2.0)
 
 ### Import Options
 

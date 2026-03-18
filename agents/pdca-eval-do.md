@@ -5,6 +5,8 @@ description: |
   v1.6.1 baseline vs Customized bkit 비교 분석 수행.
   평가 항목: 구현 속도, 첫 시도 정확도, 피드백 수집, 런타임 스킬 확장.
 model: sonnet
+effort: medium
+maxTurns: 20
 tools:
   - Read
   - Glob

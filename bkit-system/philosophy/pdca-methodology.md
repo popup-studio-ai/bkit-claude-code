@@ -306,14 +306,14 @@ PM Team ensures that PDCA Plan starts with validated product requirements rather
 
 ### /loop + Cron Integration (ENH-100)
 
-CC v2.1.71 `/loop` command enables automated PDCA monitoring:
+CC v2.1.78 `/loop` command enables automated PDCA monitoring:
 - `/loop 5m check deploy` — periodic deployment status monitoring
 - Cron scheduling tool for automated Check phase repetition
 - Integration with PDCA auto-monitoring for continuous quality gates
 
 ### Skill Evals for PDCA Quality
 
-28 Skill Evals definitions enable quality measurement across PDCA phases:
+31 Skill Evals definitions enable quality measurement across PDCA phases:
 - Plan phase evals: validate plan completeness and structure
 - Check phase evals: verify gap analysis accuracy
 - Report phase evals: ensure report comprehensiveness

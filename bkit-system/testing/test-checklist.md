@@ -411,8 +411,8 @@ echo '{"tool_input":{"file_path":"src/features/auth/login.ts","content":"test"}}
 
 | ID | Test | Expected Result |
 |----|------|-----------------|
-| V16-T01 | Total exports count = 208 | `Object.keys(require('./lib/common')).length === 208` |
-| V16-T02 | Total agents = 21 | 16 core + 5 PM Team agents in agents/ directory |
-| V16-T03 | Total skills = 28 | 22 core + 5 bkend + 1 pm-discovery in skills/ directory |
-| V16-T04 | CC v2.1.71 compatibility | All 10 hook events fire correctly |
+| V16-T01 | Total exports count = 210 | `Object.keys(require('./lib/common')).length === 210` |
+| V16-T02 | Total agents = 29 | 16 core + 5 PM Team + 8 new agents in agents/ directory |
+| V16-T03 | Total skills = 31 | 22 core + 5 bkend + 1 pm-discovery + 3 new in skills/ directory |
+| V16-T04 | CC v2.1.78 compatibility | All 12 hook events fire correctly |
 | V16-T05 | SessionStart announces PM Team | PM Team availability in session message |

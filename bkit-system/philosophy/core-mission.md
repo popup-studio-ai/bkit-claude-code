@@ -117,7 +117,7 @@ After:  /learn-claude-code → Systematic training
 
 ---
 
-## Current Implementation (v1.6.1)
+## Current Implementation (v1.6.2)
 
 > **v1.5.3**: CTO-Led Agent Teams + Team Visibility + Claude Code Exclusive
 > **v1.5.4**: bkend MCP Accuracy Fix - embodying "No Guessing" philosophy through exact MCP tool names (19→28+)
@@ -128,17 +128,18 @@ After:  /learn-claude-code → Systematic training
 > **v1.5.9**: Executive Summary module, AskUserQuestion Preview UX, ENH-74~81, 199 exports
 > **v1.6.0**: Skills 2.0 - Skill Classification (9W/18C/1H), PM Agent Team (5 agents), Skill Evals (28 defs)
 > **v1.6.1**: CTO Orchestration Redesign, P0 Bug Fixes (4), Config-Code Sync, 3-Tier Agent Security, 1073 TC, CE-5 (88/100), 208 exports
+> **v1.6.2**: CC v2.1.78 Integration - 14 ENH(117~130), Hook events 10->12, Agent frontmatter effort/maxTurns, ${CLAUDE_PLUGIN_DATA} backup, CE-6, 210 exports
 
 ### Component Counts
 
 | Component | Count | Location |
 |-----------|-------|----------|
-| Skills | 28 (9 Workflow / 18 Capability / 1 Hybrid) | `skills/*/SKILL.md` |
-| Agents | 21 (16 core + 5 PM Team) | `agents/*.md` |
+| Skills | 31 (9 Workflow / 20 Capability / 2 Hybrid) | `skills/*/SKILL.md` |
+| Agents | 29 (8 opus + 19 sonnet + 2 haiku) | `agents/*.md` |
 | Commands | DEPRECATED | Migrated to Skills |
-| Scripts | 45 | `scripts/*.js` |
+| Scripts | 49 | `scripts/*.js` |
 | Templates | 28 | `templates/*.md` |
-| lib/ | 5 modules (208 functions) | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/`, `lib/team/` |
+| lib/ | 5 modules (210 functions) | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/`, `lib/team/` |
 | Evals | 28 definitions (56 content files) | Skill quality measurement |
 | Tests | 39 files (1073 TC) | 8 perspectives, 99.6% pass |
 
@@ -183,7 +184,7 @@ CTO Lead (opus) orchestrates specialized teams for PDCA execution:
 
 ### Agent Memory
 
-Automatic cross-session context persistence for all 21 agents.
+Automatic cross-session context persistence for all 29 agents.
 Scopes: `project` (14 agents), `user` (2 agents: starter-guide, pipeline-guide)
 
 ---

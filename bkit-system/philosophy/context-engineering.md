@@ -84,7 +84,7 @@ bkit v1.5.4 builds on the original 8 functional requirements (FR-01~FR-08) with 
 │  │  L2: Skill YAML ─→ PreToolUse, PostToolUse, Stop                        │ │
 │  │  L3: Agent YAML ─→ PreToolUse, PostToolUse                              │ │
 │  │  L4: Triggers   ─→ 8-language keyword detection                         │ │
-│  │  L5: Scripts    ─→ 47 Node.js modules                                   │ │
+│  │  L5: Scripts    ─→ 49 Node.js modules                                   │ │
 │  │  L6: Team Orch. ─→ CTO-led phase routing (leader/council/swarm/watch)   │ │
 │  └─────────────────────────────────────────────────────────────────────────┘ │
 │                                  │                                           │
@@ -116,7 +116,7 @@ bkit v1.5.4 builds on the original 8 functional requirements (FR-01~FR-08) with 
 └──────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Library Modules (15 modules across 5 subdirectories, 208 exports)
+### Library Modules (15 modules across 5 subdirectories, 210 exports)
 
 **Modular subdirectories** (v1.5.4 — refactored from monolithic common.js):
 
@@ -127,7 +127,7 @@ bkit v1.5.4 builds on the original 8 functional requirements (FR-01~FR-08) with 
 | `lib/intent/` | 4 | 19 | 8-language detection, trigger matching, ambiguity analysis |
 | `lib/task/` | 5 | 26 | Task classification, context, creation, tracking |
 | `lib/team/` | 9 | 40 | Coordinator, strategy, CTO logic, state-writer, communication |
-| **Subtotal** | **31+** | **208** | |
+| **Subtotal** | **31+** | **210** | |
 
 **Top-level modules** (FR implementations, unchanged):
 
@@ -139,13 +139,13 @@ bkit v1.5.4 builds on the original 8 functional requirements (FR-01~FR-08) with 
 | `lib/permission-manager.js` | FR-05 | Permission hierarchy | `checkPermission()`, `getToolPermission()` |
 | `lib/memory-store.js` | FR-08 | Session persistence | `setMemory()`, `getMemory()`, `deleteMemory()` |
 | `lib/skill-orchestrator.js` | — | Skill routing | `orchestrateSkillPre()`, `getAgentForAction()` |
-| `lib/common.js` | All | **Bridge layer** | Re-exports all 208 functions for backward compatibility |
+| `lib/common.js` | All | **Bridge layer** | Re-exports all 210 functions for backward compatibility |
 
 ---
 
 ## bkit's Context Engineering Structure
 
-### 1. Domain Knowledge Layer (28 Skills)
+### 1. Domain Knowledge Layer (31 Skills)
 
 Skills provide **structured domain knowledge**.
 
@@ -179,7 +179,7 @@ Skills provide **structured domain knowledge**.
 | **Checklists** | Clear completion criteria | Enables automation |
 | **Code Examples** | Ready-to-apply references | Consistent implementation |
 
-### 2. Behavioral Rules Layer (21 Agents)
+### 2. Behavioral Rules Layer (29 Agents)
 
 Agents define **role-based behavioral rules**.
 
@@ -219,7 +219,7 @@ Agents define **role-based behavioral rules**.
 
 ### 3. State Management Layer (5-Module Architecture)
 
-A **modular state management system** composed of 208 exports across 5 subdirectories, with `lib/common.js` as a backward-compatible bridge layer.
+A **modular state management system** composed of 210 exports across 5 subdirectories, with `lib/common.js` as a backward-compatible bridge layer.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
@@ -243,7 +243,7 @@ A **modular state management system** composed of 208 exports across 5 subdirect
 │  │  5 files, 26 exp │  │  9 files, 40 exp │  │  (Bridge Layer)  │  │
 │  │                  │  │                  │  │                  │  │
 │  │  • Classification│  │  • Coordinator   │  │  Re-exports all  │  │
-│  │  • Context       │  │  • Strategy      │  │  208 functions   │  │
+│  │  • Context       │  │  • Strategy      │  │  210 functions   │  │
 │  │  • Creator       │  │  • CTO Logic     │  │  from 5 modules  │  │
 │  │  • Tracker       │  │  • State-Writer  │  │  for backward    │  │
 │  │                  │  │  • Communication │  │  compatibility   │  │
@@ -254,18 +254,190 @@ A **modular state management system** composed of 208 exports across 5 subdirect
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-> **Migration Note**: As of v1.5.4, `lib/common.js` is a pure bridge layer. All 208 functions originate in subdirectory modules. Existing scripts that `require('./lib/common.js')` continue to work without changes.
+> **Migration Note**: As of v1.5.4, `lib/common.js` is a pure bridge layer. All 210 functions originate in subdirectory modules. Existing scripts that `require('./lib/common.js')` continue to work without changes.
 
 ---
 
-## 6-Layer Hook System (10 Events)
+## 1M Context Window Default (v1.6.2)
 
-bkit's context injection occurs at **6 layers** with **10 hook events**.
+### CC v2.1.75 Change
+- Opus 4.6: 1M context window enabled by default for Max/Team/Enterprise plans
+- Previously required extra usage billing
+- Now included in plan (no additional cost)
+
+### bkit Impact
+- 8 opus agents (cto-lead, code-analyzer, design-validator, enterprise-expert, gap-detector, infra-architect, pm-lead, security-architect) benefit from 1M context
+- Long-running CTO Team sessions can maintain full PDCA cycle context without loss
+- Large codebase analysis can load entire file sets simultaneously
+
+### Context Engineering Level 6 Criteria
+- Level 5: 200K context utilization (v1.6.1)
+- Level 6: 1M context default + PostCompact auto-recovery + PLUGIN_DATA persistence (v1.6.2)
+
+---
+
+## Output Token 128K Upper Limit (v1.6.2)
+
+### CC v2.1.77 Change
+- Opus 4.6: default 64K, upper limit 128K output tokens
+- Sonnet 4.6: upper limit 128K output tokens
+
+### bkit Usage
+- report-generator agent: large completion reports benefit from 128K limit
+- code-analyzer agent: comprehensive analysis output without truncation
+- gap-detector agent: detailed gap analysis reports
+
+---
+
+## autoMemoryDirectory Setting (v1.6.2)
+
+### CC v2.1.74 Change
+- `autoMemoryDirectory` setting allows customizing auto-memory storage path
+- Default: `~/.claude/projects/{path}/memory/`
+
+### bkit Memory Systems (No Collision)
+| System | Path | Format | Collision |
+|--------|------|--------|-----------|
+| CC auto-memory | ~/.claude/projects/{path}/memory/MEMORY.md | Markdown | None |
+| bkit memory-store | .bkit/state/memory.json | JSON | None |
+| bkit agent-memory | .claude/agent-memory/{agent}/MEMORY.md | Markdown | None |
+| PLUGIN_DATA backup | ${CLAUDE_PLUGIN_DATA}/backup/ | JSON | None |
+
+### User Guide
+Users can customize auto-memory path in `.claude/settings.json`:
+```json
+{
+  "autoMemoryDirectory": "/path/to/custom/memory"
+}
+```
+
+---
+
+## ${CLAUDE_PLUGIN_DATA} Persistent Storage (v1.6.2)
+
+### CC v2.1.78 Change
+- `${CLAUDE_PLUGIN_DATA}` environment variable points to persistent storage
+- Survives plugin updates and reinstallation
+- Deleted only on explicit `plugin uninstall` with confirmation
+
+### bkit Usage (ENH-119)
+- Automatic backup of pdca-status.json and memory.json on every save
+- Automatic restore on SessionStart when primary files are missing
+- Version history tracking for backup audit trail
+
+### Data Structure
+```
+${CLAUDE_PLUGIN_DATA}/
+  backup/
+    pdca-status.backup.json    # Mirror of .bkit/state/pdca-status.json
+    memory.backup.json         # Mirror of .bkit/state/memory.json
+    version-history.json       # Backup timestamp audit trail
+```
+
+---
+
+## modelOverrides (CC v2.1.73+)
+
+For Bedrock/Vertex/Microsoft Foundry users, `modelOverrides` maps model picker items to custom provider model IDs:
+
+```json
+// .claude/settings.json
+{
+  "modelOverrides": {
+    "opus": "arn:aws:bedrock:us-west-2:123456:inference-profile/opus-custom",
+    "sonnet": "custom-sonnet-endpoint"
+  }
+}
+```
+
+bkit's 29 agents use shorthand model names (opus/sonnet/haiku) which are automatically resolved through modelOverrides.
+
+---
+
+## worktree.sparsePaths (CC v2.1.76+)
+
+For large monorepos, `worktree.sparsePaths` enables sparse-checkout when using `claude --worktree`:
+
+```json
+// .claude/settings.json
+{
+  "worktree": {
+    "sparsePaths": ["packages/my-service/", "libs/shared/"]
+  }
+}
+```
+
+Useful for CTO Team worktree isolation in Enterprise-level projects.
+
+---
+
+## allowRead Sandbox (CC v2.1.77+)
+
+Fine-grained filesystem read control within sandbox:
+
+```json
+// .claude/settings.json
+{
+  "sandbox": {
+    "filesystem": {
+      "denyRead": ["/etc/", "/var/"],
+      "allowRead": ["/etc/hosts"]
+    }
+  }
+}
+```
+
+---
+
+## Session Name (CC v2.1.76+)
+
+The `-n`/`--name` CLI flag sets a display name for sessions:
+
+```bash
+claude -n "feature-auth-v2" --resume
+```
+
+Useful for CI/CD automation and CTO Team session identification.
+
+---
+
+## Hook Source Display (CC v2.1.75+)
+
+Hook permission prompts now show the source (settings/plugin/skill) of each hook. This helps users understand which component registered the hook and makes debugging easier.
+
+---
+
+## tmux Notification Passthrough (CC v2.1.78+)
+
+Claude Code now properly passes notifications through tmux sessions. CTO Team users running in tmux will receive completion notifications without configuration changes.
+
+---
+
+## /effort Command (CC v2.1.76+)
+
+The `/effort` slash command allows adjusting model effort level during a session:
+
+```
+/effort high    # Deep thinking (opus default in bkit)
+/effort medium  # Balanced (sonnet/haiku default)
+/effort low     # Fast response
+```
+
+bkit sets effort levels in agent frontmatter (ENH-120): opus=high, sonnet=medium, haiku=low.
+
+For advanced use, typing "ultrathink" in a prompt triggers maximum reasoning depth.
+
+---
+
+## 6-Layer Hook System (12 Events)
+
+bkit's context injection occurs at **6 layers** with **12 hook events** (v1.6.2).
 
 ```
 Layer 1: hooks.json (Global)
-         └── SessionStart, UserPromptSubmit, PreCompact
+         └── SessionStart, UserPromptSubmit, PreCompact, PostCompact
          └── TaskCompleted, SubagentStart, SubagentStop, TeammateIdle
+         └── StopFailure
 
 Layer 2: Skill Frontmatter
          └── hooks: { PreToolUse, PostToolUse, Stop }
@@ -276,7 +448,7 @@ Layer 3: Agent Frontmatter
 Layer 4: Description Triggers
          └── "Triggers:" keyword matching (8 languages)
 
-Layer 5: Scripts (47 modules)
+Layer 5: Scripts (49 modules)
          └── Actual Node.js logic execution
 
 Layer 6: Team Orchestration (v1.5.3+)
@@ -284,7 +456,7 @@ Layer 6: Team Orchestration (v1.5.3+)
          └── Patterns: leader | council | swarm | watchdog
 ```
 
-**Context Injection by Hook Event** (10 events):
+**Context Injection by Hook Event** (12 events, v1.6.2):
 
 | Event | Timing | Injection Type |
 |-------|--------|----------------|
@@ -293,7 +465,9 @@ Layer 6: Team Orchestration (v1.5.3+)
 | **PreToolUse** | Before tool execution | Validation checklist, convention hints |
 | **PostToolUse** | After tool execution | Next step guide, analysis suggestion |
 | **Stop** | Agent termination | State transition, user choice prompt |
+| **StopFailure** | API error termination | Error classification, recovery guidance (v1.6.2) |
 | **PreCompact** | Before compaction | PDCA state snapshot preservation |
+| **PostCompact** | After compaction | PDCA state integrity verification (v1.6.2) |
 | **TaskCompleted** | Task completion | Auto-advance to next PDCA phase |
 | **SubagentStart** | Subagent startup | Agent state recording, team registration |
 | **SubagentStop** | Subagent shutdown | Agent state cleanup, result collection |
@@ -400,11 +574,11 @@ Reports bkit feature usage status at the end of every response.
 
 | Component | Location | Count |
 |-----------|----------|:-----:|
-| Skills | `skills/*/SKILL.md` | 28 |
-| Agents | `agents/*.md` | 21 |
-| Scripts | `scripts/*.js` | 47 |
+| Skills | `skills/*/SKILL.md` | 31 |
+| Agents | `agents/*.md` | 29 |
+| Scripts | `scripts/*.js` | 49 |
 | Templates | `templates/*.md` + `pipeline/` + `shared/` | 13 + subdirs |
-| lib/ modules | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/`, `lib/team/` | 5 dirs, 208 exports |
+| lib/ modules | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/`, `lib/team/` | 5 dirs, 210 exports |
 | lib/ top-level | `context-hierarchy`, `import-resolver`, `context-fork`, `permission-manager`, `memory-store`, `skill-orchestrator`, `common` (bridge) | 7 modules |
 | Output Styles | `output-styles/*.md` | 4 |
 | Context File | `CLAUDE.md` | 1 |
@@ -943,22 +1117,22 @@ active → candidate (parity data) → deprecated (v1.6.x) → removed (v1.7.0+)
 | CC Feature | bkit v1.5.9 | bkit v1.6.0 | Migration |
 |---|:---:|:---:|---|
 | context:fork (native) | FR-03 custom (228 lines) | Native frontmatter | Deprecated, fallback retained |
-| Frontmatter hooks | N/A (hooks.json only) | 21 agents + 10 skills | Gradual migration |
+| Frontmatter hooks | N/A (hooks.json only) | 29 agents + 12 skills | Gradual migration |
 | Skill hot reload | Supported (passive) | Documented + guided | ENH-87 |
-| / invoke | Supported (28 skills) | Documented | ENH-96 |
+| / invoke | Supported (31 skills) | Documented | ENH-96 |
 | Wildcard permissions | Not documented | Guided in bkit-rules | ENH-95 |
 | Skill Creator | N/A | Integrated workflow | ENH-97 |
 | Skill Evals | N/A | 28 evals + A/B testing | ENH-88, ENH-89 |
-| Skill Classification | N/A | 28 skills classified | ENH-90 |
+| Skill Classification | N/A | 31 skills classified | ENH-90 |
 | /loop + Cron | N/A | PDCA auto-monitoring | ENH-100 |
 
 ### CC Version Compatibility
 
 ```
-v2.1.34~v2.1.71: 37 consecutive compatible releases
-Breaking Changes: 0 (across all 37 releases)
+v2.1.34~v2.1.78: 44 consecutive compatible releases
+Breaking Changes: 0 (across all 44 releases)
 CC 2.1.0 (Skills 2.0): 100% backward compatible (additive features)
-Recommended version: v2.1.71 (stdin freeze fix, background agent recovery)
+Recommended version: v2.1.78
 ```
 
 ### PM Agent Team (ENH-102 derived)

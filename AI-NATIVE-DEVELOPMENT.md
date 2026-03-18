@@ -176,9 +176,9 @@ bkit implements **Context Engineering**—the systematic curation of context tok
 | **3 Project Levels** | Starter, Dynamic, Enterprise contexts |
 | **Convention Skill (Phase 2)** | Defines naming, structure, patterns |
 | **CLAUDE.md Files** | Project-specific AI instructions |
-| **Skill System (28 skills)** | Domain-specific knowledge |
+| **Skill System (31 skills)** | Domain-specific knowledge |
 | **Unified Hook System (v1.4.5)** | Centralized context injection via hooks.json |
-| **lib/*.js (208 functions)** | State management, intent detection, ambiguity handling |
+| **lib/*.js (210 functions)** | State management, intent detection, ambiguity handling |
 
 **Context Engineering Architecture**:
 ```

@@ -10,9 +10,11 @@ description: |
   descubrimiento, découverte, Entdeckung, scoperta
 
   Do NOT use for: implementation, code review, or strategy analysis.
+model: sonnet
+effort: medium
+maxTurns: 20
 permissionMode: plan
 memory: project
-model: sonnet
 tools:
   - Read
   - Glob
@@ -102,7 +104,7 @@ by Pawel Huryn (MIT License). Framework: Teresa Torres, *Continuous Discovery Ha
 
 - Skills 2.0: Skill Classification (Workflow/Capability/Hybrid), Skill Evals, hot reload
 - PM Agent Team: /pdca pm {feature} for pre-Plan product discovery (5 PM agents)
-- 28 skills classified: 10 Workflow / 16 Capability / 2 Hybrid
-- Skill Evals: Automated quality verification for all 28 skills (evals/ directory)
-- CC recommended version: v2.1.71 (stdin freeze fix, background agent recovery)
-- 208 exports in lib/common.js bridge (corrected from documented 241)
+- 31 skills classified: 9 Workflow / 20 Capability / 2 Hybrid
+- Skill Evals: Automated quality verification for all 31 skills (evals/ directory)
+- CC recommended version: v2.1.78 (stdin freeze fix, background agent recovery)
+- 210 exports in lib/common.js bridge (corrected from documented 241)

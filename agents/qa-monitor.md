@@ -16,6 +16,9 @@ description: |
 
   Do NOT use for: unit testing with test scripts, frontend-only testing without Docker,
   or design document validation.
+model: haiku
+effort: low
+maxTurns: 15
 imports:
   - ${PLUGIN_ROOT}/templates/shared/error-handling-patterns.md
 permissionMode: acceptEdits
@@ -25,7 +28,6 @@ hooks:
     - type: command
       command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/qa-stop.js"
       timeout: 10000
-model: haiku
 tools:
   - Bash
   - Read
@@ -347,7 +349,7 @@ This agent uses `memory: project` scope — QA findings and issue patterns persi
 
 - Skills 2.0: Skill Classification (Workflow/Capability/Hybrid), Skill Evals, hot reload
 - PM Agent Team: /pdca pm {feature} for pre-Plan product discovery (5 PM agents)
-- 28 skills classified: 10 Workflow / 16 Capability / 2 Hybrid
-- Skill Evals: Automated quality verification for all 28 skills (evals/ directory)
-- CC recommended version: v2.1.71 (stdin freeze fix, background agent recovery)
-- 208 exports in lib/common.js bridge (corrected from documented 241)
+- 31 skills classified: 9 Workflow / 20 Capability / 2 Hybrid
+- Skill Evals: Automated quality verification for all 31 skills (evals/ directory)
+- CC recommended version: v2.1.78 (stdin freeze fix, background agent recovery)
+- 210 exports in lib/common.js bridge (corrected from documented 241)

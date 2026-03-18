@@ -2,6 +2,7 @@
 
 > Hook events triggered during Claude Code operations
 >
+> **v1.6.2**: PostCompact + StopFailure hooks added (10->12 events), hook source display (CC v2.1.75+)
 > **v1.5.0**: Claude Code Exclusive - Gemini CLI support removed
 > **v1.4.7**: Task Management Integration - triggerNextPdcaAction, Task Chain Auto-Creation
 > **v1.4.6**: Sub-agent call stability with `bkit:` prefix
@@ -43,7 +44,7 @@ Hooks are the core of bkit's **context injection system**, organized into 5 laye
 │  Layer 4: Description Triggers                                  │
 │           └── "Triggers:" keyword matching (8 languages)        │
 │                                                                  │
-│  Layer 5: Scripts (45 modules)                                  │
+│  Layer 5: Scripts (49 modules)                                  │
 │           └── Actual Node.js logic execution                    │
 │                                                                  │
 └─────────────────────────────────────────────────────────────────┘
@@ -60,7 +61,7 @@ Hooks are the core of bkit's **context injection system**, organized into 5 laye
 | **PreCompact** | Before context compaction (v1.4.2) | PDCA state snapshot, context preservation |
 | **Stop** | Agent termination | State transition, user choice prompt |
 
-## Hook Events (v1.6.1 - Claude Code Exclusive)
+## Hook Events (v1.6.2 - Claude Code Exclusive)
 
 | Hook Event | Description | Added |
 |------------|-------------|:-----:|
@@ -74,6 +75,8 @@ Hooks are the core of bkit's **context injection system**, organized into 5 laye
 | `SubagentStop` | Subagent completed | v1.5.3 |
 | `TaskCompleted` | Task completion | v1.5.1 |
 | `TeammateIdle` | Teammate idle detection | v1.5.1 |
+| `PostCompact` | After context compaction | v1.6.2 |
+| `StopFailure` | Agent failure handling | v1.6.2 |
 
 ## Hook Architecture (v1.4.2)
 
@@ -472,11 +475,11 @@ PM Team agents (5) use the existing hook infrastructure:
 
 ### Skills 2.0 Compatibility
 
-bkit v1.6.1 continues using `command` type hooks exclusively (10 hook events).
+bkit v1.6.2 continues using `command` type hooks exclusively (12 hook events).
 CC 2.1.0 adds `type: "http"`, `type: "prompt"`, and `type: "agent"` hook types — bkit may adopt these in future versions.
 
-### CC v2.1.71 Hook Improvements
+### CC v2.1.78 Hook Improvements
 
 - Fixed stdin freeze in long sessions (direct benefit for CTO Team + PM Team)
 - Background agent output recovery (ensures PM Team agents return results to pm-lead)
-- CC official hook events total: 18 (bkit uses 10/18 = 56%)
+- CC official hook events total: 22 (bkit uses 12/22 = 55%)

@@ -5,6 +5,8 @@ description: |
   v1.6.1 baseline vs Customized bkit 비교 분석 수행.
   평가 항목: 자기 개선 루프 완성도, 학습 보존, 팀 공유.
 model: sonnet
+effort: medium
+maxTurns: 20
 tools:
   - Read
   - Glob

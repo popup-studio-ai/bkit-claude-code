@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * bkit Vibecoding Kit - SessionStart Hook (v1.6.1)
+ * bkit Vibecoding Kit - SessionStart Hook (v1.6.2)
  */
 
 const fs = require('fs');
@@ -108,6 +108,19 @@ try {
   }
 } catch (e) {
   debugLog('SessionStart', 'Path migration skipped', { error: e.message });
+}
+
+// v1.6.2: Restore from ${CLAUDE_PLUGIN_DATA} if primary state files missing (ENH-119)
+try {
+  const { restoreFromPluginData } = require('../lib/core/paths');
+  const restoreResult = restoreFromPluginData();
+  if (restoreResult.restored.length > 0) {
+    debugLog('SessionStart', 'Restored from PLUGIN_DATA backup', {
+      restored: restoreResult.restored
+    });
+  }
+} catch (e) {
+  debugLog('SessionStart', 'PLUGIN_DATA restore skipped', { error: e.message });
 }
 
 // Initialize PDCA status file if not exists
@@ -481,7 +494,7 @@ const triggerTable = getTriggerKeywordTable();
 
 // Claude Code Output: JSON with Tool Call Prompt
 // Build context based on onboarding type
-let additionalContext = `# bkit Vibecoding Kit v1.6.1 - Session Startup\n\n`;
+let additionalContext = `# bkit Vibecoding Kit v1.6.2 - Session Startup\n\n`;
 
   if (onboardingData.hasExistingWork) {
     additionalContext += `## 🔄 Previous Work Detected\n\n`;
@@ -646,6 +659,17 @@ let additionalContext = `# bkit Vibecoding Kit v1.6.1 - Session Startup\n\n`;
   additionalContext += `- 37 consecutive CC compatible releases (v2.1.34~v2.1.71)\n`;
   additionalContext += `\n`;
 
+  // v1.6.2: CC v2.1.73~v2.1.78 Integration (ENH-117~130)
+  additionalContext += `## v1.6.2 Enhancements (CC v2.1.78 Integration)\n`;
+  additionalContext += `- CC recommended version: v2.1.78 (PLUGIN_DATA, plugin agent frontmatter, StopFailure hook)\n`;
+  additionalContext += `- 1M context window default for Opus 4.6 (Max/Team/Enterprise plans, CC v2.1.75+)\n`;
+  additionalContext += `- Agent frontmatter: effort/maxTurns native support (CC v2.1.78+)\n`;
+  additionalContext += `- \${CLAUDE_PLUGIN_DATA} persistent backup for state files (ENH-119)\n`;
+  additionalContext += `- Hook events: 12 in hooks.json (PostCompact, StopFailure added)\n`;
+  additionalContext += `- Output token: Opus 64K default, 128K upper limit (CC v2.1.77+)\n`;
+  additionalContext += `- 44 consecutive CC compatible releases (v2.1.34~v2.1.78)\n`;
+  additionalContext += `\n`;
+
   // v1.5.7: Enhancements awareness
   additionalContext += `## v1.5.7 Enhancements\n`;
   additionalContext += `- CC v2.1.63 HTTP hooks support: \`type: "http"\` in hooks config\n`;
@@ -747,7 +771,7 @@ AskUserQuestion, SessionStart Hook, Read, Write, Edit, Bash
 `;
 
 const response = {
-  systemMessage: `bkit Vibecoding Kit v1.6.1 activated (Claude Code)`,
+  systemMessage: `bkit Vibecoding Kit v1.6.2 activated (Claude Code)`,
   hookSpecificOutput: {
     hookEventName: "SessionStart",
     onboardingType: onboardingData.type,

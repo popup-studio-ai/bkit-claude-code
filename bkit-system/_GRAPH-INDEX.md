@@ -33,6 +33,16 @@
 > **v1.6.0 Skills 2.0**: Skill Classification (9W/18C/1H), PM Agent Team (5 agents), Skill Evals (28 defs), Skill Creator + A/B Testing
 >
 > **v1.6.1 Quality Hardening**: CTO Orchestration Redesign, P0 Bug Fixes (4), Config-Code Sync, 3-Tier Agent Security, 1073 TC (99.6%), CE-5 (88/100), 208 exports, CC v2.1.71
+>
+> **v1.6.2 CC v2.1.78 Integration**: 14 ENH(117~130), Hook events 10→12, 29 agents, 31 skills, 49 scripts, 210 exports, 1186 TC (99.7%), CC v2.1.78
+
+### v1.6.2 (2026-03-18) - CC v2.1.78 Integration
+- CC v2.1.78 Integration: 14 ENH(117~130), 44 consecutive compatible releases
+- Hook events 10→12 (PostCompact, StopFailure added)
+- 29 agents (8 opus + 19 sonnet + 2 haiku)
+- 31 skills (9 Workflow / 20 Capability / 2 Hybrid)
+- 49 scripts, 210 exports
+- 1186 TC, 99.7% pass rate
 
 ### v1.6.1 (2026-03-08) - CTO Orchestration Redesign + Quality Hardening
 - CTO/PM Orchestration Redesign: Main Session as CTO pattern (CC v2.1.69+ compatibility, Issue #41 fix)
@@ -42,16 +52,16 @@
 - Skill Evals 28/28: Full implementation with real evaluation engine (56 content files)
 - Comprehensive Test Suite: 1073 TC, 99.6% pass rate, 8 perspectives
 - CE Level Assessment: CE-5 Master (88/100), 252 components inventoried
-- 208 exports (common.js bridge, corrected from documented 241)
+- 210 exports (common.js bridge)
 - 72 files, ~1,400 LOC changed
 
 ### v1.6.0 (2026-03-07) - Skills 2.0 + PM Agent Team
 - Skills 2.0 integration: Skill Classification (9 Workflow / 18 Capability / 1 Hybrid), Skill Evals (28 definitions), Skill Creator + A/B Testing
 - PM Agent Team: 5 new agents (pm-lead, pm-discovery, pm-strategy, pm-research, pm-prd) for pre-Plan product discovery
 - pm-discovery skill added (28 total skills)
-- 21 agents (16 core + 5 PM Team)
-- 208 exports (common.js bridge)
-- CC recommended version: v2.1.71
+- 29 agents (8 opus + 19 sonnet + 2 haiku)
+- 210 exports (common.js bridge)
+- CC recommended version: v2.1.78
 
 ### v1.5.7 (2026-02-28) - /simplify + /batch PDCA Integration
 - CC v2.1.63 /simplify and /batch commands integrated into PDCA Check→Report flow
@@ -105,8 +115,8 @@ bkit is a practical implementation of **Context Engineering**:
 ┌─────────────────────────────────────────────────────────────────┐
 │              bkit Context Engineering Components                 │
 ├─────────────────────────────────────────────────────────────────┤
-│  Domain Knowledge (28 Skills)  → Structured domain knowledge     │
-│  Behavioral Rules (21 Agents)  → Role-based behavioral rules     │
+│  Domain Knowledge (31 Skills)  → Structured domain knowledge     │
+│  Behavioral Rules (29 Agents)  → Role-based behavioral rules     │
 │  State Management (lib/common) → State management 76+ functions  │
 │  5-Layer Hook System           → Context injection timing ctrl   │
 │  Dynamic Injection             → Conditional context selection   │
@@ -121,7 +131,7 @@ Core design principles and methodology:
 - [[philosophy/ai-native-principles|ai-native-principles]] - AI-Native development & 3 core competencies
 - [[philosophy/pdca-methodology|pdca-methodology]] - PDCA cycle & 9-stage pipeline relationship
 
-## Skills (28)
+## Skills (31)
 
 ### PDCA Skills (2)
 - [[../skills/pdca/SKILL|pdca]] - Unified PDCA cycle management (8 actions) [Workflow]
@@ -206,7 +216,7 @@ The following skills were consolidated:
 - [[../lib/team/hooks|team hooks]] - TaskCompleted and TeammateIdle handlers
 
 ### Agent Memory
-- All 21 agents configured with `memory:` frontmatter
+- All 29 agents configured with `memory:` frontmatter
 - 9 agents: `project` scope, 2 agents: `user` scope
 - Automatic cross-session context persistence
 
@@ -239,7 +249,7 @@ The following skills were consolidated:
 - `/claude-code-learning` - Learning curriculum
 - `/code-review` - Code review and quality analysis
 
-## Hooks (10 events)
+## Hooks (12 events)
 
 ### Global Hooks (hooks/hooks.json)
 - [[components/hooks/_hooks-overview|SessionStart]] - Plugin initialization with AskUserQuestion guidance
@@ -248,7 +258,7 @@ The following skills were consolidated:
 - [[components/hooks/_hooks-overview|PreToolUse]] - Before Write/Edit operations (defined in SKILL.md)
 - [[components/hooks/_hooks-overview|PostToolUse]] - After Write operations (defined in SKILL.md)
 
-## Scripts (45)
+## Scripts (49)
 
 > **Note**: All scripts converted to Node.js (.js) in v1.3.1 for cross-platform compatibility
 >
@@ -293,7 +303,7 @@ The following skills were consolidated:
 ## Infrastructure
 
 ### Shared Library
-- `lib/common.js` - Shared utility functions (v1.6.1, **208 exports** via bridge)
+- `lib/common.js` - Shared utility functions (v1.6.2, **210 exports** via bridge)
 
 #### Platform Detection (v1.5.0 - Claude Code Exclusive)
   - `isClaudeCode()` - Check if running in Claude Code
@@ -415,10 +425,10 @@ bkit supports languages and frameworks organized by tier:
 > **v1.5.0**: bkit is now Claude Code exclusive. Gemini CLI support was removed for simplified architecture.
 
 **Components**:
-- `skills/` - 28 skills
-- `agents/` - 21 agents
-- `scripts/` - 45 scripts (Node.js)
-- `lib/` - 5 modules (208 functions)
+- `skills/` - 31 skills
+- `agents/` - 29 agents
+- `scripts/` - 49 scripts (Node.js)
+- `lib/` - 5 modules (210 functions)
 - `templates/` - 27 templates
 
 ## Templates (27)

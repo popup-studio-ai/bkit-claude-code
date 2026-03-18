@@ -5,6 +5,56 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.2] - 2026-03-18
+
+### Added
+- **CC v2.1.73~v2.1.78 Full Integration** (14 ENH items: ENH-117~130)
+  - PostCompact hook event: PDCA state integrity verification after context compaction
+  - StopFailure hook event: API error classification, logging, and recovery guidance
+  - `${CLAUDE_PLUGIN_DATA}` persistent backup: automatic state backup/restore across plugin updates
+  - Agent frontmatter `effort`/`maxTurns`: native support for all 29 agents (opus=high/30-50, sonnet=medium/20, haiku=low/15)
+  - 1M context window documentation: default for Max/Team/Enterprise plans (CC v2.1.75+)
+  - Output token 128K upper limit documentation (CC v2.1.77+)
+  - modelOverrides guide for Bedrock/Vertex users
+  - autoMemoryDirectory guide for custom memory paths
+  - worktree.sparsePaths guide for large monorepo optimization
+  - /effort command guide with ultrathink documentation
+  - allowRead sandbox guide for fine-grained filesystem control
+  - Session name (-n) guide for CI/CD automation
+  - Hook source display documentation (CC v2.1.75+)
+  - tmux notification passthrough documentation (CC v2.1.78+)
+- **New Scripts** (2)
+  - `scripts/post-compaction.js`: PostCompact hook handler (~120 LOC)
+  - `scripts/stop-failure-handler.js`: StopFailure hook handler (~160 LOC)
+- **Comprehensive Test Suite** (1,186 TC, 8 perspectives)
+  - Unit (555), Integration (134), Security (85), Regression (192), Performance (76), Philosophy (58), UX (60), E2E (26)
+  - 99.7% pass rate, 0 failures, 4 skips (pre-existing)
+  - 6 new test files, 6 updated test files (+161 TC from v1.6.1)
+
+### Changed
+- **Hook Events**: 10 → 12 in hooks.json (+PostCompact, +StopFailure)
+- **lib/core/paths.js**: +2 functions (backupToPluginData, restoreFromPluginData), +2 STATE_PATHS (pluginData, pluginDataBackup)
+- **lib/core/index.js**: 52 → 54 exports (+2 PLUGIN_DATA functions)
+- **lib/common.js**: 208 → 210 exports (+2 bridge re-exports)
+- **lib/pdca/status.js**: savePdcaStatus() and writeBkitMemory() now auto-backup to PLUGIN_DATA
+- **hooks/session-start.js**: PLUGIN_DATA restore on startup, v1.6.2 enhancements section, 1M context info
+- **agents/*.md**: All 29 agents updated with effort/maxTurns fields (model field moved to top)
+- **CC recommended version**: v2.1.71 → v2.1.78
+- **CC compatibility**: v2.1.34~v2.1.78 = 44 consecutive compatible releases (0 breaking changes)
+- **Version bumps**: plugin.json, bkit.config.json, hooks.json, session-start.js, marketplace.json
+
+### Documentation
+- **bkit-system/philosophy/context-engineering.md**: 12 new sections for v1.6.2 features
+- **bkit-system/philosophy/core-mission.md**: v1.6.2 version record
+- **bkit-system/components/hooks/_hooks-overview.md**: v1.6.2 hook events
+
+### Compatibility
+- Claude Code: Minimum v2.1.69+, Recommended v2.1.78
+- Node.js: Minimum v18+
+- Agent Teams: Requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+
+---
+
 ## [1.6.1] - 2026-03-08
 
 ### Added

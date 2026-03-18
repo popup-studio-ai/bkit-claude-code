@@ -1,6 +1,6 @@
 # bkit Skill Evals Framework
 
-> v1.6.1 ENH-88: Automated skill quality verification (28/28 full implementation)
+> v1.6.2 ENH-88: Automated skill quality verification (28/28 full implementation)
 
 ## Overview
 
@@ -45,7 +45,7 @@ Each skill has an eval.yaml defining test cases:
 ```yaml
 name: skill-name
 classification: workflow|capability|hybrid
-version: 1.6.1
+version: 1.6.2
 evals:
   - name: test-name
     prompt: prompt-file.md

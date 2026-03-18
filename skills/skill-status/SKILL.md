@@ -50,7 +50,7 @@ allowed-tools:
 Skill Status Report
 ====================
 
-Layer: bkit Core (v1.6.1)
+Layer: bkit Core (v1.6.2)
   Skills: 28 loaded
   -----------------------------------------------
   Name                | Type       | Classification

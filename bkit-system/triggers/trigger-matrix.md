@@ -1,12 +1,13 @@
 # Trigger Matrix
 
-> Core matrix showing which components trigger on each event (v1.6.1)
+> Core matrix showing which components trigger on each event (v1.6.2)
 >
 > **v1.5.0**: Claude Code Exclusive
 > **v1.6.0**: PM Agent Team triggers, Skills 2.0, 28 skills, 21 agents
 > **v1.6.1**: CTO Orchestration Redesign, 3-Tier Agent Security Model
+> **v1.6.2**: CC v2.1.78 Integration, 12 hook events, 29 agents, 31 skills
 
-## Hook Event Reference (v1.6.1)
+## Hook Event Reference (v1.6.2)
 
 | Hook Event | Description | Added |
 |------------|-------------|:-----:|
@@ -20,8 +21,10 @@
 | `SubagentStop` | Subagent completed | v1.5.3 |
 | `TaskCompleted` | Task completion | v1.5.1 |
 | `TeammateIdle` | Teammate idle detection | v1.5.1 |
+| `PostCompact` | After context compaction | v1.6.2 |
+| `StopFailure` | Agent failure handling | v1.6.2 |
 
-> **Note (v1.5.3)**: SubagentStart and SubagentStop added for Team Visibility. TaskCompleted and TeammateIdle added in v1.5.1 for Agent Teams support. Total: 10 hook events.
+> **Note (v1.6.2)**: PostCompact and StopFailure added in v1.6.2. Total: 12 hook events.
 
 ---
 

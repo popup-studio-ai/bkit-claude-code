@@ -5,6 +5,8 @@ description: |
   기존 bkit 28개 core 스킬과 매칭하여 갭 분석을 수행하는 에이전트.
   pm-lead Phase 4 완료 후 자동 호출되어 skill-create 파이프라인에 연결.
 model: sonnet
+effort: medium
+maxTurns: 20
 tools:
   - Read
   - Glob

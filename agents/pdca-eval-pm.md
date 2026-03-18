@@ -5,6 +5,8 @@ description: |
   v1.6.1 baseline vs Customized bkit 비교 분석 수행.
   평가 항목: PRD 분석 깊이, 스킬 니즈 추출, PM->스킬 파이프라인 연결.
 model: sonnet
+effort: medium
+maxTurns: 20
 tools:
   - Read
   - Glob

@@ -1,6 +1,6 @@
 # Skills Overview
 
-> 28 Skills defined in bkit (v1.6.1)
+> 31 Skills defined in bkit (v1.6.2)
 >
 > **v1.4.1**: Added Context Engineering perspective - Domain Knowledge Layer
 > **v1.5.0**: Claude Code Exclusive
@@ -9,6 +9,7 @@
 > **v1.5.9**: Executive Summary module, AskUserQuestion Preview UX, ENH-74~81, 199 exports
 > **v1.6.0**: Skills 2.0 - Skill Classification (9W/18C/1H), pm-discovery skill, Skill Evals (28 defs)
 > **v1.6.1**: CTO Orchestration Redesign, P0 Bug Fixes (4), 3-Tier Agent Security, Skill Evals 28/28 full implementation, 1073 TC, 208 exports
+> **v1.6.2**: 31 skills (9 Workflow / 20 Capability / 2 Hybrid), 210 exports, CC v2.1.78
 
 ## What are Skills?
 
@@ -62,7 +63,7 @@ Skills form bkit's **Domain Knowledge Layer**, designed according to [[../../phi
 
 ## Skill Classification (v1.6.0)
 
-All 28 skills are classified into three categories based on CC 2.1.0 Skills 2.0 (per `evals/config.json` SSOT):
+All 31 skills are classified into three categories based on CC 2.1.0 Skills 2.0 (per `evals/config.json` SSOT):
 
 ### Workflow Skills (9) — Permanent Core Value
 

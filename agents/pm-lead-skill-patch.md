@@ -5,6 +5,8 @@ description: |
   프로젝트 특화 스킬 니즈를 자동 추출하는 연결 로직.
   기존 pm-lead 에이전트를 수정하지 않고 project-local에서 확장.
 model: sonnet
+effort: medium
+maxTurns: 20
 tools:
   - Read
   - Glob

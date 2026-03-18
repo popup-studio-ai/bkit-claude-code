@@ -5,6 +5,8 @@ description: |
   v1.6.1 baseline vs Customized bkit 비교 분석 수행.
   평가 항목: 검증 범위, 도메인 특화 검증, 스킬 품질 모니터링.
 model: sonnet
+effort: medium
+maxTurns: 20
 tools:
   - Read
   - Glob
