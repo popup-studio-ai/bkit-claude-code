@@ -10,7 +10,7 @@
     "hybrid": { "evalType": "both", "parityTest": true }
   },
   "skills": {
-    "workflow": ["bkit-rules", "bkit-templates", "pdca", "development-pipeline", "phase-2-convention", "phase-8-review", "zero-script-qa", "code-review", "pm-discovery"],
+    "workflow": ["bkit-rules", "bkit-templates", "pdca", "development-pipeline", "phase-2-convention", "phase-8-review", "zero-script-qa", "code-review", "pm-discovery", "cc-version-analysis"],
     "capability": ["starter", "dynamic", "enterprise", "phase-1-schema", "phase-3-mockup", "phase-4-api", "phase-5-design-system", "phase-6-ui-integration", "phase-7-seo-security", "phase-9-deployment", "mobile-app", "desktop-app", "claude-code-learning", "bkend-quickstart", "bkend-auth", "bkend-data", "bkend-cookbook", "bkend-storage"],
     "hybrid": ["plan-plus"]
   }

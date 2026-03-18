@@ -1,0 +1,31 @@
+name: cc-version-analysis
+classification: workflow
+version: 1.0
+description: "CC version analysis workflow process compliance evaluation"
+
+evals:
+  - name: version-range-trigger
+    prompt: prompt-1.md
+    expected: expected-1.md
+    criteria:
+      - "Must detect installed CC version or use provided from_version"
+      - "Must create Task tracking structure with 4 phases"
+      - "Must launch cc-version-researcher agent for Phase 1"
+      - "Must launch bkit-impact-analyst agent for Phase 2"
+      - "Must apply Plan Plus brainstorming for Phase 3"
+      - "Must generate Korean report in docs/04-report/"
+      - "Must update MEMORY.md with version history"
+      - "Must not skip any phase"
+      - "Must not implement any ENH items (analysis-only)"
+      - "All documents must be written in Korean"
+    timeout: 120000
+
+parity_test:
+  enabled: false
+
+benchmark:
+  model_baseline: "claude-sonnet-4-6"
+  metrics:
+    - trigger_accuracy
+    - process_compliance
+    - phase_completeness

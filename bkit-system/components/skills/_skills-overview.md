@@ -10,6 +10,7 @@
 > **v1.6.0**: Skills 2.0 - Skill Classification (9W/18C/1H), pm-discovery skill, Skill Evals (28 defs)
 > **v1.6.1**: CTO Orchestration Redesign, P0 Bug Fixes (4), 3-Tier Agent Security, Skill Evals 28/28 full implementation, 1073 TC, 208 exports
 > **v1.6.2**: 31 skills (9 Workflow / 20 Capability / 2 Hybrid), 210 exports, CC v2.1.78
+> **v1.6.2+**: cc-version-analysis skill (32 skills, 10 Workflow / 20 Capability / 2 Hybrid)
 
 ## What are Skills?
 
