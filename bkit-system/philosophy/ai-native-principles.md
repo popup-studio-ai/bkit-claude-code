@@ -1,21 +1,19 @@
 # AI-Native Development Principles
 
-> Core principles and 3 competencies of AI-Native development
+> Core principles and competencies of AI-Native development with bkit v2.0.0
 
 ## What is AI-Native Development?
 
 ```
-Claude Code + PDCA Methodology + 9-Stage Pipeline + Zero Script QA
-= AI-Native Development Framework
+Claude Code + PDCA State Machine + Controllable AI (L0-L4) + Agent Teams
+= AI-Native Development OS (v2.0.0)
 ```
 
-A development approach where AI operates as **a partner leading the entire development process together**, not just a simple code generation tool.
+A development approach where AI operates as **a controllable partner leading the entire development process**, with full transparency, auditability, and human governance at every level.
 
 ---
 
 ## 3 Core Competencies
-
-Three essential competencies required of humans in AI-Native development:
 
 | Competency | Description | Without It |
 |------------|-------------|------------|
@@ -23,13 +21,13 @@ Three essential competencies required of humans in AI-Native development:
 | **Direction Setting** | Clearly define what to build | AI generates guess-based results |
 | **Quality Standards** | Provide criteria for good code | Inconsistent codebase |
 
-### Implementation in bkit
+### v2.0.0 Implementation
 
 | Competency | bkit Feature |
 |------------|--------------|
-| Verification | `gap-detector` agent, `/pdca-analyze` |
-| Direction | Design-first workflow, templates |
-| Quality | `code-analyzer` agent, `bkit-rules` skill |
+| Verification | gap-detector agent, quality gates (7 stages), metrics collector (M1-M10), regression guard |
+| Direction | State machine-driven PDCA, design-first workflow, PM Agent Team (5 agents), plan-plus brainstorming |
+| Quality | code-analyzer agent, bkit-rules skill, destructive-detector (8 rules), blast radius analysis |
 
 ---
 
@@ -37,90 +35,84 @@ Three essential competencies required of humans in AI-Native development:
 
 ### Development Process
 
-| Aspect | As-Is (Traditional) | To-Be (With bkit) |
-|--------|---------------------|-------------------|
-| **Methodology** | Waterfall or Agile (manual) | Automated PDCA cycle |
-| **Documentation** | Code first, docs later | Design first → Code → Auto-sync |
-| **Quality Verification** | Manual QA team testing | Zero Script QA (log-based) |
-| **Knowledge Sharing** | Scattered docs | Single Source of Truth (CLAUDE.md) |
-| **Onboarding** | 2-4 weeks | Under 1 week (auto-referenced docs) |
+| Aspect | As-Is (Traditional) | To-Be (With bkit v2.0.0) |
+|--------|---------------------|--------------------------|
+| **Methodology** | Waterfall or Agile (manual) | Declarative PDCA state machine (20 transitions, 9 guards) |
+| **Automation** | All manual or all-or-nothing | 5-level controllable automation (L0-L4) |
+| **Documentation** | Code first, docs later | State machine enforces Plan → Design → Do |
+| **Quality** | Manual QA team testing | Quality gates (7 stages) + Zero Script QA + metrics (M1-M10) |
+| **Transparency** | AI decisions opaque | Audit logger + decision tracer + CLI dashboard |
+| **Safety** | Trust the AI blindly | Trust Score + destructive detection + checkpoint/rollback |
+| **Knowledge** | Scattered docs | Regression guard + PDCA report auto-generation |
 
 ### Team Composition
 
-| Role | As-Is (10-person) | To-Be (bkit) | bkit Agent | Change |
-|------|-------------------|--------------|------------|--------|
-| **PM** | 1 | 0.5 | product-manager | PDCA auto-tracking |
-| **Senior Dev** | 2 | 1 | cto-lead (CTO) | AI guides architecture |
+| Role | As-Is (10-person) | To-Be (bkit v2.0.0) | bkit Agents | Change |
+|------|-------------------|----------------------|-------------|--------|
+| **PM** | 1 | 0.3 | pm-lead + 4 PM agents | AI-driven product discovery |
+| **Senior Dev** | 2 | 1 | cto-lead (opus) | AI orchestrates architecture |
 | **Junior Dev** | 4 | 2 | bkend-expert, frontend-architect | 3x productivity with AI |
-| **QA** | 2 | 0.5 | qa-strategist, qa-monitor | Zero Script QA |
-| **Security** | 1 | 0 | security-architect | AI-automated review |
+| **QA** | 2 | 0.5 | qa-strategist, qa-monitor, gap-detector | Zero Script QA + quality gates |
+| **Security** | 1 | 0 | security-architect, destructive-detector | AI-automated review + safety |
 | **Tech Writer** | 1 | 0 | report-generator | Auto-generated docs |
-| **Total** | **11** | **4** | **16 AI agents** | **64% reduction** |
+| **Total** | **11** | **3.8** | **31 AI agents** | **65% reduction** |
 
 ---
 
 ## Role Transformation
 
-### Senior Developer
+### Senior Developer → AI-Native Conductor
 
 ```
 As-Is: Direct coding + Junior reviews + Architecture design
-To-Be: AI verification + Direction setting + Quality standards
-       (AI-Native conductor)
+To-Be: Set automation level (L0-L4) + Verify AI decisions via audit trail
+       + Define quality gates + Review trust score progression
+       (AI-Native conductor with full control)
 ```
 
-### Junior Developer
+### Junior Developer → AI-Augmented Builder
 
 ```
 As-Is: Simple feature implementation, asks seniors questions
-To-Be: Can implement complex features through AI collaboration
+To-Be: Drives complex features through PDCA with AI guidance
+       State machine ensures consistent workflow regardless of experience
 ```
 
-### QA Engineer
+### QA Engineer → Quality Gate Operator
 
 ```
 As-Is: Write and execute manual test scripts
-To-Be: Monitor logs, discover edge cases with AI assistance
+To-Be: Configure quality gates + Monitor metrics dashboard
+       AI handles gap analysis, human sets thresholds
 ```
 
 ---
 
 ## Speed Improvements
 
-| Feature Size | As-Is | To-Be (bkit) | Improvement |
-|--------------|-------|--------------|-------------|
+| Feature Size | As-Is | To-Be (bkit v2.0.0) | Improvement |
+|--------------|-------|----------------------|-------------|
 | Simple CRUD | 2-3 days | 2-4 hours | **80% faster** |
 | Medium complexity | 1-2 weeks | 2-3 days | **70% faster** |
 | Complex feature | 3-4 weeks | 1-2 weeks | **50% faster** |
 | Full MVP | 3-6 months | 1-2 months | **60% faster** |
 
-### Breakdown
-
-```
-1. Auto-generated boilerplate: -50% coding time
-2. Design-code sync: -70% communication overhead
-3. Zero Script QA: -80% QA time
-4. Auto-documentation: -90% doc writing time
-5. AI pair programming: -40% debugging time
-```
-
 ---
 
 ## Quality Metrics
 
-| Quality Metric | As-Is | To-Be (bkit) |
-|----------------|-------|--------------|
-| **Bug Discovery** | Post-release | During development |
-| **Design-Implementation Gap** | 30-50% | Under 5% |
-| **Code Consistency** | Varies by developer | Auto-applied conventions |
-| **Security Vulnerabilities** | Found post-hoc | Pre-checked (Phase 7) |
-| **Technical Debt** | Accumulates | Periodic analysis |
+| Quality Metric | As-Is | To-Be (bkit v2.0.0) |
+|----------------|-------|----------------------|
+| **Bug Discovery** | Post-release | During PDCA Check phase (quality gates) |
+| **Design-Implementation Gap** | 30-50% | Under 5% (gap-detector + pdca-iterator) |
+| **Code Consistency** | Varies by developer | Auto-applied conventions + regression guard |
+| **Security Vulnerabilities** | Found post-hoc | Destructive detector (8 rules) + blast radius analysis |
+| **Technical Debt** | Accumulates | Metrics collector (M1-M10) + continuous monitoring |
+| **AI Decision Transparency** | None | Full audit trail (JSONL) + decision tracer |
 
 ---
 
-## Language Tier System (v1.2.1)
-
-bkit classifies languages optimized for AI-Native development into 4 tiers:
+## Language Tier System
 
 | Tier | Category | Languages/Frameworks |
 |------|----------|---------------------|
@@ -128,14 +120,46 @@ bkit classifies languages optimized for AI-Native development into 4 tiers:
 | **Tier 2** | Mainstream Recommended | Go, Rust, Dart, Vue, Astro, Flutter |
 | **Tier 3** | Domain Specific | Java, Kotlin, Swift, C/C++, Angular |
 | **Tier 4** | Legacy/Niche | PHP, Ruby, C#, Scala, Elixir |
-| **Experimental** | Future Consideration | Mojo, Zig, V |
 
-### Selection Criteria
+---
 
-- AI tool ecosystem compatibility (Copilot, Claude, Cursor)
-- Vibe Coding optimization
-- Market share (IEEE Spectrum)
-- Training data availability
+## CTO-Led Agent Teams (v2.0.0)
+
+### Agent Distribution
+
+| Model | Count | Roles |
+|-------|-------|-------|
+| **opus** | 10 | cto-lead, code-analyzer, design-validator, gap-detector, enterprise-expert, infra-architect, security-architect, pm-lead, bkit-impact-analyst, cc-version-researcher |
+| **sonnet** | 19 | bkend-expert, pdca-iterator, pipeline-guide, starter-guide, product-manager, frontend-architect, qa-strategist, pm-discovery, pm-strategy, pm-research, pm-prd, pm-lead-skill-patch, skill-needs-extractor, 6 pdca-eval agents |
+| **haiku** | 2 | qa-monitor, report-generator |
+
+### Agent Frontmatter (v2.0.0)
+
+All 31 agents support native frontmatter fields:
+- `effort`: min/max reasoning effort per agent role
+- `maxTurns`: execution budget control
+- `disallowedTools`: restrict dangerous tool access per agent
+- `memory`: project or user scope for cross-session persistence
+
+### Orchestration Patterns
+
+| Pattern | Usage | PDCA Phase |
+|---------|-------|------------|
+| Leader | CTO directs single agent | Plan, Report |
+| Council | Multiple agents collaborate | Design, Check |
+| Swarm | Parallel independent tasks | Do |
+| Pipeline | Sequential processing | Do → Check |
+| Watchdog | Continuous monitoring | Act |
+
+---
+
+## Skill Classification (v2.0.0)
+
+| Classification | Count | Core Philosophy |
+|:---:|:---:|---|
+| **Workflow** | 9 | Automation First — permanent value regardless of model advancement |
+| **Capability** | 25 | No Guessing — guidance that models may eventually internalize |
+| **Hybrid** | 2 | Both workflow and capability characteristics |
 
 ---
 
@@ -147,86 +171,19 @@ bkit classifies languages optimized for AI-Native development into 4 tiers:
 │   "It's not about reducing developers,                         │
 │    it's about letting developers focus on more valuable work"  │
 │                                                                 │
-│   • Repetitive tasks → AI handles                               │
-│   • Creative design, business logic → Developers focus          │
-│   • Documentation, QA → Automated                               │
-│   • Direction setting, verification → Human's unique role       │
+│   v2.0.0 adds: "...with full control over how much AI does"   │
 │                                                                 │
-│   Result: Same team creates 3x more value                       │
+│   • Repetitive tasks → AI handles (L2+ auto)                   │
+│   • Creative design, business logic → Developers focus          │
+│   • Documentation, QA → Automated with quality gates            │
+│   • Direction setting, verification → Human's unique role       │
+│   • AI transparency → Audit trail + decision traces             │
+│   • AI safety → Trust Score + destructive detection             │
+│                                                                 │
+│   Result: Same team creates 3x more value, with full control   │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
-
----
-
----
-
-## v1.6.0 PM Agent Team in AI-Native Development
-
-### PM Team Role
-
-The PM Agent Team (v1.6.0) extends AI-Native development into the **pre-development phase**:
-
-| Phase | As-Is (Traditional) | To-Be (With PM Team) |
-|-------|---------------------|---------------------|
-| **Market Research** | Manual competitor analysis, weeks of work | pm-research + pm-discovery automate in hours |
-| **Product Strategy** | PM writes strategy docs alone | pm-strategy generates data-driven positioning |
-| **PRD Creation** | 1-2 weeks manual writing | pm-prd generates structured PRD with user stories |
-| **Requirements Handoff** | Meetings, slides, miscommunication | PRD flows directly into PDCA Plan phase |
-
-### Updated Team Composition
-
-| Role | As-Is (10-person) | To-Be (bkit v1.6.0) | bkit Agent | Change |
-|------|-------------------|---------------------|------------|--------|
-| **PM** | 1 | 0.3 | pm-lead + PM Team (5 agents) | AI-driven product discovery |
-| **Senior Dev** | 2 | 1 | cto-lead (CTO) | AI guides architecture |
-| **Junior Dev** | 4 | 2 | bkend-expert, frontend-architect | 3x productivity with AI |
-| **QA** | 2 | 0.5 | qa-strategist, qa-monitor | Zero Script QA |
-| **Security** | 1 | 0 | security-architect | AI-automated review |
-| **Tech Writer** | 1 | 0 | report-generator | Auto-generated docs |
-| **Total** | **11** | **3.8** | **21 AI agents** | **65% reduction** |
-
-### Skill Classification in AI-Native Context
-
-Skill Classification (v1.6.0) reflects AI-Native maturity:
-- **Workflow skills (9)**: Process automation that remains valuable regardless of model capability — PDCA, pipeline, rules, QA, PM discovery
-- **Capability skills (18)**: Domain guidance that may become redundant as models improve — data-driven deprecation via Skill Evals
-- **Hybrid skills (1)**: Bridge between process and capability (plan-plus)
-
-## v1.5.4 Agent Distribution
-
-**Model distribution**: 7 opus / 7 sonnet / 2 haiku (16 core) + 5 PM Team (21 total)
-**Permission modes**: 9 acceptEdits / 7 plan (core), PM Team uses plan mode
-
----
-
-## v1.5.3 Feature Integration
-
-### Output Styles in AI-Native Context
-
-Output Styles implement adaptive communication:
-
-| Style | AI-Native Benefit |
-|-------|-------------------|
-| `bkit-learning` | Reduces learning curve, enables beginners to adopt AI practices |
-| `bkit-pdca-guide` | Enforces document-driven development through visual progress |
-| `bkit-enterprise` | CTO-level analysis for architecture decisions |
-
-### CTO-Led Agent Teams in AI-Native Context
-
-Agent Teams transform AI from "assistant" to "professional development team":
-- CTO Lead (opus) orchestrates the entire PDCA workflow automatically
-- 5 specialized roles: PM, Architect, Developer, QA, Security
-- 5 orchestration patterns adapt to PDCA phases (Leader, Council, Swarm, Pipeline, Watchdog)
-- Auto-suggested for major features — users don't need to know commands (Automation First)
-- Mirrors real CTO-led team structure with quality gates and Plan approval
-
-### Agent Memory in AI-Native Context
-
-Agent Memory enables continuous learning:
-- Project knowledge accumulates across sessions
-- Agents improve their responses based on previous interactions
-- No manual knowledge transfer needed between sessions
 
 ---
 
@@ -234,5 +191,4 @@ Agent Memory enables continuous learning:
 
 - [[core-mission]] - Core mission and philosophies
 - [[pdca-methodology]] - PDCA methodology
-- [[../components/agents/_agents-overview]] - Agent system
-- [[../../skills/enterprise/SKILL]] - Enterprise skill (AI-Native details)
+- [[context-engineering]] - Context Engineering architecture

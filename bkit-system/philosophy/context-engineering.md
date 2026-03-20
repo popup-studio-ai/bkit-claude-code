@@ -1,37 +1,11 @@
 # Context Engineering Principles
 
-> Optimal token curation for LLM inference - bkit's core design principle
+> Optimal token curation for LLM inference — bkit v2.0.0 architecture
 >
-> **v1.4.1**: Analyzing bkit architecture from Context Engineering perspective
->
-> **v1.4.2**: Complete Context Engineering implementation with 8 functional requirements (FR-01~FR-08)
->
-> **v1.4.4**: Skills-Agents multi-binding architecture, PDCA Skill integration (8 actions)
->
-> **v1.4.5**: `/pdca archive` action, 8-language trigger completion, internationalization (KO→EN)
->
-> **v1.5.0**: Claude Code Exclusive - simplified architecture
->
-> **v1.5.3**: Agent Teams with team/ module (9 files, 40 exports), state-writer, SubagentStart/Stop hooks
->
-> **v1.5.4**: lib/ modularization (5 subdirs, 180 exports), 10 hook events, bkend MCP accuracy fix
->
-> **v1.5.3-gemini**: Tool Registry centralization, 17 built-in tool names verified from Gemini CLI source, "Tool Name Accuracy" as Context Engineering principle
->
-> **v1.5.6**: CC v2.1.59 auto-memory integration, ENH-48~51, 182 exports
->
-> **v1.5.6-gemini**: Gemini CLI v0.31.0 migration - RuntimeHook preparation, Tool Annotations, Project-level Policy, 18 feature flags
->
-> **v1.5.7**: CC_COMMAND_PATTERNS (8-lang CC command awareness), /simplify + /batch PDCA integration, 182 exports, English conversion (3 stop scripts)
->
-> **v1.5.8**: Path Registry (lib/core/paths.js), state directory migration (.bkit/{state,runtime,snapshots}/), 186 exports, auto-migration with EXDEV fallback
-> **v1.5.9**: Executive Summary, AskUserQuestion Preview UX, ENH-74~81, 199 exports
-> **v1.6.0**: Skills 2.0 - Skill Classification (9W/18C/1H), PM Agent Team (5 agents), Skill Evals (28 defs)
-> **v1.6.1**: CTO Orchestration Redesign, P0 Bug Fixes (4), Config-Code Sync, 3-Tier Agent Security, 1073 TC, CE-5 (88/100), 208 exports
+> **v2.0.0**: AI Native Development OS — State machine, workflow engine, controllable AI,
+> audit system, quality gates, CLI dashboard, MCP servers, 76 lib modules, ~465 exports
 
 ## What is Context Engineering?
-
-Context Engineering is **the practice of optimally curating context tokens for LLM inference**.
 
 ```
 Traditional Prompt Engineering:
@@ -42,1136 +16,270 @@ Context Engineering:
    to provide LLMs with optimal context for inference"
 ```
 
-bkit is a **practical implementation of Context Engineering**, providing a systematic context management system for Claude Code.
+bkit is a **practical implementation of Context Engineering**, providing a systematic context management system for Claude Code with 36 skills, 31 agents, 18 hook events, and 2 MCP servers.
 
 ---
 
-## v1.5.4 Context Engineering Architecture
-
-bkit v1.5.4 builds on the original 8 functional requirements (FR-01~FR-08) with modular library architecture, Agent Teams orchestration, and expanded hook events:
+## v2.0.0 Context Engineering Architecture
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────┐
-│                    bkit v1.5.4 Context Engineering Architecture              │
+│                    bkit v2.0.0 Context Engineering Architecture              │
 ├──────────────────────────────────────────────────────────────────────────────┤
 │                                                                              │
 │  ┌────────────────────────────────────────────────────────────────────────┐  │
 │  │                 Multi-Level Context Hierarchy (FR-01)                  │  │
-│  │                                                                        │  │
-│  │  L1: Plugin Policy ──→ L2: User Config ──→ L3: Project ──→ L4: Session │  │
-│  │     (bkit defaults)     (~/.claude/bkit/)   (.pdca-status)   (runtime) │  │
-│  │                                                                        │  │
-│  │  Priority: L4 > L3 > L2 > L1 (later levels override earlier)           │  │
+│  │  L1: Plugin Policy ──→ L2: User Config ──→ L3: Project ──→ L4: Session│  │
+│  │     (bkit defaults)     (~/.claude/bkit/)   (.bkit/state/)  (runtime) │  │
 │  └────────────────────────────────────────────────────────────────────────┘  │
 │                                     │                                        │
 │                                     ▼                                        │
-│  ┌───────────────────┐  ┌──────────────────┐  ┌──────────────────┐           │
-│  │ @import Directive │  │ context:fork     │  │ Permission       │           │
-│  │ (FR-02)           │  │ (FR-03)          │  │ Hierarchy (FR-05)│           │
-│  │                   │  │                  │  │                  │           │
-│  │ • SKILL.md loads  │  │ • Isolated exec  │  │ • deny: block    │           │
-│  │ • Variable subst  │  │ • Deep clone     │  │ • ask: confirm   │           │
-│  │ • Circular detect │  │ • Merge-back opt │  │ • allow: permit  │           │
-│  └────────┬──────────┘  └────────┬─────────┘  └─────────┬────────┘           │
-│           │                      │                      │                    │
-│           └──────────────────────┼──────────────────────┘                    │
-│                                  ▼                                           │
-│  ┌─────────────────────────────────────────────────────────────────────────┐ │
-│  │                  6-Layer Hook System (10 Events)                        │ │
-│  │                                                                         │ │
-│  │  L1: hooks.json ─→ SessionStart, UserPromptSubmit, PreCompact           │ │
-│  │                     TaskCompleted, SubagentStart/Stop, TeammateIdle     │ │
-│  │  L2: Skill YAML ─→ PreToolUse, PostToolUse, Stop                        │ │
-│  │  L3: Agent YAML ─→ PreToolUse, PostToolUse                              │ │
-│  │  L4: Triggers   ─→ 8-language keyword detection                         │ │
-│  │  L5: Scripts    ─→ 49 Node.js modules                                   │ │
-│  │  L6: Team Orch. ─→ CTO-led phase routing (leader/council/swarm/watch)   │ │
-│  └─────────────────────────────────────────────────────────────────────────┘ │
-│                                  │                                           │
-│           ┌──────────────────────┼──────────────────────┐                    │
-│           ▼                      ▼                      ▼                    │
-│  ┌───────────────────┐  ┌──────────────────┐  ┌──────────────────┐           │
-│  │ Task Dependency   │  │ Context Compact. │  │ MEMORY Variable  │           │
-│  │ Chain (FR-06)     │  │ Hook (FR-07)     │  │ (FR-08)          │           │
-│  │                   │  │                  │  │                  │           │
-│  │ • PDCA blocking   │  │ • State snapshot │  │ • Session persist│           │
-│  │ • blockedBy meta  │  │ • Auto-cleanup   │  │ • Key-value store│           │
-│  │ • Non-blocking    │  │ • 10 recent kept │  │ • .bkit-memory   │           │
-│  └───────────────────┘  └──────────────────┘  └──────────────────┘           │
-│                                  │                                           │
-│                                  ▼                                           │
-│  ┌─────────────────────────────────────────────────────────────────────────┐ │
-│  │              Agent Teams Orchestration (v1.5.3+)                        │ │
-│  │                                                                         │ │
-│  │  CTO Lead (opus) ──→ Orchestration Pattern per Phase                    │ │
-│  │       │                                                                 │ │
-│  │       ├── Teammate A (own context window)                               │ │
-│  │       ├── Teammate B (own context window)                               │ │
-│  │       └── Teammate C (own context window)                               │ │
-│  │                                                                         │ │
-│  │  State: .bkit/agent-state.json (schema v1.0)                            │ │
-│  │  Modules: lib/team/ (9 files, 40 exports)                               │ │
-│  └─────────────────────────────────────────────────────────────────────────┘ │
+│  ┌────────────────────────────────────────────────────────────────────────┐  │
+│  │                  18-Event Hook System (6 Layers)                       │  │
+│  │                                                                        │  │
+│  │  L1: hooks.json ─→ SessionStart, UserPromptSubmit, PreCompact,         │  │
+│  │                     PostCompact, Stop, StopFailure, TaskCompleted,     │  │
+│  │                     SubagentStart/Stop, TeammateIdle, SessionEnd,      │  │
+│  │                     PostToolUseFailure, InstructionsLoaded,            │  │
+│  │                     ConfigChange, PermissionRequest, Notification      │  │
+│  │  L2: Skill YAML ─→ PreToolUse, PostToolUse, Stop                      │  │
+│  │  L3: Agent YAML ─→ PreToolUse, PostToolUse                            │  │
+│  │  L4: Triggers   ─→ 8-language keyword detection (EN/KO/JA/ZH/ES/FR/  │  │
+│  │                     DE/IT)                                             │  │
+│  │  L5: Scripts    ─→ 21 Node.js hook scripts                            │  │
+│  │  L6: Team Orch. ─→ CTO-led phase routing                             │  │
+│  └────────────────────────────────────────────────────────────────────────┘  │
+│                                     │                                        │
+│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────────────┐   │
+│  │ State Machine    │  │ Workflow Engine   │  │ Controllable AI         │   │
+│  │ (NEW v2.0.0)     │  │ (NEW v2.0.0)     │  │ (NEW v2.0.0)           │   │
+│  │                  │  │                  │  │                          │   │
+│  │ • 20 transitions │  │ • 3 YAML presets │  │ • L0-L4 automation      │   │
+│  │ • 9 guards       │  │ • Step execution │  │ • Trust Score (0-100)   │   │
+│  │ • Declarative    │  │ • Parallel-check │  │ • Emergency stop        │   │
+│  └──────────────────┘  └──────────────────┘  └──────────────────────────┘   │
+│                                     │                                        │
+│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────────────┐   │
+│  │ Quality Gates    │  │ Audit System     │  │ CLI Dashboard           │   │
+│  │ (NEW v2.0.0)     │  │ (NEW v2.0.0)     │  │ (NEW v2.0.0)           │   │
+│  │                  │  │                  │  │                          │   │
+│  │ • 7-stage gates  │  │ • JSONL logging  │  │ • Progress bar          │   │
+│  │ • Metrics M1-M10 │  │ • Decision trace │  │ • Workflow map           │   │
+│  │ • Regression     │  │ • Explanation gen │  │ • Control panel         │   │
+│  │   guard          │  │                  │  │ • Agent panel            │   │
+│  └──────────────────┘  └──────────────────┘  └──────────────────────────┘   │
+│                                     │                                        │
+│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────────────┐   │
+│  │ Safety Layer     │  │ MCP Servers      │  │ Agent Teams             │   │
+│  │ (NEW v2.0.0)     │  │ (NEW v2.0.0)     │  │ (Enhanced v2.0.0)      │   │
+│  │                  │  │                  │  │                          │   │
+│  │ • Destructive    │  │ • bkit-pdca      │  │ • 31 agents             │   │
+│  │   detector (8)   │  │   (10 tools)     │  │ • effort/maxTurns      │   │
+│  │ • Blast radius   │  │ • bkit-analysis  │  │ • disallowedTools      │   │
+│  │ • Scope limiter  │  │   (6 tools)      │  │ • 3-tier security      │   │
+│  │ • Checkpoint/    │  │                  │  │                          │   │
+│  │   rollback       │  │                  │  │                          │   │
+│  └──────────────────┘  └──────────────────┘  └──────────────────────────┘   │
 │                                                                              │
 └──────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Library Modules (15 modules across 5 subdirectories, 210 exports)
+---
 
-**Modular subdirectories** (v1.5.4 — refactored from monolithic common.js):
+## Library Modules (76 files across 10 subdirectories, ~465 exports)
 
 | Module | Files | Exports | Purpose |
 |--------|:-----:|:-------:|---------|
-| `lib/core/` | 7 | 41 | Platform detection, cache, I/O, debug, config, file utilities |
-| `lib/pdca/` | 6 | 54 | Tier classification, level detection, phase management, status, automation |
+| `lib/core/` | 13 | 61 | Platform, cache, I/O, debug, config, file, paths, constants, errors, state-store, ansi, hook-io |
+| `lib/pdca/` | 18 | 116 | State machine, workflow engine/parser, status, automation, tier, level, phase, lifecycle, resume, batch-orchestrator, feature-manager, backup-scheduler, do-detector, full-auto-do, template-validator |
 | `lib/intent/` | 4 | 19 | 8-language detection, trigger matching, ambiguity analysis |
 | `lib/task/` | 5 | 26 | Task classification, context, creation, tracking |
-| `lib/team/` | 9 | 40 | Coordinator, strategy, CTO logic, state-writer, communication |
-| **Subtotal** | **31+** | **210** | |
+| `lib/team/` | 9 | 40 | Coordinator, strategy, CTO logic, state-writer, communication, task-queue, orchestrator, hooks |
+| `lib/ui/` | 7 | 23 | Progress bar, workflow map, control panel, agent panel, impact view |
+| `lib/audit/` | 3 | 35+ | Audit logger (JSONL), decision tracer, explanation generator |
+| `lib/control/` | 7 | 62+ | Automation controller (L0-L4), trust engine, destructive detector, blast radius, checkpoint manager, scope limiter |
+| `lib/quality/` | 3 | 20+ | Gate manager (7 gates), metrics collector (M1-M10), regression guard |
+| `lib/adapters/` | 0 | 0 | Reserved for future platform adapters |
+| **Top-level** | 7 | 63 | context-fork, context-hierarchy, import-resolver, memory-store, permission-manager, skill-orchestrator, common (bridge) |
+| **Total** | **76** | **~465** | |
 
-**Top-level modules** (FR implementations, unchanged):
+### v2.0.0 New Modules (vs v1.6.x)
 
-| Module | FR | Purpose | Key Functions |
-|--------|:--:|---------|---------------|
-| `lib/context-hierarchy.js` | FR-01 | Multi-level context management | `getContextHierarchy()`, `mergeContextLevels()`, `setSessionContext()` |
-| `lib/import-resolver.js` | FR-02 | @import directive processing | `resolveImports()`, `resolveVariables()`, `detectCircularImport()` |
-| `lib/context-fork.js` | FR-03 | Context isolation | `forkContext()`, `mergeForkedContext()`, `discardFork()` |
-| `lib/permission-manager.js` | FR-05 | Permission hierarchy | `checkPermission()`, `getToolPermission()` |
-| `lib/memory-store.js` | FR-08 | Session persistence | `setMemory()`, `getMemory()`, `deleteMemory()` |
-| `lib/skill-orchestrator.js` | — | Skill routing | `orchestrateSkillPre()`, `getAgentForAction()` |
-| `lib/common.js` | All | **Bridge layer** | Re-exports all 210 functions for backward compatibility |
-
----
-
-## bkit's Context Engineering Structure
-
-### 1. Domain Knowledge Layer (31 Skills)
-
-Skills provide **structured domain knowledge**.
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    Domain Knowledge Layer                        │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐             │
-│  │ Core (2)    │  │ Level (3)   │  │ Pipeline(10)│             │
-│  │             │  │             │  │             │             │
-│  │ bkit-rules  │  │ starter     │  │ phase-1~9   │             │
-│  │ bkit-templ  │  │ dynamic     │  │ development │             │
-│  │             │  │ enterprise  │  │ -pipeline   │             │
-│  └─────────────┘  └─────────────┘  └─────────────┘             │
-│                                                                 │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │                  Specialized (3)                         │   │
-│  │  zero-script-qa │ mobile-app │ desktop-app              │   │
-│  └─────────────────────────────────────────────────────────┘   │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-**Context Engineering Techniques**:
-
-| Technique | Application | Effect |
-|-----------|-------------|--------|
-| **Hierarchical Tables** | Level/Phase-specific methods | Conditional knowledge selection |
-| **ASCII Diagrams** | Architecture visualization | Structural understanding |
-| **Checklists** | Clear completion criteria | Enables automation |
-| **Code Examples** | Ready-to-apply references | Consistent implementation |
-
-### 2. Behavioral Rules Layer (29 Agents)
-
-Agents define **role-based behavioral rules**.
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    Behavioral Rules Layer                        │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │              Role Definition Pattern                     │   │
-│  │                                                         │   │
-│  │  1. Specify expertise (Expert in X)                     │   │
-│  │  2. Define responsibility scope (responsible for X)     │   │
-│  │  3. Specify level (CTO-level, beginner-friendly)        │   │
-│  │  4. Reference real cases (bkamp.ai case study)          │   │
-│  └─────────────────────────────────────────────────────────┘   │
-│                                                                 │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │              Constraint Specification                    │   │
-│  │                                                         │   │
-│  │  • Permission Mode: plan | acceptEdits                  │   │
-│  │  • Allowed/Disallowed Tools                             │   │
-│  │  • Score Thresholds (70/90%)                            │   │
-│  │  • Workflow Rules (docs first, step-by-step)            │   │
-│  └─────────────────────────────────────────────────────────┘   │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-**Model Selection Strategy by Agent**:
-
-| Model | Agents | Characteristics |
-|-------|--------|-----------------|
-| **opus** | cto-lead, code-analyzer, design-validator, gap-detector, enterprise-expert, infra-architect, security-architect | Strategic leadership, complex analysis |
-| **sonnet** | bkend-expert, pdca-iterator, pipeline-guide, starter-guide, product-manager, frontend-architect, qa-strategist | Execution, guidance, iteration |
-| **haiku** | qa-monitor, report-generator | Fast monitoring, document generation |
-
-### 3. State Management Layer (5-Module Architecture)
-
-A **modular state management system** composed of 210 exports across 5 subdirectories, with `lib/common.js` as a backward-compatible bridge layer.
-
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                   State Management Layer (v1.5.4)                    │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                      │
-│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐  │
-│  │  lib/core/       │  │  lib/pdca/       │  │  lib/intent/     │  │
-│  │  7 files, 41 exp │  │  6 files, 54 exp │  │  4 files, 19 exp │  │
-│  │                  │  │                  │  │                  │  │
-│  │  • Platform      │  │  • Tier          │  │  • Language (8)  │  │
-│  │  • Cache (TTL)   │  │  • Level         │  │  • Trigger match │  │
-│  │  • I/O           │  │  • Phase         │  │  • Ambiguity     │  │
-│  │  • Debug         │  │  • Status        │  │                  │  │
-│  │  • Config        │  │  • Automation    │  │                  │  │
-│  │  • File          │  │  • readBkitMem   │  │                  │  │
-│  └──────────────────┘  └──────────────────┘  └──────────────────┘  │
-│                                                                      │
-│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐  │
-│  │  lib/task/       │  │  lib/team/       │  │  lib/common.js   │  │
-│  │  5 files, 26 exp │  │  9 files, 40 exp │  │  (Bridge Layer)  │  │
-│  │                  │  │                  │  │                  │  │
-│  │  • Classification│  │  • Coordinator   │  │  Re-exports all  │  │
-│  │  • Context       │  │  • Strategy      │  │  210 functions   │  │
-│  │  • Creator       │  │  • CTO Logic     │  │  from 5 modules  │  │
-│  │  • Tracker       │  │  • State-Writer  │  │  for backward    │  │
-│  │                  │  │  • Communication │  │  compatibility   │  │
-│  │                  │  │  • Task Queue    │  │                  │  │
-│  │                  │  │  • Orchestrator  │  │                  │  │
-│  └──────────────────┘  └──────────────────┘  └──────────────────┘  │
-│                                                                      │
-└─────────────────────────────────────────────────────────────────────┘
-```
-
-> **Migration Note**: As of v1.5.4, `lib/common.js` is a pure bridge layer. All 210 functions originate in subdirectory modules. Existing scripts that `require('./lib/common.js')` continue to work without changes.
+| Category | New Modules | Count |
+|----------|------------|-------|
+| **Workflow** | state-machine, workflow-engine, workflow-parser, lifecycle, resume | 5 |
+| **Automation** | automation-controller, trust-engine, do-detector, full-auto-do | 4 |
+| **Safety** | destructive-detector, blast-radius, scope-limiter, checkpoint-manager, circuit-breaker, loop-breaker | 6 |
+| **Quality** | gate-manager, metrics-collector, regression-guard | 3 |
+| **Audit** | audit-logger, decision-tracer, explanation-gen | 3 |
+| **UI** | progress-bar, workflow-map, control-panel, agent-panel, impact-view | 5 |
+| **Multi-feature** | batch-orchestrator, feature-manager, backup-scheduler | 3 |
+| **Core** | constants, errors, state-store, ansi, hook-io | 5 |
+| **Total new** | | **34** |
 
 ---
 
-## 1M Context Window Default (v1.6.2)
+## Domain Knowledge Layer (36 Skills)
 
-### CC v2.1.75 Change
-- Opus 4.6: 1M context window enabled by default for Max/Team/Enterprise plans
-- Previously required extra usage billing
-- Now included in plan (no additional cost)
-
-### bkit Impact
-- 8 opus agents (cto-lead, code-analyzer, design-validator, enterprise-expert, gap-detector, infra-architect, pm-lead, security-architect) benefit from 1M context
-- Long-running CTO Team sessions can maintain full PDCA cycle context without loss
-- Large codebase analysis can load entire file sets simultaneously
-
-### Context Engineering Level 6 Criteria
-- Level 5: 200K context utilization (v1.6.1)
-- Level 6: 1M context default + PostCompact auto-recovery + PLUGIN_DATA persistence (v1.6.2)
-
----
-
-## Output Token 128K Upper Limit (v1.6.2)
-
-### CC v2.1.77 Change
-- Opus 4.6: default 64K, upper limit 128K output tokens
-- Sonnet 4.6: upper limit 128K output tokens
-
-### bkit Usage
-- report-generator agent: large completion reports benefit from 128K limit
-- code-analyzer agent: comprehensive analysis output without truncation
-- gap-detector agent: detailed gap analysis reports
-
----
-
-## autoMemoryDirectory Setting (v1.6.2)
-
-### CC v2.1.74 Change
-- `autoMemoryDirectory` setting allows customizing auto-memory storage path
-- Default: `~/.claude/projects/{path}/memory/`
-
-### bkit Memory Systems (No Collision)
-| System | Path | Format | Collision |
-|--------|------|--------|-----------|
-| CC auto-memory | ~/.claude/projects/{path}/memory/MEMORY.md | Markdown | None |
-| bkit memory-store | .bkit/state/memory.json | JSON | None |
-| bkit agent-memory | .claude/agent-memory/{agent}/MEMORY.md | Markdown | None |
-| PLUGIN_DATA backup | ${CLAUDE_PLUGIN_DATA}/backup/ | JSON | None |
-
-### User Guide
-Users can customize auto-memory path in `.claude/settings.json`:
-```json
-{
-  "autoMemoryDirectory": "/path/to/custom/memory"
-}
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    Domain Knowledge Layer (36 Skills)                    │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│  ┌─────────────┐  ┌─────────────┐  ┌──────────────┐  ┌─────────────┐  │
+│  │ Core (4)    │  │ Level (3)   │  │ Pipeline (10)│  │ PDCA (5)    │  │
+│  │ bkit-rules  │  │ starter     │  │ phase-1~9    │  │ pdca        │  │
+│  │ bkit-templ  │  │ dynamic     │  │ development  │  │ pdca-batch  │  │
+│  │ bkit (help) │  │ enterprise  │  │ -pipeline    │  │ plan-plus   │  │
+│  │ btw         │  │             │  │              │  │ rollback    │  │
+│  │             │  │             │  │              │  │ audit       │  │
+│  └─────────────┘  └─────────────┘  └──────────────┘  └─────────────┘  │
+│                                                                         │
+│  ┌─────────────┐  ┌──────────────┐  ┌─────────────┐  ┌─────────────┐  │
+│  │ Control (2) │  │ BaaS (5)     │  │ Platform (3)│  │ Utility (4) │  │
+│  │ control     │  │ bkend-quick  │  │ mobile-app  │  │ code-review │  │
+│  │ skill-status│  │ bkend-auth   │  │ desktop-app │  │ zero-qa     │  │
+│  │             │  │ bkend-data   │  │ cc-learning │  │ skill-create│  │
+│  │             │  │ bkend-storage│  │             │  │ cc-version  │  │
+│  │             │  │ bkend-cook   │  │             │  │             │  │
+│  └─────────────┘  └──────────────┘  └─────────────┘  └─────────────┘  │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## ${CLAUDE_PLUGIN_DATA} Persistent Storage (v1.6.2)
+## Behavioral Rules Layer (31 Agents)
 
-### CC v2.1.78 Change
-- `${CLAUDE_PLUGIN_DATA}` environment variable points to persistent storage
-- Survives plugin updates and reinstallation
-- Deleted only on explicit `plugin uninstall` with confirmation
+### Model Selection Strategy
 
-### bkit Usage (ENH-119)
-- Automatic backup of pdca-status.json and memory.json on every save
-- Automatic restore on SessionStart when primary files are missing
-- Version history tracking for backup audit trail
+| Model | Count | Agents | Characteristics |
+|-------|:-----:|--------|-----------------|
+| **opus** | 10 | cto-lead, code-analyzer, design-validator, gap-detector, enterprise-expert, infra-architect, security-architect, pm-lead, bkit-impact-analyst, cc-version-researcher | Strategic leadership, complex analysis, 1M context |
+| **sonnet** | 19 | bkend-expert, pdca-iterator, pipeline-guide, starter-guide, product-manager, frontend-architect, qa-strategist, pm-discovery, pm-strategy, pm-research, pm-prd, pm-lead-skill-patch, skill-needs-extractor, 6 pdca-eval-* agents | Execution, guidance, iteration |
+| **haiku** | 2 | qa-monitor, report-generator | Fast monitoring, document generation |
 
-### Data Structure
-```
-${CLAUDE_PLUGIN_DATA}/
-  backup/
-    pdca-status.backup.json    # Mirror of .bkit/state/pdca-status.json
-    memory.backup.json         # Mirror of .bkit/state/memory.json
-    version-history.json       # Backup timestamp audit trail
-```
+### Agent Frontmatter (v2.0.0 native)
 
----
-
-## modelOverrides (CC v2.1.73+)
-
-For Bedrock/Vertex/Microsoft Foundry users, `modelOverrides` maps model picker items to custom provider model IDs:
-
-```json
-// .claude/settings.json
-{
-  "modelOverrides": {
-    "opus": "arn:aws:bedrock:us-west-2:123456:inference-profile/opus-custom",
-    "sonnet": "custom-sonnet-endpoint"
-  }
-}
-```
-
-bkit's 29 agents use shorthand model names (opus/sonnet/haiku) which are automatically resolved through modelOverrides.
-
----
-
-## worktree.sparsePaths (CC v2.1.76+)
-
-For large monorepos, `worktree.sparsePaths` enables sparse-checkout when using `claude --worktree`:
-
-```json
-// .claude/settings.json
-{
-  "worktree": {
-    "sparsePaths": ["packages/my-service/", "libs/shared/"]
-  }
-}
-```
-
-Useful for CTO Team worktree isolation in Enterprise-level projects.
-
----
-
-## allowRead Sandbox (CC v2.1.77+)
-
-Fine-grained filesystem read control within sandbox:
-
-```json
-// .claude/settings.json
-{
-  "sandbox": {
-    "filesystem": {
-      "denyRead": ["/etc/", "/var/"],
-      "allowRead": ["/etc/hosts"]
-    }
-  }
-}
-```
-
----
-
-## Session Name (CC v2.1.76+)
-
-The `-n`/`--name` CLI flag sets a display name for sessions:
-
-```bash
-claude -n "feature-auth-v2" --resume
-```
-
-Useful for CI/CD automation and CTO Team session identification.
-
----
-
-## Hook Source Display (CC v2.1.75+)
-
-Hook permission prompts now show the source (settings/plugin/skill) of each hook. This helps users understand which component registered the hook and makes debugging easier.
-
----
-
-## tmux Notification Passthrough (CC v2.1.78+)
-
-Claude Code now properly passes notifications through tmux sessions. CTO Team users running in tmux will receive completion notifications without configuration changes.
-
----
-
-## /effort Command (CC v2.1.76+)
-
-The `/effort` slash command allows adjusting model effort level during a session:
-
-```
-/effort high    # Deep thinking (opus default in bkit)
-/effort medium  # Balanced (sonnet/haiku default)
-/effort low     # Fast response
-```
-
-bkit sets effort levels in agent frontmatter (ENH-120): opus=high, sonnet=medium, haiku=low.
-
-For advanced use, typing "ultrathink" in a prompt triggers maximum reasoning depth.
-
----
-
-## 6-Layer Hook System (12 Events)
-
-bkit's context injection occurs at **6 layers** with **12 hook events** (v1.6.2).
-
-```
-Layer 1: hooks.json (Global)
-         └── SessionStart, UserPromptSubmit, PreCompact, PostCompact
-         └── TaskCompleted, SubagentStart, SubagentStop, TeammateIdle
-         └── StopFailure
-
-Layer 2: Skill Frontmatter
-         └── hooks: { PreToolUse, PostToolUse, Stop }
-
-Layer 3: Agent Frontmatter
-         └── hooks: { PreToolUse, PostToolUse }
-
-Layer 4: Description Triggers
-         └── "Triggers:" keyword matching (8 languages)
-
-Layer 5: Scripts (49 modules)
-         └── Actual Node.js logic execution
-
-Layer 6: Team Orchestration (v1.5.3+)
-         └── CTO-led phase routing, orchestration pattern selection
-         └── Patterns: leader | council | swarm | watchdog
-```
-
-**Context Injection by Hook Event** (12 events, v1.6.2):
-
-| Event | Timing | Injection Type |
-|-------|--------|----------------|
-| **SessionStart** | Session start | Onboarding, PDCA status, trigger table |
-| **UserPromptSubmit** | Before AI processing | Intent detection, agent/skill triggers, ambiguity |
-| **PreToolUse** | Before tool execution | Validation checklist, convention hints |
-| **PostToolUse** | After tool execution | Next step guide, analysis suggestion |
-| **Stop** | Agent termination | State transition, user choice prompt |
-| **StopFailure** | API error termination | Error classification, recovery guidance (v1.6.2) |
-| **PreCompact** | Before compaction | PDCA state snapshot preservation |
-| **PostCompact** | After compaction | PDCA state integrity verification (v1.6.2) |
-| **TaskCompleted** | Task completion | Auto-advance to next PDCA phase |
-| **SubagentStart** | Subagent startup | Agent state recording, team registration |
-| **SubagentStop** | Subagent shutdown | Agent state cleanup, result collection |
-| **TeammateIdle** | Teammate idle | Task reassignment, idle state handling |
-
----
-
-## Dynamic Context Injection Patterns
-
-### Pattern 1: Task Size → PDCA Level
-
-```javascript
-// lib/task/classification.js (re-exported via lib/common.js)
-const classification = {
-  quick_fix: lines < 10,      // PDCA: None
-  minor_change: lines < 50,   // PDCA: Light mention
-  feature: lines < 200,       // PDCA: Recommended
-  major_feature: lines >= 200 // PDCA: Required
-};
-```
-
-### Pattern 2: User Intent → Agent/Skill Auto-Trigger
-
-```javascript
-// lib/intent/trigger.js (re-exported via lib/common.js)
-const implicitPatterns = {
-  'gap-detector': {
-    patterns: [/맞아\??/, /이거 괜찮아\??/, /is this right\?/i],
-    contextRequired: ['design', 'implementation']
-  },
-  'pdca-iterator': {
-    patterns: [/고쳐/, /개선해줘/, /make.*better/i],
-    contextRequired: ['check', 'act']
-  }
-};
-```
-
-### Pattern 3: Ambiguity Score → Clarifying Questions
-
-```javascript
-// lib/intent/ambiguity.js (re-exported via lib/common.js)
-// Score >= 50 → Trigger AskUserQuestion
-
-// Addition factors
-- No specific nouns: +20
-- Undefined scope: +20
-- Multiple interpretations possible: +30
-- Context conflict: +30
-
-// Subtraction factors
-- Contains file path: -30
-- Contains technical terms: -20
-
-// Magic Word Bypass
-!hotfix, !prototype, !bypass → Score = 0
-```
-
-### Pattern 4: Match Rate → Check-Act Iteration
-
-```
-gap-detector (Check) → Calculate Match Rate
-    ├── >= 90% → report-generator (Complete)
-    ├── 70-89% → AskUserQuestion (manual/auto choice)
-    └── < 70%  → Strongly recommend pdca-iterator
-                      ↓
-                 Re-run gap-detector
-                      ↓
-                 Repeat (max 5 iterations)
-```
-
----
-
-## Response Report Rule (v1.4.1)
-
-Reports bkit feature usage status at the end of every response.
-
-```markdown
-─────────────────────────────────────────────────
-📊 bkit Feature Usage Report
-─────────────────────────────────────────────────
-✅ Used: [bkit features used in this response]
-⏭️ Not Used: [Major unused features] (reason)
-💡 Recommended: [Features suitable for next task]
-─────────────────────────────────────────────────
-```
-
-**Recommendations by PDCA Stage**:
-
-| Current Status | Recommendation |
-|----------------|----------------|
-| No PDCA | Start with `/pdca plan` |
-| Plan complete | Design with `/pdca design` |
-| Design complete | Implement or `/pdca next` |
-| Do complete | Gap analysis with `/pdca analyze` |
-| Check < 90% | Auto-improve with `/pdca iterate` |
-| Check >= 90% | Complete with `/pdca report` |
-
----
-
-## Component Architecture (v1.5.4)
-
-> **Note**: As of v1.5.0, bkit is Claude Code exclusive. v1.5.3 adds Team Visibility + SubagentStart/Stop hooks.
-> **v1.5.4**: MCP tool accuracy is a critical Context Engineering concern -- providing exact tool names (not numbered lists) ensures LLMs invoke the correct MCP tools without hallucinating tool names. bkend MCP tools expanded 19→28+ with accurate naming across 4 categories.
-
-| Component | Location | Count |
-|-----------|----------|:-----:|
-| Skills | `skills/*/SKILL.md` | 31 |
-| Agents | `agents/*.md` | 29 |
-| Scripts | `scripts/*.js` | 49 |
-| Templates | `templates/*.md` + `pipeline/` + `shared/` | 13 + subdirs |
-| lib/ modules | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/`, `lib/team/` | 5 dirs, 210 exports |
-| lib/ top-level | `context-hierarchy`, `import-resolver`, `context-fork`, `permission-manager`, `memory-store`, `skill-orchestrator`, `common` (bridge) | 7 modules |
-| Output Styles | `output-styles/*.md` | 4 |
-| Context File | `CLAUDE.md` | 1 |
-| Manifest | `.claude-plugin/plugin.json` | 1 |
-
----
-
-## Functional Requirements (FR-01~FR-08, stable since v1.4.2)
-
-### FR-01: Multi-Level Context Hierarchy
-
-A 4-level context hierarchy with priority-based merging.
-
-```
-L1: Plugin Policy (${PLUGIN_ROOT}/bkit.config.json)
-    ↓ override
-L2: User Config (~/.claude/bkit/user-config.json)
-    ↓ override
-L3: Project Config (${PROJECT_DIR}/bkit.config.json)
-    ↓ override
-L4: Session Context (in-memory runtime state)
-```
-
-**Implementation**: `lib/context-hierarchy.js` (282 lines)
-
-**Key Functions**:
-- `getContextHierarchy()`: Load and merge all 4 levels
-- `getHierarchicalConfig(keyPath)`: Access config by dot-notation path
-- `setSessionContext(key, value)`: Set runtime session values
-- `getUserConfigDir()`: Platform-specific user config directory
-
-**Usage**:
-```javascript
-const { getHierarchicalConfig } = require('./lib/context-hierarchy.js');
-
-// Get merged value from hierarchy (L4 > L3 > L2 > L1)
-const threshold = getHierarchicalConfig('pdca.matchThreshold'); // e.g., 90
-```
-
-### FR-02: @import Directive
-
-External context file loading with variable substitution.
-
-**Supported Variables**:
-- `${PLUGIN_ROOT}` - bkit plugin installation directory
-- `${PROJECT}` - Current project directory
-- `${USER_CONFIG}` - User config directory
-
-**Syntax in SKILL.md/Agent.md frontmatter**:
-```yaml
----
-name: my-skill
-imports:
-  - ./shared/api-patterns.md
-  - ${PLUGIN_ROOT}/templates/error-handling.md
-  - ${PROJECT}/conventions.md
----
-```
-
-**Implementation**: `lib/import-resolver.js` (272 lines)
-
-**Features**:
-- Relative and absolute path resolution
-- Variable substitution
-- Circular dependency detection
-- TTL-based caching
-
-**Shared Context Files** (`templates/shared/`):
-| File | Purpose |
-|------|---------|
-| `api-patterns.md` | RESTful API design patterns |
-| `error-handling-patterns.md` | Error handling best practices |
-| `naming-conventions.md` | Naming convention standards |
-
-### FR-03: Context Fork Isolation
-
-Skills/Agents can execute in isolated context copies.
-
-**Frontmatter Extension**:
 ```yaml
 ---
 name: gap-detector
-context: fork      # fork | shared (default)
-mergeResult: false # merge result back to parent
+model: opus
+effort: high          # reasoning effort
+maxTurns: 20          # execution budget
+memory: project       # cross-session persistence
+disallowedTools:      # restricted tools
+  - Edit
+  - Write
 ---
 ```
 
-**Implementation**: `lib/context-fork.js` (228 lines)
+---
 
-**Key Functions**:
-- `forkContext(skillName, options)`: Create isolated deep clone
-- `mergeForkedContext(forkId)`: Merge results back (arrays dedupe, objects merge)
-- `discardFork(forkId)`: Discard without merging
-- `getActiveForks()`: List active fork contexts
+## State Management Layer (v2.0.0)
 
-**Usage**:
-```javascript
-const { forkContext, mergeForkedContext, discardFork } = require('./lib/context-fork.js');
-
-const { forkId, context } = forkContext('my-skill', { mergeResult: true });
-// ... isolated operations on context ...
-mergeForkedContext(forkId);  // or discardFork(forkId)
 ```
-
-**Agents Using Fork**:
-- `gap-detector.md` - context: fork, mergeResult: false
-- `design-validator.md` - context: fork, mergeResult: false
-
-### FR-04: UserPromptSubmit Hook
-
-User input preprocessing before AI processing.
-
-**Hook Registration** (`hooks/hooks.json`):
-```json
-{
-  "UserPromptSubmit": [{
-    "hooks": [{
-      "type": "command",
-      "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/user-prompt-handler.js",
-      "timeout": 3000
-    }]
-  }]
-}
+┌─────────────────────────────────────────────────────────────────────────┐
+│               State Management Layer (v2.0.0 — 10 subdirs)              │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐      │
+│  │  lib/core/       │  │  lib/pdca/       │  │  lib/intent/     │      │
+│  │  13 files, 61 exp│  │  18 files,116 exp│  │  4 files, 19 exp │      │
+│  │  Platform, State │  │  State Machine   │  │  Language (8)    │      │
+│  │  Store, Paths    │  │  Workflow Engine  │  │  Trigger match   │      │
+│  │  Constants, I/O  │  │  Lifecycle, Batch│  │  Ambiguity       │      │
+│  └──────────────────┘  └──────────────────┘  └──────────────────┘      │
+│                                                                         │
+│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐      │
+│  │  lib/team/       │  │  lib/ui/         │  │  lib/audit/      │      │
+│  │  9 files, 40 exp │  │  7 files, 23 exp │  │  3 files, 35+ exp│      │
+│  │  CTO orchestr.   │  │  Dashboard       │  │  JSONL Logger    │      │
+│  │  Communication   │  │  Progress bar    │  │  Decision trace  │      │
+│  │  State-writer    │  │  Workflow map     │  │  Explanation gen │      │
+│  └──────────────────┘  └──────────────────┘  └──────────────────┘      │
+│                                                                         │
+│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐      │
+│  │  lib/control/    │  │  lib/quality/    │  │  lib/task/       │      │
+│  │  7 files, 62+ exp│  │  3 files, 20+ exp│  │  5 files, 26 exp │      │
+│  │  L0-L4 Levels    │  │  Quality Gates   │  │  Classification  │      │
+│  │  Trust Engine    │  │  Metrics M1-M10  │  │  Context         │      │
+│  │  Safety (blast,  │  │  Regression      │  │  Creator         │      │
+│  │  checkpoint,     │  │  Guard           │  │  Tracker         │      │
+│  │  scope, destruct)│  │                  │  │                  │      │
+│  └──────────────────┘  └──────────────────┘  └──────────────────┘      │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
 ```
-
-**Implementation**: `scripts/user-prompt-handler.js` (110 lines)
-
-**Processing Flow**:
-1. Feature Intent Detection - Detect new feature requests
-2. Agent Trigger Detection - Match implicit agent triggers (8 languages)
-3. Skill Trigger Detection - Match implicit skill triggers
-4. Ambiguity Detection - Calculate ambiguity score
-
-**Output**:
-```json
-{
-  "hookSpecificOutput": {
-    "hookEventName": "UserPromptSubmit",
-    "additionalContext": "Detected intent: new feature 'auth-system'"
-  }
-}
-```
-
-### FR-05: Permission Hierarchy
-
-Three-level permission system for tool access control.
-
-**Permission Levels**:
-| Level | Value | Behavior |
-|-------|:-----:|----------|
-| `deny` | 0 | Block tool execution (exit code 2) |
-| `ask` | 1 | Add confirmation context |
-| `allow` | 2 | Permit execution (default) |
-
-**Configuration** (`bkit.config.json`):
-```json
-{
-  "permissions": {
-    "Write": "allow",
-    "Bash(rm -rf*)": "deny",
-    "Bash(git push --force*)": "deny",
-    "Bash(docker system prune*)": "ask"
-  }
-}
-```
-
-**Implementation**: `lib/permission-manager.js` (205 lines)
-
-**Key Functions**:
-- `checkPermission(toolName, toolInput)`: Check permission level
-- `getToolPermission(toolName)`: Get configured permission
-- Pattern matching with glob-style wildcards
-
-### FR-06: Task Dependency Chain
-
-PDCA phase-based task blocking using Claude Code Task System.
-
-**Task Classification Behavior**:
-| Classification | Lines | Task Created | blockedBy |
-|---------------|:-----:|:------------:|:---------:|
-| quick_fix | <10 | ❌ Skip | N/A |
-| minor_change | <50 | ❌ Skip | N/A |
-| feature | <200 | ✅ Yes | Optional |
-| major_feature | ≥200 | ✅ Yes | Auto-set |
-
-**Non-Blocking PDCA**: `blockedBy` is dependency tracking metadata, not a hard block.
-
-**Implementation**: `lib/task/creator.js` - `autoCreatePdcaTask()` (re-exported via `lib/common.js`)
-
-### FR-07: Context Compaction Hook
-
-Preserve PDCA state during context compaction.
-
-**Hook Registration** (`hooks/hooks.json`):
-```json
-{
-  "PreCompact": [{
-    "matcher": "auto|manual",
-    "hooks": [{
-      "type": "command",
-      "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/context-compaction.js",
-      "timeout": 5000
-    }]
-  }]
-}
-```
-
-**Implementation**: `scripts/context-compaction.js` (96 lines)
-
-**Features**:
-- PDCA state snapshot to `docs/.pdca-snapshots/`
-- Automatic cleanup (keeps 10 most recent)
-- State summary in output for context restoration
-
-### FR-08: MEMORY Variable Support
-
-Session-persistent key-value storage.
-
-**Storage Location**: `docs/.bkit-memory.json`
-
-**Implementation**: `lib/memory-store.js` (189 lines)
-
-**API**:
-```javascript
-const { setMemory, getMemory, deleteMemory, getAllMemory, clearMemory } = require('./lib/memory-store.js');
-
-setMemory('lastFeature', 'auth-system');
-const feature = getMemory('lastFeature', 'default');
-deleteMemory('lastFeature');
-const all = getAllMemory();
-clearMemory();
-```
-
-**Use Cases**:
-- Session counter tracking
-- Last active feature persistence
-- User preference storage
-- Cross-session state
 
 ---
 
-## Module Integration Map
+## MCP Servers (v2.0.0)
 
-All modules are integrated through the following call paths:
+External tool integration via Model Context Protocol:
 
-**Top-level FR modules**:
-
-| Module | Called From | Trigger |
-|--------|-------------|---------|
-| `context-hierarchy.js` | `hooks/session-start.js` | SessionStart |
-| `import-resolver.js` | `hooks/session-start.js`, `user-prompt-handler.js` | SessionStart, UserPromptSubmit |
-| `context-fork.js` | `hooks/session-start.js` | SessionStart (stale fork cleanup) |
-| `permission-manager.js` | `scripts/pre-write.js` | PreToolUse (Write\|Edit) |
-| `memory-store.js` | `hooks/session-start.js` | SessionStart |
-| `skill-orchestrator.js` | `scripts/skill-post.js` | Skill invocation |
-
-**Subdirectory modules** (via `lib/common.js` bridge):
-
-| Module | Called From | Trigger |
-|--------|-------------|---------|
-| `lib/core/*` | All scripts | Platform, cache, I/O, debug, config, file operations |
-| `lib/pdca/*` | PDCA scripts, stop hooks | Phase transitions, status updates, tier detection |
-| `lib/intent/*` | `user-prompt-handler.js` | UserPromptSubmit (language/trigger/ambiguity) |
-| `lib/task/*` | Stop hooks, PDCA scripts | Task creation, classification, tracking |
-| `lib/team/*` | Team hooks, CTO logic | SubagentStart/Stop, TeammateIdle, orchestration |
+| Server | Tools | Purpose |
+|--------|:-----:|---------|
+| **bkit-pdca** | 10 | bkit_pdca_status, bkit_pdca_history, bkit_feature_list, bkit_feature_detail, bkit_plan_read, bkit_design_read, bkit_analysis_read, bkit_report_read, bkit_metrics_get, bkit_metrics_history |
+| **bkit-analysis** | 6 | bkit_code_quality, bkit_gap_analysis, bkit_regression_rules, bkit_checkpoint_list, bkit_checkpoint_detail, bkit_audit_search |
 
 ---
 
-## v1.4.4 Architecture Diagrams
+## State File Architecture
 
-### Component Diagram (6-Layer Architecture)
-
-```mermaid
-flowchart TB
-    subgraph UserLayer["User Request"]
-        UR[User Input]
-    end
-
-    subgraph SkillLayer["Skill Layer (Entry Point)"]
-        PDCA["/pdca<br/>agents:<br/>analyze: gap-detector<br/>iterate: pdca-iterator"]
-        ENT["/enterprise<br/>agents:<br/>init: enterprise-expert<br/>infra: infra-architect"]
-        P8["/phase-8<br/>agents:<br/>design: design-validator<br/>code: code-analyzer"]
-    end
-
-    subgraph Orchestrator["skill-orchestrator.js (Enhanced)"]
-        PAF["parseAgentsField()"]
-        GAA["getAgentForAction()"]
-        OSPre["orchestrateSkillPre()"]
-        OSPost["orchestrateSkillPost()"]
-    end
-
-    subgraph AgentLayer["Agent Layer"]
-        GD["gap-detector<br/>Stop Hook: gap-detector-stop.js"]
-        PI["pdca-iterator<br/>Stop Hook: iterator-stop.js"]
-        RG["report-generator<br/>Skills: bkit-templates, pdca"]
-    end
-
-    subgraph StopHooks["Stop Hooks Layer (Enhanced)"]
-        GDS["gap-detector-stop.js<br/>• Match Rate branching<br/>• Task auto-creation<br/>• AskUserQuestion prompt"]
-        ITS["iterator-stop.js<br/>• Iteration result branching<br/>• Auto re-analyze trigger<br/>• Task status update"]
-    end
-
-    subgraph StateLayer["State Management Layer"]
-        PDS[".pdca-status.json<br/>matchRate, iterationCount, phase"]
-        MEM[".bkit-memory<br/>activePdca, pdcaHistory, sessionCount"]
-        TASK["Task System<br/>[PM]→[Plan]→[Design]→[Do]→[Check]→[Act]→[Report]"]
-    end
-
-    UR --> SkillLayer
-    PDCA --> Orchestrator
-    ENT --> Orchestrator
-    P8 --> Orchestrator
-    Orchestrator --> AgentLayer
-    GD --> StopHooks
-    PI --> StopHooks
-    StopHooks --> StateLayer
-```
-
-### Data Flow (PDCA Analyze Cycle)
-
-```mermaid
-flowchart TD
-    A["User: /pdca analyze feature"] --> B["Skill: pdca<br/>Action: analyze"]
-    B -->|"getAgentForAction('pdca', 'analyze')"| C["Agent: gap-detector<br/>model: opus"]
-    C -->|"Design vs Implementation comparison"| D["Analysis Result<br/>matchRate: 85%"]
-    D -->|"Agent Stop"| E["gap-detector-stop.js"]
-    E -->|"matchRate < 90%"| F["Task Auto-Creation<br/>[Act-1] feature<br/>blockedBy: [Check]"]
-    E -->|"matchRate < 90%"| G["AskUserQuestion<br/>'Auto-improve?'<br/>• Auto-improve (Recommended)<br/>• Manual fix<br/>• Complete as-is"]
-    E -->|"matchRate >= 90%"| H["Task Auto-Creation<br/>[Report] feature<br/>blockedBy: [Check]"]
-    E -->|"matchRate >= 90%"| I["AskUserQuestion<br/>'Generate report?'<br/>• Generate report<br/>• Continue improvement"]
-```
-
-### Component Dependencies
-
-| Component | Depends On | Purpose |
-|-----------|-----------|---------|
-| `skill-orchestrator.js` | `lib/common.js` | PDCA state management functions |
-| `gap-detector-stop.js` | `lib/common.js` | Task creation, state update |
-| `iterator-stop.js` | `lib/common.js` | Task update, phase transition |
-| `pdca` skill | `templates/*.md` | Template imports |
-| `agents/*.md` | `skills` | `skills_preload`, `skills` fields |
-
-### Agents Multi-Binding
-
-v1.4.4 introduces `agents` field for action-specific agent routing:
-
-```yaml
-# Single binding (backward compatible)
-agent: starter-guide
-
-# Multi-binding (v1.4.4)
-agents:
-  analyze: gap-detector      # /pdca analyze → gap-detector
-  iterate: pdca-iterator     # /pdca iterate → pdca-iterator
-  report: report-generator   # /pdca report → report-generator
-  default: gap-detector      # fallback agent
-```
-
-**Skills with Multi-Binding**:
-| Skill | Actions | Agents |
-|-------|---------|--------|
-| `pdca` | analyze, iterate, report | gap-detector, pdca-iterator, report-generator |
-| `enterprise` | init, strategy, infra | enterprise-expert, infra-architect |
-| `phase-8-review` | design, code | design-validator, code-analyzer |
+| Category | Path | Format | Purpose |
+|----------|------|--------|---------|
+| PDCA Status | `.bkit/state/pdca-status.json` | JSON (v3.0) | Feature states, phase tracking |
+| Trust Profile | `.bkit/state/trust-profile.json` | JSON | Trust score components, level history |
+| Memory Store | `.bkit/state/memory.json` | JSON | Cross-session bkit memory |
+| Control State | `.bkit/runtime/control-state.json` | JSON | Automation level, session stats |
+| Agent State | `.bkit/runtime/agent-state.json` | JSON | Agent Teams runtime state |
+| Agent Events | `.bkit/runtime/agent-events.jsonl` | JSONL | Agent team event log |
+| Audit Logs | `.bkit/audit/YYYY-MM-DD.jsonl` | JSONL | Daily audit trail |
+| Workflows | `.bkit/workflows/*.workflow.yaml` | YAML | PDCA workflow presets |
+| Config | `bkit.config.json` | JSON | Project-level configuration |
+| Plugin | `.claude-plugin/plugin.json` | JSON | Plugin manifest |
 
 ---
 
-## v1.5.x Context Engineering Features
+## Context Engineering Level (CE-7)
 
-### Output Styles as Context Layer (v1.5.1)
+| Level | Version | Capabilities |
+|:-----:|---------|-------------|
+| CE-1 | v1.0 | Basic skills and hooks |
+| CE-2 | v1.2 | Multi-language support, pipeline |
+| CE-3 | v1.3 | Agent Teams, iteration loop |
+| CE-4 | v1.4 | 8-language triggers, Skills 2.0 |
+| CE-5 | v1.5 | Modular lib architecture, PM Team |
+| CE-6 | v1.6 | 1M context, PLUGIN_DATA, 210 exports |
+| **CE-7** | **v2.0** | **State machine, workflow engine, controllable AI (L0-L4), audit system, quality gates, CLI dashboard, MCP servers, 76 modules, ~465 exports** |
 
-Output Styles add a response formatting context layer:
+### CE-7 Criteria
 
-| Style | Context Injection |
-|-------|-------------------|
-| `bkit-learning` | Learning points, TODO(learner) markers, concept explanations |
-| `bkit-pdca-guide` | Status badges, checklists, gap analysis suggestions |
-| `bkit-enterprise` | Tradeoff tables, cost impact, deployment strategy |
-| `bkit-pdca-enterprise` | Enterprise PDCA report styling |
-
-**Auto-Selection**: Level detection → Output style suggestion (Starter→learning, Dynamic→pdca-guide, Enterprise→enterprise)
-
-**Configuration** (`bkit.config.json`):
-```json
-{
-  "outputStyles": {
-    "directory": "output-styles",
-    "available": ["bkit-pdca-guide", "bkit-learning", "bkit-enterprise", "bkit-pdca-enterprise"],
-    "levelDefaults": {
-      "Starter": "bkit-learning",
-      "Dynamic": "bkit-pdca-guide",
-      "Enterprise": "bkit-enterprise"
-    }
-  }
-}
-```
-
-> **Note**: Plugin must declare `"outputStyles": "./output-styles/"` in `plugin.json` for discovery.
-
-### CTO-Led Agent Teams as Parallel Context (v1.5.1+)
-
-CTO-Led Agent Teams enable orchestrated parallel context management:
-- CTO Lead (opus) coordinates all context flow across teammates
-- Each teammate operates with its own context window per PDCA phase
-- Phase-specific agents focus on their domain context
-- Orchestrator selects pattern (Leader/Council/Swarm/Watchdog) per phase
-- Communication module manages structured team messages (7 types)
-
-**Orchestration Patterns by Level**:
-
-| Level | Plan | Design | Do | Check | Act |
-|-------|------|--------|-----|-------|-----|
-| Dynamic | leader | leader | swarm | council | leader |
-| Enterprise | leader | council | swarm | council | watchdog |
-
-**Team Configuration** (`bkit.config.json`):
-```json
-{
-  "team": {
-    "enabled": true,
-    "displayMode": "in-process",
-    "maxTeammates": 5,
-    "ctoAgent": "cto-lead",
-    "levelOverrides": {
-      "Dynamic": { "maxTeammates": 3 },
-      "Enterprise": { "maxTeammates": 5 }
-    }
-  }
-}
-```
-
-### Team Visibility & State Writer (v1.5.3)
-
-The `lib/team/state-writer.js` module (9 exports) persists agent team state for external tools (e.g., bkit Studio IPC):
-
-- **State file**: `.bkit/agent-state.json` (schema v1.0)
-- **Tracked data**: Agent status, phase progress, teammate assignments
-- **New hooks**: `SubagentStart`, `SubagentStop` for lifecycle tracking
-- **Handlers**: `subagent-start-handler.js`, `subagent-stop-handler.js`, `team-idle-handler.js`
-
-### Agent Memory as Persistent Context (v1.5.1)
-
-Agent Memory implements cross-session context persistence:
-
-| Scope | Location | Persistence |
-|-------|----------|-------------|
-| `project` | `.claude/agent-memory/` | Per-project, across sessions |
-| `user` | `~/.claude/agent-memory/` | Global, across all projects |
-| `local` | `.claude/agent-memory-local/` | Per-project, local only |
-
-9 agents use `project` scope, 2 agents (starter-guide, pipeline-guide) use `user` scope.
-
-### MCP Tool Accuracy (v1.5.4)
-
-MCP tool accuracy is a critical Context Engineering concern. Providing exact tool names (not numbered lists) ensures LLMs invoke the correct MCP tools without hallucinating names.
-
-- bkend MCP tools expanded: 19 → 28+ tools
-- Accurate naming across 4 categories (auth, data, storage, management)
-- Each tool documented with exact name, parameters, and examples
-
-### Gemini CLI v0.31.0 Migration (v1.5.6-gemini)
-
-v1.5.6 extends bkit-gemini with Gemini CLI v0.31.0 stable support, adding 3 major context engineering capabilities:
-
-**1. RuntimeHook Function Preparation** (`lib/adapters/gemini/hook-adapter.js`):
-- SDK-based `HookSystem.registerHook()` abstraction layer
-- `HOOK_EVENT_MAP`: 10 entries mapping PascalCase (hooks.json) to snake_case (SDK) event names
-- `supportsRuntimeHookFunctions()`, `getRuntimeHookTemplate()` for version-gated detection
-- Actual SDK transition deferred to v1.6.0 pending stable `@anthropic-ai/gemini-cli-sdk`
-
-**2. Tool Annotation Metadata** (`lib/adapters/gemini/tool-registry.js`):
-- `TOOL_ANNOTATIONS`: All 17 built-in tools with `readOnlyHint`, `destructiveHint`, `idempotentHint`
-- `getToolAnnotations(toolName)`: Query annotations for trust-model-aware tool selection
-- `isReadOnlyTool(toolName)`, `getStrictReadOnlyTools()`: Annotation-based read-only classification
-- `getReadOnlyTools()` kept hardcoded for backward compatibility
-
-**3. Project-level Policy (Tier 3)** (`lib/adapters/gemini/policy-migrator.js`):
-- `LEVEL_POLICY_TEMPLATES`: Starter (10 rules, restrictive), Dynamic (7 rules, balanced), Enterprise (5 rules, permissive)
-- All templates use `tier: 3` (workspace level) which allows `allow` decisions
-- Extension tier (Tier 2) blocks `allow` — only Tier 3+ can grant full permissions
-- `generateLevelPolicy(level, projectDir)`: Auto-generates workspace policy when `hasProjectLevelPolicy` flag is true
-
-**Version Detector Expansion** (9 → 18 feature flags):
-```
-v0.31.0 flags: hasRuntimeHookFunctions, hasBrowserAgent, hasProjectLevelPolicy,
-               hasMcpProgress, hasParallelReadCalls, hasPlanModeCustomStorage,
-               hasToolAnnotations, hasExtensionFolderTrust, hasAllowMultipleReplace
-```
-
-**Breaking Change Awareness** (tracked, no code changes required):
-- `read_file`: `offset/limit` → `start_line/end_line` (1-based line numbers)
-- `replace`: `expected_replacements` → `allow_multiple` (boolean)
-
-**Context Engineering Pattern: Version-Gated Features**
-All new capabilities are guarded by `getFeatureFlags()` checks, ensuring backward compatibility with v0.29.0+ while enabling progressive enhancement on v0.31.0+.
+- Declarative state machine with guards (not imperative phase management)
+- YAML-defined workflows (not hardcoded phase sequences)
+- 5-level controllable automation with trust score (not binary on/off)
+- Full audit trail with decision tracing (not opaque AI)
+- Quality gates with configurable thresholds (not manual checks)
+- Real-time CLI dashboard (not text-only status)
+- MCP server integration for external tools (not plugin-only)
+- Checkpoint/rollback for safe experimentation (not irreversible changes)
 
 ---
 
-## v1.6.0 Enhancements
+## Memory Systems (No Collision)
 
-### Skill Classification System (ENH-90)
-
-All 28 bkit skills are classified into three categories:
-
-| Classification | Count | Description | Deprecation Risk |
-|:---:|:---:|---|---|
-| **Workflow** | 9 | Process automation, model-independent | none |
-| **Capability** | 18 | Guidance that may become redundant as models improve | low~high |
-| **Hybrid** | 1 | Combines workflow and capability features | low |
-
-Key principle: **Workflow skills are bkit's core value** — PDCA methodology, pipeline management, coding rules, QA processes persist regardless of model advancement.
-
-### Skill Lifecycle Management (ENH-99)
-
-Capability skills follow a data-driven deprecation process:
-
-**Deprecation Criteria**:
-1. Evals parity test: model achieves 85%+ of skill-assisted quality without the skill
-2. 3 consecutive parity test passes trigger deprecation candidate status
-3. CTO manual approval required before deprecated marking
-4. 2 releases retention period before removal
-
-**Deprecation Process**:
-```
-active → candidate (parity data) → deprecated (v1.6.x) → removed (v1.7.0+)
-```
-
-**Deprecation Risk Assessment**:
-- `none`: Workflow skills — permanently valuable
-- `low`: Specialized domain knowledge (enterprise, mobile-app, desktop-app)
-- `medium`: General development guidance (phase-1~9, bkend-*)
-- `high`: Content likely subsumed by model (claude-code-learning, phase-3-mockup)
-
-### CC 2.1.0 Compatibility Matrix (ENH-98)
-
-| CC Feature | bkit v1.5.9 | bkit v1.6.0 | Migration |
-|---|:---:|:---:|---|
-| context:fork (native) | FR-03 custom (228 lines) | Native frontmatter | Deprecated, fallback retained |
-| Frontmatter hooks | N/A (hooks.json only) | 29 agents + 12 skills | Gradual migration |
-| Skill hot reload | Supported (passive) | Documented + guided | ENH-87 |
-| / invoke | Supported (31 skills) | Documented | ENH-96 |
-| Wildcard permissions | Not documented | Guided in bkit-rules | ENH-95 |
-| Skill Creator | N/A | Integrated workflow | ENH-97 |
-| Skill Evals | N/A | 28 evals + A/B testing | ENH-88, ENH-89 |
-| Skill Classification | N/A | 31 skills classified | ENH-90 |
-| /loop + Cron | N/A | PDCA auto-monitoring | ENH-100 |
-
-### CC Version Compatibility
-
-```
-v2.1.34~v2.1.78: 44 consecutive compatible releases
-Breaking Changes: 0 (across all 44 releases)
-CC 2.1.0 (Skills 2.0): 100% backward compatible (additive features)
-Recommended version: v2.1.78
-```
-
-### PM Agent Team (ENH-102 derived)
-
-5 PM Team agents provide structured pre-Plan product discovery:
-- **pm-lead**: Orchestrates PM workflow, delegates to specialists
-- **pm-discovery**: Market research, user interviews, pain point analysis
-- **pm-strategy**: Product positioning, go-to-market, competitive advantage
-- **pm-research**: Data gathering, trend analysis, competitive landscape
-- **pm-prd**: PRD generation with user stories, acceptance criteria
-
-PM Team triggers: `pm`, `PRD`, `product discovery`, `market research`
-
-### Skill Evals (ENH-88)
-
-28 eval definitions enable data-driven skill quality measurement:
-- Each skill has a paired eval definition
-- Evals measure skill output quality against ground truth
-- Supports automated regression testing of skill changes
-
-### Skill Creator + A/B Testing (ENH-89, ENH-97)
-
-- Skill Creator workflow guides creation of new skills following bkit conventions
-- A/B Testing compares skill variants using eval metrics
-- Data-driven deprecation: 3 consecutive parity passes trigger deprecation candidate
-
-### Skill Hot Reload (ENH-87)
-
-Skills can be updated live without session restart:
-- CC 2.1.0 native hot reload support
-- `/reload-plugins` command refreshes skill content
-- Enables iterative skill development within active sessions
+| System | Path | Format |
+|--------|------|--------|
+| CC auto-memory | `~/.claude/projects/{path}/memory/MEMORY.md` | Markdown |
+| bkit memory-store | `.bkit/state/memory.json` | JSON |
+| bkit agent-memory | `.claude/agent-memory/{agent}/MEMORY.md` | Markdown |
+| PLUGIN_DATA backup | `${CLAUDE_PLUGIN_DATA}/backup/` | JSON |
 
 ---
 
 ## Related Documents
 
-- [[core-mission]] - Three core philosophies
-- [[ai-native-principles]] - AI-Native development principles
+- [[core-mission]] - Core mission and philosophies
+- [[ai-native-principles]] - AI-Native principles
 - [[pdca-methodology]] - PDCA methodology
-- [[../triggers/trigger-matrix]] - Trigger matrix
-- [[../components/hooks/_hooks-overview]] - Hook system details

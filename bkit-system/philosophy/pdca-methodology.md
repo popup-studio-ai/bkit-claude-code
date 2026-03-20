@@ -1,36 +1,62 @@
-# PDCA Methodology in bkit
+# PDCA Methodology in bkit v2.0.0
 
-> Relationship between PDCA cycle and 9-stage pipeline
+> Declarative state machine-driven PDCA with workflow engine, quality gates, and controllable automation
 
-## PDCA Cycle
+## PDCA Cycle (v2.0.0 State Machine)
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                      PDCA Cycle                                  │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│   Plan ──────► Design ──────► Do ──────► Check ──────► Act     │
-│     │                                                    │      │
-│     └────────────────── Improvement Cycle ◄──────────────┘      │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    PDCA State Machine (v2.0.0)                           │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│   idle ──→ PM ──→ Plan ──→ Design ──→ Do ──→ Check ──┬──→ Report       │
+│    │                                          ↑       │       │         │
+│    └──── (SKIP_PM) ──→ Plan                   │       ▼       ▼         │
+│                                               └──── Act    Completed    │
+│                                                                         │
+│   20 transitions │ 9 guards │ 3 YAML presets │ Checkpoint per phase     │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
 ```
 
 ### Phases
 
-| Phase | Document Location | Command | Purpose |
-|-------|-------------------|---------|---------|
-| **Plan** | `docs/01-plan/` | `/pdca-plan` | Define goals, scope, success criteria |
-| **Design** | `docs/02-design/` | `/pdca-design` | Architecture, data model, API spec |
-| **Do** | Code | - | Implement based on design |
-| **Check** | `docs/03-analysis/` | `/pdca-analyze` | Design-implementation gap analysis |
-| **Act** | `docs/04-report/` | `/pdca-report` | Completion report, lessons learned |
+| Phase | Document Location | Unified Command | Purpose |
+|-------|-------------------|-----------------|---------|
+| **PM** | PRD output | `/pdca pm {feature}` | Product discovery, PRD generation |
+| **Plan** | `docs/01-plan/` | `/pdca plan {feature}` | Define goals, scope, success criteria |
+| **Design** | `docs/02-design/` | `/pdca design {feature}` | Architecture, data model, API spec |
+| **Do** | Code | `/pdca do {feature}` | Implement based on design |
+| **Check** | `docs/03-analysis/` | `/pdca analyze {feature}` | Design-implementation gap analysis |
+| **Act** | Iteration | `/pdca iterate {feature}` | Auto-fix gaps (max 5 iterations) |
+| **Report** | `docs/04-report/` | `/pdca report {feature}` | Completion report, lessons learned |
+
+### State Machine Transitions
+
+| # | From | Event | To | Guard |
+|---|------|-------|-----|-------|
+| 1 | idle | START | pm_analysis | — |
+| 2 | idle | SKIP_PM | plan | — |
+| 3 | pm_analysis | PM_DONE | plan | prdExists |
+| 4 | plan | PLAN_DONE | design | planDocValid |
+| 5 | design | DESIGN_DONE | do | designDocValid |
+| 6 | do | DO_DONE | check | implementationComplete |
+| 7 | check | APPROVE | report | matchRate >= 90% |
+| 8 | check | ITERATE | act | maxIterations < 5 |
+| 9 | act | ACT_DONE | check | — |
+| 10 | report | REPORT_DONE | completed | — |
+
+### Workflow Presets (YAML DSL)
+
+| Preset | Steps | Use Case |
+|--------|-------|----------|
+| **default** | 9 steps (PM → Plan → Design → Do → Check → Act → Report → Archive) | Standard feature development |
+| **enterprise** | 9 steps + parallel-check | Enterprise with concurrent QA |
+| **hotfix** | 7 steps (skip PM, Design) | Urgent production fixes |
 
 ---
 
 ## 9-Stage Development Pipeline
-
-A 9-stage pipeline for full project development:
 
 ```
 Phase 1: Schema       → Data modeling, terminology
@@ -52,28 +78,15 @@ Phase 9: Deployment   → Production deployment
 | **Dynamic** | 1 → 2 → 3 → 4 → 5 → 6 → 7 → 9 | Phase 8 optional |
 | **Enterprise** | All phases | All phases required |
 
----
-
-## PDCA vs Pipeline: The Key Relationship
-
-### Core Concept
+### PDCA within Pipeline
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                                                                 │
-│   "Run PDCA cycle WITHIN each Pipeline Phase"                   │
-│                                                                 │
-│   NOT: Pipeline as a whole = PDCA                               │
-│   YES: Each Phase = One PDCA cycle                              │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
+"Run PDCA cycle WITHIN each Pipeline Phase"
 
-### Example: Phase 4 (API)
+NOT: Pipeline as a whole = PDCA
+YES: Each Phase = One PDCA cycle
 
-```
-Phase 4: API Implementation
-
+Example: Phase 4 (API)
 ├── Plan: Define API endpoints and requirements
 ├── Design: Write API spec (OpenAPI/REST)
 ├── Do: Implement endpoints
@@ -83,115 +96,105 @@ Phase 4: API Implementation
 
 ---
 
-## Auto-Apply Rules
+## Quality Gates (v2.0.0)
 
-`bkit-rules` skill automatically applies PDCA:
+7-stage quality gate system with configurable thresholds:
 
-### 1. Task Classification
+| Gate | Phase Transition | Threshold | Auto-Approve Level |
+|------|-----------------|-----------|-------------------|
+| PM Gate | pm → plan | PRD exists | L1+ |
+| Plan Gate | plan → design | Plan doc validated | L2+ |
+| Design Gate | design → do | Design doc validated | L2+ |
+| Do Gate | do → check | Implementation exists | L3+ |
+| Check Gate | check → report | matchRate >= 90% | All levels (gate) |
+| Iterate Gate | check → act | matchRate < 90%, iterations < 5 | L2+ |
+| Report Gate | report → archive | Report generated | L3+ |
 
-```
-Auto-classification on code changes:
+### Metrics (M1-M10)
 
-Quick Fix      (< 10 lines)   → PDCA optional
-Minor Change   (< 50 lines)   → PDCA recommended
-Feature        (< 200 lines)  → PDCA required
-Major Feature  (>= 200 lines) → PDCA + split recommended
-```
+| Metric | Description | Target |
+|--------|-------------|--------|
+| M1 | Plan accuracy (predicted vs actual changes) | > 80% |
+| M2 | Design coverage (designed vs implemented) | > 90% |
+| M3 | Implementation match rate | > 90% |
+| M4 | Test pass rate | 100% |
+| M5 | Code quality score | > 70/100 |
+| M6 | Convention compliance | > 90% |
+| M7 | Critical issue count | 0 |
+| M8 | PDCA cycle duration | Trending down |
+| M9 | Iteration count | < 3 average |
+| M10 | Regression rate | 0% |
 
-### 2. Design Document Check
+---
 
-```
-On Write/Edit (PreToolUse hook):
+## Automation Levels for PDCA
 
-1. Check if design doc exists for the feature
-2. If not exists → Suggest "Shall I write the design first?"
-3. If exists → Reference design during implementation
-```
+| Level | Phase Transitions | Destructive Ops | Trust Score Required |
+|:-----:|------------------|-----------------|---------------------|
+| L0 | All manual | All denied/ask | 0+ |
+| L1 | idle→pm, idle→plan auto | Read auto | 20+ |
+| L2 | Most transitions auto | Non-destructive auto | 40+ |
+| L3 | All except report→archive | Most auto, high-risk ask | 65+ |
+| L4 | Fully automatic | All auto, post-review only | 85+ |
 
-### 3. Gap Analysis Suggestion
+### Trust Score Components
 
-```
-After implementation (PostToolUse hook):
+| Component | Weight | Description |
+|-----------|--------|-------------|
+| pdcaCompletionRate | 0.25 | % of PDCA cycles completed |
+| gatePassRate | 0.20 | % of quality gates passed |
+| rollbackFrequency | 0.15 | Inverse of rollback rate |
+| destructiveBlockRate | 0.15 | % of destructive ops blocked |
+| iterationEfficiency | 0.15 | Based on consecutive successes |
+| userOverrideRate | 0.10 | Inverse of user override frequency |
 
-1. Detect changed files
-2. Analyze feature size
-3. Suggest "Shall I run Gap Analysis?"
-```
+---
 
-### 4. Check-Act Iteration Loop (v1.3.0)
+## Check-Act Iteration Loop
 
 ```
 gap-detector Agent (Check)
-    ↓ (Stop hook)
-gap-detector-stop.js
-    ├── >= 90% Match Rate → Suggest report-generator → Enable /archive
-    ├── 70-89% Match Rate → Provide options (manual/auto)
-    └── < 70% Match Rate  → Strongly recommend pdca-iterator
+    ↓
+    ├── >= 90% Match Rate → Suggest report-generator → /pdca report
+    ├── 70-89% Match Rate → Options (manual/auto)
+    └── < 70% Match Rate  → Auto-trigger pdca-iterator
                                ↓
                           pdca-iterator Agent (Act)
-                               ↓ (Stop hook)
-                          iterator-stop.js
-                               ├── Complete → Suggest report-generator
-                               └── In progress → Guide to re-run gap-detector
-                                    ↓
-                               Repeat (max 5 times)
+                               ↓
+                          Re-run gap-detector (Check)
+                               ↓
+                          Repeat (max 5 iterations via guard)
 ```
-
-**v1.3.0 Key Improvement**: Check-Act iteration automated through Stop hooks.
 
 ---
 
-## Document Templates
+## Checkpoint & Rollback
 
-| Template | Purpose | Key Sections |
-|----------|---------|--------------|
-| `plan.template.md` | Plan document | Goals, Scope, Success Criteria, Schedule |
-| `design.template.md` | Design document | Architecture, Data Model, API Spec, Test Plan |
-| `design-starter.template.md` | Simplified design for Starter | Goals, User Flow, Components |
-| `design-enterprise.template.md` | Detailed design for Enterprise | Service Architecture, Infrastructure |
-| `analysis.template.md` | Gap analysis document | Match Rate, Missing/Added/Changed, Recommendations |
-| `report.template.md` | Completion report | Completed Items, Learnings, Improvements |
+| Trigger | Action |
+|---------|--------|
+| Phase transition | Auto-create checkpoint (if `checkpointOnPhaseTransition: true`) |
+| Destructive operation detected | Auto-create checkpoint (if `checkpointOnDestructive: true`) |
+| User request | `/rollback` to list and restore checkpoints |
 
 ---
 
-## Archive Rules
+## Unified Command Reference
 
-Move to archive after PDCA cycle completion:
-
-### Archive Trigger
-
-| Condition | Action |
-|-----------|--------|
-| Gap Analysis >= 90% match | Archive enabled |
-| Report generation complete | Archive recommended |
-| User explicit completion declaration | Execute archive |
-
-### Archive Process
-
-```
-1. Verify completion conditions
-   └── docs/03-analysis/{feature}.analysis.md exists
-   └── match rate >= 90% or user approval
-
-2. Create archive folder
-   └── docs/archive/YYYY-MM/{feature}/
-
-3. Move related documents
-   ├── docs/pdca/01-plan/features/{feature}.plan.md → archive
-   ├── docs/pdca/02-design/features/{feature}.design.md → archive
-   └── docs/pdca/03-analysis/{feature}.analysis.md → archive
-
-4. Update index
-   └── Add to docs/archive/YYYY-MM/_INDEX.md
-```
+| Command | Function |
+|---------|----------|
+| `/pdca status` | Current PDCA progress dashboard |
+| `/pdca plan {feature}` | Write plan document |
+| `/pdca design {feature}` | Write design document |
+| `/pdca do {feature}` | Implementation guidance |
+| `/pdca analyze {feature}` | Gap analysis (design vs implementation) |
+| `/pdca iterate {feature}` | Auto-fix with Evaluator-Optimizer pattern |
+| `/pdca report {feature}` | Generate completion report |
+| `/pdca next` | Suggest next action based on state machine |
+| `/pdca pm {feature}` | PM Agent Team product discovery |
 
 ---
 
 ## Zero Script QA
-
-A methodology for performing QA without traditional test scripts:
-
-### Traditional vs Zero Script
 
 | Aspect | Traditional QA | Zero Script QA |
 |--------|---------------|----------------|
@@ -200,136 +203,25 @@ A methodology for performing QA without traditional test scripts:
 | Analysis | Check results | AI real-time log analysis |
 | Maintenance | Update scripts per change | No maintenance needed |
 
-### Core Principles
-
-```
+Core Principles:
 1. Log everything (including 200 OK)
 2. Structured JSON logs
 3. Track entire flow with Request ID
 4. AI monitors real-time and documents issues
-```
 
 ---
 
-## Commands Reference
-
-### PDCA Workflow
-
-| Command | Function |
-|---------|----------|
-| `/pdca-status` | Current PDCA progress dashboard |
-| `/pdca-plan [feature]` | Write plan document |
-| `/pdca-design [feature]` | Write design document |
-| `/pdca-analyze [feature]` | Gap analysis (design vs implementation) |
-| `/pdca-iterate [feature]` | Auto-fix with Evaluator-Optimizer pattern |
-| `/pdca-report` | Generate completion report |
-| `/pdca-next` | Suggest next action |
-| `/archive [feature]` | Archive completed PDCA documents (v1.3.0) |
-
-### Pipeline Management
-
-| Command | Function |
-|---------|----------|
-| `/pipeline-start` | Start full development pipeline |
-| `/pipeline-status` | Check pipeline status |
-| `/pipeline-next` | Next pipeline phase |
-
----
-
----
-
-## v1.5.4 PDCA Notes
-
-- bkend MCP accuracy fix: ensures PDCA Check phase uses exact tool names for gap analysis against bkend API
-- Comprehensive Test results: 764/765 PASS (100%), validating PDCA workflow stability
-
----
-
-## v1.5.3 PDCA Enhancements
-
-### Output Styles for PDCA Phases
-
-`bkit-pdca-guide` output style enhances PDCA visibility:
-- Phase status badges: `[Plan] -> [Design] -> [Do] -> [Check] -> [Act]`
-- Auto-suggested gap analysis after code changes
-- Next-phase checklists and guidance
-
-### CTO-Led Agent Teams for Parallel PDCA
-
-CTO Lead orchestrates specialized teams for parallel PDCA execution:
-
-| Role | Agent | Phase Coverage | Level |
-|------|-------|---------------|-------|
-| CTO Lead | cto-lead (opus) | All phases | Dynamic + Enterprise |
-| Developer | bkend-expert | Do, Act | Dynamic + Enterprise |
-| Frontend | frontend-architect | Design, Do | Dynamic + Enterprise |
-| QA | qa-strategist, qa-monitor, gap-detector | Check | Dynamic + Enterprise |
-| Architect | enterprise-expert, infra-architect | Design | Enterprise only |
-| Reviewer | code-analyzer, design-validator | Check, Act | Enterprise only |
-| Security | security-architect | Design, Check | Enterprise only |
-
-Orchestration Patterns per PDCA Phase:
-| Level | Plan | Design | Do | Check | Act |
-|-------|------|--------|-----|-------|-----|
-| Dynamic | leader | leader | swarm | council | leader |
-| Enterprise | leader | council | swarm | council | watchdog |
-
-Command: `/pdca team {feature}` (auto-suggested for Major Features)
-
-### Agent Memory for PDCA Context
-
-All PDCA-related agents use `memory: project` scope:
-- gap-detector remembers previous analysis patterns
-- pdca-iterator remembers fix patterns and iteration history
-- report-generator remembers PDCA metrics across cycles
-
----
-
----
-
-## v1.6.0 PDCA Enhancements
-
-### PM Agent Team (pre-Plan Phase)
-
-v1.6.0 introduces a structured pre-Plan phase via PM Agent Team:
+## PM Agent Team (pre-Plan Phase)
 
 ```
-PM Discovery ──► Plan ──► Design ──► Do ──► Check ──► Act
+PM Discovery ──► Plan ──► Design ──► Do ──► Check ──► Act ──► Report
      │
-     ├── pm-discovery: Market research, user needs
-     ├── pm-strategy: Product positioning
-     ├── pm-research: Competitive analysis
-     └── pm-prd: PRD document → feeds into /pdca plan
+     ├── pm-lead: Orchestrates discovery workflow
+     ├── pm-discovery: Market research, user needs (OST framework)
+     ├── pm-strategy: Product positioning (JTBD + Lean Canvas)
+     ├── pm-research: Competitive analysis, market sizing
+     └── pm-prd: PRD generation → feeds into /pdca plan
 ```
-
-PM Team ensures that PDCA Plan starts with validated product requirements rather than assumptions.
-
-### /loop + Cron Integration (ENH-100)
-
-CC v2.1.78 `/loop` command enables automated PDCA monitoring:
-- `/loop 5m check deploy` — periodic deployment status monitoring
-- Cron scheduling tool for automated Check phase repetition
-- Integration with PDCA auto-monitoring for continuous quality gates
-
-### Skill Evals for PDCA Quality
-
-31 Skill Evals definitions enable quality measurement across PDCA phases:
-- Plan phase evals: validate plan completeness and structure
-- Check phase evals: verify gap analysis accuracy
-- Report phase evals: ensure report comprehensiveness
-- Data-driven PDCA improvement through eval metrics
-
-### Skill Classification Impact on PDCA
-
-| PDCA Phase | Workflow Skills | Capability Skills |
-|------------|----------------|-------------------|
-| Plan | pdca, plan-plus, pm-discovery | starter, dynamic, enterprise |
-| Design | bkit-templates, phase-2-convention | phase-1~5 guides |
-| Do | development-pipeline | phase-4~6 guides |
-| Check | zero-script-qa, phase-8-review, code-review | phase-7 guide |
-| Act | bkit-rules | (iteration guidance) |
-
-Workflow skills (9) remain permanent PDCA infrastructure; Capability skills (18) may be deprecated as models improve.
 
 ---
 
@@ -337,6 +229,4 @@ Workflow skills (9) remain permanent PDCA infrastructure; Capability skills (18)
 
 - [[core-mission]] - Core mission and philosophies
 - [[ai-native-principles]] - AI-Native principles
-- [[../components/skills/_skills-overview]] - Skill details
-- [[../scenarios/scenario-new-feature]] - New feature scenario
-- [[../../skills/development-pipeline/SKILL]] - Pipeline skill
+- [[context-engineering]] - Context Engineering architecture
