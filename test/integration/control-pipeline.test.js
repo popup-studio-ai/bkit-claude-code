@@ -154,8 +154,8 @@ const trustEngine = require(path.join(PROJECT_ROOT, 'lib/control/trust-engine'))
 // CP-011: createDefaultProfile returns valid profile
 const profile11 = trustEngine.createDefaultProfile();
 assert('CP-011',
-  profile11.trustScore === 0 && profile11.currentLevel === 0 && profile11.components.pdcaCompletionRate,
-  'createDefaultProfile returns profile with trustScore=0, level=0'
+  profile11.trustScore === 40 && profile11.currentLevel === 0 && profile11.components.pdcaCompletionRate,
+  'createDefaultProfile returns profile with trustScore=40, level=0'
 );
 
 // CP-012: calculateScore returns weighted sum

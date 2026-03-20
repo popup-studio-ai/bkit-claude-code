@@ -44,7 +44,7 @@ console.log('\n=== trust-engine.test.js ===\n');
 
 resetProfile();
 const defaultProfile = mod.createDefaultProfile();
-assert('TE-001', defaultProfile.trustScore === 0, 'Default trust score is 0');
+assert('TE-001', defaultProfile.trustScore === 40, 'Default trust score is 40 (component weighted sum)');
 assert('TE-002', defaultProfile.currentLevel === 0, 'Default level is 0 (L0)');
 assert('TE-003', typeof defaultProfile.components === 'object', 'Profile has components object');
 assert('TE-004', typeof defaultProfile.stats === 'object', 'Profile has stats object');
@@ -192,8 +192,8 @@ assert('TE-024', loaded.trustScore === 72 && loaded.currentLevel === 3,
 
 resetProfile();
 const defaultLoaded = mod.loadTrustProfile();
-assert('TE-025', defaultLoaded.trustScore === 0 && defaultLoaded.currentLevel === 0,
-  'loadTrustProfile returns defaults when no file exists');
+assert('TE-025', defaultLoaded.trustScore === 40 && defaultLoaded.currentLevel === 0,
+  'loadTrustProfile returns defaults when no file exists (trustScore=40 from components)');
 
 // --- Cleanup ---
 process.chdir(origCwd);

@@ -114,10 +114,10 @@ assert('AF-008',
   'getRuntimeState sets currentLevel to 2 (Semi-Auto)'
 );
 
-// --- AF-009: initState trustScore starts at 50 (middle ground) ---
+// --- AF-009: initState trustScore starts at 40 (component weighted sum) ---
 assert('AF-009',
-  initState.trustScore === 50,
-  'getRuntimeState trustScore starts at 50 (balanced starting point)'
+  initState.trustScore === 40,
+  'getRuntimeState trustScore starts at 40 (calculated from trust-engine components)'
 );
 
 // --- AF-010: initState emergencyStop is false by default ---

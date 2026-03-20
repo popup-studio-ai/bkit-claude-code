@@ -122,22 +122,22 @@ assert('SB-010',
 // SB-011~015: Trust Score starts at 50 (middle, not high)
 // =====================================================================
 
-// --- SB-011: getRuntimeState trustScore is 50 ---
+// --- SB-011: getRuntimeState trustScore is 40 (component weighted sum) ---
 assert('SB-011',
-  initState.trustScore === 50,
-  'getRuntimeState trustScore is 50 (middle ground — not 0 and not 100)'
+  initState.trustScore === 40,
+  'getRuntimeState trustScore is 40 (calculated from trust-engine components)'
 );
 
-// --- SB-012: Trust score 50 is below L3 upgrade threshold (65) ---
+// --- SB-012: Trust score 40 is below L3 upgrade threshold (65) ---
 assert('SB-012',
   initState.trustScore < trustEngine.LEVEL_THRESHOLDS[3],
-  `Trust score 50 < L3 threshold (${trustEngine.LEVEL_THRESHOLDS[3]}): cannot auto-escalate to L3`
+  `Trust score 40 < L3 threshold (${trustEngine.LEVEL_THRESHOLDS[3]}): cannot auto-escalate to L3`
 );
 
-// --- SB-013: Trust score 50 is above L2 threshold (40) ---
+// --- SB-013: Trust score 40 is at/above L2 threshold (40) ---
 assert('SB-013',
   initState.trustScore >= trustEngine.LEVEL_THRESHOLDS[2],
-  `Trust score 50 >= L2 threshold (${trustEngine.LEVEL_THRESHOLDS[2]}): qualifies for L2 Semi-Auto`
+  `Trust score 40 >= L2 threshold (${trustEngine.LEVEL_THRESHOLDS[2]}): qualifies for L2 Semi-Auto`
 );
 
 // --- SB-014: SCORE_CHANGES has negative values for risky events ---
