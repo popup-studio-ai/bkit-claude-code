@@ -21,10 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Skills: 31 → 36 (+5: control, audit, rollback, pdca-batch, btw)
 - Agents: 29 → 31 (+2: pdca-eval-design, pm-lead-skill-patch)
 - Hook Events: 12 → 18 (+6 new events)
-- Lib Modules: 36 → 78 (+42 new modules across 7 domains)
-- Scripts: 49 → 54 (+5 new hook scripts)
-- Exports: 210 → 260+ (+50 new functions)
-- Test Cases: 1,151 → 2,717 (+1,566)
+- Lib Modules: 36 → 76 (+40 new modules across 10 subdirectories)
+- Hook Scripts: 49 → 21 (consolidated with unified handlers)
+- Exports: 210 → ~465 (+255 new functions)
+- Test Cases: 1,151 → 2,645+ (+1,494)
 
 ### Removed
 - `lib/skill-loader.js` (795 LOC) — orphaned, never imported

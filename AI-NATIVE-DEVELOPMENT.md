@@ -14,8 +14,8 @@ flowchart TB
         subgraph ROW1[" "]
             direction LR
             SPEC["**1. SPEC**<br/>Plan Doc<br/>Design Doc"]
-            CONTEXT["**2. CONTEXT**<br/>CLAUDE.md<br/>27 Skills"]
-            AGENT["**3. AI AGENT**<br/>16 Agents<br/>Autonomous Implementation"]
+            CONTEXT["**2. CONTEXT**<br/>CLAUDE.md<br/>36 Skills"]
+            AGENT["**3. AI AGENT**<br/>31 Agents<br/>Controllable Implementation"]
         end
 
         OVERSIGHT["**4. HUMAN OVERSIGHT**<br/>Gap Analysis<br/>Verification & Approval"]
@@ -95,15 +95,17 @@ Based on research from industry leaders (Addy Osmani, Sapphire Ventures, DevOps.
 - Automated testing and validation
 - Self-correction through iteration
 
-### 4. Human Oversight by Design
+### 4. Human Oversight by Design (Controllable AI)
 
-**Principle**: Humans provide strategic direction while AI handles execution.
+**Principle**: Humans govern AI through progressive trust and 5-level automation control.
 
-**Balance**:
-- AI proposes, human approves
-- Critical decisions require human judgment
-- Verification at key checkpoints
-- Final quality assurance by humans
+**bkit v2.0.0 Controllable AI**:
+- **L0-L4 automation levels**: Manual → Guided → Semi-Auto → Auto → Full-Auto
+- **Trust Score (0-100)**: Earned through track record, 6 weighted components
+- **Quality Gates (7 stages)**: Configurable thresholds per phase transition
+- **Audit trail**: JSONL logging + decision tracer for full transparency
+- **Emergency stop**: Immediate pause with checkpoint/rollback support
+- **Destructive detection**: 8 rules (rm -rf, git push --force, etc.) with blast radius analysis
 
 ---
 
@@ -126,21 +128,24 @@ According to Addy Osmani's research on AI-Native engineers, effective practition
 - Test edge cases and error handling
 - Validate against requirements
 
-### 4. Context Engineering (v1.4.5 Enhanced)
+### 4. Context Engineering (v2.0.0)
 
 Context Engineering is the **systematic design of information flow to LLMs**—going beyond simple prompt crafting to build entire systems that consistently guide AI behavior.
 
 **Key Practices**:
-- Design multi-layered context injection systems
-- Build state management for session persistence
-- Create adaptive triggers based on user intent
-- Implement quality feedback loops (Evaluator-Optimizer)
+- Design multi-layered context injection systems (18 hook events, 6 layers)
+- Build state management with declarative state machines (20 transitions, 9 guards)
+- Create adaptive triggers based on user intent (8-language, auto-detection)
+- Implement quality feedback loops with quality gates and metrics (M1-M10)
 
-**bkit Implementation**:
+**bkit v2.0.0 Implementation**:
 ```
-Domain Knowledge (27 Skills) ─┐
-Behavioral Rules (16 Agents) ─┼─→ Unified Hook System ─→ Dynamic Context Injection
-State Management (208 funcs) ─┘
+Domain Knowledge (36 Skills) ──┐
+Behavioral Rules (31 Agents) ──┼─→ 18-Event Hook System ─→ Dynamic Context Injection
+State Management (~465 funcs) ─┤
+Workflow Engine (3 presets) ────┤
+Controllable AI (L0-L4) ───────┤
+Audit System (JSONL traces) ───┘
 ```
 
 See [bkit-system/philosophy/context-engineering.md](bkit-system/philosophy/context-engineering.md) for detailed implementation.
@@ -176,20 +181,22 @@ bkit implements **Context Engineering**—the systematic curation of context tok
 | **3 Project Levels** | Starter, Dynamic, Enterprise contexts |
 | **Convention Skill (Phase 2)** | Defines naming, structure, patterns |
 | **CLAUDE.md Files** | Project-specific AI instructions |
-| **Skill System (31 skills)** | Domain-specific knowledge |
-| **Unified Hook System (v1.4.5)** | Centralized context injection via hooks.json |
-| **lib/*.js (210 functions)** | State management, intent detection, ambiguity handling |
+| **Skill System (36 skills)** | Domain-specific knowledge (9 Workflow / 25 Capability / 2 Hybrid) |
+| **18-Event Hook System** | Centralized context injection via hooks.json (18 events, 21 scripts) |
+| **lib/ (76 modules, ~465 functions)** | 10 subdirectories: core, pdca, intent, task, team, ui, audit, control, quality |
 
-**Context Engineering Architecture**:
+**Context Engineering Architecture (v2.0.0)**:
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│              bkit Context Engineering Layers                     │
+│              bkit v2.0.0 Context Engineering Layers              │
 ├─────────────────────────────────────────────────────────────────┤
-│  Layer 1: Domain Knowledge   │ 27 Skills (structured instructions)│
-│  Layer 2: Behavioral Rules   │ 16 Agents (role + constraints)    │
-│  Layer 3: State Management   │ PDCA v2.0, Multi-Feature Context  │
-│  Layer 4: Dynamic Injection  │ Intent detection, ambiguity score │
-│  Layer 5: Feedback Loop      │ Match Rate → Iteration            │
+│  Layer 1: Domain Knowledge   │ 36 Skills (structured knowledge)  │
+│  Layer 2: Behavioral Rules   │ 31 Agents (role + constraints)    │
+│  Layer 3: State Management   │ State machine, workflow engine    │
+│  Layer 4: Dynamic Injection  │ Intent detection, 8-lang triggers │
+│  Layer 5: Controllable AI    │ L0-L4 automation, trust score     │
+│  Layer 6: Quality & Audit    │ 7 gates, M1-M10 metrics, audit   │
+│  Layer 7: Feedback Loop      │ Match Rate → Iteration (max 5)   │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -203,7 +210,7 @@ User Message → Intent Detection → Skill/Agent Trigger →
 
 | bkit Feature | Implementation |
 |--------------|----------------|
-| **16 Specialized Agents** | code-analyzer, qa-monitor, cto-lead, frontend-architect, etc. |
+| **31 Specialized Agents** | 10 opus + 19 sonnet + 2 haiku (cto-lead, code-analyzer, gap-detector, pm-lead, etc.) |
 | **Evaluator-Optimizer Pattern** | Automatic iteration cycles |
 | **gap-detector Agent** | Finds design-implementation gaps |
 | **code-analyzer Agent** | Quality and security analysis |
@@ -222,9 +229,11 @@ code-explorer → code-architect → implementation → code-reviewer → qa-mon
 | **Act Phase** | Human approval before proceeding |
 | **Iteration Reports** | Transparent progress documentation |
 
-**Verification Points**:
+**Verification Points (v2.0.0 — State Machine + Quality Gates)**:
 ```
-Plan → [Human Review] → Design → [Human Review] → Do → Check → [Human Review] → Act
+idle → [PM Gate] → Plan → [Plan Gate] → Design → [Design Gate] → Do
+  → [Do Gate] → Check → [Check Gate: ≥90%] → Report → Completed
+                    └──→ [Iterate Gate: <90%] → Act → Check (max 5)
 ```
 
 ### Principle 5: CTO-Led Agent Teams (v1.5.3)
