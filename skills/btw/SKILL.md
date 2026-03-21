@@ -43,7 +43,13 @@ allowed-tools:
      "category": "auto-detect",
      "status": "pending",
      "promotedTo": null,
-     "priority": null
+     "priority": null,
+     "teamContext": {
+       "isTeamSession": false,
+       "phase": "{PDCA phase or null}",
+       "role": "{teammate role that discovered this, or 'user'}",
+       "pattern": "{orchestration pattern or null}"
+     }
    }
    ```
 4. Auto-detect category from suggestion text:
@@ -153,3 +159,37 @@ Initialize with this structure if file does not exist:
 - **PDCA Context**: Reads `.bkit-memory.json` for current phase/feature
 - **skill-create**: `/btw promote` triggers skill-create workflow
 - **skill-needs-extractor**: `/btw analyze` results feed into gap analysis
+- **CTO Team**: Phase transition triggers btw summary (see below)
+
+## CTO Team Integration
+
+When `/btw` is used during a CTO Team session (`/pdca team`):
+
+### Auto-Detection
+- Check if team session is active via `.bkit/runtime/agent-state.json`
+- If active: set `teamContext.isTeamSession = true` and populate phase/role/pattern
+- If not active: set `teamContext.isTeamSession = false` (default behavior)
+
+### Phase Transition Hook
+CTO Lead automatically reads btw-suggestions.json at every phase transition:
+- **0 pending**: Silent skip (no output, no turns spent)
+- **1+ pending**: Brief summary (top 3, category counts) in 1-2 turns
+- CTO does NOT auto-promote — user decides via `/btw promote {id}`
+
+### Session End
+`cto-stop.js` hook outputs btw stats at session end:
+- Total suggestions collected during session
+- Category breakdown
+- Promotion rate
+
+### teamContext Field
+Added to each suggestion entry when recorded during a team session:
+```json
+"teamContext": {
+  "isTeamSession": true,
+  "phase": "do",
+  "role": "user",
+  "pattern": "swarm"
+}
+```
+This enables `/btw analyze` to group suggestions by PDCA phase and identify phase-specific patterns.

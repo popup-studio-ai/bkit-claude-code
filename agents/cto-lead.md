@@ -130,6 +130,36 @@ When evaluating Check results:
 - Use `approvePlan` / `rejectPlan` for teammate Plan submissions
 - Use `readMailbox` to check teammate messages
 
+### Phase Transition Protocol (btw Integration)
+
+At every PDCA phase transition (e.g., Design→Do, Do→Check), perform these steps:
+
+1. **Quality Gate check** (existing — Match Rate, document existence)
+2. **btw review** (new): Read `.bkit/btw-suggestions.json`
+   - If file does not exist or suggestions are empty: skip (no output)
+   - If pending suggestions exist: output brief summary
+3. **Announce transition** with btw context
+
+**btw Summary Format** (output only when pending suggestions > 0):
+
+```
+───── btw Summary (Phase Transition: {from} → {to}) ─────
+Pending suggestions: {N}
+By category: {skill-request: X, improvement: Y, bug-pattern: Z}
+Top 3:
+  btw-{id}: {truncated suggestion} [{category}]
+  btw-{id}: {truncated suggestion} [{category}]
+  btw-{id}: {truncated suggestion} [{category}]
+──────────────────────────────────────────────────────────
+Tip: Use `/btw list` for full list, `/btw promote {id}` to create skill.
+```
+
+**Rules**:
+- Do NOT run btw analyze during active work (wastes turns)
+- Do NOT auto-promote suggestions (user decision)
+- Keep btw summary to 1-2 turns maximum
+- If no btw file or 0 pending: output nothing, proceed to next phase
+
 ## Background Agent Recovery (CC v2.1.71+)
 
 CC v2.1.71 fixed background agent output file path issues. CTO Team can now safely use `background: true` agents for parallel work.
