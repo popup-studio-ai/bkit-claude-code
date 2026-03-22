@@ -45,7 +45,7 @@ function generateReport(allResults) {
   const passRate = totalTC > 0 ? ((totalPassed / totalTC) * 100).toFixed(1) : '0.0';
   const timestamp = new Date().toISOString();
 
-  let report = `# bkit v2.0.0 Comprehensive Test Report\n\n`;
+  let report = `# bkit v2.0.3 Comprehensive Test Report\n\n`;
   report += `> Generated: ${timestamp}\n`;
   report += `> Total: ${totalTC} TC, ${totalPassed} PASS, ${totalFailed} FAIL, ${totalSkipped} SKIP\n`;
   report += `> Pass Rate: ${passRate}%\n\n`;
@@ -101,7 +101,7 @@ function generateReport(allResults) {
 
   report += `## Verdict\n\n`;
   if (totalFailed === 0) {
-    report += `**ALL TESTS PASSED** - bkit v2.0.0 is ready for release.\n`;
+    report += `**ALL TESTS PASSED** - bkit v2.0.3 is ready for release.\n`;
   } else {
     report += `**${totalFailed} TESTS FAILED** - Issues must be resolved before release.\n`;
   }

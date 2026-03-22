@@ -28,7 +28,7 @@ Display the following help message:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 PDCA (Document-Driven Development)
-  /pdca pm <feature>         PM Agent Team analysis (43 frameworks, v2.0.2)
+  /pdca pm <feature>         PM Agent Team analysis (43 frameworks, v2.0.3)
   /pdca plan <feature>       Plan with Checkpoints 1-2 (requirements + questions)
   /pdca design <feature>     Design with Checkpoint 3 (3 architecture options)
   /pdca do <feature>         Implement with Checkpoint 4 (scope approval)
@@ -143,7 +143,7 @@ Output Styles (v1.5.3)
 | qa-strategist | test strategy, QA plan, quality metrics | sonnet | Test strategy, quality metrics coordination |
 | security-architect | security, vulnerability, OWASP | opus | Vulnerability analysis, authentication design review |
 
-#### PM Agent Team (5, v2.0.2 — 43 frameworks)
+#### PM Agent Team (5, v2.0.3 — 43 frameworks)
 
 | Agent | Trigger Keywords | Model | Frameworks |
 |-------|-----------------|-------|------------|
@@ -155,7 +155,7 @@ Output Styles (v1.5.3)
 
 Based on [pm-skills](https://github.com/phuryn/pm-skills) by Pawel Huryn (MIT License).
 
-**How to Use PM Agent Team (v2.0.2):**
+**How to Use PM Agent Team (v2.0.3):**
 ```bash
 # Run PM analysis with 43 frameworks (recommended)
 /pdca pm {feature}
@@ -201,7 +201,7 @@ export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
 | TaskCompleted Hook | Automatic | Auto-advance PDCA phases on task completion |
 | TeammateIdle Hook | Automatic | Assign work to idle teammates |
 
-### v2.0.2 Features
+### v2.0.3 Features
 
 | Feature | Activation | Description |
 |---------|-----------|-------------|

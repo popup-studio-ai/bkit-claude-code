@@ -40,8 +40,8 @@
 - CC v2.1.78 Integration: 14 ENH(117~130), 44 consecutive compatible releases
 - Hook events 10→12 (PostCompact, StopFailure added)
 - 29 agents (8 opus + 19 sonnet + 2 haiku)
-- 31 skills (9 Workflow / 20 Capability / 2 Hybrid)
-- 49 scripts, 210 exports
+- 36 skills (17 Workflow / 18 Capability / 1 Hybrid)
+- 54 scripts, ~580+ exports
 - 1186 TC, 99.7% pass rate
 
 ### v1.6.1 (2026-03-08) - CTO Orchestration Redesign + Quality Hardening
@@ -115,10 +115,10 @@ bkit is a practical implementation of **Context Engineering**:
 ┌─────────────────────────────────────────────────────────────────┐
 │              bkit Context Engineering Components                 │
 ├─────────────────────────────────────────────────────────────────┤
-│  Domain Knowledge (31 Skills)  → Structured domain knowledge     │
-│  Behavioral Rules (29 Agents)  → Role-based behavioral rules     │
-│  State Management (lib/common) → State management 76+ functions  │
-│  5-Layer Hook System           → Context injection timing ctrl   │
+│  Domain Knowledge (36 Skills)  → Structured domain knowledge     │
+│  Behavioral Rules (31 Agents)  → Role-based behavioral rules     │
+│  State Management (lib/common) → ~580+ exports                   │
+│  6-Layer Hook System           → Context injection timing ctrl   │
 │  Dynamic Injection             → Conditional context selection   │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -131,7 +131,7 @@ Core design principles and methodology:
 - [[philosophy/ai-native-principles|ai-native-principles]] - AI-Native development & 3 core competencies
 - [[philosophy/pdca-methodology|pdca-methodology]] - PDCA cycle & 9-stage pipeline relationship
 
-## Skills (31)
+## Skills (36)
 
 ### PDCA Skills (2)
 - [[../skills/pdca/SKILL|pdca]] - Unified PDCA cycle management (8 actions) [Workflow]
@@ -177,7 +177,7 @@ The following skills were consolidated:
 - ~~ai-native-development~~ → `enterprise`
 - ~~monorepo-architecture~~ → `enterprise`
 
-## Agents (21)
+## Agents (31)
 
 ### Level-Based Agents
 - [[../agents/starter-guide|starter-guide]] - Starter level guide (beginners)
@@ -216,7 +216,7 @@ The following skills were consolidated:
 - [[../lib/team/hooks|team hooks]] - TaskCompleted and TeammateIdle handlers
 
 ### Agent Memory
-- All 29 agents configured with `memory:` frontmatter
+- All 31 agents configured with `memory:` frontmatter
 - 9 agents: `project` scope, 2 agents: `user` scope
 - Automatic cross-session context persistence
 
@@ -249,7 +249,7 @@ The following skills were consolidated:
 - `/claude-code-learning` - Learning curriculum
 - `/code-review` - Code review and quality analysis
 
-## Hooks (12 events)
+## Hooks (18 events)
 
 ### Global Hooks (hooks/hooks.json)
 - [[components/hooks/_hooks-overview|SessionStart]] - Plugin initialization with AskUserQuestion guidance
@@ -258,7 +258,7 @@ The following skills were consolidated:
 - [[components/hooks/_hooks-overview|PreToolUse]] - Before Write/Edit operations (defined in SKILL.md)
 - [[components/hooks/_hooks-overview|PostToolUse]] - After Write operations (defined in SKILL.md)
 
-## Scripts (49)
+## Scripts (54)
 
 > **Note**: All scripts converted to Node.js (.js) in v1.3.1 for cross-platform compatibility
 >
@@ -303,7 +303,7 @@ The following skills were consolidated:
 ## Infrastructure
 
 ### Shared Library
-- `lib/common.js` - Shared utility functions (v1.6.2, **210 exports** via bridge)
+- `lib/common.js` - Shared utility functions (v2.0.3, **~580+ exports** via bridge)
 
 #### Platform Detection (v1.5.0 - Claude Code Exclusive)
   - `isClaudeCode()` - Check if running in Claude Code
@@ -425,13 +425,13 @@ bkit supports languages and frameworks organized by tier:
 > **v1.5.0**: bkit is now Claude Code exclusive. Gemini CLI support was removed for simplified architecture.
 
 **Components**:
-- `skills/` - 31 skills
-- `agents/` - 29 agents
-- `scripts/` - 49 scripts (Node.js)
-- `lib/` - 5 modules (210 functions)
-- `templates/` - 27 templates
+- `skills/` - 36 skills
+- `agents/` - 31 agents
+- `scripts/` - 54 scripts (Node.js)
+- `lib/` - 10 subdirectories, 76 modules (~580+ exports)
+- `templates/` - 28 templates
 
-## Templates (27)
+## Templates (28)
 
 ### PDCA Templates
 - `plan.template.md` - Plan phase

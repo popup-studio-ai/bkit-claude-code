@@ -69,7 +69,7 @@ bkit is a practical implementation of **Context Engineering**. Context Engineeri
 │                                                                 │
 │  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────┐  │
 │  │ Domain Knowledge │  │ Behavioral Rules │  │ State Mgmt   │  │
-│  │    (36 Skills)   │  │   (31 Agents)    │  │ (5 modules)  │  │
+│  │    (36 Skills)   │  │   (31 Agents)    │  │(10 subdirs)  │  │
 │  │                  │  │                  │  │              │  │
 │  │ • 9-Phase Guide  │  │ • Role Def.      │  │ • PDCA v2.0  │  │
 │  │ • 3 Levels       │  │ • Constraints    │  │ • Multi-Feat │  │
@@ -114,7 +114,7 @@ Details: [[philosophy/context-engineering]]
 
 ## v1.4.7 Architecture
 
-### Component Diagram (5-Layer)
+### Component Diagram (6-Layer)
 
 ```mermaid
 flowchart TB
@@ -202,7 +202,7 @@ lib/
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                bkit Trigger System (v2.0.0)                      │
+│                bkit Trigger System (v2.0.3)                      │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
 │  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐      │
@@ -215,7 +215,10 @@ lib/
 │  │                    Hooks Layer (18 events)            │      │
 │  │  SessionStart │ UserPromptSubmit │ PreToolUse │       │      │
 │  │  PostToolUse  │ PreCompact │ Stop │ SubagentStart │   │      │
-│  │  SubagentStop │ TaskCompleted │ TeammateIdle          │      │
+│  │  SubagentStop │ TaskCompleted │ TeammateIdle │        │      │
+│  │  PostCompact │ StopFailure │ SessionEnd │             │      │
+│  │  PostToolUseFailure │ InstructionsLoaded │            │      │
+│  │  ConfigChange │ PermissionRequest │ Notification │    │      │
 │  └──────────────────────────────────────────────────────┘      │
 │                              │                                  │
 │                              ▼                                  │
@@ -235,7 +238,7 @@ lib/
 | Commands | DEPRECATED | Migrated to Skills (v1.4.4) | - |
 | Hooks | 18 events | Event-based triggers (unified) | [[components/hooks/_hooks-overview]] |
 | Scripts | 54 | Actual logic execution | [[components/scripts/_scripts-overview]] |
-| Lib | 5 modules | Shared utilities | `lib/core/`, `lib/pdca/`, `lib/intent/`, `lib/task/`, `lib/team/` (260+ exports) |
+| Lib | 10 subdirectories, 76 modules | Shared utilities | ~580+ exports |
 | Evals | 28 | Skill evaluation definitions (v1.6.0) | Skill Creator + A/B Testing |
 | Config | 1 | Centralized settings | `bkit.config.json` |
 | Templates | 28 | Document templates | PDCA + Pipeline + Shared |
@@ -250,7 +253,7 @@ lib/
 
 ## Trigger Layers
 
-bkit triggers occur across 5 layers:
+bkit triggers occur across 6 layers:
 
 ```
 Layer 1: hooks.json (Global) → SessionStart, UserPromptSubmit, PreCompact, PreToolUse, PostToolUse, Stop
@@ -258,6 +261,7 @@ Layer 2: Unified Scripts     → unified-stop.js, unified-bash-pre.js, unified-w
 Layer 3: Agent Frontmatter   → Constraints and role definitions (hooks deprecated)
 Layer 4: Description Triggers → "Triggers:" keyword matching
 Layer 5: Scripts             → Actual Node.js logic execution (54 modules)
+Layer 6: Lib Modules         → 10 subdirectories, ~580+ exports
 ```
 
 > **Note (v1.4.4)**: All hooks centralized in hooks.json. SKILL.md frontmatter hooks deprecated (backward compatible).
@@ -356,7 +360,7 @@ The `bkit-system/.obsidian/` folder includes shared settings:
 ### Skills 2.0 Integration
 
 bkit v1.6.0 integrates CC 2.1.0 Skills 2.0 features:
-- **Skill Classification**: 9 Workflow / 18 Capability / 1 Hybrid — Workflow skills are bkit's permanent core value
+- **Skill Classification**: 17 Workflow / 18 Capability / 1 Hybrid — Workflow skills are bkit's permanent core value
 - **Skill Evals**: 28 eval definitions for data-driven skill quality measurement
 - **Skill Creator + A/B Testing**: Create and compare skill variants systematically
 - **Skill Hot Reload**: Live skill updates without session restart
@@ -370,16 +374,16 @@ bkit v1.6.0 integrates CC 2.1.0 Skills 2.0 features:
 - `pm-research` — Competitive analysis and data gathering
 - `pm-prd` — PRD document generation
 
-### Component Counts (v2.0.0)
+### Component Counts (v2.0.3)
 
 | Component | Count |
 |-----------|-------|
-| Skills | 36 (9 Workflow / 20 Capability / 2 Hybrid) |
-| Agents | 31 (8 opus + 19 sonnet + 2 haiku) |
-| Library Functions | 260+ |
+| Skills | 36 (17 Workflow / 18 Capability / 1 Hybrid) |
+| Agents | 31 (10 opus / 19 sonnet / 2 haiku) |
+| Library Functions | ~580+ exports (10 subdirectories) |
 | Scripts | 54 |
 | Hook Events | 18 |
 | Output Styles | 4 |
 | Evals | 28 (56 content files) |
-| Tests | 1186 TC (99.7%) |
-| CC Recommended | v2.1.79 |
+| Tests | 3202 TC |
+| CC Recommended | v2.1.81+ |

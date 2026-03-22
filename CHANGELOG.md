@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.3] - 2026-03-22
+
+### Fixed — Documentation & Architecture Sync
+
+**Version Alignment**
+- Synced `bkit.config.json` version from stale 2.0.0 to match `plugin.json` 2.0.3
+- Updated hardcoded version strings in `lib/audit/audit-logger.js` (BKIT_VERSION), `hooks/session-start.js` (systemMessage), `lib/core/paths.js` (meta.json), MCP server packages
+- Fixed test expectations for version checks (config-sync, v200-wiring, config-permissions, agents-effort)
+
+**Documentation Sync with v2.0.2 Architecture**
+- Updated skill classification across all docs: 9W/25C/2H → **17 Workflow / 18 Capability / 1 Hybrid** (7 new skills classified)
+- Updated eval count: 28 → **29** (cc-version-analysis added)
+- Updated export count: ~465 → **~580+** (v2.0.0 modules not counted)
+- Updated script count in docs: 49 → **54** (5 new hook scripts)
+- Updated lib subdirectory references to include `adapters`
+- Synced team composition names with cto-lead.md implementation
+- Added PR #51 (Impact Analysis section) to v2.0.2 changelog entry
+
+**Test Runner**
+- Aligned `test/run-all.js` expected TC counts with actual: Unit 1120→1403, Integration 360→479, Security 130→205, Regression 335→416, Performance 126→160, Philosophy 140→138, UX 150→160, E2E 55→61
+- Updated pm-discovery/pm-prd maxTurns expectations: 20→25
+
+### Changed
+- Total Test Cases: 3,202 TC (0 failures, 12 skips, 99.6% pass rate)
+- CC recommended version: v2.1.81+ (was v2.1.78+)
+- PDCA documents: docs/01-plan/ through docs/04-report/
+
 ## [2.0.2] - 2026-03-22
 
 ### Added — PM Skills Integration + Interactive Checkpoints
@@ -16,6 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Design Template Architecture Options**: 3 options comparison table (Option A: Minimal / Option B: Clean / Option C: Pragmatic)
 - **pm-prd Template v2.0**: Section 6 Execution Deliverables (Pre-mortem, User Stories, Job Stories, Test Scenarios, Stakeholder Map), SWOT Analysis, Customer Journey Map, ICP, Battlecards, Growth Loops
 - **Integration Test**: pm-skills-integration.test.js (50 TC, 100% pass)
+- **Plan Template Impact Analysis Section** ([PR #51](https://github.com/popup-studio-ai/bkit-claude-code/pull/51)): Mandatory Section 6 requiring full inventory of existing consumers (CREATE/READ/UPDATE/DELETE) before modifying resources — prevents silent breakage of existing functionality
 
 ### Changed
 - `agents/pm-discovery.md`: +167 LOC (Brainstorm, Assumption Risk frameworks)
@@ -30,6 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `scripts/cto-stop.js`: +37 LOC (btw session summary)
 - `templates/design.template.md`: +21 LOC (Architecture Options)
 - `templates/pm-prd.template.md`: v1.0→v2.0, +136 LOC
+- `templates/plan.template.md`: +41 LOC (Section 6 Impact Analysis, section renumbering 6→7→8→9)
 - CC recommended version: v2.1.78+ → v2.1.81+
 - CC compatibility: v2.1.34~v2.1.81 = 47 consecutive compatible releases
 

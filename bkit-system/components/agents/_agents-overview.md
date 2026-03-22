@@ -1,6 +1,6 @@
 # Agents Overview
 
-> List of 31 Agents defined in bkit and their roles (v1.6.2)
+> List of 31 Agents defined in bkit and their roles (v2.0.3)
 >
 > **v1.4.1**: Added Context Engineering perspective - Role-based Behavioral Rules Layer
 > **v1.5.0**: Claude Code Exclusive
@@ -56,11 +56,11 @@ Agents form bkit's **Behavioral Rules Layer**, designed according to [[../../phi
 
 | Model | Agents | Characteristics |
 |-------|--------|-----------------|
-| **opus** (7) | cto-lead, code-analyzer, design-validator, gap-detector, enterprise-expert, infra-architect, security-architect | Complex analysis, strategic decisions |
-| **sonnet** (12) | bkend-expert, pdca-iterator, pipeline-guide, starter-guide, product-manager, frontend-architect, qa-strategist, pm-lead, pm-discovery, pm-strategy, pm-research, pm-prd | Execution, guidance, iteration |
+| **opus** (10) | cto-lead, code-analyzer, design-validator, gap-detector, enterprise-expert, infra-architect, security-architect, cc-version-researcher, bkit-impact-analyst, + 1 more | Complex analysis, strategic decisions |
+| **sonnet** (19) | bkend-expert, pdca-iterator, pipeline-guide, starter-guide, product-manager, frontend-architect, qa-strategist, pm-lead, pm-discovery, pm-strategy, pm-research, pm-prd, + 7 more | Execution, guidance, iteration |
 | **haiku** (2) | qa-monitor, report-generator | Fast monitoring, document generation |
 
-**Distribution**: 7 opus / 12 sonnet / 2 haiku (21 total), Core: 9 acceptEdits / 7 plan, PM Team: 5 plan
+**Distribution**: 10 opus / 19 sonnet / 2 haiku (31 total)
 
 ## Full List
 
@@ -269,7 +269,7 @@ bkit-claude-code/
 
 ### Agent Memory
 
-All 29 agents have `memory:` frontmatter for cross-session context persistence:
+All 31 agents have `memory:` frontmatter for cross-session context persistence:
 
 | Scope | Agents |
 |-------|--------|

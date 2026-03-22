@@ -1,5 +1,5 @@
 {
-  "version": "2.0.0",
+  "version": "2.0.3",
   "defaultTimeout": 60000,
   "maxRetries": 2,
   "benchmarkModel": "claude-sonnet-4-6",

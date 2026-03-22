@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-v2.1.81+-purple.svg)](https://code.claude.com)
-[![Version](https://img.shields.io/badge/Version-2.0.2-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-2.0.3-green.svg)](CHANGELOG.md)
 [![Author](https://img.shields.io/badge/Author-POPUP%20STUDIO-orange.svg)](https://popupstudio.ai)
 
 > **PDCA methodology + CTO-Led Agent Teams + AI coding assistant mastery for AI-native development**
@@ -38,7 +38,7 @@ bkit implements Context Engineering through three interconnected layers:
 |-------|------------|---------|
 | **Domain Knowledge** | 36 Skills | Structured expert knowledge (phases, levels, specialized domains) |
 | **Behavioral Rules** | 31 Agents | Role-based constraints with model selection (opus/sonnet/haiku) |
-| **State Management** | ~465 Functions | PDCA state machine, workflow engine, automation control, audit, quality gates, intent detection, team coordination |
+| **State Management** | ~580+ Functions | PDCA state machine, workflow engine, automation control, audit, quality gates, intent detection, team coordination |
 
 ### 6-Layer Hook System
 
@@ -61,9 +61,9 @@ Layer 6: Plugin Data Backup      → ${CLAUDE_PLUGIN_DATA} persistent state mana
 
 ![bkit Features](images/bkit-features.png)
 
-- **PM Skills Integration + Interactive Checkpoints (v2.0.2)** - PM Agent Team expanded from 9→43 frameworks ([pm-skills](https://github.com/phuryn/pm-skills) MIT), PDCA Interactive Checkpoints 1~5 (AskUserQuestion-gated), code-analyzer Confidence-Based Filtering (≥80%), Design phase 3 Architecture Options (Minimal/Clean/Pragmatic), btw CTO Team Integration, pm-prd template v2.0 with Execution Deliverables (Pre-mortem, User/Job Stories, Test Scenarios, Stakeholder Map, Growth Loops)
+- **PM Skills Integration + Interactive Checkpoints (v2.0.3)** - PM Agent Team expanded from 9→43 frameworks ([pm-skills](https://github.com/phuryn/pm-skills) MIT), PDCA Interactive Checkpoints 1~5 (AskUserQuestion-gated), code-analyzer Confidence-Based Filtering (≥80%), Design phase 3 Architecture Options (Minimal/Clean/Pragmatic), btw CTO Team Integration, pm-prd template v2.0 with Execution Deliverables (Pre-mortem, User/Job Stories, Test Scenarios, Stakeholder Map, Growth Loops)
 - **Cross-Project Isolation Fix (v2.0.1)** - PLUGIN_DATA backup/restore project identity guard via meta.json, globalCache project namespace, prevents cross-project PDCA state leakage ([#48](https://github.com/popup-studio-ai/bkit-claude-code/issues/48))
-- **AI Native Development OS (v2.0.0)** - Declarative PDCA state machine (20 transitions), YAML workflow DSL (3 presets), L0-L4 controllable AI automation, CLI dashboard (progress-bar, workflow-map, control-panel), audit logging + decision tracing, quality gates (7 stages), checkpoint/rollback, destructive operation detector (8 rules), MCP servers (bkit-pdca + bkit-analysis), 3,175+ TC, ~465 exports, 76 lib modules, 36 skills, 31 agents, 18 hook events
+- **AI Native Development OS (v2.0.0)** - Declarative PDCA state machine (20 transitions), YAML workflow DSL (3 presets), L0-L4 controllable AI automation, CLI dashboard (progress-bar, workflow-map, control-panel), audit logging + decision tracing, quality gates (7 stages), checkpoint/rollback, destructive operation detector (8 rules), MCP servers (bkit-pdca + bkit-analysis), 3,175+ TC, ~580+ exports, 76 lib modules, 36 skills, 31 agents, 18 hook events
 - **CC v2.1.78 Full Integration (v1.6.2)** - 14 ENH items (ENH-117~130), PostCompact/StopFailure hooks, ${CLAUDE_PLUGIN_DATA} persistent backup, agent effort/maxTurns, 1M context default, 128K output, 1186 TC (99.7%), 260+ exports, 54 scripts, CC v2.1.78 recommended
 - **CTO Orchestration Redesign + Quality Hardening (v1.6.1)** - Main Session as CTO pattern (CC v2.1.69+ compatibility), P0 bug fixes (4), Config-Code synchronization, 3-Tier Agent Security Model, 1073 TC comprehensive test (99.6% pass), CE Level 5 assessment (88/100), 72 files ~1,400 LOC
 - **Skills 2.0 Complete Integration (v1.6.0)** - 19 ENH items (ENH-85~103), Skill Evals framework with 28 eval definitions, Skill Classification (Workflow/Capability/Hybrid), A/B testing, template-validator, frontmatter hooks migration, context:fork deprecation, PM Agent Team integration
@@ -89,10 +89,10 @@ Layer 6: Plugin Data Backup      → ${CLAUDE_PLUGIN_DATA} persistent state mana
 - **9-Stage Development Pipeline** - From schema design to deployment
 - **3 Project Levels** - Starter (static), Dynamic (fullstack), Enterprise (microservices)
 - **Multilingual Support** - 8 languages (EN, KO, JA, ZH, ES, FR, DE, IT)
-- **36 Skills** - Domain-specific knowledge (9 Workflow / 25 Capability / 2 Hybrid)
+- **36 Skills** - Domain-specific knowledge (17 Workflow / 18 Capability / 1 Hybrid)
 - **31 Agents** - Specialized AI assistants (10 opus / 19 sonnet / 2 haiku) including CTO/PM Team + PDCA Eval agents
 - **21 Hook Scripts** - Hook execution with unified handlers across 18 event types
-- **~465 Utility Functions** - 76 lib modules across 10 subdirectories (core, pdca, intent, task, team, ui, audit, control, quality, adapters)
+- **~580+ Utility Functions** - 76 lib modules across 10 subdirectories (core, pdca, intent, task, team, ui, audit, control, quality, adapters)
 - **Check-Act Iteration Loop** - Automatic gap analysis and fix cycles with max 5 iterations (90% threshold)
 
 ---
@@ -111,9 +111,9 @@ bkit builds three layers on top of Claude Code's native Evals:
 
 | Layer | Claude Code Native | bkit Enhancement |
 |-------|-------------------|------------------|
-| **Eval Execution** | Basic eval runner | `evals/runner.js` with benchmark mode, 28 pre-built eval definitions |
+| **Eval Execution** | Basic eval runner | `evals/runner.js` with benchmark mode, 29 pre-built eval definitions |
 | **A/B Testing** | Not available | `evals/ab-tester.js` compares skill performance across models (e.g., Sonnet 4.6 vs Opus 4.6) |
-| **Skill Classification** | Not available | All 36 skills classified as Workflow (9) / Capability (25) / Hybrid (2) with deprecation-risk scoring |
+| **Skill Classification** | Not available | All 36 skills classified as Workflow (17) / Capability (18) / Hybrid (1) with deprecation-risk scoring |
 
 ```
 evals/
@@ -121,7 +121,7 @@ evals/
 ├── runner.js                # Eval execution engine (CLI + module)
 ├── reporter.js              # Markdown/JSON result reporting
 ├── ab-tester.js             # Model comparison + parity testing
-├── workflow/{9 skills}/     # Eval definitions for permanent skills
+├── workflow/{10 skills}/     # Eval definitions for permanent skills
 ├── capability/{18 skills}/  # Eval definitions for model-dependent skills
 └── hybrid/{1 skill}/        # Eval definitions for single dual-purpose skill
 ```
@@ -132,7 +132,7 @@ Not all skills age the same way. bkit classifies each skill to manage its lifecy
 
 | Classification | Count | Purpose | What Evals Measure |
 |---------------|:-----:|---------|-------------------|
-| **Workflow** | 9 | Process automation (PDCA, pipelines) | Quality regression only—these skills are permanent |
+| **Workflow** | 17 | Process automation (PDCA, pipelines) | Quality regression only—these skills are permanent |
 | **Capability** | 18 | Model ability augmentation (mockups, APIs) | **Parity testing**—can the model match this skill's output without it? |
 | **Hybrid** | 1 | Both process + capability | Both regression and parity |
 
@@ -145,7 +145,7 @@ node evals/ab-tester.js --parity phase-3-mockup --model claude-opus-4-6
 # Compare skill performance between two models
 node evals/ab-tester.js --skill pdca --modelA claude-sonnet-4-6 --modelB claude-opus-4-6
 
-# Run all 31 skill evaluations
+# Run all 29 skill evaluations
 node evals/runner.js --benchmark
 ```
 
@@ -153,7 +153,7 @@ node evals/runner.js --benchmark
 
 | Before (v1.5.9) | After (v1.6.1 with Evals) |
 |-----------------|--------------------------|
-| 28 skills, no quality measurement | 31 skills, each with automated eval definitions |
+| 28 skills, no quality measurement | 36 skills, 29 with automated eval definitions |
 | No way to know if a skill degraded after model update | Benchmark detects regression across all skills |
 | Manual judgment on skill usefulness | Data-driven deprecation recommendations |
 | Skills accumulate indefinitely | Skill lifecycle: create → eval → deprecate → remove |
@@ -194,7 +194,7 @@ Skill Evals connect directly to bkit's PDCA workflow:
 
 | Requirement | Minimum Version | Notes |
 |-------------|:---------------:|-------|
-| **Claude Code** | **v2.1.78+** | Required. bkit v2.0.2 uses agent frontmatter (effort/maxTurns/disallowedTools), 18 hook events, MCP servers, and ${CLAUDE_PLUGIN_DATA}. Recommended: v2.1.81+. |
+| **Claude Code** | **v2.1.78+** | Required. bkit v2.0.3 uses agent frontmatter (effort/maxTurns/disallowedTools), 18 hook events, MCP servers, and ${CLAUDE_PLUGIN_DATA}. Recommended: v2.1.81+. |
 | Node.js | v18+ | For hook script execution |
 | Agent Teams (optional) | Set `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` | Required only for CTO-Led Agent Teams feature |
 
@@ -267,9 +267,12 @@ bkit-claude-code/
 │   ├── plugin.json          # Claude Code plugin manifest
 │   └── marketplace.json     # Marketplace registry
 ├── agents/                  # Specialized AI agents
+├── commands/                # CLI command definitions
 ├── skills/                  # Domain knowledge
 ├── hooks/                   # Event hooks (hooks.json)
+├── evals/                   # Skill eval definitions & runner
 ├── scripts/                 # Hook execution scripts
+├── servers/                 # MCP servers (bkit-pdca, bkit-analysis)
 ├── lib/                     # Shared utilities (76 modules across 10 subdirs)
 ├── output-styles/           # Level-based response formatting
 ├── templates/               # Document templates
@@ -342,9 +345,9 @@ git commit -m "feat: customize bkit starter skill"
 /enterprise   # Microservices with K8s (Enterprise level)
 ```
 
-### PDCA Workflow (v2.0.2)
+### PDCA Workflow (v2.0.3)
 
-> **v2.0.2**: Each phase now includes Interactive Checkpoints that pause for user confirmation before proceeding. Plan confirms requirements, Design presents 3 architecture options, Do confirms implementation scope, Check offers fix strategy choices.
+> **v2.0.3**: Each phase now includes Interactive Checkpoints that pause for user confirmation before proceeding. Plan confirms requirements, Design presents 3 architecture options, Do confirms implementation scope, Check offers fix strategy choices.
 
 ```bash
 /pdca pm {feature}       # PM analysis & PRD generation (43 frameworks)
@@ -472,7 +475,7 @@ bkit is **primarily designed for software development**. However, some component
 ### Component Reference
 
 - [Development Pipeline](skills/development-pipeline/SKILL.md) - 9-stage pipeline skill
-- [Skills Reference](skills/) - 36 domain skills (9 Workflow / 25 Capability / 2 Hybrid)
+- [Skills Reference](skills/) - 36 domain skills (17 Workflow / 18 Capability / 1 Hybrid)
 - [Agents Reference](agents/) - 31 specialized agents (10 opus / 19 sonnet / 2 haiku)
 
 ### PDCA Documents
@@ -576,7 +579,7 @@ The software industry has spent decades refining how humans write code—version
 
 - **Verification over trust.** AI generates plausible code. Plausible is not correct. Every implementation goes through gap analysis against its design document. If the match rate falls below 90%, the system iterates automatically. We do not ship hope.
 
-- **Context over prompts.** A well-structured prompt helps once. A well-structured context system helps every time. bkit's ~465 functions across 76 modules, 36 skills, and 31 agents exist to ensure the AI receives the right context at the right moment—not through clever prompting, but through systematic engineering.
+- **Context over prompts.** A well-structured prompt helps once. A well-structured context system helps every time. bkit's ~580+ functions across 76 modules, 36 skills, and 31 agents exist to ensure the AI receives the right context at the right moment—not through clever prompting, but through systematic engineering.
 
 - **Constraints over features.** We intentionally limit what bkit does. Three project levels, not infinite configuration. A fixed 9-stage pipeline, not a customizable workflow builder. Opinionated defaults, not a framework for frameworks. Constraints eliminate decision fatigue and make the system learnable.
 

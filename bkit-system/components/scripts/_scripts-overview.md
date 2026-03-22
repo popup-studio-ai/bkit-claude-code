@@ -1,6 +1,6 @@
 # Scripts Overview
 
-> 49 Node.js Scripts used by bkit hooks (v1.6.2)
+> 54 Node.js Scripts used by bkit hooks (v2.0.3)
 >
 > **v1.5.0**: Claude Code Exclusive - Gemini CLI support removed, simplified architecture
 > **v1.4.7**: Core Modularization - lib/ split into 4 modules, Task Management Integration
@@ -77,7 +77,7 @@ All scripts are at root level (not in .claude/):
 
 ```
 bkit-claude-code/
-├── lib/                       # Modular Library (v1.6.2, 210 exports)
+├── lib/                       # Modular Library (v2.0.3, ~580+ exports)
 │   ├── common.js              # Migration Bridge (re-exports all modules)
 │   ├── core/                  # Core utilities (7 files, 40 exports)
 │   │   ├── index.js           # Entry point
@@ -220,14 +220,15 @@ bkit-claude-code/
 
 > **Note**: pdca-pre-write.js was deprecated and deleted in v1.4.2. Its functionality is integrated into pre-write.js.
 
-## Shared Library: lib/ (v1.5.3)
+## Shared Library: lib/ (v2.0.3)
 
+> **v2.0.3**: 10 subdirectories, 76 modules with ~580+ exports total
 > **v1.6.2**: 5 module directories with 210 exports total
 > **v1.4.7**: Core Modularization - 4 module directories with 132 functions total
 > **v1.4.2**: 6 library modules with 86+ functions total
 > **v1.4.0**: Expanded from 38 to 80+ functions with dual platform support
 
-### Library Modules (v1.6.0)
+### Library Modules (v2.0.3)
 
 | Module | Files | Exports | Purpose |
 |--------|:-----:|:-------:|---------|
@@ -236,9 +237,9 @@ bkit-claude-code/
 | `lib/intent/` | 4 | 19 | Language detection, triggers, ambiguity scoring |
 | `lib/task/` | 5 | 26 | Task classification, context, creation, tracking |
 | `lib/team/` | 9 | 40 | Team coordination, strategy, state-writer |
-| `lib/common.js` | 1 | 210 | Migration Bridge (re-exports all modules) |
+| `lib/common.js` | 1 | ~580+ | Migration Bridge (re-exports all modules) |
 
-**Export summary**: 210 total exports via bridge (core + pdca + intent + task + team + executive-summary + PM team + skills 2.0)
+**Export summary**: ~580+ total exports via bridge (10 subdirectories, 76 modules)
 
 ### Import Options
 

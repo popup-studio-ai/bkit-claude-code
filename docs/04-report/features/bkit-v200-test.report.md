@@ -1,6 +1,6 @@
-# bkit v2.0.0 Comprehensive Test Report
+# bkit v2.0.3 Comprehensive Test Report
 
-> Generated: 2026-03-22T14:31:38.818Z
+> Generated: 2026-03-22T14:48:35.769Z
 > Total: 3202 TC, 3190 PASS, 0 FAIL, 12 SKIP
 > Pass Rate: 99.6%
 
@@ -41,4 +41,4 @@
 
 ## Verdict
 
-**ALL TESTS PASSED** - bkit v2.0.0 is ready for release.
+**ALL TESTS PASSED** - bkit v2.0.3 is ready for release.

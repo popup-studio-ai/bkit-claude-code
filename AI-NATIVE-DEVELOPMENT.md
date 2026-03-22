@@ -99,10 +99,10 @@ Based on research from industry leaders (Addy Osmani, Sapphire Ventures, DevOps.
 
 **Principle**: Humans govern AI through progressive trust, 5-level automation control, and interactive checkpoints.
 
-**bkit v2.0.2 Controllable AI**:
+**bkit v2.0.3 Controllable AI**:
 - **L0-L4 automation levels**: Manual → Guided → Semi-Auto → Auto → Full-Auto
-- **Interactive Checkpoints (v2.0.2)**: 5 AskUserQuestion gates — Plan (requirements + questions), Design (3 architecture options), Do (scope approval), Check (fix strategy)
-- **Confidence-Based Analysis (v2.0.2)**: code-analyzer reports only ≥80% confidence issues with Critical/Important severity
+- **Interactive Checkpoints (v2.0.3)**: 5 AskUserQuestion gates — Plan (requirements + questions), Design (3 architecture options), Do (scope approval), Check (fix strategy)
+- **Confidence-Based Analysis (v2.0.3)**: code-analyzer reports only ≥80% confidence issues with Critical/Important severity
 - **Trust Score (0-100)**: Earned through track record, 6 weighted components
 - **Quality Gates (7 stages)**: Configurable thresholds per phase transition
 - **Audit trail**: JSONL logging + decision tracer for full transparency
@@ -144,7 +144,7 @@ Context Engineering is the **systematic design of information flow to LLMs**—g
 ```
 Domain Knowledge (36 Skills) ──┐
 Behavioral Rules (31 Agents) ──┼─→ 18-Event Hook System ─→ Dynamic Context Injection
-State Management (~465 funcs) ─┤
+State Management (~580+ funcs) ─┤
 Workflow Engine (3 presets) ────┤
 Controllable AI (L0-L4) ───────┤
 Audit System (JSONL traces) ───┘
@@ -183,9 +183,9 @@ bkit implements **Context Engineering**—the systematic curation of context tok
 | **3 Project Levels** | Starter, Dynamic, Enterprise contexts |
 | **Convention Skill (Phase 2)** | Defines naming, structure, patterns |
 | **CLAUDE.md Files** | Project-specific AI instructions |
-| **Skill System (36 skills)** | Domain-specific knowledge (9 Workflow / 25 Capability / 2 Hybrid) |
-| **18-Event Hook System** | Centralized context injection via hooks.json (18 events, 21 scripts) |
-| **lib/ (76 modules, ~465 functions)** | 10 subdirectories: core, pdca, intent, task, team, ui, audit, control, quality |
+| **Skill System (36 skills)** | Domain-specific knowledge (17 Workflow / 18 Capability / 1 Hybrid) |
+| **18-Event Hook System** | Centralized context injection via hooks.json (18 events, 54 scripts) |
+| **lib/ (76 modules, ~580+ functions)** | 10 subdirectories: core, pdca, intent, task, team, ui, audit, control, quality, adapters |
 
 **Context Engineering Architecture (v2.0.0)**:
 ```
@@ -226,12 +226,12 @@ code-explorer → code-architect → implementation → code-reviewer → qa-mon
 
 | bkit Feature | Implementation |
 |--------------|----------------|
-| **Interactive Checkpoints (v2.0.2)** | 5 AskUserQuestion gates: requirements, questions, architecture, scope, fix strategy |
+| **Interactive Checkpoints (v2.0.3)** | 5 AskUserQuestion gates: requirements, questions, architecture, scope, fix strategy |
 | **PDCA Methodology** | Quality gate at each phase transition |
 | **Confidence-Based Analysis** | code-analyzer reports only ≥80% confidence issues |
 | **Iteration Reports** | Transparent progress documentation |
 
-**Verification Points (v2.0.2 — State Machine + Quality Gates + Interactive Checkpoints)**:
+**Verification Points (v2.0.3 — State Machine + Quality Gates + Interactive Checkpoints)**:
 ```
 idle → [PM Gate] → Plan [CP1: Requirements] [CP2: Questions]
   → [Plan Gate] → Design [CP3: 3 Architecture Options]
@@ -268,8 +268,8 @@ idle → [PM Gate] → Plan [CP1: Requirements] [CP2: Questions]
 
 | Level | Teammates | Agents |
 |-------|-----------|--------|
-| Dynamic | 3 | QA + Frontend + Backend |
-| Enterprise | 5 | QA + Frontend + Backend + Security + Product |
+| Dynamic | 3 | developer, qa, frontend |
+| Enterprise | 5 | architect, developer, qa, reviewer, security |
 
 **Requirements**: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` + Claude Code v2.1.32+
 

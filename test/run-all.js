@@ -2,7 +2,7 @@
 'use strict';
 
 /**
- * bkit v2.0.0 Comprehensive Test Runner
+ * bkit v2.0.3 Comprehensive Test Runner
  * ~3100+ TC across 10 perspectives
  *
  * Usage:
@@ -352,7 +352,7 @@ async function main() {
   const startTime = Date.now();
 
   console.log('='.repeat(60));
-  console.log('bkit v2.0.0 Comprehensive Test Runner');
+  console.log('bkit v2.0.3 Comprehensive Test Runner');
   console.log(`Date: ${new Date().toISOString()}`);
   console.log('='.repeat(60));
 

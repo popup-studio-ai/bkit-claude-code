@@ -360,8 +360,8 @@ assert('CS-011',
 
 // CS-012: plugin.json version is 2.0.2
 assert('CS-012',
-  pluginJson?.version === '2.0.2',
-  `plugin.json version is ${pluginJson?.version} (expected 2.0.2)`
+  pluginJson?.version === '2.0.3',
+  `plugin.json version is ${pluginJson?.version} (expected 2.0.3)`
 );
 
 // CS-013: plugin.json has outputStyles

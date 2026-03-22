@@ -164,7 +164,7 @@ const ANALYSIS_TOOLS = [
 // ============================================================
 // MS-021~023: servers/*/package.json version = 2.0.0
 // ============================================================
-console.log('\n--- MS-021~023: package.json version = 2.0.0 ---');
+console.log('\n--- MS-021~023: package.json version = 2.0.3 ---');
 
 const serverDirs = ['bkit-pdca-server', 'bkit-analysis-server'];
 
@@ -179,8 +179,8 @@ for (let i = 0; i < serverDirs.length; i++) {
     version = pkg.version;
   } catch (_) {}
 
-  assert(id, version === '2.0.0',
-    `${serverName}/package.json version is 2.0.0 (got: ${version})`);
+  assert(id, version === '2.0.3',
+    `${serverName}/package.json version is 2.0.3 (got: ${version})`);
 }
 
 // MS-023: Both package.json have "type": "commonjs" or no type (default CJS)
