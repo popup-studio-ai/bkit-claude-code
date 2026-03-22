@@ -89,7 +89,7 @@ const CATEGORIES = {
       'unit/v200-mcp-servers.test.js',
       'unit/v200-workflows.test.js',
     ],
-    expected: 1120,
+    expected: 1403,
   },
   integration: {
     name: 'Integration Tests',
@@ -109,8 +109,10 @@ const CATEGORIES = {
       'integration/v200-wiring.test.js',
       'integration/v200-dashboard.test.js',
       'integration/v200-common-bridge.test.js',
+      'integration/pm-skills-integration.test.js',
+      'integration/impact-analysis-section.test.js',
     ],
-    expected: 285,
+    expected: 479,
   },
   security: {
     name: 'Security Tests',
@@ -125,7 +127,7 @@ const CATEGORIES = {
       'security/scope-limiter.test.js',
       'security/trust-score-safety.test.js',
     ],
-    expected: 130,
+    expected: 205,
   },
   regression: {
     name: 'Regression Tests',
@@ -145,7 +147,7 @@ const CATEGORIES = {
       'regression/skills-36.test.js',
       'regression/agents-31.test.js',
     ],
-    expected: 335,
+    expected: 416,
   },
   performance: {
     name: 'Performance Tests',
@@ -161,7 +163,7 @@ const CATEGORIES = {
       'performance/audit-write-perf.test.js',
       'performance/ui-render-perf.test.js',
     ],
-    expected: 126,
+    expected: 160,
   },
   philosophy: {
     name: 'Philosophy Tests',
@@ -175,7 +177,7 @@ const CATEGORIES = {
       'philosophy/docs-equals-code-v2.test.js',
       'philosophy/security-by-default-v2.test.js',
     ],
-    expected: 140,
+    expected: 138,
   },
   ux: {
     name: 'UX Tests',
@@ -192,7 +194,7 @@ const CATEGORIES = {
       'ux/control-panel-ux.test.js',
       'ux/skill-commands.test.js',
     ],
-    expected: 150,
+    expected: 160,
   },
   e2e: {
     name: 'E2E Tests (Node)',
@@ -202,7 +204,7 @@ const CATEGORIES = {
       'e2e/pdca-auto-cycle.test.js',
       'e2e/error-recovery.test.js',
     ],
-    expected: 55,
+    expected: 61,
   },
   architecture: {
     name: 'Architecture Tests',
