@@ -105,11 +105,11 @@ PM Agent Team 분석 완료!
 PRD: docs/00-pm/{feature}.prd.md
 
 포함된 분석:
-- Opportunity Solution Tree (Discovery)
-- Value Proposition + Lean Canvas (Strategy)
-- User Personas x3 + Competitors x5 + Market Sizing (Research)
-- Beachhead Segment + GTM Strategy (Go-To-Market)
-- Product Requirements Document (8-section PRD)
+- 5-Step Discovery Chain + Opportunity Solution Tree (Discovery)
+- Value Proposition + Lean Canvas + SWOT + Strategic Analysis (Strategy)
+- User Personas x3 + Competitors x5 + Market Sizing + Journey Map (Research)
+- ICP + Beachhead + GTM + Battlecards + Growth Loops (Go-To-Market)
+- PRD 8-section + Pre-mortem + User Stories + Test Scenarios + Stakeholder Map (Execution)
 
 다음 단계: /pdca plan {feature}
 (PRD가 Plan 문서에 자동 참조됩니다)
@@ -127,15 +127,32 @@ PRD: docs/00-pm/{feature}.prd.md
 ### Quality Checklist
 
 Before delivering PRD, verify:
+
+**Discovery (pm-discovery)**:
+- [ ] 5-Step Chain completed (Brainstorm → Assumptions → Prioritize → Experiments → OST)
 - [ ] OST has at least 3 opportunities with solutions
+- [ ] Top assumptions identified and prioritized (Impact × Risk)
+
+**Strategy (pm-strategy)**:
 - [ ] VP has all 6 parts filled
-- [ ] Lean Canvas has all 9 sections
-- [ ] 3 distinct personas created
+- [ ] Lean Canvas (or BMC) has all 9 sections
+- [ ] SWOT analysis completed with SO/WT strategies
+- [ ] Additional frameworks run if context-appropriate
+
+**Research (pm-research)**:
+- [ ] 3 distinct personas created with JTBD
 - [ ] 5 competitors analyzed
-- [ ] TAM/SAM/SOM estimated
+- [ ] TAM/SAM/SOM estimated (dual-method)
+- [ ] Customer Journey Map for primary persona
+
+**PRD & Execution (pm-prd)**:
+- [ ] ICP defined from research synthesis
 - [ ] Beachhead segment selected with 4-criteria scoring
 - [ ] GTM strategy includes channels + metrics
 - [ ] PRD 8 sections complete
+- [ ] Pre-mortem completed (top 3 risks identified)
+- [ ] User Stories generated with INVEST check
+- [ ] Test Scenarios derived from stories
 - [ ] Attribution included
 
 ### Attribution

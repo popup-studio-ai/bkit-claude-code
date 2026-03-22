@@ -1,7 +1,7 @@
 ---
 template: pm-prd
-version: 1.0
-description: PM Agent Team PRD output template. Combines Discovery, Strategy, Research analysis with Beachhead + GTM + PRD 8-section.
+version: 2.0
+description: PM Agent Team PRD output template. Combines 5-Step Discovery, Strategic Analysis, Market Research, GTM, PRD 8-section, and Execution deliverables.
 variables:
   - feature: Feature name
   - date: Creation date (YYYY-MM-DD)
@@ -34,7 +34,12 @@ variables:
 
 {Measurable business/product outcome}
 
-### 1.2 Opportunity Solution Tree
+### 1.2 Brainstormed Ideas (Top 5)
+
+| # | Idea | Perspective | Rationale |
+|---|------|-------------|-----------|
+
+### 1.3 Opportunity Solution Tree
 
 ```
 Outcome: {desired outcome}
@@ -48,19 +53,21 @@ Outcome: {desired outcome}
     └── Solution E: {approach}
 ```
 
-### 1.3 Prioritized Opportunities
+### 1.4 Prioritized Opportunities
 
 | # | Opportunity | Importance | Satisfaction | Score |
-|---|------------|------------|--------------|-------|
+|---|------------|:----------:|:------------:|:-----:|
 | 1 | {opportunity} | {0-1} | {0-1} | {score} |
-| 2 | {opportunity} | {0-1} | {0-1} | {score} |
-| 3 | {opportunity} | {0-1} | {0-1} | {score} |
 
-### 1.4 Recommended Experiments
+### 1.5 Key Assumptions & Risk Prioritization
 
-| # | Tests Assumption | Method | Success Criteria |
-|---|-----------------|--------|-----------------|
-| 1 | {assumption} | {method} | {criteria} |
+| # | Assumption | Category | Impact | Risk | Score | Action |
+|---|-----------|----------|:------:|:----:|:-----:|--------|
+
+### 1.6 Recommended Experiments
+
+| # | Tests Assumption | Method | Success Criteria | Effort |
+|---|-----------------|--------|-----------------|:------:|
 
 ---
 
@@ -93,13 +100,27 @@ Outcome: {desired outcome}
 | **Cost Structure** | {key costs} |
 | **Key Metrics** | {north star + supporting metrics} |
 
+### 2.3 SWOT Analysis
+
+| | Helpful | Harmful |
+|---|---------|---------|
+| **Internal** | Strengths: {list} | Weaknesses: {list} |
+| **External** | Opportunities: {list} | Threats: {list} |
+
+**SO Strategy**: {leverage strengths for opportunities}
+**WT Strategy**: {mitigate weaknesses against threats}
+
+### 2.4 Additional Strategic Analysis (if applicable)
+
+{PESTLE, Porter's Five Forces, Pricing Strategy, Ansoff Matrix — context-dependent}
+
 ---
 
 ## 3. Market Research
 
 ### 3.1 User Personas
 
-#### Persona 1: {name}
+#### Persona 1: {name} (Primary)
 
 | Attribute | Details |
 |-----------|---------|
@@ -122,23 +143,31 @@ Outcome: {desired outcome}
 
 | Competitor | Strengths | Weaknesses | Our Opportunity |
 |-----------|-----------|------------|-----------------|
-| {comp 1} | {strengths} | {weaknesses} | {opportunity} |
-| {comp 2} | {strengths} | {weaknesses} | {opportunity} |
-| {comp 3} | {strengths} | {weaknesses} | {opportunity} |
-| {comp 4} | {strengths} | {weaknesses} | {opportunity} |
-| {comp 5} | {strengths} | {weaknesses} | {opportunity} |
 
 **Differentiation Strategy**: {key differentiators to emphasize}
 
 ### 3.3 Market Sizing
 
 | Metric | Current Estimate | 3-Year Projection |
-|--------|-----------------|-------------------|
+|--------|:---------------:|:-----------------:|
 | **TAM** | {total addressable market} | {projection} |
 | **SAM** | {serviceable addressable} | {projection} |
 | **SOM** | {serviceable obtainable} | {projection} |
 
 **Key Assumptions**: {numbered list of critical assumptions}
+
+### 3.4 Customer Journey Map (Primary Persona)
+
+| Stage | Touchpoint | Actions | Emotions | Pain Points | Opportunities |
+|-------|-----------|---------|----------|-------------|---------------|
+| Awareness | | | | | |
+| Consideration | | | | | |
+| Decision | | | | | |
+| Onboarding | | | | | |
+| Usage | | | | | |
+| Advocacy | | | | | |
+
+**Moments of Truth**: {key moments}
 
 ---
 
@@ -165,6 +194,31 @@ Outcome: {desired outcome}
 | **Success Metrics** | {KPIs and targets} |
 | **Launch Timeline** | Pre-launch / Launch / Post-launch phases |
 
+### 4.3 Ideal Customer Profile (ICP)
+
+| Attribute | Details |
+|-----------|---------|
+| Industry/Vertical | {specific industry} |
+| Company Size | {employees, revenue} |
+| Role/Title | {decision maker + end user} |
+| Primary JTBD | {core job} |
+| Budget Range | {willingness to pay} |
+
+### 4.4 Competitive Battlecards
+
+| Category | Us | {Competitor 1} | {Competitor 2} |
+|----------|-----|----------------|----------------|
+| Positioning | | | |
+| Key Strength | | | |
+| Key Weakness | | | |
+| Price | | | |
+| Best For | | | |
+
+### 4.5 Growth Loops
+
+| Loop Type | Trigger | Action | Output | Metric |
+|-----------|---------|--------|--------|--------|
+
 ---
 
 ## 5. Product Requirements (PRD)
@@ -185,7 +239,7 @@ Outcome: {desired outcome}
 
 ### 5.4 Market Segments
 
-{Target segments with constraints - markets defined by problems/JTBD, not demographics}
+{Target segments defined by problems/JTBD, not demographics}
 
 ### 5.5 Value Propositions
 
@@ -200,8 +254,7 @@ Outcome: {desired outcome}
 ### 5.7 Assumptions & Risks
 
 | # | Assumption | Category | Confidence | Validation Method |
-|---|-----------|----------|------------|-------------------|
-| 1 | {assumption} | Value/Usability/Feasibility/Viability | High/Med/Low | {method} |
+|---|-----------|----------|:----------:|-------------------|
 
 ### 5.8 Release Plan
 
@@ -212,12 +265,53 @@ Outcome: {desired outcome}
 
 ---
 
+## 6. Execution Deliverables
+
+### 6.1 Pre-mortem
+
+| # | Failure Mode | Category | Likelihood | Impact | Prevention Strategy |
+|---|-------------|----------|:----------:|:------:|-------------------|
+
+**Top 3 Risks**: {risks to address before v1}
+
+### 6.2 User Stories
+
+| ID | User Story | Priority | Acceptance Criteria (Given/When/Then) |
+|----|-----------|:--------:|--------------------------------------|
+
+### 6.3 Job Stories
+
+| ID | When (Situation) | I want to (Motivation) | So I can (Outcome) |
+|----|-----------------|----------------------|-------------------|
+
+### 6.4 Test Scenarios
+
+| ID | Story Ref | Scenario | Steps | Expected Result | Priority |
+|----|-----------|----------|-------|----------------|:--------:|
+
+### 6.5 Stakeholder Map
+
+| Stakeholder | Role | Power | Interest | Strategy |
+|------------|------|:-----:|:--------:|----------|
+
+---
+
 ## Attribution
 
 This PRD was generated by bkit PM Agent Team.
 Frameworks based on [pm-skills](https://github.com/phuryn/pm-skills) by Pawel Huryn (MIT License).
 
 - Opportunity Solution Tree: Teresa Torres, *Continuous Discovery Habits*
+- Brainstorm & Assumptions: Multi-perspective ideation + 8-category risk assessment (4 Product + 4 GTM)
 - Value Proposition: JTBD 6-Part (Pawel Huryn & Aatir Abdul Rauf)
 - Lean Canvas: Ash Maurya
+- SWOT/PESTLE/Porter's: Strategic analysis frameworks
 - Beachhead Segment: Geoffrey Moore, *Crossing the Chasm*
+- GTM Strategy: Product Compass methodology
+- ICP & Battlecard: Sales-ready competitive tools
+- Growth Loops: Product-led & sales-led mechanisms
+- Pre-mortem: Gary Klein, prospective hindsight
+- User Stories: 3C + INVEST (Ron Jeffries)
+- Job Stories: Alan Klement, *When Coffee and Kale Compete*
+- Test Scenarios: BDD Given/When/Then
+- Stakeholder Map: Mendelow's Power/Interest matrix

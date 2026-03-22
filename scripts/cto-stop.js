@@ -66,7 +66,42 @@ function run(context) {
     });
   } catch (_) {}
 
-  outputAllow('CTO session ended. Team state saved for next session.', 'CTOStop');
+  // btw stats summary at session end (v1.7.0)
+  try {
+    const fs = require('fs');
+    const { getStatePath } = require('../lib/core/paths');
+    const btwPath = getStatePath('btw-suggestions.json');
+    if (fs.existsSync(btwPath)) {
+      const btwData = JSON.parse(fs.readFileSync(btwPath, 'utf-8'));
+      const pending = (btwData.suggestions || []).filter(s => s.status === 'pending').length;
+      const promoted = (btwData.suggestions || []).filter(s => s.status === 'promoted').length;
+      const total = btwData.stats?.total || 0;
+      if (total > 0) {
+        const categories = {};
+        (btwData.suggestions || []).forEach(s => {
+          categories[s.category] = (categories[s.category] || 0) + 1;
+        });
+        const catSummary = Object.entries(categories).map(([k, v]) => `${k}=${v}`).join(', ');
+        outputAllow(
+          `CTO session ended. Team state saved.\n` +
+          `───── btw Session Summary ─────\n` +
+          `Total: ${total} | Pending: ${pending} | Promoted: ${promoted}\n` +
+          `Categories: ${catSummary}\n` +
+          `Use /btw list to review, /btw promote {id} to create skills.\n` +
+          `───────────────────────────────`,
+          'CTOStop'
+        );
+      } else {
+        outputAllow('CTO session ended. Team state saved for next session.', 'CTOStop');
+      }
+    } else {
+      outputAllow('CTO session ended. Team state saved for next session.', 'CTOStop');
+    }
+  } catch (e) {
+    debugLog('CTOStop', 'btw stats output failed (non-fatal)', { error: e.message });
+    outputAllow('CTO session ended. Team state saved for next session.', 'CTOStop');
+  }
+
   debugLog('CTOStop', 'CTO session cleanup completed');
 }
 

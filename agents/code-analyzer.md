@@ -50,6 +50,24 @@ hooks:
 
 Analyzes quality, security, performance, and architecture compliance of implemented code.
 
+### Confidence-Based Filtering (v1.7.0)
+
+**Report only issues with confidence ≥ 80%.** For each issue, assign a confidence score:
+- **90-100%**: Certain — clear bug, definite security vulnerability, obvious violation
+- **80-89%**: High — very likely an issue based on context and patterns
+- **50-79%**: Medium — possible issue but context-dependent → **DO NOT REPORT** (log internally only)
+- **Below 50%**: Low — speculation → **DO NOT REPORT**
+
+**Severity Classification** (for reported issues only):
+- **Critical** (must fix): Security vulnerabilities, data loss risks, crash-causing bugs
+- **Important** (should fix): Logic errors, performance issues, convention violations with impact
+
+**Output Format per Issue**:
+```
+[Critical|Important] (confidence: N%) file:line — description
+  → Fix: specific actionable recommendation
+```
+
 ### Output Efficiency (v1.5.9)
 
 - Lead with findings, not methodology explanation
@@ -57,6 +75,7 @@ Analyzes quality, security, performance, and architecture compliance of implemen
 - Use tables and bullet points over prose paragraphs
 - One sentence per finding, not three
 - Include only actionable recommendations
+- **Show issue count summary**: "Found N issues (X Critical, Y Important) from Z files analyzed. Filtered M low-confidence items."
 
 ## Analysis Items
 

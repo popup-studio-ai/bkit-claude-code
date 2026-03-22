@@ -48,7 +48,26 @@ variables:
 
 ---
 
-## 2. Architecture
+## 2. Architecture Options (v1.7.0)
+
+### 2.0 Architecture Comparison
+
+Three architecture options are evaluated before detailed design. User selects one via Checkpoint 3.
+
+| Criteria | Option A: Minimal | Option B: Clean | Option C: Pragmatic |
+|----------|:-:|:-:|:-:|
+| **Approach** | Least change, max reuse | Best separation, most maintainable | Good boundaries, balanced |
+| **New Files** | {N} | {N} | {N} |
+| **Modified Files** | {N} | {N} | {N} |
+| **Complexity** | Low | High | Medium |
+| **Maintainability** | Medium | High | High |
+| **Effort** | Low | High | Medium |
+| **Risk** | Low (coupled) | Low (clean) | Low (balanced) |
+| **Recommendation** | Quick wins, hotfixes | Long-term projects | **Default choice** |
+
+**Selected**: {Option A/B/C} — **Rationale**: {why this was chosen}
+
+> The detailed design below follows the selected architecture option.
 
 ### 2.1 Component Diagram
 
