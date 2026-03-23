@@ -32,6 +32,7 @@ PDCA (Document-Driven Development)
   /pdca plan <feature>       Plan with Checkpoints 1-2 (requirements + questions)
   /pdca design <feature>     Design with Checkpoint 3 (3 architecture options)
   /pdca do <feature>         Implement with Checkpoint 4 (scope approval)
+  /pdca do <feature> --scope module-N   Multi-session incremental (v2.0.5)
   /pdca analyze <feature>    Gap analysis with Checkpoint 5 (fix strategy)
   /pdca iterate <feature>    Auto-improvement iteration
   /pdca report <feature>     Generate completion report
@@ -200,6 +201,15 @@ export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
 | Output Styles | `/output-style` | Custom response formatting |
 | TaskCompleted Hook | Automatic | Auto-advance PDCA phases on task completion |
 | TeammateIdle Hook | Automatic | Assign work to idle teammates |
+
+### v2.0.5 Features
+
+| Feature | Activation | Description |
+|---------|-----------|-------------|
+| Context Anchor | Automatic in `/pdca plan` | WHY/WHO/RISK/SUCCESS/SCOPE 5-line summary propagated across Plan→Design→Do→Analysis |
+| Session Guide | Automatic in `/pdca design` | Module Map + Recommended Session Plan for multi-session implementation |
+| Multi-Session Scope | `/pdca do {feature} --scope module-N` | Implement specific modules per session to reduce context loss |
+| Upstream Cross-Reading | Automatic in `/pdca do`, `/pdca analyze` | Do reads Plan Context Anchor; Analyze references Plan Success Criteria |
 
 ### v2.0.3 Features
 

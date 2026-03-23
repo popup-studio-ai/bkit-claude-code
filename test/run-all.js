@@ -2,8 +2,8 @@
 'use strict';
 
 /**
- * bkit v2.0.4 Comprehensive Test Runner
- * ~3100+ TC across 10 perspectives
+ * bkit v2.0.5 Comprehensive Test Runner
+ * ~3175+ TC across 10 perspectives
  *
  * Usage:
  *   node test/run-all.js                    # Run all tests (Node layer only, ~1850 TC)
@@ -88,8 +88,9 @@ const CATEGORIES = {
       'unit/v200-skills.test.js',
       'unit/v200-mcp-servers.test.js',
       'unit/v200-workflows.test.js',
+      'unit/session-guide.test.js',
     ],
-    expected: 1403,
+    expected: 1438,
   },
   integration: {
     name: 'Integration Tests',
@@ -111,8 +112,9 @@ const CATEGORIES = {
       'integration/v200-common-bridge.test.js',
       'integration/pm-skills-integration.test.js',
       'integration/impact-analysis-section.test.js',
+      'integration/context-anchor-propagation.test.js',
     ],
-    expected: 479,
+    expected: 504,
   },
   security: {
     name: 'Security Tests',
@@ -148,8 +150,9 @@ const CATEGORIES = {
       'regression/skills-36.test.js',
       'regression/agents-31.test.js',
       'regression/issue-53-path-quoting.test.js',
+      'regression/pr55-handoff-loss.test.js',
     ],
-    expected: 426,
+    expected: 441,
   },
   performance: {
     name: 'Performance Tests',
@@ -354,7 +357,7 @@ async function main() {
   const startTime = Date.now();
 
   console.log('='.repeat(60));
-  console.log('bkit v2.0.4 Comprehensive Test Runner');
+  console.log('bkit v2.0.5 Comprehensive Test Runner');
   console.log(`Date: ${new Date().toISOString()}`);
   console.log('='.repeat(60));
 
