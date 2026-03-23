@@ -1,7 +1,7 @@
 ---
 template: do
-version: 1.0
-description: PDCA Do phase implementation guide template
+version: 1.1
+description: PDCA Do phase implementation guide template with Context Anchor and Session Scope
 variables:
   - feature: Feature name
   - date: Creation date (YYYY-MM-DD)
@@ -20,6 +20,35 @@ variables:
 > **Date**: {date}
 > **Status**: In Progress
 > **Design Doc**: [{feature}.design.md](../02-design/features/{feature}.design.md)
+
+---
+
+## Context Anchor
+
+> Carried from Plan → Design → Do. Review WHY before implementation.
+
+| Key | Value |
+|-----|-------|
+| **WHY** | {copied from Design Context Anchor} |
+| **WHO** | {copied from Design Context Anchor} |
+| **RISK** | {copied from Design Context Anchor} |
+| **SUCCESS** | {copied from Design Context Anchor} |
+| **SCOPE** | {copied from Design Context Anchor} |
+
+---
+
+## Session Scope
+
+> Scope: {--scope value or "전체 (all modules)"}
+
+### Current Session Modules
+
+| Module | Scope Key | Status |
+|--------|-----------|:------:|
+| {module} | `module-N` | ☐ This session |
+| {module} | `module-N` | — Other session |
+
+> Tip: Use `/pdca do {feature} --scope module-N` to focus on specific modules.
 
 ---
 

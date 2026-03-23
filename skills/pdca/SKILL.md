@@ -120,7 +120,8 @@ Run PM Agent Team for product discovery and strategy analysis before Plan phase.
 7. Create Task: `[Plan] {feature}`
 8. Update .bkit-memory.json: phase = "plan"
 9. Write `## Executive Summary` at document top with 4-perspective table (Problem/Solution/Function UX Effect/Core Value), each 1-2 sentences
-10. **MANDATORY**: After completing the document, also output the Executive Summary table in your response so the user sees it immediately without opening the file
+10. **Context Anchor Generation**: After generating Plan document, extract Context Anchor (WHY/WHO/RISK/SUCCESS/SCOPE) from Executive Summary, Requirements, and Risk sections. Write as `## Context Anchor` table between Executive Summary and Section 1. This anchor propagates to Design/Do documents for cross-session context continuity.
+11. **MANDATORY**: After completing the document, also output the Executive Summary table in your response so the user sees it immediately without opening the file
 
 **Output Path**: `docs/01-plan/features/{feature}.plan.md`
 
@@ -132,33 +133,50 @@ Run PM Agent Team for product discovery and strategy analysis before Plan phase.
 
 1. Verify Plan document exists (required - suggest running plan first if missing)
 2. Read Plan document to understand requirements and scope
-3. **Generate 3 Architecture Options** (inspired by feature-dev Phase 4):
+3. **Context Anchor Embed**: Copy Plan's `## Context Anchor` table to Design document top (between header metadata and ## 1. Overview). If Plan has no Context Anchor (legacy), skip this step gracefully.
+4. **Generate 3 Architecture Options** (inspired by feature-dev Phase 4):
    - **Option A — Minimal Changes**: Least modification, maximum reuse of existing code. Fast but potentially coupled.
    - **Option B — Clean Architecture**: Best separation of concerns, most maintainable. More files, more refactoring.
    - **Option C — Pragmatic Balance**: Good boundaries without over-engineering. Recommended default.
-4. Present comparison table with trade-offs (complexity, maintainability, effort, risk)
-5. **Checkpoint 3 — Architecture Selection**: Use AskUserQuestion: "3가지 설계안 중 어떤 걸 선택하시겠습니까?" Include recommendation. Wait for user selection.
-6. Create `docs/02-design/features/{feature}.design.md` using selected architecture
-7. Use `design.template.md` structure + reference Plan content
-8. Create Task: `[Design] {feature}` (blockedBy: Plan task)
-9. Update .bkit-memory.json: phase = "design"
+5. Present comparison table with trade-offs (complexity, maintainability, effort, risk)
+6. **Checkpoint 3 — Architecture Selection**: Use AskUserQuestion: "3가지 설계안 중 어떤 걸 선택하시겠습니까?" Include recommendation. Wait for user selection.
+7. Create `docs/02-design/features/{feature}.design.md` using selected architecture
+8. Use `design.template.md` structure + reference Plan content
+9. **Session Guide Generation**: Analyze Design's `## 11. Implementation Guide` structure to generate Module Map and Recommended Session Plan. Add as `### 11.3 Session Guide` within Implementation Guide section. This enables `/pdca do {feature} --scope module-N` for multi-session incremental implementation.
+10. Create Task: `[Design] {feature}` (blockedBy: Plan task)
+11. Update .bkit-memory.json: phase = "design"
 
 **Output Path**: `docs/02-design/features/{feature}.design.md`
 
 ### do (Do Phase)
 
 1. Verify Design document exists (required)
-2. Read Design document and summarize implementation scope:
+2. **Read Design document FULLY** (read the entire document, not just a summary. This is critical — full context reload ensures each session starts with complete architectural context)
+3. **Parse --scope parameter**: If arguments contain `--scope <value>`, extract module list (comma-separated scope keys). Match against Design's Session Guide Module Map. Filter implementation items to show only matching modules.
+4. **Display Context Anchor**: Show the Context Anchor table from Design document header. Format: "📌 Context Anchor" + WHY/WHO/RISK/SUCCESS/SCOPE table. This reminds the user WHY we're building this feature.
+5. **Session Guide Display**:
+   - If no --scope: Show full Module Map from Design + recommend session split + proceed with full implementation guide
+   - If --scope provided: Show only the selected modules' implementation items
+6. Summarize implementation scope:
    - Files to create: N
    - Files to modify: M
    - Estimated changes: ~X lines
-3. **Checkpoint 4 — Implementation Approval**: Present scope summary and use AskUserQuestion: "이 범위로 구현을 시작해도 되겠습니까?" **DO NOT START IMPLEMENTATION WITHOUT USER APPROVAL.**
-4. After approval, provide implementation guide based on `do.template.md`
-5. Reference implementation order from Design document
-6. Create Task: `[Do] {feature}` (blockedBy: Design task)
-7. Update .bkit-memory.json: phase = "do"
+7. **Checkpoint 4 — Implementation Approval**: Present scope summary and use AskUserQuestion: "이 범위로 구현을 시작해도 되겠습니까?" **DO NOT START IMPLEMENTATION WITHOUT USER APPROVAL.**
+8. After approval, provide implementation guide based on `do.template.md`
+9. Reference implementation order from Design document (filtered by --scope if provided)
+10. Create Task: `[Do] {feature}` (blockedBy: Design task)
+11. Update .bkit-memory.json: phase = "do"
+
+**--scope Parameter**:
+```
+/pdca do feature                      # Full scope (backward compatible) + session guide
+/pdca do feature --scope module-1     # Only module-1
+/pdca do feature --scope module-1,module-2  # Multiple modules
+```
 
 **Guide Provided**:
+- Context Anchor (WHY/WHO/RISK/SUCCESS/SCOPE)
+- Session scope (filtered or full)
 - Implementation order checklist
 - Key files/components list
 - Dependency installation commands
@@ -166,9 +184,10 @@ Run PM Agent Team for product discovery and strategy analysis before Plan phase.
 ### analyze (Check Phase)
 
 1. Verify Do completion status (implementation code exists)
-2. **Call gap-detector Agent**
-3. Compare Design document vs implementation code
-4. Calculate Match Rate and generate Gap list
+2. **Context Anchor Embed**: Read Design document's Context Anchor and embed in Analysis document. This ensures the Check phase evaluates implementation against strategic intent, not just structural compliance.
+3. **Call gap-detector Agent**
+4. Compare Design document vs implementation code
+5. Calculate Match Rate and generate Gap list
 5. **Checkpoint 5 — Review Decision**: Present issues by severity (Critical/Important only, confidence ≥80%). Use AskUserQuestion with options:
    - "지금 모두 수정" — proceed to iterate
    - "Critical만 수정" — iterate critical only

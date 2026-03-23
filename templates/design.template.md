@@ -1,7 +1,7 @@
 ---
 template: design
-version: 1.2
-description: PDCA Design phase document template (between Plan and Do) with Clean Architecture and Convention support
+version: 1.3
+description: PDCA Design phase document template with Context Anchor, Session Guide, and Clean Architecture support
 variables:
   - feature: Feature name
   - date: Creation date (YYYY-MM-DD)
@@ -31,6 +31,20 @@ variables:
 | Phase 4 | [API Spec](../02-design/api/{feature}.md) | ✅/❌/N/A |
 
 > **Note**: If Pipeline documents exist, reference them in the relevant sections below.
+
+---
+
+## Context Anchor
+
+> Copied from Plan document. Ensures strategic context survives Design→Do handoff.
+
+| Key | Value |
+|-----|-------|
+| **WHY** | {copied from Plan Context Anchor} |
+| **WHO** | {copied from Plan Context Anchor} |
+| **RISK** | {copied from Plan Context Anchor} |
+| **SUCCESS** | {copied from Plan Context Anchor} |
+| **SCOPE** | {copied from Plan Context Anchor} |
 
 ---
 
@@ -399,6 +413,27 @@ src/
 2. [ ] Implement API
 3. [ ] Implement UI components
 4. [ ] Integration and testing
+
+### 11.3 Session Guide
+
+> Auto-generated from Design structure. Session split is recommended, not required.
+> Use `/pdca do {feature} --scope module-N` to implement one module per session.
+
+#### Module Map
+
+| Module | Scope Key | Description | Estimated Turns |
+|--------|-----------|-------------|:---------------:|
+| {module name} | `module-1` | {description} | {turns} |
+| {module name} | `module-2` | {description} | {turns} |
+
+#### Recommended Session Plan
+
+| Session | Phase | Scope | Turns |
+|---------|-------|-------|:-----:|
+| Session 1 | Plan + Design | 전체 | 30-35 |
+| Session 2 | Do | `--scope module-1` | 40-50 |
+| Session 3 | Do | `--scope module-2` | 40-50 |
+| Session 4 | Check + Report | 전체 | 30-40 |
 
 ---
 

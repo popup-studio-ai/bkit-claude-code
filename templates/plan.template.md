@@ -1,7 +1,7 @@
 ---
 template: plan
-version: 1.2
-description: PDCA Plan phase document template with Architecture and Convention considerations
+version: 1.3
+description: PDCA Plan phase document template with Context Anchor and Architecture considerations
 variables:
   - feature: Feature name
   - date: Creation date (YYYY-MM-DD)
@@ -30,6 +30,20 @@ variables:
 | **Solution** | {Selected solution approach} |
 | **Function/UX Effect** | {Expected functional and UX impact} |
 | **Core Value** | {Core value proposition} |
+
+---
+
+## Context Anchor
+
+> Auto-generated from Executive Summary. Propagated to Design/Do documents for context continuity.
+
+| Key | Value |
+|-----|-------|
+| **WHY** | {Core problem — extracted from Executive Summary Problem} |
+| **WHO** | {Target users — extracted from Scope or Requirements} |
+| **RISK** | {Top risk — extracted from Risks section} |
+| **SUCCESS** | {Measurable criteria — extracted from Success Criteria} |
+| **SCOPE** | {Phase breakdown — extracted from Scope section} |
 
 ---
 

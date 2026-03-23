@@ -1,7 +1,7 @@
 ---
 template: analysis
-version: 1.2
-description: PDCA Check phase document template with Clean Architecture and Convention compliance checks
+version: 1.3
+description: PDCA Check phase document template with Context Anchor, Clean Architecture and Convention compliance checks
 variables:
   - feature: Feature name
   - date: Creation date (YYYY-MM-DD)
@@ -28,6 +28,20 @@ variables:
 | Phase 2 | [Conventions](../01-plan/conventions.md) | Convention compliance |
 | Phase 4 | [API Spec](../02-design/api/{feature}.md) | API implementation match |
 | Phase 8 | [Review Checklist](./phase-8-review.md) | Architecture/Convention review |
+
+---
+
+## Context Anchor
+
+> Carried from Plan → Design → Analysis. Verify implementation against strategic intent.
+
+| Key | Value |
+|-----|-------|
+| **WHY** | {copied from Design Context Anchor} |
+| **WHO** | {copied from Design Context Anchor} |
+| **RISK** | {copied from Design Context Anchor} |
+| **SUCCESS** | {copied from Design Context Anchor} |
+| **SCOPE** | {copied from Design Context Anchor} |
 
 ---
 
