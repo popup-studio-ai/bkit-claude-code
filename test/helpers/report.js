@@ -45,7 +45,7 @@ function generateReport(allResults) {
   const passRate = totalTC > 0 ? ((totalPassed / totalTC) * 100).toFixed(1) : '0.0';
   const timestamp = new Date().toISOString();
 
-  let report = `# bkit v2.0.4 Comprehensive Test Report\n\n`;
+  let report = `# bkit v2.0.5 Comprehensive Test Report\n\n`;
   report += `> Generated: ${timestamp}\n`;
   report += `> Total: ${totalTC} TC, ${totalPassed} PASS, ${totalFailed} FAIL, ${totalSkipped} SKIP\n`;
   report += `> Pass Rate: ${passRate}%\n\n`;

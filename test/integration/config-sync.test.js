@@ -358,10 +358,10 @@ assert('CS-011',
   'plugin.json exists and parses as valid JSON'
 );
 
-// CS-012: plugin.json version is 2.0.2
+// CS-012: plugin.json version is 2.0.5
 assert('CS-012',
-  pluginJson?.version === '2.0.4',
-  `plugin.json version is ${pluginJson?.version} (expected 2.0.4)`
+  pluginJson?.version === '2.0.5',
+  `plugin.json version is ${pluginJson?.version} (expected 2.0.5)`
 );
 
 // CS-013: plugin.json has outputStyles

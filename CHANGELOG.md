@@ -5,6 +5,46 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.5] - 2026-03-23
+
+### Added — Multi-Session Incremental Context Management (PR #55)
+
+**Session Guide Module** (`lib/pdca/session-guide.js`)
+- New module with 8 exported functions (277 LOC) for multi-session handoff context loss reduction
+  - `extractContextAnchor()`: Extracts 5-line strategic summary (WHY/WHO/RISK/SUCCESS/SCOPE) from Plan document
+  - `formatContextAnchor()`: Formats anchor as markdown table
+  - `analyzeModules()`: Parses Design document's Implementation Guide for module scope keys
+  - `suggestSessions()`: Generates session plan based on module turn estimates (default 50 turns/session)
+  - `formatSessionPlan()`, `formatModuleMap()`: Markdown table formatters
+  - `filterByScope()`, `parseDoArgs()`: Scope parameter handling for `--scope` CLI support
+
+**Context Anchor Template Integration**
+- Plan template v1.2→v1.3, Design template v1.2→v1.3, Do template v1.0→v1.1, Analysis template v1.2→v1.3
+- All 4 PDCA templates now include Context Anchor section (extracted from Plan, propagated downstream)
+- Design template adds Session Guide section (Module Map + Recommended Session Plan)
+- Do template adds Session Scope section with `--scope module-N` usage
+
+**Upstream Document Cross-Reading** (SKILL.md enhancements)
+- Plan phase: Context Anchor Generation step
+- Design phase: Context Anchor Embed + Session Guide Generation + PRD Context Loading
+- Do phase: `--scope` parameter parsing + Context Anchor display + Plan Context Anchor reading
+- Analyze phase: Context Anchor Embed + Plan Success Criteria Reference
+
+**Test Coverage** (75 new TC)
+- `test/unit/session-guide.test.js` (35 TC): 8 functions unit tests
+- `test/integration/context-anchor-propagation.test.js` (25 TC): Template + SKILL.md integration
+- `test/regression/pr55-handoff-loss.test.js` (15 TC): Backward compatibility + structural integrity
+
+### Fixed
+- `lib/pdca/status.js`: `addPdcaHistory()` crash when `status.history` is undefined (defensive guard added)
+
+### Changed
+- Total Test Cases: 3298 TC (was 3224, +74 new)
+- Session Guide registered in `lib/pdca/index.js` exports (8 new exports)
+- Version bumped to 2.0.5 across all config files
+
+---
+
 ## [2.0.4] - 2026-03-23
 
 ### Fixed — Hook Path Quoting for Windows Compatibility

@@ -156,7 +156,7 @@ try {
 
 // --- Output Response ---
 const response = {
-  systemMessage: `bkit Vibecoding Kit v2.0.4 activated (Claude Code)`,
+  systemMessage: `bkit Vibecoding Kit v2.0.5 activated (Claude Code)`,
   hookSpecificOutput: {
     hookEventName: "SessionStart",
     onboardingType: onboardingContext.onboardingData.type,
