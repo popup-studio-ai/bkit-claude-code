@@ -120,7 +120,7 @@ After:  Regression guard + metrics collector → Cross-session learning
 
 ```
 Before: "Setting up config files is tedious"
-After:  36 skills auto-detected by keywords → Zero config needed
+After:  37 skills auto-detected by keywords → Zero config needed
 
 Before: "Writing design docs is annoying"
 After:  Templates + PM Agent Team → Design doc in 5 minutes
@@ -133,7 +133,7 @@ After:  gap-detector + pdca-iterator → Auto gap analysis and fix
 
 ```
 Before: "Each team member uses Claude differently"
-After:  CTO-led Agent Teams (31 agents) → Standardized PDCA workflow
+After:  CTO-led Agent Teams (32 agents) → Standardized PDCA workflow
 
 Before: "AI decisions are opaque"
 After:  Audit logger + decision tracer → Full visibility and traceability
@@ -148,17 +148,17 @@ After:  L0-L4 levels + trust score + emergency stop → Controllable AI
 
 > **v2.0.0**: AI Native Development OS — Declarative PDCA state machine, YAML workflow DSL,
 > L0-L4 controllable AI, CLI dashboard, audit logging, quality gates, MCP servers,
-> checkpoint/rollback, destructive operation detection, 36 Skills, 31 Agents, 18 Hook Events
+> checkpoint/rollback, destructive operation detection, 37 Skills, 32 Agents, 18 Hook Events
 
 ### Component Counts
 
 | Component | Count | Location |
 |-----------|-------|----------|
-| Skills | 36 (9 Workflow / 25 Capability / 2 Hybrid) | `skills/*/SKILL.md` |
-| Agents | 31 (10 opus / 19 sonnet / 2 haiku) | `agents/*.md` |
+| Skills | 37 (18 Workflow / 18 Capability / 1 Hybrid) | `skills/*/SKILL.md` |
+| Agents | 32 (11 opus / 19 sonnet / 2 haiku) | `agents/*.md` |
 | Hook Events | 18 | `hooks/hooks.json` |
-| Hook Scripts | 21 | `hooks/`, `scripts/` |
-| lib/ Modules | 76 files across 10 subdirs (~465 exports) | `lib/` |
+| Hook Scripts | 57 | `hooks/`, `scripts/` |
+| lib/ Modules | 88 files across 11 subdirs (~620+ exports) | `lib/` |
 | MCP Servers | 2 (16 tools) | `servers/` |
 | Workflow Presets | 3 (default, enterprise, hotfix) | `.bkit/workflows/` |
 | Output Styles | 4 | `output-styles/` |

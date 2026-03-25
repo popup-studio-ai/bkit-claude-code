@@ -5,6 +5,81 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.6] - 2026-03-25
+
+### Added — Living Context System + Self-Healing + PDCA Handoff Fix (PR #57)
+
+**Living Context System** (`lib/context/` — 7 new modules, ~1,527 LOC)
+- New `lib/context/` subdirectory (11th lib subdirectory) with 7 modules:
+  - `context-loader.js` (526 LOC): 4-Layer Living Context loading — `loadFullUpstream()`, `extractSection()`, `extractDecisions()`, `formatUpstreamSummary()` for full PRD→Plan→Design chain reading
+  - `impact-analyzer.js` (205 LOC): Change impact analysis for Living Context decisions
+  - `invariant-checker.js` (131 LOC): Context invariant validation with schema support
+  - `scenario-runner.js` (203 LOC): Design-post scenario execution for verification
+  - `self-healing.js` (301 LOC): Automated error detection and context-aware fix generation
+  - `ops-metrics.js` (150 LOC): Operational metrics collection for Living Context
+  - `index.js` (11 LOC): Module entry point re-exporting context-loader, invariant-checker, impact-analyzer, scenario-runner
+
+**Self-Healing Agent** (`agents/self-healing.md`)
+- New opus-model agent for automated error recovery
+- Detects errors from Slack/Sentry, loads 4-Layer context, fixes code, verifies with scenario runner
+- Tools: Read, Write, Edit, Glob, Grep, Bash, Task(Explore), Task(code-analyzer), Task(gap-detector)
+- Stop hook: `heal-hook.js` for post-healing state capture
+
+**Deploy Skill & State Machine** (`skills/deploy/SKILL.md`, `lib/pdca/deploy-*.js`)
+- New deploy skill with environment progression: dev → staging → prod
+- `deploy-state-machine.js` (261 LOC): 3-environment state machine with gate conditions
+- `deploy-gate.js` (173 LOC): Quality gates per environment (dev 80%+, staging 90%+, prod 95%+ with human approval)
+- `deploy-hook.js` (107 LOC): Hook script for deploy event handling
+
+**PDCA Handoff Loss Fix Phase 2** (upstream document cross-reading)
+- `context-loader.js`: `loadFullUpstream()` enables all phases to read PRD→Plan→Design chain
+- `skills/pdca/SKILL.md`: Do/Analyze/Report phases now include full upstream loading steps
+- `templates/analysis.template.md`: Strategic Alignment Check (PRD alignment + SC evaluation + Decision verification)
+- `templates/do.template.md`: Upstream Context Chain + Documents Loaded table
+
+**PDCA Handoff Loss Fix Phase 3** (PRD→Code context penetration)
+- `lib/pdca/decision-record.js` (174 LOC): Decision Record Chain extraction and formatting
+- `lib/pdca/commit-context.js` (124 LOC): PDCA-aware commit message generation with decision references
+- `lib/pdca/session-guide.js`: Added `extractSuccessCriteria()` + `formatSuccessCriteria()` exports
+- `templates/report.template.md`: Decision Record Summary + Success Criteria Final Status sections
+
+**Infrastructure Templates** (11 new template files)
+- `templates/infra/`: ArgoCD application, deploy pipelines (dynamic/enterprise), staging EKS, Terraform main
+- `templates/infra/observability/`: Prometheus, Loki, OpenTelemetry Tempo value files
+- `templates/infra/security/`: Security layer template
+- `templates/context/`: Invariants + scenario YAML schemas
+
+**New Scripts** (3 new, 54→57 total)
+- `scripts/deploy-hook.js`: Deploy event handler
+- `scripts/design-post-scenario.js`: Post-design scenario verification
+- `scripts/heal-hook.js`: Self-healing post-fix state capture
+
+**Design Guide**
+- `docs/02-design/LIVING-CONTEXT-GUIDE.md`: Living Context System architecture and usage guide
+
+**PM Documents** (3 new PRDs)
+- `docs/00-pm/bkit-3way-comparison.prd.md`: bkit vs alternatives comparison
+- `docs/00-pm/bkit-customization-impact-analysis.prd.md`: Customization impact analysis
+- `docs/00-pm/bkit-infra-automation.prd.md`: Infrastructure automation PRD
+
+### Changed
+
+- **Component Counts Updated**:
+  - Lib Modules: 78 → 88 (+10 new modules across 2 subdirectories)
+  - Lib Subdirectories: 10 → 11 (+context)
+  - Agents: 31 → 32 (+self-healing)
+  - Skills: 36 → 37 (+deploy)
+  - Scripts: 54 → 57 (+3 new hook scripts)
+  - Exports: ~580+ → ~620+ (new context + pdca modules)
+  - Total LOC (lib/): ~40K → ~45K (+~5K)
+- `lib/core/paths.js`: Added context module and deploy paths
+- Skill classification: 17 Workflow → 18 Workflow (+deploy), 18 Capability, 1 Hybrid
+- Agent model distribution: 10 opus → 11 opus (+self-healing), 19 sonnet, 2 haiku
+- PRD→Code Context Preservation: 30-40% → 75-85% (with Phase 1+2+3)
+- Version bumped to 2.0.6 across all config files
+
+---
+
 ## [2.0.5] - 2026-03-23
 
 ### Added — Multi-Session Incremental Context Management (PR #55)

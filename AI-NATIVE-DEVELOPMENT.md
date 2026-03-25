@@ -14,8 +14,8 @@ flowchart TB
         subgraph ROW1[" "]
             direction LR
             SPEC["**1. SPEC**<br/>Plan Doc<br/>Design Doc"]
-            CONTEXT["**2. CONTEXT**<br/>CLAUDE.md<br/>36 Skills"]
-            AGENT["**3. AI AGENT**<br/>31 Agents<br/>Controllable Implementation"]
+            CONTEXT["**2. CONTEXT**<br/>CLAUDE.md<br/>37 Skills"]
+            AGENT["**3. AI AGENT**<br/>32 Agents<br/>Controllable Implementation"]
         end
 
         OVERSIGHT["**4. HUMAN OVERSIGHT**<br/>Gap Analysis<br/>Verification & Approval"]
@@ -142,9 +142,9 @@ Context Engineering is the **systematic design of information flow to LLMs**—g
 
 **bkit v2.0.0 Implementation**:
 ```
-Domain Knowledge (36 Skills) ──┐
-Behavioral Rules (31 Agents) ──┼─→ 18-Event Hook System ─→ Dynamic Context Injection
-State Management (~580+ funcs) ─┤
+Domain Knowledge (37 Skills) ──┐
+Behavioral Rules (32 Agents) ──┼─→ 18-Event Hook System ─→ Dynamic Context Injection
+State Management (~620+ funcs) ─┤
 Workflow Engine (3 presets) ────┤
 Controllable AI (L0-L4) ───────┤
 Audit System (JSONL traces) ───┘
@@ -183,17 +183,17 @@ bkit implements **Context Engineering**—the systematic curation of context tok
 | **3 Project Levels** | Starter, Dynamic, Enterprise contexts |
 | **Convention Skill (Phase 2)** | Defines naming, structure, patterns |
 | **CLAUDE.md Files** | Project-specific AI instructions |
-| **Skill System (36 skills)** | Domain-specific knowledge (17 Workflow / 18 Capability / 1 Hybrid) |
-| **18-Event Hook System** | Centralized context injection via hooks.json (18 events, 54 scripts) |
-| **lib/ (76 modules, ~580+ functions)** | 10 subdirectories: core, pdca, intent, task, team, ui, audit, control, quality, adapters |
+| **Skill System (37 skills)** | Domain-specific knowledge (18 Workflow / 18 Capability / 1 Hybrid) |
+| **18-Event Hook System** | Centralized context injection via hooks.json (18 events, 57 scripts) |
+| **lib/ (88 modules, ~620+ functions)** | 11 subdirectories: core, pdca, intent, task, team, ui, audit, control, quality, adapters, context |
 
 **Context Engineering Architecture (v2.0.0)**:
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │              bkit v2.0.0 Context Engineering Layers              │
 ├─────────────────────────────────────────────────────────────────┤
-│  Layer 1: Domain Knowledge   │ 36 Skills (structured knowledge)  │
-│  Layer 2: Behavioral Rules   │ 31 Agents (role + constraints)    │
+│  Layer 1: Domain Knowledge   │ 37 Skills (structured knowledge)  │
+│  Layer 2: Behavioral Rules   │ 32 Agents (role + constraints)    │
 │  Layer 3: State Management   │ State machine, workflow engine    │
 │  Layer 4: Dynamic Injection  │ Intent detection, 8-lang triggers │
 │  Layer 5: Controllable AI    │ L0-L4 automation, trust score     │
@@ -212,7 +212,7 @@ User Message → Intent Detection → Skill/Agent Trigger →
 
 | bkit Feature | Implementation |
 |--------------|----------------|
-| **31 Specialized Agents** | 10 opus + 19 sonnet + 2 haiku (cto-lead, code-analyzer, gap-detector, pm-lead, etc.) |
+| **32 Specialized Agents** | 11 opus + 19 sonnet + 2 haiku (cto-lead, code-analyzer, gap-detector, pm-lead, self-healing, etc.) |
 | **Evaluator-Optimizer Pattern** | Automatic iteration cycles |
 | **gap-detector Agent** | Finds design-implementation gaps |
 | **code-analyzer Agent** | Quality and security analysis |

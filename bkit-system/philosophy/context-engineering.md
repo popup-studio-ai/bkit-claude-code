@@ -3,7 +3,7 @@
 > Optimal token curation for LLM inference — bkit v2.0.0 architecture
 >
 > **v2.0.0**: AI Native Development OS — State machine, workflow engine, controllable AI,
-> audit system, quality gates, CLI dashboard, MCP servers, 76 lib modules, ~465 exports
+> audit system, quality gates, CLI dashboard, MCP servers, 88 lib modules, ~620+ exports
 
 ## What is Context Engineering?
 
@@ -16,7 +16,7 @@ Context Engineering:
    to provide LLMs with optimal context for inference"
 ```
 
-bkit is a **practical implementation of Context Engineering**, providing a systematic context management system for Claude Code with 36 skills, 31 agents, 18 hook events, and 2 MCP servers.
+bkit is a **practical implementation of Context Engineering**, providing a systematic context management system for Claude Code with 37 skills, 32 agents, 18 hook events, and 2 MCP servers.
 
 ---
 
@@ -73,7 +73,7 @@ bkit is a **practical implementation of Context Engineering**, providing a syste
 │  │ Safety Layer     │  │ MCP Servers      │  │ Agent Teams             │   │
 │  │ (NEW v2.0.0)     │  │ (NEW v2.0.0)     │  │ (Enhanced v2.0.0)      │   │
 │  │                  │  │                  │  │                          │   │
-│  │ • Destructive    │  │ • bkit-pdca      │  │ • 31 agents             │   │
+│  │ • Destructive    │  │ • bkit-pdca      │  │ • 32 agents             │   │
 │  │   detector (8)   │  │   (10 tools)     │  │ • effort/maxTurns      │   │
 │  │ • Blast radius   │  │ • bkit-analysis  │  │ • disallowedTools      │   │
 │  │ • Scope limiter  │  │   (6 tools)      │  │ • 3-tier security      │   │
@@ -86,7 +86,7 @@ bkit is a **practical implementation of Context Engineering**, providing a syste
 
 ---
 
-## Library Modules (76 files across 10 subdirectories, ~465 exports)
+## Library Modules (88 files across 11 subdirectories, ~620+ exports)
 
 | Module | Files | Exports | Purpose |
 |--------|:-----:|:-------:|---------|
@@ -101,7 +101,8 @@ bkit is a **practical implementation of Context Engineering**, providing a syste
 | `lib/quality/` | 3 | 20+ | Gate manager (7 gates), metrics collector (M1-M10), regression guard |
 | `lib/adapters/` | 0 | 0 | Reserved for future platform adapters |
 | **Top-level** | 7 | 63 | context-fork, context-hierarchy, import-resolver, memory-store, permission-manager, skill-orchestrator, common (bridge) |
-| **Total** | **76** | **~465** | |
+| `lib/context/` | 7 | 30+ | Living Context loader, invariant checker, impact analyzer, scenario runner, self-healing, ops metrics |
+| **Total** | **88** | **~620+** | |
 
 ### v2.0.0 New Modules (vs v1.6.x)
 
@@ -119,11 +120,11 @@ bkit is a **practical implementation of Context Engineering**, providing a syste
 
 ---
 
-## Domain Knowledge Layer (36 Skills)
+## Domain Knowledge Layer (37 Skills)
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                    Domain Knowledge Layer (36 Skills)                    │
+│                    Domain Knowledge Layer (37 Skills)                    │
 ├─────────────────────────────────────────────────────────────────────────┤
 │                                                                         │
 │  ┌─────────────┐  ┌─────────────┐  ┌──────────────┐  ┌─────────────┐  │
@@ -149,13 +150,13 @@ bkit is a **practical implementation of Context Engineering**, providing a syste
 
 ---
 
-## Behavioral Rules Layer (31 Agents)
+## Behavioral Rules Layer (32 Agents)
 
 ### Model Selection Strategy
 
 | Model | Count | Agents | Characteristics |
 |-------|:-----:|--------|-----------------|
-| **opus** | 10 | cto-lead, code-analyzer, design-validator, gap-detector, enterprise-expert, infra-architect, security-architect, pm-lead, bkit-impact-analyst, cc-version-researcher | Strategic leadership, complex analysis, 1M context |
+| **opus** | 11 | cto-lead, code-analyzer, design-validator, gap-detector, enterprise-expert, infra-architect, security-architect, pm-lead, bkit-impact-analyst, cc-version-researcher, self-healing | Strategic leadership, complex analysis, 1M context |
 | **sonnet** | 19 | bkend-expert, pdca-iterator, pipeline-guide, starter-guide, product-manager, frontend-architect, qa-strategist, pm-discovery, pm-strategy, pm-research, pm-prd, pm-lead-skill-patch, skill-needs-extractor, 6 pdca-eval-* agents | Execution, guidance, iteration |
 | **haiku** | 2 | qa-monitor, report-generator | Fast monitoring, document generation |
 
@@ -180,7 +181,7 @@ disallowedTools:      # restricted tools
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│               State Management Layer (v2.0.0 — 10 subdirs)              │
+│               State Management Layer (v2.0.6 — 11 subdirs)              │
 ├─────────────────────────────────────────────────────────────────────────┤
 │                                                                         │
 │  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐      │

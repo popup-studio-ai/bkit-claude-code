@@ -40,9 +40,13 @@
 >
 > **v2.0.0**: Architecture expansion — 18 hook events, 31 agents, 36 skills, 54 scripts, 260+ exports
 >
+> **v2.0.6**: Living Context + Self-Healing — 18 hook events, 32 agents, 37 skills, 57 scripts, ~620+ exports
+>
 > **v2.0.1**: Cross-project isolation fix — meta.json project identity guard, globalCache namespace (#48)
 >
 > **v2.0.2**: PM Skills Integration — 43 PM frameworks (pm-skills MIT), PDCA Interactive Checkpoints 1~5, code-analyzer Confidence-Based Filtering, Design 3 Architecture Options, btw CTO Team Integration, pm-prd template v2.0
+>
+> **v2.0.6**: Living Context System (lib/context/ 7 modules), Self-Healing agent (opus), Deploy skill + state machine, PDCA Handoff Fix Phase 2+3 (75-85% context preservation), 11 infra templates, 88 lib modules, 37 skills, 32 agents, 57 scripts
 
 ## Purpose of This Document
 
@@ -69,7 +73,7 @@ bkit is a practical implementation of **Context Engineering**. Context Engineeri
 │                                                                 │
 │  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────┐  │
 │  │ Domain Knowledge │  │ Behavioral Rules │  │ State Mgmt   │  │
-│  │    (36 Skills)   │  │   (31 Agents)    │  │(10 subdirs)  │  │
+│  │    (37 Skills)   │  │   (32 Agents)    │  │(11 subdirs)  │  │
 │  │                  │  │                  │  │              │  │
 │  │ • 9-Phase Guide  │  │ • Role Def.      │  │ • PDCA v2.0  │  │
 │  │ • 3 Levels       │  │ • Constraints    │  │ • Multi-Feat │  │
@@ -233,12 +237,12 @@ lib/
 
 | Component | Count | Role | Details |
 |-----------|-------|------|---------|
-| Skills | 36 | Domain knowledge + Slash commands | [[components/skills/_skills-overview]] |
-| Agents | 31 | Specialized task execution | [[components/agents/_agents-overview]] |
+| Skills | 37 | Domain knowledge + Slash commands | [[components/skills/_skills-overview]] |
+| Agents | 32 | Specialized task execution | [[components/agents/_agents-overview]] |
 | Commands | DEPRECATED | Migrated to Skills (v1.4.4) | - |
 | Hooks | 18 events | Event-based triggers (unified) | [[components/hooks/_hooks-overview]] |
-| Scripts | 54 | Actual logic execution | [[components/scripts/_scripts-overview]] |
-| Lib | 10 subdirectories, 76 modules | Shared utilities | ~580+ exports |
+| Scripts | 57 | Actual logic execution | [[components/scripts/_scripts-overview]] |
+| Lib | 11 subdirectories, 88 modules | Shared utilities | ~620+ exports |
 | Evals | 28 | Skill evaluation definitions (v1.6.0) | Skill Creator + A/B Testing |
 | Config | 1 | Centralized settings | `bkit.config.json` |
 | Templates | 28 | Document templates | PDCA + Pipeline + Shared |
@@ -249,7 +253,7 @@ lib/
 |---------|-----------|---------------------|
 | Output Styles | 4 style files in `output-styles/` | Auto-suggested at SessionStart based on level |
 | Agent Teams | `lib/team/` module (9 files) | Announced at SessionStart, suggested for major features |
-| Agent Memory | `memory:` frontmatter in all 31 agents | Auto-active, mentioned at SessionStart |
+| Agent Memory | `memory:` frontmatter in all 32 agents | Auto-active, mentioned at SessionStart |
 
 ## Trigger Layers
 
@@ -260,8 +264,8 @@ Layer 1: hooks.json (Global) → SessionStart, UserPromptSubmit, PreCompact, Pre
 Layer 2: Unified Scripts     → unified-stop.js, unified-bash-pre.js, unified-write-post.js, etc.
 Layer 3: Agent Frontmatter   → Constraints and role definitions (hooks deprecated)
 Layer 4: Description Triggers → "Triggers:" keyword matching
-Layer 5: Scripts             → Actual Node.js logic execution (54 modules)
-Layer 6: Lib Modules         → 10 subdirectories, ~580+ exports
+Layer 5: Scripts             → Actual Node.js logic execution (57 modules)
+Layer 6: Lib Modules         → 11 subdirectories, ~620+ exports
 ```
 
 > **Note (v1.4.4)**: All hooks centralized in hooks.json. SKILL.md frontmatter hooks deprecated (backward compatible).
@@ -351,7 +355,7 @@ The `bkit-system/.obsidian/` folder includes shared settings:
 | `workspace.json` | Personal workspace state | No |
 | `app.json` | Personal app settings | No |
 
-> **Tip**: The graph settings are pre-configured for optimal visualization of bkit's 36 skills, 31 agents, 54 scripts, and their relationships.
+> **Tip**: The graph settings are pre-configured for optimal visualization of bkit's 37 skills, 32 agents, 57 scripts, and their relationships.
 
 ---
 
@@ -374,13 +378,13 @@ bkit v1.6.0 integrates CC 2.1.0 Skills 2.0 features:
 - `pm-research` — Competitive analysis and data gathering
 - `pm-prd` — PRD document generation
 
-### Component Counts (v2.0.4)
+### Component Counts (v2.0.6)
 
 | Component | Count |
 |-----------|-------|
-| Skills | 36 (17 Workflow / 18 Capability / 1 Hybrid) |
-| Agents | 31 (10 opus / 19 sonnet / 2 haiku) |
-| Library Functions | ~580+ exports (10 subdirectories) |
+| Skills | 37 (18 Workflow / 18 Capability / 1 Hybrid) |
+| Agents | 32 (11 opus / 19 sonnet / 2 haiku) |
+| Library Functions | ~620+ exports (11 subdirectories) |
 | Scripts | 54 |
 | Hook Events | 18 |
 | Output Styles | 4 |

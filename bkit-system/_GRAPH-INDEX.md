@@ -40,8 +40,8 @@
 - CC v2.1.78 Integration: 14 ENH(117~130), 44 consecutive compatible releases
 - Hook events 10→12 (PostCompact, StopFailure added)
 - 29 agents (8 opus + 19 sonnet + 2 haiku)
-- 36 skills (17 Workflow / 18 Capability / 1 Hybrid)
-- 54 scripts, ~580+ exports
+- 37 skills (18 Workflow / 18 Capability / 1 Hybrid)
+- 57 scripts, ~620+ exports
 - 1186 TC, 99.7% pass rate
 
 ### v1.6.1 (2026-03-08) - CTO Orchestration Redesign + Quality Hardening
@@ -115,9 +115,9 @@ bkit is a practical implementation of **Context Engineering**:
 ┌─────────────────────────────────────────────────────────────────┐
 │              bkit Context Engineering Components                 │
 ├─────────────────────────────────────────────────────────────────┤
-│  Domain Knowledge (36 Skills)  → Structured domain knowledge     │
-│  Behavioral Rules (31 Agents)  → Role-based behavioral rules     │
-│  State Management (lib/common) → ~580+ exports                   │
+│  Domain Knowledge (37 Skills)  → Structured domain knowledge     │
+│  Behavioral Rules (32 Agents)  → Role-based behavioral rules     │
+│  State Management (lib/common) → ~620+ exports                   │
 │  6-Layer Hook System           → Context injection timing ctrl   │
 │  Dynamic Injection             → Conditional context selection   │
 └─────────────────────────────────────────────────────────────────┘
@@ -216,7 +216,7 @@ The following skills were consolidated:
 - [[../lib/team/hooks|team hooks]] - TaskCompleted and TeammateIdle handlers
 
 ### Agent Memory
-- All 31 agents configured with `memory:` frontmatter
+- All 32 agents configured with `memory:` frontmatter
 - 9 agents: `project` scope, 2 agents: `user` scope
 - Automatic cross-session context persistence
 
@@ -303,7 +303,7 @@ The following skills were consolidated:
 ## Infrastructure
 
 ### Shared Library
-- `lib/common.js` - Shared utility functions (v2.0.3, **~580+ exports** via bridge)
+- `lib/common.js` - Shared utility functions (v2.0.3, **~620+ exports** via bridge)
 
 #### Platform Detection (v1.5.0 - Claude Code Exclusive)
   - `isClaudeCode()` - Check if running in Claude Code
@@ -425,10 +425,10 @@ bkit supports languages and frameworks organized by tier:
 > **v1.5.0**: bkit is now Claude Code exclusive. Gemini CLI support was removed for simplified architecture.
 
 **Components**:
-- `skills/` - 36 skills
-- `agents/` - 31 agents
-- `scripts/` - 54 scripts (Node.js)
-- `lib/` - 10 subdirectories, 76 modules (~580+ exports)
+- `skills/` - 37 skills
+- `agents/` - 32 agents
+- `scripts/` - 57 scripts (Node.js)
+- `lib/` - 11 subdirectories, 88 modules (~620+ exports)
 - `templates/` - 28 templates
 
 ## Templates (28)

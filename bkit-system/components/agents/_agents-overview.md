@@ -1,6 +1,6 @@
 # Agents Overview
 
-> List of 31 Agents defined in bkit and their roles (v2.0.4)
+> List of 32 Agents defined in bkit and their roles (v2.0.6)
 >
 > **v1.4.1**: Added Context Engineering perspective - Role-based Behavioral Rules Layer
 > **v1.5.0**: Claude Code Exclusive
@@ -13,6 +13,7 @@
 > **v1.6.1**: 3-Tier Agent Security Model (9 acceptEdits agents with tiered disallowedTools), CTO Orchestration Redesign, 208 exports, CC v2.1.71
 > **v1.6.2**: Agent frontmatter effort/maxTurns native support (29 agents), CC v2.1.78
 > **v1.6.2+**: cc-version-researcher + bkit-impact-analyst agents (31 agents), CC version analysis workflow
+> **v2.0.6**: self-healing agent (opus) added (32 agents, 11 opus / 19 sonnet / 2 haiku)
 
 ## What are Agents?
 
@@ -269,7 +270,7 @@ bkit-claude-code/
 
 ### Agent Memory
 
-All 31 agents have `memory:` frontmatter for cross-session context persistence:
+All 32 agents have `memory:` frontmatter for cross-session context persistence:
 
 | Scope | Agents |
 |-------|--------|
