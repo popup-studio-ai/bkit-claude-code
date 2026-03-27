@@ -63,7 +63,129 @@ Automates the **Check** stage of the PDCA cycle.
 
 ## Comparison Items
 
-### 1. API Comparison (Phase 4 Based)
+### 1. API Contract Verification — 3-Way (v2.2.0)
+
+```
+CRITICAL: API verification requires 3-way cross-reference.
+Checking only server file existence is insufficient.
+
+       Design §4 (API Spec)
+           ↕ Match?
+    Server (route.ts / controller)
+           ↕ Match?
+    Client (fetch calls / hooks / pages)
+
+All three must agree on: URL, method, parameters, response shape.
+```
+
+#### 1.1 Server-Side Extraction
+
+```
+For each API route file (src/app/api/**/route.ts or src/api/**):
+
+EXTRACT:
+- Endpoint URL (from file path)
+- HTTP methods exported (GET, POST, PUT, DELETE)
+- Request parameter parsing:
+  - searchParams.get() calls → query params
+  - request.json() fields → body params
+  - params from route segments → path params
+  - request.headers.get() → header params
+- Response format:
+  - NextResponse.json() calls → what shape is returned?
+  - Status codes used
+  - Error response shape
+- Auth requirement: does it call getAuthUser() or check session?
+- Validation: does it use Zod .safeParse()?
+
+OUTPUT TABLE:
+| Endpoint | Method | Query Params | Body Params | Success Response | Error Response | Auth | Validation |
+```
+
+#### 1.2 Client-Side Extraction
+
+```
+For each file that calls fetch() or API functions:
+
+GREP PATTERNS:
+- fetch('/api/...') or fetch(`/api/...`)
+- await res.json() → how is response destructured/consumed?
+- .then(data => ...) → what fields are accessed?
+
+EXTRACT:
+- Which URL is called
+- Which HTTP method
+- What parameters are sent (body, query string)
+- How response is consumed:
+  - Does client expect raw array? (data.map, setItems(data))
+  - Does client expect wrapped? (data.data, response.data)
+  - Does client access .pagination, .filters, .error?
+
+OUTPUT TABLE:
+| Client File | Calls | Method | Sends | Expects Response Shape |
+```
+
+#### 1.3 Contract Mismatch Detection
+
+```
+For each API endpoint, cross-reference:
+
+CHECK 1 — URL Match:
+  Client fetch URL == Server route path == Design §4 URL
+  Example mismatch: Client calls /api/favorite but server is /api/favorites
+
+CHECK 2 — Method Match:
+  Client uses POST but server only exports GET
+
+CHECK 3 — Parameter Match:
+  Client sends { propertyId } but server reads body.property_id
+  Client sends query ?type=short-term but server expects ?type=SHORT_TERM
+
+CHECK 4 — Response Shape Match:
+  Server returns { data: [...] } but client does response.map() (expects raw array)
+  Server returns { data: property } but client does setProperty(response) (missing .data)
+
+CHECK 5 — Error Handling Match:
+  Server returns { error: { code, message } } but client doesn't check res.ok
+  Server returns 401 but client doesn't redirect to login
+
+CHECK 6 — Design Alignment:
+  Design says GET /api/properties returns { data, pagination, filters }
+  Server actually returns { data, pagination, filters } → MATCH
+  Client actually reads response.data → MATCH (or MISMATCH if reads response directly)
+
+SEVERITY:
+- URL/Method mismatch → Critical (will not work at all)
+- Parameter name mismatch → Critical (server receives undefined)
+- Response shape mismatch → Critical (client crashes or shows no data)
+- Missing error handling → Important (silent failures)
+- Design deviation → Important (contract drift)
+```
+
+#### 1.4 Contract Verification Output Format
+
+```markdown
+## API Contract Verification
+
+### Contract Match Summary
+| # | Endpoint | Design | Server | Client | Contract |
+|---|----------|:------:|:------:|:------:|:--------:|
+| 1 | GET /api/properties | ✅ | ✅ | ✅ | PASS |
+| 2 | POST /api/bookings | ✅ | ✅ | ❌ | FAIL — client sends raw, server expects {data} |
+| 3 | GET /api/favorites | ✅ | ✅ | ❌ | FAIL — response shape mismatch |
+
+### Contract Failures Detail
+| Endpoint | Layer | Issue | Fix Required |
+|----------|-------|-------|-------------|
+| GET /api/favorites | Client | `setFavorites(await res.json())` but server returns `{ data: [...] }` | Change to `setFavorites((await res.json()).data)` |
+
+### Contract Score
+Endpoints checked: N
+Contracts passing: M
+Contract Match Rate: M/N = X%
+```
+
+#### 1.5 Legacy Format (kept for backward compatibility)
 
 ```
 Design Document (docs/02-design/api-spec.md)
@@ -128,6 +250,83 @@ Phase 6 Integration:
     - UI Components → Service Layer → API Client Layer
 - Error handling standardization applied
     - ApiError type, ERROR_CODES usage
+```
+
+### 4.1 Functional Depth Analysis (v2.1.0)
+
+```
+CRITICAL: Check not just file existence, but actual implementation depth.
+Structural Match Rate alone is insufficient — must calculate Functional Match Rate.
+
+Match Rate Formula:
+  Overall = (Structural × 0.3) + (Functional × 0.7)
+
+Functional Depth scoring per file (0-100):
+  0   = File exists but empty or only imports
+  20  = Skeleton with placeholder divs / TODO comments
+  40  = Basic structure but hardcoded/mock data, no real logic
+  60  = Real logic but missing fields/features from design
+  80  = Most design requirements met, minor gaps
+  100 = Fully implements all design-specified elements
+```
+
+### 4.2 Placeholder Detection Rules (v2.1.0)
+
+```
+Grep for these patterns to detect shallow implementation:
+
+HIGH CONFIDENCE (file is placeholder):
+- `// TODO` or `// placeholder` or `// will be`
+- `console.log(` in event handlers (stub, not real logic)
+- Hardcoded skeleton arrays: `[1, 2, 3].map` or `Array.from({ length: N })`
+- Empty form handlers: `onSubmit={(e) => { e.preventDefault(); }}`
+- Comment-only functions: function body is only comments
+
+MEDIUM CONFIDENCE (file may be incomplete):
+- `animate-pulse` without conditional real-data rendering
+- fetch() call without error handling or loading state
+- Form with < 50% of design-specified fields
+- Page component that doesn't call any hook or fetch data
+
+DETECTION OUTPUT:
+| File | Depth Score | Placeholder Indicators | Design Fields Missing |
+|------|:----------:|----------------------|----------------------|
+| SearchPage.tsx | 40 | [1,2,3].map skeleton, no ARC filter | ARC checkbox, Pet filter, Save Search |
+
+Threshold: If >30% of files score below 60, flag as "SHALLOW IMPLEMENTATION"
+```
+
+### 4.3 Page UI Checklist Verification (v2.1.0)
+
+```
+If Design document contains "## 5.4 Page UI Checklist":
+  1. Parse each page's checklist items
+  2. For each item, grep implementation code for matching element
+  3. Calculate per-page functional coverage
+  4. Report missing UI elements by page
+
+Example verification:
+  Design says: "Search Page → ARC Registration checkbox"
+  Grep: FilterPanel.tsx for "ARC" or "arc" → NOT FOUND → ❌ Missing
+
+Per-page output:
+| Page | Design Elements | Implemented | Missing | Rate |
+|------|:--------------:|:-----------:|:-------:|:----:|
+| Search | 12 | 5 | 7 | 42% |
+```
+
+### 4.4 Reference Site Comparison (v2.1.0, Optional)
+
+```
+If Plan document contains `reference_url` field:
+  1. Note the URL for manual comparison reference
+  2. Compare implementation against known reference features
+  3. Calculate "Reference Match Rate" separately from Design Match Rate
+  4. Report as supplementary metric (does not replace Design Match Rate)
+
+Note: WebFetch not available in gap-detector (read-only agent).
+Reference comparison relies on Design document's Page UI Checklist
+capturing reference site features accurately.
 ```
 
 ### 5. Environment Variable Comparison (Phase 2/9 Based)
@@ -251,6 +450,86 @@ Convention Score Calculation:
 1. Reflect added features in design document
 2. Document changed specs
 ```
+
+## Runtime Verification Plan (v2.3.0)
+
+gap-detector is a read-only agent (no Bash). Instead of executing tests itself,
+it OUTPUTS a structured Runtime Verification Plan that the PDCA analyze orchestrator executes.
+
+### Output Format
+
+After completing static analysis, gap-detector MUST output this section at the end of its report:
+
+```markdown
+## Runtime Verification Plan
+
+### L1: API Endpoint Tests (curl)
+
+Each test is a curl command with expected status code and response shape.
+
+| # | Test | Command | Expected Status | Expected Response |
+|---|------|---------|:--------------:|-------------------|
+| 1 | {description} | curl -s {url} | {200/401/...} | {shape check} |
+
+Example:
+| 1 | Properties list returns data array | curl -s http://localhost:{port}/api/properties | 200 | .data is array, .pagination exists |
+| 2 | Bookings requires auth | curl -s http://localhost:{port}/api/bookings | 401 | .error.code = "UNAUTHORIZED" |
+| 3 | Register validates input | curl -s -X POST .../api/auth/register -d '{"email":"bad"}' | 400 | .error.code = "VALIDATION_ERROR" |
+| 4 | Property detail returns host | curl -s .../api/properties/{id} | 200 | .data.host.name exists |
+
+### L2: UI Action Tests (Playwright)
+
+Each test describes a user action → expected result sequence.
+
+| # | Page | Action | Expected Result | API Call Expected |
+|---|------|--------|----------------|-------------------|
+| 1 | /search | Click "Short-Term" filter tab | Only short-term properties shown | GET /api/properties?type=short-term |
+| 2 | /auth/login | Fill email+password, click Sign In | Redirect to /dashboard | POST /api/auth/callback/credentials |
+| 3 | /property/:id | Fill dates+guests, click Book Now | Success message or login redirect | POST /api/bookings |
+| 4 | /concierge | Fill form, click Submit | Success confirmation shown | POST /api/concierge |
+
+### L3: E2E Scenario Tests (Playwright)
+
+Full user journey flows that chain multiple pages and actions.
+
+| # | Scenario | Steps | Success Criteria |
+|---|----------|-------|-----------------|
+| 1 | Guest browsing | Home → Search → Filter → Property Detail → View Reviews | All pages render, data loads, no errors |
+| 2 | Booking flow | Register → Search → Property → Fill Booking → Submit → Dashboard/Bookings | Booking appears in list with "pending" status |
+| 3 | Host flow | Login as host → Host Dashboard → New Listing → Fill wizard → Create → Listings | Listing appears in host listings |
+| 4 | Concierge flow | Home → CTA click → Concierge → Fill form → Submit | Success confirmation shown |
+| 5 | i18n flow | Home (en) → Switch to ko → Verify Korean text → Search → Verify Korean UI | All text in Korean, URLs use /ko/ prefix |
+
+### Playwright Test File (auto-generated)
+
+Output a ready-to-run Playwright test file path suggestion:
+`tests/e2e/{feature}.spec.ts`
+
+Include the test code inline if possible, or reference the template:
+`templates/e2e-test.template.ts`
+```
+
+### How the Plan is Consumed
+
+1. gap-detector outputs the Runtime Verification Plan (static — what to test)
+2. PDCA analyze orchestrator receives the plan
+3. Orchestrator executes L1 tests via Bash (curl commands)
+4. If L2/L3 requested: orchestrator generates Playwright test file and runs it
+5. Results feed back into the overall Match Rate calculation
+
+### Runtime Score Weight
+
+```
+If runtime verification is executed:
+  Overall = (Structural × 0.15) + (Functional × 0.25)
+          + (Contract × 0.25) + (Runtime × 0.35)
+
+If runtime verification is NOT executed (no server running):
+  Overall = (Structural × 0.2) + (Functional × 0.4) + (Contract × 0.4)
+  (v2.2.0 fallback — static only)
+```
+
+---
 
 ## Task System Integration (v1.3.1 - FR-04)
 

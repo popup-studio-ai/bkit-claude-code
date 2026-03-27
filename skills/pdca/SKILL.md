@@ -144,8 +144,12 @@ Run PM Agent Team for product discovery and strategy analysis before Plan phase.
 8. Create `docs/02-design/features/{feature}.design.md` using selected architecture
 9. Use `design.template.md` structure + reference Plan content
 10. **Session Guide Generation**: Analyze Design's `## 11. Implementation Guide` structure to generate Module Map and Recommended Session Plan. Add as `### 11.3 Session Guide` within Implementation Guide section. This enables `/pdca do {feature} --scope module-N` for multi-session incremental implementation.
-11. Create Task: `[Design] {feature}` (blockedBy: Plan task)
-12. Update .bkit-memory.json: phase = "design"
+11. **Design Anchor Integration (Pencil MCP)**: If the feature involves UI and Pencil MCP is available:
+    - Suggest: "UI 컨셉 페이지를 1-2개 먼저 만든 후 `/design-anchor capture {feature}` 로 디자인 토큰을 잠그세요"
+    - If Design Anchor already exists (`docs/02-design/styles/{feature}.design-anchor.md`), embed it in the Design document as `## Design Anchor` section
+    - This ensures design tokens (colors, typography, spacing) are locked before implementation
+12. Create Task: `[Design] {feature}` (blockedBy: Plan task)
+13. Update .bkit-memory.json: phase = "design"
 
 **Output Path**: `docs/02-design/features/{feature}.design.md`
 
@@ -216,17 +220,60 @@ Run PM Agent Team for product discovery and strategy analysis before Plan phase.
    - Mark as ✅ Met / ⚠️ Partial / ❌ Not Met
    - Include evidence (file:line or test result)
    - Criteria violations are automatically Critical severity
-6. **Call gap-detector Agent**
-7. Compare Design document vs implementation code
-8. Calculate Match Rate and generate Gap list
-9. **Decision Record Verification (Phase 3)**: Check if key decisions from Decision Record Chain were followed in implementation. Flag deviations.
-10. **Checkpoint 5 — Review Decision**: Present issues by severity (Critical/Important only, confidence ≥80%). Use AskUserQuestion with options:
+6. **Call gap-detector Agent** (v2.3.0: Static Analysis + Runtime Verification Plan)
+   - gap-detector performs static analysis (Structural + Functional + Contract)
+   - gap-detector outputs a **Runtime Verification Plan** (L1/L2/L3 test specs)
+7. Compare Design document vs implementation code on 3 static axes:
+   - **Structural Match**: File existence, route coverage, component list
+   - **Functional Depth**: Placeholder detection, Page UI Checklist verification, actual logic completeness
+   - **API Contract**: 3-way verification (Design §4 ↔ Server route.ts ↔ Client fetch calls)
+8. **Runtime Verification (v2.3.0)**: After gap-detector completes, execute runtime tests.
+   - **Preferred**: Run existing tests from `tests/e2e/{feature}.spec.ts` (written during Do phase)
+   - **Fallback**: If no test file exists, generate from gap-detector's Runtime Verification Plan
+   - Test scenarios are defined in Design §8 Test Plan, implemented during Do phase, executed here
+
+   **L1 — API Endpoint Tests** (always run if server is available):
+   - Execute each curl command from gap-detector's L1 plan
+   - Check: HTTP status code matches expected
+   - Check: Response JSON shape matches expected (has .data, .error, .pagination)
+   - Check: Auth guard returns 401 for protected endpoints
+   - Check: Zod validation returns 400 with fieldErrors for invalid input
+   - Check: Rate limiting returns 429 after threshold
+   - Detect server: `curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/`
+   - If no server running: skip L1, warn user, use static-only formula
+
+   **L2 — UI Action Tests** (run if Playwright is installed):
+   - Generate Playwright test file from gap-detector's L2 plan
+   - Write to `tests/e2e/{feature}-actions.spec.ts`
+   - Run: `npx playwright test tests/e2e/{feature}-actions.spec.ts`
+   - Each test: navigate to page → perform action → assert result
+   - Check: API calls triggered by UI match expected endpoints
+   - If Playwright not installed: skip L2, suggest `pnpm add -D @playwright/test`
+
+   **L3 — E2E Scenario Tests** (run if Playwright is installed):
+   - Generate Playwright test file from gap-detector's L3 plan
+   - Write to `tests/e2e/{feature}-e2e.spec.ts`
+   - Run: `npx playwright test tests/e2e/{feature}-e2e.spec.ts`
+   - Full user journey: multi-page flows with state persistence
+   - Check: complete flow from start to end without errors
+
+   **Match Rate Formula (v2.3.0)**:
+   ```
+   If runtime executed:
+     Overall = (Structural × 0.15) + (Functional × 0.25)
+             + (Contract × 0.25) + (Runtime × 0.35)
+   If static only (no server):
+     Overall = (Structural × 0.2) + (Functional × 0.4) + (Contract × 0.4)
+   ```
+9. Calculate Match Rate and generate Gap list. Report all rates separately.
+10. **Decision Record Verification (Phase 3)**: Check if key decisions from Decision Record Chain were followed in implementation. Flag deviations.
+11. **Checkpoint 5 — Review Decision**: Present issues by severity (Critical/Important only, confidence ≥80%). Use AskUserQuestion with options:
     - "지금 모두 수정" — proceed to iterate
     - "Critical만 수정" — iterate critical only
     - "그대로 진행" — accept current state
     Wait for user decision before proceeding.
-11. Create Task: `[Check] {feature}` (blockedBy: Do task)
-12. Update .bkit-memory.json: phase = "check", matchRate
+12. Create Task: `[Check] {feature}` (blockedBy: Do task)
+13. Update .bkit-memory.json: phase = "check", matchRate
 
 **Output Path**: `docs/03-analysis/{feature}.analysis.md`
 
