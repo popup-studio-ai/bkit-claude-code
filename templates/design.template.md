@@ -48,6 +48,25 @@ variables:
 
 ---
 
+## Design Anchor (if Pencil MCP used)
+
+> Locked design tokens from initial concept pages. Enforced on every new page.
+> Capture with: `/design-anchor capture {feature}`
+> File: `docs/02-design/styles/{feature}.design-anchor.md`
+
+| Category | Tokens |
+|----------|--------|
+| **Colors** | primary: `{value}`, bg: `{value}`, text: `{value}` |
+| **Typography** | {font-family}, sizes: {scale} |
+| **Spacing** | {base-unit} grid, card: {value}, section: {value} |
+| **Radius** | default: `{value}` |
+| **Tone** | {design tone description} |
+| **Layout** | {layout pattern description} |
+
+> Remove this section if not using Pencil MCP for this feature.
+
+---
+
 ## 1. Overview
 
 ### 1.1 Design Goals
@@ -232,6 +251,38 @@ Home → Login → Dashboard → Use Feature → View Results
 |-----------|----------|----------------|
 | {ComponentA} | src/components/ | {Role} |
 
+### 5.4 Page UI Checklist (v2.1.0)
+
+> **CRITICAL**: List EVERY required UI element per page. Gap Detector verifies each item.
+> Without this checklist, gap analysis only checks file existence (structural), not content (functional).
+>
+> **How to fill**: For each page, list all interactive elements (forms, buttons, filters, dropdowns,
+> badges, toggles) and data display elements (cards, lists, scores, charts) that MUST be present.
+> Include specific field names, option values, and data types.
+
+#### {Page Name 1}
+
+- [ ] {Element type}: {Description} ({specific details: options, fields, values})
+- [ ] {Element type}: {Description}
+
+#### {Page Name 2}
+
+- [ ] {Element type}: {Description}
+
+> **Example** (remove in actual document):
+> #### Search Page
+> - [ ] Filter: Property Type dropdown (6 options: Officetel, Apartment, House, Share House, Serviced Apt, Hotel)
+> - [ ] Filter: Price range slider (weekly rent, min/max KRW inputs)
+> - [ ] Filter: ARC Registration Available checkbox
+> - [ ] Filter: Pet Allowed checkbox
+> - [ ] Button: Save Search
+> - [ ] Card: Weekly rent display (₩{amount}/week)
+> - [ ] Card: Area display ({N}평)
+> - [ ] Card: ARC badge (green, conditional)
+> - [ ] Card: Pet badge (conditional)
+> - [ ] Toggle: List / Map view
+> - [ ] Sort: Recommended, Price ASC, Price DESC, Newest
+
 ---
 
 ## 6. Error Handling
@@ -269,21 +320,66 @@ Home → Login → Dashboard → Use Feature → View Results
 
 ---
 
-## 8. Test Plan
+## 8. Test Plan (v2.3.0)
+
+> **CRITICAL**: Define WHAT to test here. Test CODE is written during Do phase alongside implementation.
+> Do phase rule: code + test = 1 set. No module is "done" without its tests passing.
+> Check phase: runs all tests, doesn't create new ones.
 
 ### 8.1 Test Scope
 
-| Type | Target | Tool |
-|------|--------|------|
-| Unit Test | Business logic | Jest/Vitest |
-| Integration Test | API endpoints | Supertest |
-| E2E Test | User scenarios | Playwright |
+| Type | Target | Tool | Phase |
+|------|--------|------|-------|
+| L1: API Tests | Endpoints — status, params, response shape | curl / Playwright request | Do |
+| L2: UI Action Tests | Page elements — forms, buttons, data display | Playwright | Do |
+| L3: E2E Scenario Tests | User journeys — multi-page flows | Playwright | Do |
 
-### 8.2 Test Cases (Key)
+### 8.2 L1: API Test Scenarios
 
-- [ ] Happy path: {description}
-- [ ] Error scenario: {description}
-- [ ] Edge case: {description}
+> Define expected behavior for each endpoint. Do phase writes the actual test code.
+
+| # | Endpoint | Method | Test Description | Expected Status | Expected Response |
+|---|----------|--------|-----------------|:--------------:|-------------------|
+| 1 | /api/{resource} | GET | Returns list with data | 200 | `.data` is array, `.pagination.total` > 0 |
+| 2 | /api/{resource}/:id | GET | Returns detail with relations | 200 | `.data.id` exists, nested relations loaded |
+| 3 | /api/{resource} | POST | Creates with valid data | 201 | `.data.id` exists |
+| 4 | /api/{resource} | POST | Rejects invalid data | 400 | `.error.code` = "VALIDATION_ERROR", `.error.details.fieldErrors` present |
+| 5 | /api/{protected} | GET | Blocks unauthenticated | 401 | `.error.code` = "UNAUTHORIZED" |
+| 6 | /api/{resource}?filter=X | GET | Filter reduces results | 200 | `filtered.data.length` < `all.data.length` |
+
+### 8.3 L2: UI Action Test Scenarios
+
+> Define per-page: what action → what result. Reference §5.4 Page UI Checklist.
+
+| # | Page | Action | Expected Result | Data Verification |
+|---|------|--------|----------------|-------------------|
+| 1 | {page} | Load page | All §5.4 checklist elements visible | DB data renders (not skeleton) |
+| 2 | {page} | Click filter | Results change | Count decreases |
+| 3 | {page} | Submit form | Success state shown | API returns 201 |
+| 4 | {page} | Invalid submit | Error message shown | Validation errors display |
+
+### 8.4 L3: E2E Scenario Test Scenarios
+
+> Define complete user journeys. Each scenario chains multiple pages.
+
+| # | Scenario | Steps | Success Criteria |
+|---|----------|-------|-----------------|
+| 1 | Guest browsing | Home → Search(data>0) → Filter → Detail(title+host+price) | All data renders from DB |
+| 2 | Auth flow | Register → Login → Access protected page | No 401 errors |
+| 3 | Form submission | Navigate → Fill all fields → Submit → Verify success | Confirmation UI shown |
+| 4 | i18n | Switch language → Verify text changes | UI text matches locale |
+| 5 | Error handling | Wrong credentials → Error shown, Invalid form → Validation shown | User gets feedback |
+
+### 8.5 Seed Data Requirements
+
+> Tests need data. Define minimum seed data for tests to be meaningful.
+
+| Entity | Minimum Count | Key Fields Required |
+|--------|:------------:|---------------------|
+| {entity} | {N} | {fields that must have values} |
+
+> Do phase: implement `src/lib/db/seed.ts` before writing tests.
+> Check phase: run seed before test execution.
 
 ---
 

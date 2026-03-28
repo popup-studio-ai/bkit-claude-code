@@ -21,16 +21,36 @@ opentelemetry-collector:
         tls: { insecure: true }
       prometheus:
         endpoint: "0.0.0.0:8889"
+    connectors:
+      spanmetrics:
+        histogram:
+          explicit:
+            buckets: [5ms, 10ms, 25ms, 50ms, 100ms, 250ms, 500ms, 1s, 2.5s]
+        dimensions:
+          - name: http.method
+          - name: http.status_code
+          - name: service.name
     service:
       pipelines:
         traces:
           receivers: [otlp]
           processors: [batch]
           exporters: [otlp]
-        metrics:
+        traces/sentry:
           receivers: [otlp]
           processors: [batch]
+          exporters: [sentry]
+        metrics:
+          receivers: [otlp, spanmetrics]
+          processors: [batch]
           exporters: [prometheus]
+
+# Sentry Exporter — Forward error spans to Sentry for correlation
+# Traces with error status → Sentry issue linkage
+sentry-exporter:
+  dsn: "${SENTRY_DSN}"
+  environment: "${ENVIRONMENT}"
+  insecure: false
 
 # Tempo (Trace Backend)
 # helm install tempo grafana/tempo -f otel-tempo.values.yaml

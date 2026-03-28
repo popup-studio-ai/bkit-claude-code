@@ -314,38 +314,94 @@ if (feature && currentPhase && nextPhase) {
   } catch (_) {}
 }
 
-// v2.0.0: Quality gate check when transitioning from check phase
-if (feature && currentPhase && currentPhase.toLowerCase() === 'check') {
+// v2.0.5: Quality gate check with schema bridge + result persistence + transition control
+let gateVerdict = null;
+if (feature && currentPhase) {
   try {
     const gates = getGateManager();
     const metrics = getMetricsCollector();
     if (gates && metrics) {
-      const currentMetrics = metrics.readCurrentMetrics(feature);
-      if (currentMetrics) {
-        const gateResult = gates.checkGate('check', {
+      // Use schema bridge: convert M1-M10 → gate-friendly names
+      const gateMetrics = metrics.toGateFormat(feature);
+      if (gateMetrics) {
+        const phase = currentPhase.toLowerCase();
+        const gateResult = gates.checkGate(phase, {
           feature,
           projectLevel: level || 'Dynamic',
-          automationLevel: 2,
-          metrics: currentMetrics
+          metrics: gateMetrics
         });
-        debugLog('UnifiedStop', 'v2.0.0 quality gate check', { feature, passed: gateResult?.passed, phase: 'check' });
+        gateVerdict = gateResult.verdict;
+
+        // Persist gate result for audit trail
+        gates.recordGateResult(phase, gateResult, feature);
+
+        // Write gate result to pdca-status for visibility
+        const { updatePdcaStatus: updateStatus } = require('../lib/pdca/status');
+        updateStatus(feature, currentPhase, {
+          lastGateResult: {
+            verdict: gateResult.verdict,
+            score: gateResult.score,
+            blockers: gateResult.blockers,
+            timestamp: new Date().toISOString()
+          }
+        });
+
+        debugLog('UnifiedStop', 'v2.0.5 quality gate evaluated', {
+          feature, phase, verdict: gateResult.verdict,
+          score: gateResult.score, blockers: gateResult.blockers.length
+        });
       }
     }
-  } catch (_) {}
+  } catch (e) {
+    debugLog('UnifiedStop', 'Quality gate check failed', { error: e.message });
+  }
 }
 
-// v2.0.0: State machine transition after handler execution
+// v2.0.5: State machine transition — gate verdict controls the event
 let transitionSuccess = false;
 if (feature && currentPhase) {
   try {
     const sm = getStateMachine();
     if (sm) {
       const ctx = sm.createContext(feature);
-      sm.transition(currentPhase, 'COMPLETE', ctx);
-      transitionSuccess = true;
-      debugLog('UnifiedStop', 'v2.0.0 state machine transition', { feature, currentPhase, event: 'COMPLETE' });
+
+      // Determine FSM event based on gate verdict + phase
+      let event = null;
+      const phase = currentPhase.toLowerCase();
+
+      if (phase === 'check' && gateVerdict) {
+        // Gate verdict drives check→report or check→act
+        if (gateVerdict === 'pass') {
+          event = 'MATCH_PASS';
+        } else if (gateVerdict === 'retry') {
+          event = 'ITERATE';
+        }
+        // 'fail' = blocked, no transition
+      } else if (phase === 'pm') {
+        event = 'PM_DONE';
+      } else if (phase === 'plan') {
+        event = 'PLAN_DONE';
+      } else if (phase === 'design') {
+        event = 'DESIGN_DONE';
+      } else if (phase === 'do') {
+        event = 'DO_COMPLETE';
+      } else if (phase === 'act') {
+        event = 'ANALYZE_DONE';
+      } else if (phase === 'report') {
+        event = 'REPORT_DONE';
+      }
+
+      if (event) {
+        sm.transition(phase, event, ctx);
+        transitionSuccess = true;
+        debugLog('UnifiedStop', 'v2.0.5 state machine transition', { feature, phase, event, gateVerdict });
+      } else if (gateVerdict === 'fail') {
+        debugLog('UnifiedStop', 'v2.0.5 transition BLOCKED by gate', { feature, phase, gateVerdict });
+      }
     }
-  } catch (_) {}
+  } catch (e) {
+    debugLog('UnifiedStop', 'State machine transition failed', { error: e.message });
+  }
 }
 
 // v2.0.0: Workflow-engine advancement after state transitions

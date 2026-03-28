@@ -15,6 +15,9 @@ env:
   ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com
   IMAGE_NAME: ${{ github.event.repository.name }}
   ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}
+  SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+  SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+  SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
 jobs:
   test-and-lint:
@@ -72,6 +75,17 @@ jobs:
           tags: |
             ${{ env.ECR_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
             ${{ env.ECR_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+      - name: Sentry Release — Create release & upload sourcemaps
+        uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ env.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ env.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ env.SENTRY_PROJECT }}
+        with:
+          environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
+          version: ${{ github.sha }}
+          sourcemaps: './apps/web/.next'
+          set_commits: auto
 
   deploy-dev:
     if: github.ref == 'refs/heads/develop'
@@ -122,3 +136,39 @@ jobs:
           git add infra/
           git commit -m "chore(deploy): canary prod image to ${{ github.sha }}"
           git push
+
+  post-deploy-monitoring:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: deploy-prod
+    steps:
+      - name: Wait for canary stabilization
+        run: sleep 300  # 5min — canary 10% traffic period
+
+      - name: Verify Sentry — no new critical issues
+        run: |
+          ISSUES=$(curl -s -H "Authorization: Bearer ${{ env.SENTRY_AUTH_TOKEN }}" \
+            "https://sentry.io/api/0/projects/${{ env.SENTRY_ORG }}/${{ env.SENTRY_PROJECT }}/issues/?query=is:unresolved+release:${{ github.sha }}&statsPeriod=5m" \
+            | jq 'length')
+          echo "New unresolved issues: $ISSUES"
+          if [ "$ISSUES" -gt "5" ]; then
+            echo "::error::Too many new issues ($ISSUES) — triggering rollback"
+            exit 1
+          fi
+
+      - name: Verify Prometheus — error rate check
+        run: |
+          ERROR_RATE=$(curl -s "http://${{ secrets.PROMETHEUS_URL }}/api/v1/query?query=rate(http_requests_total{status=~\"5..\"}[5m])/rate(http_requests_total[5m])" \
+            | jq '.data.result[0].value[1]' -r 2>/dev/null || echo "0")
+          echo "Current error rate: $ERROR_RATE"
+          if (( $(echo "$ERROR_RATE > 0.01" | bc -l) )); then
+            echo "::error::Error rate $ERROR_RATE exceeds 1% threshold"
+            exit 1
+          fi
+
+      - name: On failure — trigger auto-rollback
+        if: failure()
+        run: |
+          echo "::warning::Post-deploy checks failed — triggering Argo Rollouts abort"
+          curl -X PUT "${{ env.ARGOCD_SERVER }}/api/v1/applications/${{ env.IMAGE_NAME }}/rollback" \
+            -H "Authorization: Bearer ${{ secrets.ARGOCD_TOKEN }}"

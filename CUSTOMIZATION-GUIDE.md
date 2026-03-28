@@ -392,9 +392,9 @@ bkit implements a **4-tier language classification system** optimized for AI-Nat
 ┌─────────────────────────────────────────────────────────────────────────┐
 │  TIER 1: AI-Native Essential (Full PDCA Support)                        │
 ├─────────────────────────────────────────────────────────────────────────┤
-│  Languages:   Python, TypeScript, JavaScript                            │
+│  Languages:   Python, TypeScript, JavaScript ,java                           │
 │  Extensions:  .py, .pyx, .pyi, .ts, .tsx, .js, .jsx, .mjs, .cjs        │
-│  Frameworks:  React, Next.js, Svelte, SvelteKit, FastAPI                │
+│  Frameworks:  React, Next.js, Svelte, SvelteKit, FastAPI , JAVA                │
 │  AI Support:  Copilot ✓, Claude ✓, Cursor ✓, Vibe Coding optimized     │
 ├─────────────────────────────────────────────────────────────────────────┤
 │  TIER 2: Mainstream Recommended                                          │

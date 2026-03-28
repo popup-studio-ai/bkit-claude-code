@@ -446,5 +446,37 @@ const response = {
   ) : null
 };
 
+// v2.0.5: Collect M8 (Design Completeness) and M10 (PDCA Cycle Time)
+try {
+  const mc = require('../lib/quality/metrics-collector');
+  const f = feature || 'unknown';
+
+  // M8: Design Completeness — after design phase, estimate from document existence
+  if (action === 'design' && f !== 'unknown') {
+    const designPath = path.join(process.cwd(), `docs/02-design/features/${f}.design.md`);
+    const planPath = path.join(process.cwd(), `docs/01-plan/features/${f}.plan.md`);
+    let completeness = 0;
+    if (fs.existsSync(designPath)) completeness += 50;
+    if (fs.existsSync(planPath)) completeness += 30;
+    // Check for key sections in design doc
+    if (fs.existsSync(designPath)) {
+      const content = fs.readFileSync(designPath, 'utf8');
+      if (content.includes('## ')) completeness += 10;
+      if (content.length > 500) completeness += 10;
+    }
+    mc.collectMetric('M8', f, Math.min(completeness, 100), 'pdca-skill');
+  }
+
+  // M10: PDCA Cycle Time — on report phase, compute hours since feature started
+  if (action === 'report' && f !== 'unknown') {
+    const featureData = currentStatus?.features?.[f];
+    const startedAt = featureData?.timestamps?.started;
+    if (startedAt) {
+      const hours = Math.round((Date.now() - new Date(startedAt).getTime()) / 3600000 * 100) / 100;
+      mc.collectMetric('M10', f, hours, 'pdca-skill');
+    }
+  }
+} catch (_) {}
+
 console.log(JSON.stringify(response));
 process.exit(0);

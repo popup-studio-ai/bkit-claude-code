@@ -89,22 +89,42 @@ Frontend:
 - Tailwind CSS
 - TanStack Query
 - Zustand
+- Sentry Browser SDK (@sentry/nextjs) — Error tracking + Session Replay
 
 Backend:
-- Python FastAPI (microservices)
+- Python FastAPI (microservices) — default
 - PostgreSQL (schema separation)
 - Redis (cache, Pub/Sub)
 - RabbitMQ / SQS (message queue)
+- Sentry Server SDK (sentry-sdk[fastapi]) — Error tracking + APM
 
 Infrastructure:
 - AWS (EKS, RDS, S3, CloudFront)
 - Kubernetes (Kustomize)
 - Terraform (IaC)
 - ArgoCD (GitOps)
+- ALB + NGINX Ingress Controller (L7 load balancing)
+  - CORS: Ingress annotation으로 처리
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+  - NLB(L4)는 gRPC/WebSocket 전용 서비스에만 사용
 
 CI/CD:
 - GitHub Actions
 - Docker
+- Semgrep (SAST) + Trivy (Container Scan)
+
+Monitoring & Error Tracking:
+- Sentry — Error tracking, grouping, regression detection
+- Prometheus + Grafana — Metrics & dashboards
+- Loki + Promtail — Log aggregation
+- Tempo + OpenTelemetry — Distributed tracing
+- Alertmanager → PagerDuty (critical) / Slack (warning)
+
+Self-Healing Pipeline:
+- Sentry Webhook → Self-Healing Agent trigger
+- 4-Layer Living Context (Scenarios, Invariants, Impact, Incidents)
+- Auto-fix (max 5 iterations) → Auto PR → Canary Deploy
+- Auto-Rollback on error rate spike
 ```
 
 ### Language Tier Guidance (v1.3.0)
@@ -190,10 +210,57 @@ project/
 │  - Repository implementations (SQLAlchemy)               │
 │  - External API clients                                  │
 │  - Cache, messaging                                      │
+│  - Sentry SDK integration (error capture)                │
 └─────────────────────────────────────────────────────────┘
 
 Dependency direction: Top → Bottom
 Domain Layer depends on nothing
+```
+
+## Error Handling & Self-Healing Pipeline
+
+```
+Exception 발생 (Frontend/Backend)
+  ↓
+Sentry SDK 자동 캡처 (stack trace + breadcrumbs + user context)
+  ↓
+Sentry Alert Rule (new issue / regression / spike)
+  ↓
+Webhook → Self-Healing Agent trigger
+  ↓
+Living Context 4-Layer 로딩
+  ├── Scenario Matrix: 테스트 시나리오
+  ├── Invariants: 불변 조건 (critical = 수정 차단)
+  ├── Impact Map: blast radius 계산
+  └── Incident Memory: 과거 장애 교훈
+  ↓
+Claude Code Fix (max 5 iterations)
+  ↓
+4중 검증 (scenarios + invariants + impact + anti-patterns)
+  ↓
+Pass → Auto PR → Human Review → Canary Deploy (10%→25%→50%→100%)
+Fail → Escalation → PagerDuty + Slack + Auto-Rollback
+  ↓
+Post-deploy: Sentry에서 issue resolved 확인 + error_rate 모니터링
+```
+
+### Load Balancer Strategy
+
+```
+ALB + NGINX Ingress Controller (기본, 권장)
+─────────────────────────────────────
+- L7 로드밸런싱 (HTTP/HTTPS/gRPC)
+- CORS: Ingress annotation으로 처리 (앱 코드 불필요)
+- Path-based routing (/api/auth/*, /api/users/*)
+- AWS Certificate Manager (ACM) TLS 연동
+- WAF 연동 가능
+
+NLB (특수 케이스만)
+─────────────────────────────────────
+- L4 로드밸런싱 (TCP/UDP)
+- 극도의 저지연 필요 시 (< 1ms)
+- WebSocket/gRPC 전용 서비스
+- CORS 처리 불가 → 앱단에서 직접 처리 필요
 ```
 
 ## Core Patterns

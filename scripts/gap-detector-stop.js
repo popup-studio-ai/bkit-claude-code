@@ -111,6 +111,27 @@ if (feature) {
   });
 }
 
+// v2.0.5: Collect quality metrics (M1, M4)
+try {
+  const mc = require('../lib/quality/metrics-collector');
+  const f = feature || 'unknown';
+  // M1: Match Rate (primary metric from gap analysis)
+  mc.collectMetric('M1', f, matchRate, 'gap-detector');
+
+  // M4: API Compliance Rate — extract from output if present
+  const apiPattern = /(API|api)\s*(Compliance|compliance|일치율|준수율)[^0-9]*(\d+)/i;
+  const apiMatch = inputText.match(apiPattern);
+  if (apiMatch) {
+    mc.collectMetric('M4', f, parseInt(apiMatch[3], 10), 'gap-detector');
+  } else {
+    // Estimate: use matchRate as proxy when no explicit API compliance data
+    mc.collectMetric('M4', f, matchRate, 'gap-detector');
+  }
+  debugLog('Agent:gap-detector:Stop', 'Quality metrics collected', { M1: matchRate });
+} catch (e) {
+  debugLog('Agent:gap-detector:Stop', 'Metrics collection failed', { error: e.message });
+}
+
 // v1.4.0: Get configuration and check iteration limits
 const config = getBkitConfig();
 const threshold = config.pdca?.matchRateThreshold || 90;

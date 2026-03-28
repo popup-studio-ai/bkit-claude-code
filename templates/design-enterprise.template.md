@@ -272,41 +272,129 @@ spec:
 
 ## 8. Monitoring & Observability
 
-### 8.1 Metrics
+### 8.1 Monitoring Stack
 
-| Metric | Type | Alert Threshold |
-|--------|------|-----------------|
-| request_latency_seconds | Histogram | P95 > 500ms |
-| error_rate | Counter | > 1% |
-| cpu_usage | Gauge | > 80% |
+| Component | Tool | Role |
+|-----------|------|------|
+| Error Tracking | **Sentry** | Error grouping, regression detection, session replay |
+| Metrics | Prometheus | Counter/Gauge/Histogram, 15s scrape interval |
+| Dashboards | Grafana | Unified view (Prometheus + Loki + Tempo + Sentry) |
+| Logs | Loki + Promtail | JSON structured log aggregation, 30d retention |
+| Tracing | Tempo + OpenTelemetry | Distributed tracing, 10% sampling (prod) |
+| Alerting | Alertmanager | Route: Critical→PagerDuty, Warning→Slack |
 
-### 8.2 Logging
+### 8.2 Metrics & SLOs
+
+| Metric | Type | SLO/Threshold | Alert |
+|--------|------|---------------|-------|
+| request_latency_seconds | Histogram | P95 < 200ms, P99 < 500ms | Warning > 500ms, Critical > 1s |
+| error_rate | Counter | < 0.1% (SLO 99.9%) | Warning > 1%, Critical > 5% |
+| cpu_usage | Gauge | < 70% (HPA target) | Warning > 80%, Critical > 95% |
+| memory_usage | Gauge | < 80% (HPA target) | Warning > 85%, Critical > 95% |
+| sentry_unresolved_issues | Gauge | < 5 critical | Warning > 5, Critical > 10 |
+
+### 8.3 Logging
 
 - Format: JSON structured
-- Required fields: timestamp, level, service, request_id, message
+- Required fields: `timestamp, level, service, request_id, trace_id, user_id, message`
 - Retention: 30 days
+- Error logs: Sentry SDK가 자동 캡처 (breadcrumbs 포함)
 
-### 8.3 Alerts
+### 8.4 Error Tracking (Sentry)
+
+```
+Frontend (Next.js):
+- @sentry/nextjs SDK
+- Error Boundary 자동 연동
+- Session Replay (에러 시 100%)
+- Performance Monitoring (10% sampling)
+
+Backend (FastAPI):
+- sentry-sdk[fastapi]
+- ASGI middleware 자동 캡처
+- SQLAlchemy integration (slow query 추적)
+- Custom context: user_id, request_id, service_name
+```
+
+### 8.5 Alerts & Escalation
 
 | Alert | Condition | Severity | Action |
 |-------|-----------|----------|--------|
-| High Error Rate | > 5% for 5min | Critical | Page on-call |
-| High Latency | P95 > 1s for 10min | Warning | Notify Slack |
+| High Error Rate | > 5% for 5min | Critical | PagerDuty page + Auto-Rollback |
+| High Latency | P95 > 1s for 10min | Warning | Slack #error-alerts |
+| Sentry New Issue | New unhandled exception | Warning | Self-Healing Agent trigger |
+| Sentry Regression | Resolved issue re-opened | Critical | Self-Healing + PagerDuty |
+| Sentry Spike | Error frequency > 10x baseline | Critical | Auto-Rollback + PagerDuty |
 
 ---
 
-## 9. Deployment
+## 9. Error Handling & Self-Healing Pipeline
 
-### 9.1 CI/CD Pipeline
+### 9.1 Error Flow
 
 ```
-PR → Lint/Test → Build → Push Image → Deploy Staging → E2E Test → Deploy Prod
+Exception 발생
+  ↓
+Sentry SDK 자동 캡처 (breadcrumbs + user + release)
+  ↓
+Sentry Alert Rule (new/regression/spike)
+  ↓
+Self-Healing Agent (Living Context 4-Layer)
+  ↓
+Auto-fix (max 5 iter) → 4중 검증 → Auto PR
+  ↓
+Canary Deploy (10%→25%→50%→100%)
+  ↓
+Post-deploy 검증 (Sentry issue resolved? error_rate 정상?)
+  ↓
+실패 시 → Auto-Rollback + Incident Memory 기록
 ```
 
-### 9.2 Rollback Strategy
+### 9.2 Circuit Breaker
 
-1. Automatic rollback on health check failure
-2. Manual rollback via ArgoCD
+| State | Condition | Action |
+|-------|-----------|--------|
+| CLOSED | failures < 3 | Normal operation |
+| OPEN | failures >= 3 | Block all transitions, 30s cooldown |
+| HALF_OPEN | cooldown expired | 1 trial attempt → success=CLOSED, fail=OPEN |
+
+---
+
+## 10. Deployment
+
+### 10.1 Load Balancer
+
+```
+Internet → CloudFront (CDN + WAF) → ALB → NGINX Ingress Controller → Services
+                                                ↑
+                                     CORS 처리 (annotation)
+                                     Path-based routing
+                                     TLS termination (ACM)
+```
+
+- **ALB + NGINX Ingress** (기본): L7, CORS annotation, path routing, WAF 연동
+- **NLB** (특수): L4, gRPC/WebSocket 전용, CORS는 앱단 처리
+
+### 10.2 CI/CD Pipeline
+
+```
+PR → Lint/Test(≥80%) → Security Scan(Semgrep+Trivy) → Build → Push ECR
+  → Deploy Staging(ArgoCD) → E2E Test → Approval Gate → Canary Deploy Prod
+```
+
+### 10.3 Canary Strategy (Argo Rollouts)
+
+```
+10% traffic (2min) → metric check → 25% (2min) → 50% (5min) → 100%
+                      ↓ fail
+                   Auto-Rollback + Sentry alert
+```
+
+### 10.4 Rollback Strategy
+
+1. **Auto-Rollback**: Canary metrics fail (error_rate > 1% or P95 > 200ms)
+2. **Self-Healing Rollback**: 5회 fix 실패 시 자동 롤백
+3. **Manual Rollback**: ArgoCD UI one-click revert
 3. Database migration rollback scripts ready
 
 ---

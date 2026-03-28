@@ -300,6 +300,19 @@ if (feature) {
   });
 }
 
+// v2.0.5: Collect M9 (Iteration Efficiency) metric
+try {
+  const mc = require('../lib/quality/metrics-collector');
+  const prevMatchRate = featureStatus?.matchRate || 0;
+  // Efficiency = matchRate improvement per iteration (%p/iteration)
+  const improvement = matchRate - prevMatchRate;
+  const efficiency = currentIteration > 0 ? Math.round((improvement / currentIteration) * 100) / 100 : 0;
+  mc.collectMetric('M9', feature || 'unknown', efficiency, 'pdca-iterator');
+  debugLog('Agent:pdca-iterator:Stop', 'M9 metric collected', { efficiency, prevMatchRate, matchRate });
+} catch (e) {
+  debugLog('Agent:pdca-iterator:Stop', 'M9 collection failed', { error: e.message });
+}
+
 // Add Task System guidance for PDCA workflow (v1.3.1 - FR-05)
 const isComplete = status === 'completed';
 const taskGuidance = isComplete
