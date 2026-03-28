@@ -4,21 +4,8 @@ classification: workflow
 classification-reason: PDCA process automation independent of model capability evolution
 deprecation-risk: none
 description: |
-  Unified skill for managing the entire PDCA cycle.
-  Auto-triggered by keywords: "plan", "design", "analyze", "report", "status".
-  Replaces legacy /pdca-* commands.
-
-  Use proactively when user mentions PDCA cycle, planning, design documents,
-  gap analysis, iteration, or completion reports.
-
-  Triggers: pdca, 계획, 설계, 분석, 검증, 보고서, 반복, 개선, plan, design, analyze,
-  check, report, status, next, iterate, gap, 計画, 設計, 分析, 検証, 報告,
-  计划, 设计, 分析, 验证, 报告, planificar, diseño, analizar, verificar,
-  planifier, conception, analyser, vérifier, rapport,
-  planen, Entwurf, analysieren, überprüfen, Bericht,
-  pianificare, progettazione, analizzare, verificare, rapporto
-
-  Do NOT use for: simple queries without PDCA context, code-only tasks.
+  Unified PDCA cycle management — plan, design, do, analyze, iterate, report.
+  Triggers: pdca, plan, design, analyze, report, status, next, iterate, 계획, 설계, 분석, 보고서.
 argument-hint: "[action] [feature]"
 user-invocable: true
 agents:
@@ -216,7 +203,7 @@ Run PM Agent Team for product discovery and strategy analysis before Plan phase.
    - Are Plan Success Criteria met or on track?
    - Were key Design decisions (architecture, data model, API) followed?
    - Flag strategic misalignments as Critical regardless of structural match rate
-5. **Success Criteria Evaluation**: For each Success Criteria from Plan:
+5. **Plan Success Criteria Reference**: Evaluate each Success Criteria from Plan:
    - Mark as ✅ Met / ⚠️ Partial / ❌ Not Met
    - Include evidence (file:line or test result)
    - Criteria violations are automatically Critical severity

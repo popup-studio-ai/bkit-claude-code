@@ -4,19 +4,8 @@ classification: workflow
 classification-reason: Process automation persists regardless of model advancement
 deprecation-risk: none
 description: |
-  Code review skill for analyzing code quality, detecting bugs, and ensuring best practices.
-  Provides comprehensive code review with actionable feedback.
-
-  Use proactively when user requests code review, quality check, or bug detection.
-
-  Triggers: code review, review code, check code, analyze code, bug detection,
-  코드 리뷰, 코드 검토, 버그 검사, コードレビュー, バグ検出, 代码审查, 代码检查,
-  revisión de código, revisar código, detección de errores,
-  revue de code, réviser le code, détection de bugs,
-  Code-Review, Code überprüfen, Fehlererkennung,
-  revisione del codice, rivedere codice, rilevamento bug
-
-  Do NOT use for: design document creation, deployment tasks, or gap analysis (use phase-8-review).
+  Code review — analyze quality, detect bugs, ensure best practices with actionable feedback.
+  Triggers: code review, quality check, bug detection, 코드 리뷰, 품질 검사.
 argument-hint: "[file|directory|pr]"
 user-invocable: true
 agent: bkit:code-analyzer

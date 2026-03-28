@@ -4,22 +4,8 @@ classification: workflow
 classification-reason: PM process orchestration independent of model capability evolution
 deprecation-risk: none
 description: |
-  PM Agent Team - Automated product discovery, strategy, and PRD generation.
-  Runs 4 specialized PM agents in parallel to produce a comprehensive PRD
-  before PDCA Plan phase. Integrates pm-skills frameworks (MIT).
-
-  Use proactively when user wants product analysis before development,
-  needs a PRD, or asks for PM-level planning.
-
-  Triggers: /pdca pm, pm analysis, product discovery, PRD, pm team,
-  PM 분석, 제품 기획, 제품 발견, PM팀, PRD 작성,
-  PM分析, プロダクト分析, 产品分析, 产品发现,
-  análisis PM, descubrimiento de producto,
-  analyse PM, découverte produit,
-  PM-Analyse, Produktentdeckung,
-  analisi PM, scoperta prodotto
-
-  Do NOT use for: implementation, code review, existing PDCA phases (plan/design/do/check).
+  PM Agent Team — automated product discovery, strategy, and PRD generation with 4 PM agents.
+  Triggers: pm, PRD, product discovery, PM 분석, 제품 기획, PM analysis.
 argument-hint: "[feature]"
 user-invocable: true
 agents:

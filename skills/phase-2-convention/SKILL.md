@@ -4,16 +4,8 @@ classification: workflow
 classification-reason: Process automation persists regardless of model advancement
 deprecation-risk: none
 description: |
-  Skill for defining coding rules and conventions.
-  Ensures consistent code style and specifies coding standards for AI collaboration.
-
-  Use proactively when starting a new project or when coding standards are needed.
-
-  Triggers: convention, coding style, naming rules, 컨벤션, コンベンション, 编码风格,
-  convención, estilo de código, reglas de nombrado, convention, style de codage, règles de nommage,
-  Konvention, Coding-Stil, Namensregeln, convenzione, stile di codice, regole di denominazione
-
-  Do NOT use for: existing projects with established conventions, deployment, or testing.
+  Define coding rules, conventions, and standards for AI collaboration.
+  Triggers: convention, coding style, lint, rules, 코딩 규칙, 컨벤션.
 agent: bkit:pipeline-guide
 allowed-tools:
   - Read

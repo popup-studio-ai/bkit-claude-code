@@ -4,24 +4,8 @@ classification: capability
 classification-reason: Specialized domain knowledge with limited model overlap
 deprecation-risk: low
 description: |
-  Enterprise-grade system development with microservices, Kubernetes, and Terraform.
-  Includes AI Native methodology and Monorepo architecture patterns.
-  Handles high traffic, high availability, and complex architecture requirements.
-
-  Project initialization with "init enterprise" or "enterprise init".
-
-  Use proactively when user needs high traffic, microservices, custom infrastructure,
-  or AI-native development patterns.
-
-  Triggers: microservices, kubernetes, terraform, k8s, AWS, monorepo, AI native, 10-day,
-  init enterprise, enterprise init,
-  마이크로서비스, 모노레포, マイクロサービス, モノレポ, 微服务, 单仓库,
-  microservicios, estrategia empresarial, arquitectura, CTO, nativo de IA,
-  microservices, stratégie d'entreprise, architecture, CTO, natif IA,
-  Microservices, Unternehmensstrategie, Architektur, CTO, KI-nativ,
-  microservizi, strategia aziendale, architettura, CTO, AI nativo
-
-  Do NOT use for: simple websites, MVPs, or projects without infrastructure requirements.
+  Enterprise-grade systems with microservices, Kubernetes, Terraform, and AI Native methodology.
+  Triggers: microservices, k8s, terraform, monorepo, AI native, 마이크로서비스, init enterprise.
 argument-hint: "[init|guide|help]"
 agents:
   default: bkit:enterprise-expert

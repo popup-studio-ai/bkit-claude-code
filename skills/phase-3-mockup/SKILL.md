@@ -4,16 +4,8 @@ classification: capability
 classification-reason: Highly likely to be subsumed by model's native capabilities
 deprecation-risk: high
 description: |
-  Skill for creating mockups with UI/UX trends without a designer.
-  Designs HTML/CSS/JS prototypes that can be converted to Next.js components.
-
-  Use proactively when user wants to validate UI/UX before implementation.
-
-  Triggers: mockup, prototype, wireframe, UI design, 목업, モックアップ, 原型,
-  maqueta, prototipo, diseño UI, maquette, prototype, conception UI,
-  Mockup, Prototyp, UI-Design, mockup, prototipo, design UI
-
-  Do NOT use for: production code, API development, or existing component modifications.
+  Create UI/UX mockups and HTML/CSS/JS prototypes without a designer.
+  Triggers: mockup, prototype, wireframe, UI design, 목업, 프로토타입.
 agents:
   default: bkit:pipeline-guide
   frontend: bkit:frontend-architect

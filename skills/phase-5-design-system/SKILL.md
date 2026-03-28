@@ -4,18 +4,8 @@ classification: capability
 classification-reason: Pattern guidance may overlap with model's built-in knowledge as it improves
 deprecation-risk: medium
 description: |
-  Skill for building platform-independent design systems.
-  Develops consistent component libraries for all UI frameworks.
-
-  Use proactively when user needs consistent UI components or mentions design tokens.
-
-  Triggers: design system, component library, design tokens, shadcn, 디자인 시스템, デザインシステム, 设计系统,
-  sistema de diseño, biblioteca de componentes, tokens de diseño,
-  système de design, bibliothèque de composants, jetons de design,
-  Design-System, Komponentenbibliothek, Design-Tokens,
-  sistema di design, libreria di componenti, token di design
-
-  Do NOT use for: one-off UI changes, backend development, or simple static sites.
+  Build platform-independent design systems and consistent component libraries.
+  Triggers: design system, component library, design tokens, 디자인 시스템, 컴포넌트.
 imports:
   - ${PLUGIN_ROOT}/templates/pipeline/phase-5-design-system.template.md
 hooks:

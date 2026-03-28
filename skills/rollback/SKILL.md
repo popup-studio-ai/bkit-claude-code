@@ -4,22 +4,8 @@ classification: workflow
 classification-reason: Checkpoint and rollback management persists regardless of model advancement
 deprecation-risk: none
 description: |
-  Manage checkpoints and rollback PDCA state.
-  Create, list, and restore checkpoints for safe recovery during PDCA cycles.
-
-  Use proactively when user wants to undo a phase transition, restore to a checkpoint,
-  or reset a feature to its initial state.
-
-  Triggers: rollback, checkpoint, undo, restore, revert, reset, recovery,
-  롤백, 체크포인트, 되돌리기, 복원, 복구, 초기화,
-  ロールバック, チェックポイント, 元に戻す, 復元, 復旧, リセット,
-  回滚, 检查点, 撤销, 恢复, 还原, 重置,
-  revertir, punto de control, deshacer, restaurar, recuperar, reiniciar,
-  restaurer, point de controle, annuler, retablir, recuperer, reinitialiser,
-  Rollback, Kontrollpunkt, ruckgangig, wiederherstellen, zurucksetzen,
-  rollback, checkpoint, annullare, ripristinare, recuperare, reimpostare
-
-  Do NOT use for: PDCA phase execution, code review, or automation control.
+  Manage PDCA checkpoints and rollback — create, list, restore for safe recovery.
+  Triggers: rollback, checkpoint, restore, undo, 롤백, 체크포인트, 복원.
 argument-hint: "[list|to|phase|reset] [target]"
 user-invocable: true
 allowed-tools:

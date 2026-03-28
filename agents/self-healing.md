@@ -6,6 +6,8 @@ description: >
   fixes code with context-aware Claude Code, verifies with scenario runner,
   generates Auto PR or escalates to human.
 model: opus
+effort: high
+maxTurns: 30
 reasoningEffort: high
 permissionMode: code
 memory: project

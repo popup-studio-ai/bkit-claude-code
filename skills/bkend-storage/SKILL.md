@@ -4,21 +4,8 @@ classification: capability
 classification-reason: Pattern guidance may overlap with model's built-in knowledge as it improves
 deprecation-risk: medium
 description: |
-  bkend.ai file storage expert skill.
-  Covers single/multiple/multipart file upload via Presigned URL,
-  file download (CDN vs Presigned), 4 visibility levels (public/private/protected/shared),
-  bucket management, and file metadata.
-
-  Triggers: file upload, download, presigned, bucket, storage, CDN, image,
-  파일 업로드, 다운로드, 버킷, 스토리지, 이미지,
-  ファイルアップロード, ダウンロード, バケット, ストレージ,
-  文件上传, 下载, 存储桶, 存储,
-  carga de archivos, descarga, almacenamiento, cubo,
-  telechargement, televersement, stockage, seau,
-  Datei-Upload, Download, Speicher, Bucket,
-  caricamento file, scaricamento, archiviazione, bucket
-
-  Do NOT use for: database operations (use bkend-data), authentication (use bkend-auth).
+  bkend.ai file storage — upload (presigned URL), download (CDN), visibility levels, buckets.
+  Triggers: bkend file, upload, download, presigned URL, storage, 파일 업로드, 스토리지.
 user-invocable: false
 agent: bkit:bkend-expert
 allowed-tools:

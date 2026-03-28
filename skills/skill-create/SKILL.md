@@ -5,9 +5,7 @@ classification-reason: "Interactive skill creation workflow with user prompts, f
 deprecation-risk: none
 description: |
   Interactive skill creation workflow for project-local skills.
-  Generates SKILL.md + eval files based on project context.
-  Triggers: /skill-create, skill create, 스킬 생성, 스킬 만들기
-  Keywords: skill-create, create skill, generate skill, 스킬 생성
+  Triggers: skill-create, create skill, 스킬 생성, 스킬 만들기.
 argument-hint: "/skill-create [name] | /skill-create from-btw {btw-id}"
 user-invocable: true
 allowed-tools:

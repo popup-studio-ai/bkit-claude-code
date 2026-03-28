@@ -4,22 +4,8 @@ classification: capability
 classification-reason: Pattern guidance may overlap with model's built-in knowledge as it improves
 deprecation-risk: medium
 description: |
-  bkend.ai practical project tutorials and troubleshooting guide.
-  Covers 10 single-project guides (todo to SaaS) and 4 full-guide projects
-  (blog, recipe-app, shopping-mall, social-network) with step-by-step implementation.
-  Also includes common error solutions and FAQ.
-
-  Triggers: cookbook, tutorial, example project, todo app, blog app, shopping mall,
-  쿡북, 튜토리얼, 예제, 블로그, 쇼핑몰, 투두, 프로젝트 만들기,
-  クックブック, チュートリアル, 例題, ブログ, ショッピング,
-  食谱, 教程, 示例, 博客, 商城,
-  libro de cocina, tutorial, ejemplo, blog, tienda,
-  livre de recettes, tutoriel, exemple, blog, boutique,
-  Kochbuch, Tutorial, Beispiel, Blog, Shop,
-  ricettario, tutorial, esempio, blog, negozio
-
-  Do NOT use for: API reference details (use bkend-data/auth/storage),
-  platform management (use bkend-quickstart).
+  bkend.ai project tutorials (todo to SaaS) and common error troubleshooting.
+  Triggers: bkend tutorial, cookbook, troubleshooting, 튜토리얼, 에러 해결.
 user-invocable: false
 agent: bkit:bkend-expert
 allowed-tools:

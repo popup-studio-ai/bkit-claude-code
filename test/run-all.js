@@ -2,8 +2,8 @@
 'use strict';
 
 /**
- * bkit v2.0.5 Comprehensive Test Runner
- * ~3175+ TC across 10 perspectives
+ * bkit v2.0.8 Comprehensive Test Runner
+ * ~3370+ TC across 10 perspectives
  *
  * Usage:
  *   node test/run-all.js                    # Run all tests (Node layer only, ~1850 TC)
@@ -151,8 +151,10 @@ const CATEGORIES = {
       'regression/agents-31.test.js',
       'regression/issue-53-path-quoting.test.js',
       'regression/pr55-handoff-loss.test.js',
+      'regression/v208-skills-desc.test.js',
+      'regression/v208-version-consistency.test.js',
     ],
-    expected: 441,
+    expected: 516,
   },
   performance: {
     name: 'Performance Tests',

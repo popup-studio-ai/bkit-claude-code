@@ -5,22 +5,7 @@ classification-reason: Batch PDCA management persists regardless of model advanc
 deprecation-risk: none
 description: |
   Manage multiple PDCA features and batch operations.
-  View status of all active features, plan multiple features simultaneously,
-  and manage parallel PDCA cycles (max 3 concurrent).
-
-  Use proactively when user wants to work on multiple features,
-  check cross-feature status, or batch-plan related features.
-
-  Triggers: batch, multi, parallel, features, dashboard, bulk,
-  배치, 다중, 병렬, 대시보드, 일괄,
-  バッチ, 複数, 並列, ダッシュボード, 一括,
-  批处理, 多个, 并行, 仪表板, 批量,
-  lote, multiple, paralelo, panel, masivo,
-  lot, multiple, parallele, tableau de bord, masse,
-  Stapel, mehrere, parallel, Dashboard, Masse,
-  batch, multiplo, parallelo, pannello, massa
-
-  Do NOT use for: single feature PDCA operations, code review, or deployment.
+  Triggers: pdca-batch, batch, multiple features, 다중 기능, 배치.
 argument-hint: "[status|plan|manage]"
 user-invocable: true
 allowed-tools:

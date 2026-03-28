@@ -64,6 +64,8 @@ assert('SB-003',
 );
 
 // --- SB-004: getRuntimeState currentLevel matches DEFAULT_LEVEL ---
+// Reset to default before checking (previous tests in suite may have changed level)
+automationController.setLevel(automationController.DEFAULT_LEVEL, { reason: 'test-reset' });
 const initState = automationController.getRuntimeState();
 assert('SB-004',
   initState.currentLevel === automationController.DEFAULT_LEVEL,

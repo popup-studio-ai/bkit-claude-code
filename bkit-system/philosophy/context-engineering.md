@@ -279,6 +279,60 @@ External tool integration via Model Context Protocol:
 
 ---
 
+## Hook `if` Conditional Field (CC v2.1.85+)
+
+CC v2.1.85 introduced the `if` field for hooks, allowing conditional execution
+based on **permission rule syntax** — the same patterns used in `allowedTools`.
+
+**Supported events**: PreToolUse, PostToolUse, PostToolUseFailure, PermissionRequest
+
+**Syntax examples**:
+```json
+{
+  "matcher": "Bash",
+  "hooks": [{
+    "type": "command",
+    "command": "node my-git-hook.js",
+    "if": "Bash(git *)"
+  }]
+}
+```
+
+```json
+{
+  "matcher": "Edit",
+  "hooks": [{
+    "type": "command",
+    "command": "node my-ts-hook.js",
+    "if": "Edit(*.ts)"
+  }]
+}
+```
+
+**bkit current state**: bkit hooks do NOT use the `if` field.
+- `unified-bash-pre.js`: handles all Bash commands internally with pattern branching
+  (destructive detector, scope limiter, deployment safety, etc.)
+- Applying `if` would skip other important checks within the unified handler
+- **Recommendation**: Use `if` when adding new single-purpose hooks. Do not retrofit existing unified hooks.
+
+**Key difference from `matcher`**:
+- `matcher`: group-level tool name filter (e.g., `"Bash"`, `"Write|Edit"`)
+- `if`: individual hook-level tool name + argument pattern filter (e.g., `"Bash(git *)"`)
+- Both are independent — `matcher` filters which hook group fires, `if` filters within the group
+
+---
+
+## Enterprise Org Policy (CC v2.1.85+)
+
+CC v2.1.85 introduced `managed-settings.json` org policy support that can
+block specific plugin installation/activation. In Enterprise environments:
+
+- Org admins may block marketplace plugins via policy
+- bkit installation may require org admin approval in managed environments
+- Check with your organization's CC admin if plugin installation is blocked
+
+---
+
 ## Related Documents
 
 - [[core-mission]] - Core mission and philosophies

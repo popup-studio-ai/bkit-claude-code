@@ -4,23 +4,8 @@ classification: capability
 classification-reason: Pattern guidance may overlap with model's built-in knowledge as it improves
 deprecation-risk: medium
 description: |
-  Static web development skill for beginners and non-developers.
-  Covers HTML/CSS/JavaScript and Next.js App Router basics.
-
-  Project initialization with "init starter" or "starter init".
-
-  Use proactively when user is a beginner or wants a simple static website.
-
-  Triggers: static website, portfolio, landing page, HTML CSS, beginner, first website,
-  simple web, personal site, init starter, starter init,
-  정적 웹, 포트폴리오, 랜딩페이지, 초보자, 첫 웹사이트, 간단한 웹,
-  静的サイト, ポートフォリオ, 初心者, 静态网站, 个人网站, 初学者,
-  sitio web estático, portafolio, página de inicio, principiante, primer sitio web,
-  site web statique, portfolio, page d'accueil, débutant, premier site web,
-  statische Website, Portfolio, Landingpage, Anfänger, erste Website,
-  sito web statico, portfolio, pagina di destinazione, principiante, primo sito web
-
-  Do NOT use for: fullstack apps with backend, authentication features, or database needs.
+  Static web development for beginners — HTML/CSS/JS and Next.js App Router.
+  Triggers: static website, portfolio, landing page, beginner, 정적 웹, 초보자, init starter.
 argument-hint: "[init|guide|help]"
 agent: bkit:starter-guide
 allowed-tools:

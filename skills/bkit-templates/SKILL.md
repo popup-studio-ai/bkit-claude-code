@@ -4,19 +4,8 @@ classification: workflow
 classification-reason: Process automation persists regardless of model advancement
 deprecation-risk: none
 description: |
-  PDCA document templates for consistent documentation.
-  Plan, Design, Analysis, and Report templates with proper structure.
-
-  Use proactively when generating PDCA documents to ensure consistent format.
-
-  Triggers: template, plan document, design document, analysis document, report,
-  템플릿, 계획서, 설계서, 분석서, 보고서, テンプレート, 計画書, 設計書, 模板, 计划书, 设计书,
-  plantilla, documento de plan, documento de diseño, documento de análisis, informe,
-  modèle, document de plan, document de conception, document d'analyse, rapport,
-  Vorlage, Plandokument, Designdokument, Analysedokument, Bericht,
-  modello, documento di piano, documento di progettazione, documento di analisi, rapporto
-
-  Do NOT use for: code implementation, deployment, or non-documentation tasks.
+  PDCA document templates — Plan, Design, Analysis, Report with consistent structure.
+  Triggers: template, plan document, design template, 템플릿, 문서 양식.
 user-invocable: false
 ---
 

@@ -4,22 +4,8 @@ classification: workflow
 classification-reason: Automation control persists regardless of model advancement
 deprecation-risk: none
 description: |
-  Control bkit automation level and view system status.
-  Manage L0-L4 automation levels, trust score, and active guardrails.
-
-  Use proactively when user wants to adjust automation behavior, check trust score,
-  or pause/resume automated PDCA operations.
-
-  Triggers: control, automation, level, pause, resume, trust, guardrail,
-  제어, 자동화, 레벨, 일시정지, 재개, 신뢰,
-  制御, 自動化, レベル, 一時停止, 再開, 信頼,
-  控制, 自动化, 级别, 暂停, 恢复, 信任,
-  control, automatizacion, nivel, pausa, reanudar, confianza,
-  controle, automatisation, niveau, pause, reprendre, confiance,
-  Steuerung, Automatisierung, Stufe, pausieren, fortsetzen, Vertrauen,
-  controllo, automazione, livello, pausa, riprendere, fiducia
-
-  Do NOT use for: PDCA phase management, code review, or deployment tasks.
+  Control bkit automation level (L0-L4), view trust score, and manage guardrails.
+  Triggers: control, automation level, trust score, guardrail, 자동화 레벨, 제어.
 argument-hint: "[status|level|pause|resume|trust]"
 user-invocable: true
 allowed-tools:

@@ -4,22 +4,8 @@ classification: workflow
 classification-reason: Audit logging persists regardless of model advancement
 deprecation-risk: none
 description: |
-  View audit logs, decision traces, and session history.
-  Browse and search through bkit's audit trail for transparency and debugging.
-
-  Use proactively when user wants to review AI decisions, check audit history,
-  or investigate what actions were taken during a PDCA cycle.
-
-  Triggers: audit, log, trace, history, decision, transparency,
-  감사, 로그, 추적, 이력, 결정, 투명성,
-  監査, ログ, 追跡, 履歴, 決定, 透明性,
-  审计, 日志, 追踪, 历史, 决策, 透明度,
-  auditoria, registro, rastreo, historial, decision, transparencia,
-  audit, journal, trace, historique, decision, transparence,
-  Audit, Protokoll, Nachverfolgung, Verlauf, Entscheidung, Transparenz,
-  audit, registro, traccia, cronologia, decisione, trasparenza
-
-  Do NOT use for: modifying audit logs, PDCA phase execution, or code changes.
+  View audit logs, decision traces, and session history for AI transparency.
+  Triggers: audit, log, decision trace, history, 감사 로그, 결정 추적.
 argument-hint: "[log|trace|summary|search] [query]"
 user-invocable: true
 allowed-tools:

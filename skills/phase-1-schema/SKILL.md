@@ -4,16 +4,8 @@ classification: capability
 classification-reason: Pattern guidance may overlap with model's built-in knowledge as it improves
 deprecation-risk: medium
 description: |
-  Skill for defining terminology and data structures used throughout the project.
-  Covers domain terminology, entities, relationships, and schema design.
-
-  Use proactively when starting a new project or when data structures are unclear.
-
-  Triggers: schema, terminology, data model, entity, 스키마, 用語, データモデル, 数据模型,
-  esquema, terminología, modelo de datos, schéma, terminologie, modèle de données,
-  Schema, Terminologie, Datenmodell, schema, terminologia, modello dati
-
-  Do NOT use for: UI-only changes, deployment, or when schema is already defined.
+  Define project terminology, data structures, entities, and relationships.
+  Triggers: schema, data model, entity, terminology, 스키마, 데이터 모델, 용어.
 agent: bkit:pipeline-guide
 allowed-tools:
   - Read

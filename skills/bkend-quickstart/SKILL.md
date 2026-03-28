@@ -4,20 +4,8 @@ classification: capability
 classification-reason: Pattern guidance may overlap with model's built-in knowledge as it improves
 deprecation-risk: medium
 description: |
-  bkend.ai platform onboarding and core concepts guide.
-  Covers MCP setup, resource hierarchy (Org->Project->Environment),
-  Tenant vs User model, and first project creation.
-
-  Use proactively when user is new to bkend or asks about initial setup.
-
-  Triggers: bkend setup, first project, bkend start, MCP connect,
-  bkend 시작, 처음, 설정, MCP 연결, 프로젝트 생성,
-  bkend始め方, 初期設定, MCP接続, bkend入门, 初始设置, MCP连接,
-  configuracion bkend, primer proyecto, configuration bkend, premier projet,
-  bkend Einrichtung, erstes Projekt, configurazione bkend, primo progetto
-
-  Do NOT use for: specific database/auth/storage operations (use domain-specific skills),
-  enterprise infrastructure (use infra-architect).
+  bkend.ai onboarding — MCP setup, resource hierarchy, tenant/user model, first project.
+  Triggers: bkend quickstart, onboarding, setup, MCP, 시작하기, 온보딩.
 user-invocable: false
 agent: bkit:bkend-expert
 allowed-tools:

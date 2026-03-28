@@ -4,22 +4,8 @@ classification: capability
 classification-reason: Pattern guidance may overlap with model's built-in knowledge as it improves
 deprecation-risk: medium
 description: |
-  bkend.ai authentication and security expert skill.
-  Covers email signup/login, social login (Google, GitHub), magic link,
-  JWT tokens (Access 1h, Refresh 7d), session management, RBAC (admin/user/self/guest),
-  RLS policies, password management, and account lifecycle.
-
-  Triggers: signup, login, JWT, session, social login, RBAC, RLS, password, token,
-  회원가입, 로그인, 토큰, 세션, 권한, 보안정책, 비밀번호,
-  ログイン, 認証, セッション, 権限, パスワード,
-  登录, 认证, 会话, 权限, 密码,
-  registro, inicio de sesion, permisos, contrasena,
-  inscription, connexion, permissions, mot de passe,
-  Registrierung, Anmeldung, Berechtigungen, Passwort,
-  registrazione, accesso, permessi, password
-
-  Do NOT use for: database CRUD (use bkend-data), file storage (use bkend-storage),
-  enterprise-level security architecture (use security-architect).
+  bkend.ai authentication — email/social login, JWT tokens, RBAC, session management.
+  Triggers: bkend auth, login, signup, JWT, RBAC, 인증, 로그인, 회원가입.
 user-invocable: false
 agent: bkit:bkend-expert
 allowed-tools:

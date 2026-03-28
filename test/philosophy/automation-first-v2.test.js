@@ -108,6 +108,8 @@ assert('AF-007',
 );
 
 // --- AF-008: getRuntimeState uses DEFAULT_LEVEL as currentLevel ---
+// Reset to default before checking (previous tests in suite may have changed level)
+automationController.setLevel(automationController.DEFAULT_LEVEL, { reason: 'test-reset' });
 const initState = automationController.getRuntimeState();
 assert('AF-008',
   initState.currentLevel === 2,

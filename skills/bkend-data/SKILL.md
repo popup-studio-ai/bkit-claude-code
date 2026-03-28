@@ -4,22 +4,8 @@ classification: capability
 classification-reason: Pattern guidance may overlap with model's built-in knowledge as it improves
 deprecation-risk: medium
 description: |
-  bkend.ai database expert skill.
-  Covers table creation, CRUD operations, 7 column types, constraints,
-  filtering (AND/OR, 8 operators), sorting, pagination, relations, joins,
-  indexing, and schema management via MCP and REST API.
-
-  Triggers: table, column, CRUD, schema, index, filter, query, data model,
-  테이블, 컬럼, 스키마, 인덱스, 필터, 쿼리, 데이터 모델,
-  テーブル, カラム, スキーマ, インデックス, フィルター,
-  数据表, 列, 模式, 索引, 过滤, 查询,
-  tabla, columna, esquema, indice, filtro, consulta,
-  tableau, colonne, schema, index, filtre, requete,
-  Tabelle, Spalte, Schema, Index, Filter, Abfrage,
-  tabella, colonna, schema, indice, filtro, query
-
-  Do NOT use for: authentication (use bkend-auth), file storage (use bkend-storage),
-  platform management (use bkend-quickstart).
+  bkend.ai database — CRUD, column types, filtering, sorting, relations, indexing.
+  Triggers: bkend table, CRUD, column, filter, sort, relation, 테이블, 데이터.
 user-invocable: false
 agent: bkit:bkend-expert
 allowed-tools:

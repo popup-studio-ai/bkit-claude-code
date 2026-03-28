@@ -4,23 +4,8 @@ classification: workflow
 classification-reason: Orchestrates multi-phase research and analysis pipeline independent of model capability
 deprecation-risk: none
 description: |
-  CC Version Analysis — Claude Code CLI version upgrade impact analysis workflow.
-  Researches CC changes, analyzes bkit architecture impact, brainstorms improvements,
-  and generates comprehensive impact report with ENH opportunities.
-
-  Use proactively when a new CC CLI version is released or user wants to analyze
-  version upgrade impact on bkit plugin.
-
-  Triggers: cc-version-analysis, version analysis, CC upgrade, CLI upgrade analysis,
-  CC 버전 분석, CLI 업그레이드, 버전 영향 분석, CC 업데이트 분석,
-  CCバージョン分析, CLIアップグレード, バージョン影響分析,
-  CC版本分析, CLI升级分析, 版本影响分析,
-  análisis de versión CC, análisis de actualización CLI,
-  analyse de version CC, analyse de mise à jour CLI,
-  CC-Versionsanalyse, CLI-Upgrade-Analyse,
-  analisi versione CC, analisi aggiornamento CLI
-
-  Do NOT use for: non-CC version topics, bkit feature development, code implementation.
+  CC CLI version upgrade impact analysis — research changes, analyze bkit impact, generate report.
+  Triggers: cc-version-analysis, CC upgrade, version analysis, CC 버전 분석, 버전 영향.
 argument-hint: "[from_version] [to_version]"
 user-invocable: true
 

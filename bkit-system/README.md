@@ -40,6 +40,8 @@
 >
 > **v2.0.0**: Architecture expansion — 18 hook events, 31 agents, 36 skills, 54 scripts, 260+ exports
 >
+> **v2.0.8**: CC v2.1.86 compatibility — 34 skills description optimized (250-char cap), Hook `if` field docs, 52 consecutive compatible releases
+>
 > **v2.0.6**: Living Context + Self-Healing — 18 hook events, 32 agents, 37 skills, 57 scripts, ~620+ exports
 >
 > **v2.0.1**: Cross-project isolation fix — meta.json project identity guard, globalCache namespace (#48)
@@ -378,7 +380,7 @@ bkit v1.6.0 integrates CC 2.1.0 Skills 2.0 features:
 - `pm-research` — Competitive analysis and data gathering
 - `pm-prd` — PRD document generation
 
-### Component Counts (v2.0.6)
+### Component Counts (v2.0.8)
 
 | Component | Count |
 |-----------|-------|

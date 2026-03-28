@@ -4,24 +4,8 @@ classification: hybrid
 classification-reason: Combines workflow automation with capability-dependent features
 deprecation-risk: low
 description: |
-  Plan Plus — Brainstorming-Enhanced PDCA Planning.
-  Combines intent discovery from brainstorming methodology with bkit PDCA's structured planning.
-  Produces higher-quality Plan documents by exploring user intent, comparing alternatives,
-  and applying YAGNI review before document generation.
-
-  Use proactively when user mentions planning with brainstorming, intent discovery,
-  exploring alternatives, or wants a more thorough planning process.
-
-  Triggers: plan-plus, plan plus, brainstorming plan, enhanced plan, deep plan,
-  플랜 플러스, 브레인스토밍, 기획, 의도 탐색, 대안 탐색,
-  プランプラス, ブレインストーミング, 企画, 意図探索,
-  计划加强, 头脑风暴, 深度规划, 意图探索,
-  plan mejorado, lluvia de ideas, planificación profunda,
-  plan amélioré, remue-méninges, planification approfondie,
-  erweiterter Plan, Brainstorming, vertiefte Planung,
-  piano migliorato, brainstorming, pianificazione approfondita
-
-  Do NOT use for: simple tasks that don't need planning, code-only changes.
+  Brainstorming-enhanced PDCA planning with intent discovery and YAGNI review.
+  Triggers: plan-plus, brainstorm, plan plus, intent, 브레인스토밍, 플랜플러스.
 argument-hint: "[feature]"
 user-invocable: true
 allowed-tools:

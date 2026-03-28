@@ -4,21 +4,8 @@ classification: workflow
 classification-reason: Process automation persists regardless of model advancement
 deprecation-risk: none
 description: |
-  9-phase Development Pipeline complete knowledge.
-  Use when user doesn't know development order or starts a new project from scratch.
-
-  Use proactively when user asks about development order, phases, what to do first,
-  or starts a new project without clear direction.
-
-  Triggers: development pipeline, phase, development order, where to start, what to do first,
-  how to begin, new project, 개발 파이프라인, 뭐부터, 어디서부터, 순서, 시작,
-  開発パイプライン, 何から, どこから, 开发流程, 从哪里开始,
-  pipeline de desarrollo, fase, orden de desarrollo, por dónde empezar, qué hacer primero,
-  pipeline de développement, phase, ordre de développement, par où commencer, que faire d'abord,
-  Entwicklungspipeline, Phase, Entwicklungsreihenfolge, wo anfangen, was zuerst tun,
-  pipeline di sviluppo, fase, ordine di sviluppo, da dove iniziare, cosa fare prima
-
-  Do NOT use for: ongoing implementation, existing feature work, or bug fixes.
+  Complete 9-phase development pipeline guide — from schema to deployment.
+  Triggers: development pipeline, where to start, phase, 개발 파이프라인, 순서, 시작.
 agent: bkit:pipeline-guide
 allowed-tools:
   - Read

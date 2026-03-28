@@ -4,10 +4,8 @@ classification: workflow
 classification-reason: "Reports loaded skill inventory across core and project layers. Read-only status check workflow."
 deprecation-risk: none
 description: |
-  Shows loaded skill inventory: bkit core skills vs project-local skills.
-  Detects conflicts, overrides, and coverage gaps.
-  Triggers: /skill-status, skill status, 스킬 상태, 스킬 목록
-  Keywords: skill-status, skill list, skills loaded, 스킬 상태, 스킬 목록
+  Show loaded skill inventory — bkit core vs project-local, conflicts, coverage gaps.
+  Triggers: skill-status, skill list, 스킬 상태, 스킬 목록.
 argument-hint: "/skill-status [--detail] [--conflicts]"
 user-invocable: true
 allowed-tools:

@@ -4,18 +4,8 @@ classification: capability
 classification-reason: Pattern guidance may overlap with model's built-in knowledge as it improves
 deprecation-risk: medium
 description: |
-  Skill for enhancing search optimization (SEO) and security.
-  Covers meta tags, semantic HTML, and security vulnerability checks.
-
-  Use proactively when user asks about search ranking, security hardening, or vulnerability fixes.
-
-  Triggers: SEO, security, meta tags, XSS, CSRF, 보안, セキュリティ, 安全,
-  seguridad, etiquetas meta, optimización de búsqueda,
-  sécurité, balises méta, optimisation pour les moteurs de recherche,
-  Sicherheit, Meta-Tags, Suchmaschinenoptimierung,
-  sicurezza, tag meta, ottimizzazione per i motori di ricerca
-
-  Do NOT use for: backend-only APIs, internal tools, or basic development setup.
+  Enhance SEO (meta tags, semantic HTML) and security (vulnerability checks, hardening).
+  Triggers: SEO, security, meta tags, vulnerability, 검색 최적화, 보안.
 imports:
   - ${PLUGIN_ROOT}/templates/pipeline/phase-7-seo-security.template.md
 agents:

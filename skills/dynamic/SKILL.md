@@ -4,23 +4,8 @@ classification: capability
 classification-reason: Pattern guidance may overlap with model's built-in knowledge as it improves
 deprecation-risk: medium
 description: |
-  Fullstack development skill using bkend.ai BaaS platform.
-  Covers authentication, data storage, API integration for dynamic web apps.
-
-  Project initialization with "init dynamic" or "dynamic init".
-
-  Use proactively when user needs login, database, or backend features without managing servers.
-
-  Triggers: fullstack, BaaS, bkend, authentication, login feature, signup, database,
-  web app, SaaS, MVP, init dynamic, dynamic init,
-  풀스택, 인증, 로그인 기능, 회원가입, 데이터베이스, 웹앱,
-  フルスタック, 認証, ログイン機能, データベース, 全栈, 身份验证, 登录功能,
-  autenticación, inicio de sesión, registro, base de datos, fullstack, aplicación web,
-  authentification, connexion, inscription, base de données, fullstack, application web,
-  Authentifizierung, Anmeldung, Registrierung, Datenbank, Fullstack, Web-App,
-  autenticazione, accesso, registrazione, database, fullstack, applicazione web
-
-  Do NOT use for: static websites, Enterprise-grade systems requiring custom infrastructure.
+  Fullstack development with bkend.ai BaaS — authentication, database, API integration.
+  Triggers: fullstack, BaaS, login, signup, database, web app, 풀스택, 인증, init dynamic.
 argument-hint: "[init|guide|help]"
 agent: bkit:bkend-expert
 allowed-tools:

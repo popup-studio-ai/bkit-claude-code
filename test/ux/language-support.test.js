@@ -168,40 +168,36 @@ const fs = require('fs');
 const path = require('path');
 const SKILLS_DIR = path.join(__dirname, '../../skills');
 
-// --- LS-006: /control SKILL.md has 8-language triggers ---
+// --- LS-006: /control SKILL.md has EN+KO trigger keywords (v2.0.8: JA/ZH moved to agents) ---
 const controlSkill = fs.readFileSync(path.join(SKILLS_DIR, 'control', 'SKILL.md'), 'utf-8');
-const controlHasMultiLang = controlSkill.includes('제어') && controlSkill.includes('制御') &&
-  controlSkill.includes('控制') && controlSkill.includes('Steuerung');
+const controlHasLang = controlSkill.includes('control') && controlSkill.includes('제어');
 assert('LS-006',
-  controlHasMultiLang,
-  '/control SKILL.md has KO/JA/ZH/DE trigger keywords'
+  controlHasLang,
+  '/control SKILL.md has EN+KO trigger keywords (v2.0.8: 8-lang via agents)'
 );
 
-// --- LS-007: /audit SKILL.md has 8-language triggers ---
+// --- LS-007: /audit SKILL.md has EN+KO trigger keywords (v2.0.8) ---
 const auditSkill = fs.readFileSync(path.join(SKILLS_DIR, 'audit', 'SKILL.md'), 'utf-8');
-const auditHasMultiLang = auditSkill.includes('감사') && auditSkill.includes('監査') &&
-  auditSkill.includes('审计');
+const auditHasLang = auditSkill.includes('audit') && auditSkill.includes('감사');
 assert('LS-007',
-  auditHasMultiLang,
-  '/audit SKILL.md has KO/JA/ZH trigger keywords'
+  auditHasLang,
+  '/audit SKILL.md has EN+KO trigger keywords (v2.0.8: 8-lang via agents)'
 );
 
-// --- LS-008: /rollback SKILL.md has 8-language triggers ---
+// --- LS-008: /rollback SKILL.md has EN+KO trigger keywords (v2.0.8) ---
 const rollbackSkill = fs.readFileSync(path.join(SKILLS_DIR, 'rollback', 'SKILL.md'), 'utf-8');
-const rollbackHasMultiLang = rollbackSkill.includes('롤백') && rollbackSkill.includes('ロールバック') &&
-  rollbackSkill.includes('回滚');
+const rollbackHasLang = rollbackSkill.includes('rollback') && rollbackSkill.includes('롤백');
 assert('LS-008',
-  rollbackHasMultiLang,
-  '/rollback SKILL.md has KO/JA/ZH trigger keywords'
+  rollbackHasLang,
+  '/rollback SKILL.md has EN+KO trigger keywords (v2.0.8: 8-lang via agents)'
 );
 
-// --- LS-009: /pdca-batch SKILL.md has 8-language triggers ---
+// --- LS-009: /pdca-batch SKILL.md has EN+KO trigger keywords (v2.0.8) ---
 const batchSkill = fs.readFileSync(path.join(SKILLS_DIR, 'pdca-batch', 'SKILL.md'), 'utf-8');
-const batchHasMultiLang = batchSkill.includes('배치') && batchSkill.includes('バッチ') &&
-  batchSkill.includes('批处理');
+const batchHasLang = batchSkill.includes('batch') && batchSkill.includes('배치');
 assert('LS-009',
-  batchHasMultiLang,
-  '/pdca-batch SKILL.md has KO/JA/ZH trigger keywords'
+  batchHasLang,
+  '/pdca-batch SKILL.md has EN+KO trigger keywords (v2.0.8: 8-lang via agents)'
 );
 
 // --- LS-010: bkend-expert has trigger patterns for 8 languages ---

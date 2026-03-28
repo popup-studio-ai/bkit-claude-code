@@ -4,24 +4,8 @@ classification: capability
 classification-reason: Highly likely to be subsumed by model's native capabilities
 deprecation-risk: high
 description: |
-  Claude Code learning and education skill.
-  Teaches users how to configure and optimize Claude Code settings.
-  Works across any project and any language.
-
-  Start learning/setup with "learn" or "setup".
-
-  Use proactively when user is new to Claude Code, asks about configuration,
-  or wants to improve their Claude Code setup.
-
-  Triggers: learn claude code, claude code setup, CLAUDE.md, hooks, commands, skills,
-  how to configure, 클로드 코드 배우기, 설정 방법, Claude Code 학습,
-  クロードコード学習, 设置方法, how do I use claude code,
-  aprender claude code, configuración, cómo configurar,
-  apprendre claude code, configuration, comment configurer,
-  Claude Code lernen, Konfiguration, wie konfigurieren,
-  imparare claude code, configurazione, come configurare
-
-  Do NOT use for: actual coding tasks, debugging, or feature implementation.
+  Claude Code learning — configure and optimize Claude Code settings, tips, and workflows.
+  Triggers: learn, setup, claude code, optimize, 학습, 설정, 최적화.
 argument-hint: "[learn|setup|upgrade] [level]"
 agent: claude-code-guide
 allowed-tools:
