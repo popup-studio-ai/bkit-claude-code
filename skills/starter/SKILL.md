@@ -1,5 +1,8 @@
 ---
 name: starter
+effort: hard
+model: opus
+shell: bash
 classification: capability
 classification-reason: Pattern guidance may overlap with model's built-in knowledge as it improves
 deprecation-risk: medium

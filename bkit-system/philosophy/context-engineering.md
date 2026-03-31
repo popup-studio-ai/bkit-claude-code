@@ -333,6 +333,42 @@ block specific plugin installation/activation. In Enterprise environments:
 
 ---
 
+## CC v2.1.87 Feature Updates (ENH-165~171)
+
+### Skills 2.0 Frontmatter Extensions
+
+CC Skills 2.0 supports additional frontmatter fields in SKILL.md:
+
+| Field | Values | Purpose |
+|-------|--------|---------|
+| `effort` | `light` / `medium` / `hard` | CC resource allocation hint |
+| `model` | `haiku` / `sonnet` / `opus` | Preferred model for skill execution |
+| `shell` | `bash` / `zsh` / `powershell` | Default shell for skill scripts |
+
+bkit v2.0.9 applies these to all 37 skills: 5 light(haiku), 14 medium(sonnet), 18 hard(opus).
+
+### MCP Multi-Transport (8 types)
+
+CC v2.1.87 supports 8 MCP transport types:
+`stdio`, `sse`, `sse-ide`, `http`, `ws`, `ws-ide`, `sdk`, `claudeai-proxy`
+
+MCPServerConnection 5 states:
+- `Connected` — client + capabilities + serverInfo established
+- `Failed` — connection error occurred
+- `NeedsAuth` — pending OAuth/XAA authentication
+- `Pending` — reconnection in progress
+- `Disabled` — user-disabled server
+
+bkit MCP servers currently use `stdio` only. For team-shared scenarios,
+consider `sse` or `http` transport for remote MCP server deployment.
+
+### Agent Worktree Isolation
+
+AgentTool supports `isolation: "worktree"` for git-based file isolation.
+Useful for CTO Team swarm patterns where multiple agents modify overlapping files.
+
+---
+
 ## Related Documents
 
 - [[core-mission]] - Core mission and philosophies

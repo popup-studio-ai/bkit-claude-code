@@ -1,5 +1,8 @@
 ---
 name: pm-discovery
+effort: medium
+model: sonnet
+shell: bash
 classification: workflow
 classification-reason: PM process orchestration independent of model capability evolution
 deprecation-risk: none

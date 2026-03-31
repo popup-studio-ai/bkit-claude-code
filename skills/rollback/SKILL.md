@@ -1,5 +1,8 @@
 ---
 name: rollback
+effort: light
+model: haiku
+shell: bash
 classification: workflow
 classification-reason: Checkpoint and rollback management persists regardless of model advancement
 deprecation-risk: none

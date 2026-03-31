@@ -1,5 +1,8 @@
 ---
 name: zero-script-qa
+effort: medium
+model: sonnet
+shell: bash
 classification: workflow
 classification-reason: Process automation persists regardless of model advancement
 deprecation-risk: none

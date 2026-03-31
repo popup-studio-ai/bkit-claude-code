@@ -1,5 +1,8 @@
 ---
 name: pdca-batch
+effort: medium
+model: sonnet
+shell: bash
 classification: workflow
 classification-reason: Batch PDCA management persists regardless of model advancement
 deprecation-risk: none

@@ -1,5 +1,8 @@
 ---
 name: cc-version-analysis
+effort: medium
+model: sonnet
+shell: bash
 classification: workflow
 classification-reason: Orchestrates multi-phase research and analysis pipeline independent of model capability
 deprecation-risk: none

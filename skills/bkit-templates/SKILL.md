@@ -1,5 +1,8 @@
 ---
 name: bkit-templates
+effort: light
+model: haiku
+shell: bash
 classification: workflow
 classification-reason: Process automation persists regardless of model advancement
 deprecation-risk: none

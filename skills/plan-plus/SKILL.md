@@ -1,5 +1,8 @@
 ---
 name: plan-plus
+effort: medium
+model: sonnet
+shell: bash
 classification: hybrid
 classification-reason: Combines workflow automation with capability-dependent features
 deprecation-risk: low

@@ -1,5 +1,8 @@
 ---
 name: btw
+effort: medium
+model: sonnet
+shell: bash
 classification: workflow
 classification-reason: "Manages /btw command lifecycle: record, list, analyze, promote, stats. User-driven workflow with CRUD on btw-suggestions.json"
 deprecation-risk: none

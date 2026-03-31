@@ -1,5 +1,8 @@
 ---
 name: control
+effort: medium
+model: sonnet
+shell: bash
 classification: workflow
 classification-reason: Automation control persists regardless of model advancement
 deprecation-risk: none

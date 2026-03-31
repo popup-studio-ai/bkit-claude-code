@@ -27,6 +27,7 @@
       },
       {
         "matcher": "Bash",
+        "if": "Bash(kubectl*|terraform*|docker*|helm*|aws*|gcloud*|git push*|git reset*|git rebase*|rm -rf*|chmod*|chown*|drop *|truncate *)",
         "hooks": [
           {
             "type": "command",

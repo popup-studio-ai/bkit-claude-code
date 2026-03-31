@@ -1,5 +1,8 @@
 ---
 name: audit
+effort: light
+model: haiku
+shell: bash
 classification: workflow
 classification-reason: Audit logging persists regardless of model advancement
 deprecation-risk: none

@@ -1,5 +1,8 @@
 ---
 name: claude-code-learning
+effort: hard
+model: opus
+shell: bash
 classification: capability
 classification-reason: Highly likely to be subsumed by model's native capabilities
 deprecation-risk: high

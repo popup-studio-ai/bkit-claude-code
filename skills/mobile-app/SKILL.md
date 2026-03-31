@@ -1,5 +1,8 @@
 ---
 name: mobile-app
+effort: hard
+model: opus
+shell: bash
 classification: capability
 classification-reason: Specialized domain knowledge with limited model overlap
 deprecation-risk: low

@@ -1,5 +1,8 @@
 ---
 name: pdca
+effort: medium
+model: sonnet
+shell: bash
 classification: workflow
 classification-reason: PDCA process automation independent of model capability evolution
 deprecation-risk: none

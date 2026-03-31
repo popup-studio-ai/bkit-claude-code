@@ -1,5 +1,8 @@
 ---
 name: deploy
+effort: medium
+model: sonnet
+shell: bash
 description: Deploy feature to target environment (dev/staging/prod) with level-based strategy
 version: 3.0.0
 category: workflow

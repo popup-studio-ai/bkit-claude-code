@@ -1,5 +1,8 @@
 ---
 name: skill-create
+effort: medium
+model: sonnet
+shell: bash
 classification: workflow
 classification-reason: "Interactive skill creation workflow with user prompts, file generation, and eval scaffolding. Multi-step process requiring user decisions."
 deprecation-risk: none
