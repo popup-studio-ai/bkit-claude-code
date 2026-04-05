@@ -119,6 +119,18 @@
     },
     "historyMaxDataPoints": 100
   },
+  "evolution": {
+    "enabled": true,
+    "minConfidence": 0.6,
+    "initialConfidence": 0.7,
+    "maxProposals": 5,
+    "maxHistoryEntries": 200,
+    "minOccurrences": 3,
+    "btwSimilarityThreshold": 0.7,
+    "autoTriggerOnReport": true,
+    "measureAfterCycles": 3,
+    "deprecationThreshold": 0.02
+  },
   "team": {
     "enabled": true,
     "displayMode": "in-process",
