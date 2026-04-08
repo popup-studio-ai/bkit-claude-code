@@ -145,7 +145,7 @@ assert('CR-024', totalHookRefs === 0,
 
 // CR-025: lib/common.js still exists as bridge (not deleted)
 const commonPath = path.join(BASE_DIR, 'lib', 'common.js');
-assert('CR-025', fs.existsSync(commonPath),
+assert('CR-025', !fs.existsSync(commonPath) /* v2.1.0: common.js removed */,
   'lib/common.js still exists as migration bridge');
 
 // ============================================================

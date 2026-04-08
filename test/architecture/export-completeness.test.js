@@ -114,16 +114,15 @@ assert('EC-010',
 // ============================================================
 
 const ALL_NEW_MODULES = [
-  // Core (13)
+  // Core (12) — v2.1.0: backup-scheduler removed (dead code)
   'lib/core/cache.js', 'lib/core/config.js', 'lib/core/debug.js',
   'lib/core/file.js', 'lib/core/io.js', 'lib/core/platform.js',
   'lib/core/constants.js', 'lib/core/errors.js', 'lib/core/state-store.js',
   'lib/core/hook-io.js', 'lib/core/index.js', 'lib/core/paths.js',
-  'lib/core/backup-scheduler.js',
-  // PDCA (18)
+  // PDCA (14) — v2.1.0: commit-context, decision-record, deploy-gate, do-detector removed
   'lib/pdca/automation.js', 'lib/pdca/executive-summary.js', 'lib/pdca/level.js',
   'lib/pdca/phase.js', 'lib/pdca/template-validator.js', 'lib/pdca/tier.js',
-  'lib/pdca/do-detector.js', 'lib/pdca/circuit-breaker.js', 'lib/pdca/state-machine.js',
+  'lib/pdca/circuit-breaker.js', 'lib/pdca/state-machine.js',
   'lib/pdca/resume.js', 'lib/pdca/lifecycle.js', 'lib/pdca/status.js',
   'lib/pdca/workflow-parser.js', 'lib/pdca/workflow-engine.js', 'lib/pdca/full-auto-do.js',
   'lib/pdca/feature-manager.js', 'lib/pdca/batch-orchestrator.js', 'lib/pdca/index.js',

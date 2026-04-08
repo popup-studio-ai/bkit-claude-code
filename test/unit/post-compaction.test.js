@@ -26,20 +26,22 @@ console.log('\n--- Section 1: Script & Dependencies ---');
 const scriptPath = path.join(SCRIPTS_DIR, 'post-compaction.js');
 assert('PC-01', fs.existsSync(scriptPath), 'post-compaction.js file exists');
 
-// PC-02: common.js exports required functions
-let common;
+// PC-02: core modules export required functions (v2.1.0: split from common.js)
+let coreIo, coreDebug, pdcaStatus;
 try {
-  common = require('../../lib/common');
+  coreIo = require('../../lib/core/io');
+  coreDebug = require('../../lib/core/debug');
+  pdcaStatus = require('../../lib/pdca/status');
 } catch (e) {
-  common = null;
+  coreIo = null;
 }
 assert('PC-02',
-  common &&
-  typeof common.readStdinSync === 'function' &&
-  typeof common.debugLog === 'function' &&
-  typeof common.getPdcaStatusFull === 'function' &&
-  typeof common.outputEmpty === 'function',
-  'common.js has readStdinSync, debugLog, getPdcaStatusFull, outputEmpty'
+  coreIo &&
+  typeof coreIo.readStdinSync === 'function' &&
+  typeof coreDebug.debugLog === 'function' &&
+  typeof pdcaStatus.getPdcaStatusFull === 'function' &&
+  typeof coreIo.outputEmpty === 'function',
+  'core modules have readStdinSync, debugLog, getPdcaStatusFull, outputEmpty'
 );
 
 // PC-03: lib/core/paths exports restoreFromPluginData
