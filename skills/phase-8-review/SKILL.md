@@ -3,7 +3,7 @@ name: phase-8-review
 classification: workflow
 classification-reason: Process automation persists regardless of model advancement
 deprecation-risk: none
-effort: medium
+effort: high
 description: |
   Verify codebase quality — architecture consistency, convention compliance, gap analysis.
   Triggers: code review, architecture check, quality, gap analysis, 코드 리뷰, 품질 검증.

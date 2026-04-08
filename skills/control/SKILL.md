@@ -3,7 +3,7 @@ name: control
 classification: workflow
 classification-reason: Automation control persists regardless of model advancement
 deprecation-risk: none
-effort: medium
+effort: low
 description: |
   Control bkit automation level (L0-L4), view trust score, and manage guardrails.
   Triggers: control, automation level, trust score, guardrail, 자동화 레벨, 제어.

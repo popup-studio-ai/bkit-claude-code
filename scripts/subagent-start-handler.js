@@ -10,7 +10,7 @@
  * Design Reference: docs/02-design/features/team-visibility.design.md Section 5.1
  */
 
-const { readStdinSync, outputAllow } = require('../lib/core/hook-io');
+const { readStdinSync, outputAllow } = require('../lib/core/io');
 const { debugLog } = require('../lib/core/debug');
 const { getPdcaStatusFull } = require('../lib/pdca/status');
 

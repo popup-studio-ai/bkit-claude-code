@@ -3,7 +3,7 @@ name: zero-script-qa
 classification: workflow
 classification-reason: Process automation persists regardless of model advancement
 deprecation-risk: none
-effort: medium
+effort: high
 description: |
   Zero Script QA — test without scripts using structured JSON logging and Docker monitoring.
   Triggers: zero-script-qa, log testing, docker logs, QA, 제로 스크립트 QA.

@@ -92,19 +92,15 @@ assert('PHI-SEC-007',
   'gap-detector has documented plan intent + Write tool access (CC manages permissions)'
 );
 
-// --- PHI-SEC-008: 모든 acceptEdits 에이전트에 disallowedTools 있는지 확인 ---
+// --- PHI-SEC-008: v2.1.1 — No agents reference invalid tool names in disallowedTools ---
 const agentFiles = fs.readdirSync(agentsDir).filter(f => f.endsWith('.md'));
-const acceptEditsAgents = agentFiles.filter(f => {
+const invalidDisallowed = agentFiles.filter(f => {
   const content = fs.readFileSync(path.join(agentsDir, f), 'utf-8');
-  return content.includes('permissionMode: acceptEdits') || content.includes('# permissionMode: acceptEdits');
-});
-const allHaveDisallowedTools = acceptEditsAgents.every(f => {
-  const content = fs.readFileSync(path.join(agentsDir, f), 'utf-8');
-  return content.includes('disallowedTools:');
+  return content.includes('disallowedTools:') && content.includes('  - Agent');
 });
 assert('PHI-SEC-008',
-  acceptEditsAgents.length > 0 && allHaveDisallowedTools,
-  `All ${acceptEditsAgents.length} acceptEdits agents have disallowedTools defined`
+  invalidDisallowed.length === 0,
+  `No agents have invalid disallowedTools entries${invalidDisallowed.length ? ' INVALID: ' + invalidDisallowed.join(', ') : ''}`
 );
 
 // --- PHI-SEC-009: isTeamModeAvailable — 환경 변수 없으면 false ---

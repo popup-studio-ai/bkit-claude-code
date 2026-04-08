@@ -8,7 +8,7 @@
  * Converted from: scripts/phase8-review-stop.sh
  */
 
-const { outputAllow } = require('../lib/core/hook-io');
+const { outputAllow } = require('../lib/core/io');
 
 // Output guidance for next steps after review phase
 const message = `📋 Code Review Phase completed.

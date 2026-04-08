@@ -18,7 +18,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { readStdinSync } = require('../lib/core/hook-io');
+const { readStdinSync } = require('../lib/core/io');
 const { debugLog } = require('../lib/core/debug');
 const { getPdcaStatusFull } = require('../lib/pdca/status');
 

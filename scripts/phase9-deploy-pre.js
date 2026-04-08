@@ -10,7 +10,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { readStdinSync, parseHookInput, outputAllow, outputEmpty } = require('../lib/core/hook-io');
+const { readStdinSync, parseHookInput, outputAllow, outputEmpty } = require('../lib/core/io');
 const { PROJECT_DIR } = require('../lib/core/platform');
 
 // Read input from stdin

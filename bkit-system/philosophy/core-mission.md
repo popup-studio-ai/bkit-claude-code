@@ -79,11 +79,11 @@ When user requests "create a feature":
 State Machine Transitions (v2.0.0):
   idle ──[START]──→ pm_analysis ──[PM_DONE]──→ plan
        ──[SKIP_PM]──→ plan ──[PLAN_DONE]──→ design
-  design ──[DESIGN_DONE]──→ do ──[DO_DONE]──→ check
-  check ──[ITERATE]──→ act ──[ACT_DONE]──→ check (loop, max 5)
-  check ──[APPROVE]──→ report ──[REPORT_DONE]──→ completed
+  design ──[DESIGN_DONE]──→ do ──[DO_COMPLETE]──→ check
+  check ──[ITERATE]──→ act ──[ANALYZE_DONE]──→ check (loop, max 5)
+  check ──[MATCH_PASS]──→ report ──[REPORT_DONE]──→ archived
 
-Guards: matchRate >= 90% for APPROVE, maxIterations for ITERATE
+Guards: matchRate >= 90% for MATCH_PASS, maxIterations for ITERATE
 Checkpoint: auto-created on every phase transition
 ```
 

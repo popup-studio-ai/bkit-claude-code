@@ -8,7 +8,7 @@
  * Converted from: scripts/qa-stop.sh
  */
 
-const { outputAllow } = require('../lib/core/hook-io');
+const { outputAllow } = require('../lib/core/io');
 
 // Output guidance for next steps after QA session
 const message = `QA Session completed.
@@ -20,7 +20,7 @@ Next steps:
 
 // v2.0.5: M5/M6 metrics collection with actual extraction
 try {
-  const { readStdinSync } = require('../lib/core/hook-io');
+  const { readStdinSync } = require('../lib/core/io');
   const mc = require('../lib/quality/metrics-collector');
   const { extractFeatureFromContext, getPdcaStatusFull } = require('../lib/pdca/status');
   const currentStatus = getPdcaStatusFull();

@@ -32,7 +32,7 @@ function assert(id, condition, description) {
 }
 
 // Load modules needed for hook chain verification
-const common = require(path.join(PROJECT_ROOT, 'lib/common'));
+const common = require(path.join(PROJECT_ROOT, 'lib/core'));
 const coreConfig = require(path.join(PROJECT_ROOT, 'lib/core/config'));
 const ambiguity = require(path.join(PROJECT_ROOT, 'lib/intent/ambiguity'));
 const trigger = require(path.join(PROJECT_ROOT, 'lib/intent/trigger'));

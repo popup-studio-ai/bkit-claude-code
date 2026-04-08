@@ -3,7 +3,7 @@ name: bkit-rules
 classification: workflow
 classification-reason: Process automation persists regardless of model advancement
 deprecation-risk: none
-effort: medium
+effort: low
 description: |
   Core rules for bkit — PDCA methodology, level detection, agent triggering, quality standards.
   Triggers: bkit rules, core rules, methodology, 핵심 규칙, PDCA 규칙.

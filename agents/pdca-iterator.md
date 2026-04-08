@@ -33,8 +33,6 @@ skills_preload:
   - pdca
   - bkit-rules
 # permissionMode: acceptEdits  # CC ignores for plugin agents
-disallowedTools:
-  - Agent
 memory: project
 tools:
   - Read

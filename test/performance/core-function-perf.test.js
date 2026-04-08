@@ -14,7 +14,7 @@ const assert = require('assert');
 const { performance } = require('perf_hooks');
 
 // Load modules
-const common = require('../../lib/common');
+const common = require('../../lib/core');
 const intent = require('../../lib/intent');
 const pdca = require('../../lib/pdca');
 

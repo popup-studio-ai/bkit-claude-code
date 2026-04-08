@@ -9,7 +9,7 @@ const fs = require('fs');
 const { detectLevel } = require('../../lib/pdca/level');
 const { debugLog } = require('../../lib/core/debug');
 const { getPdcaStatusFull } = require('../../lib/pdca/status');
-const { emitUserPrompt } = require('../../lib/pdca/automation');
+const { formatAskUserQuestion } = require('../../lib/pdca/automation');
 const { calculateAmbiguityScore } = require('../../lib/intent/ambiguity');
 const { getBkitConfig } = require('../../lib/core/config');
 
@@ -58,46 +58,47 @@ function enhancedOnboarding() {
       'completed': 'Completed'
     };
 
+    // v2.1.1 H-01: Use formatAskUserQuestion for proper AskUserQuestion output
+    const askPayload = formatAskUserQuestion({
+      question: `Previous work detected. How would you like to proceed?\nCurrent: "${primary}" - ${phaseDisplay[phase] || phase}${matchRate ? ` (${matchRate}%)` : ''}`,
+      header: 'Resume',
+      options: [
+        { label: `Continue ${primary}`, description: `Resume ${phaseDisplay[phase] || phase} phase` },
+        { label: 'Start new task', description: 'Develop a different feature' },
+        { label: 'Check status', description: 'View PDCA status (/pdca status)' }
+      ],
+      multiSelect: false
+    });
+
     return {
       type: 'resume',
       hasExistingWork: true,
       primaryFeature: primary,
       phase: phase,
       matchRate: matchRate,
-      prompt: emitUserPrompt({
-        questions: [{
-          question: `Previous work detected. How would you like to proceed?\nCurrent: "${primary}" - ${phaseDisplay[phase] || phase}${matchRate ? ` (${matchRate}%)` : ''}`,
-          header: 'Resume',
-          options: [
-            { label: `Continue ${primary}`, description: `Resume ${phaseDisplay[phase] || phase} phase` },
-            { label: 'Start new task', description: 'Develop a different feature' },
-            { label: 'Check status', description: 'View PDCA status (/pdca status)' }
-          ],
-          multiSelect: false
-        }]
-      }),
+      userPrompt: JSON.stringify(askPayload),
       suggestedAction: matchRate && matchRate < 90 ? '/pdca iterate' : '/pdca status'
     };
   }
 
-  // New user onboarding
+  // v2.1.1 H-01: New user onboarding with proper AskUserQuestion
+  const newUserPayload = formatAskUserQuestion({
+    question: 'How can I help you?',
+    header: 'Help Type',
+    options: [
+      { label: 'Learn bkit', description: 'Introduction and 9-phase pipeline' },
+      { label: 'Learn Claude Code', description: 'Settings and usage' },
+      { label: 'Start new project', description: 'Project initialization' },
+      { label: 'Start freely', description: 'Proceed without guide' }
+    ],
+    multiSelect: false
+  });
+
   return {
     type: 'new_user',
     hasExistingWork: false,
     level: level,
-    prompt: emitUserPrompt({
-      questions: [{
-        question: 'How can I help you?',
-        header: 'Help Type',
-        options: [
-          { label: 'Learn bkit', description: 'Introduction and 9-phase pipeline' },
-          { label: 'Learn Claude Code', description: 'Settings and usage' },
-          { label: 'Start new project', description: 'Project initialization' },
-          { label: 'Start freely', description: 'Proceed without guide' }
-        ],
-        multiSelect: false
-      }]
-    })
+    userPrompt: JSON.stringify(newUserPayload),
   };
 }
 
@@ -126,18 +127,17 @@ function analyzeRequestAmbiguity(userRequest, context = {}) {
       score: ambiguityResult.score,
       factors: ambiguityResult.factors,
       questions: ambiguityResult.clarifyingQuestions,
-      prompt: emitUserPrompt({
-        questions: ambiguityResult.clarifyingQuestions.slice(0, 2).map((q, i) => ({
-          question: q,
-          header: `Clarify ${i + 1}`,
-          options: [
-            { label: 'Yes, correct', description: 'This interpretation is correct' },
-            { label: 'No', description: 'Please interpret differently' },
-            { label: 'More details', description: 'I will explain in more detail' }
-          ],
-          multiSelect: false
-        }))
-      })
+      // v2.1.1 H-01: Use formatAskUserQuestion for ambiguity clarification
+      userPrompt: JSON.stringify(formatAskUserQuestion({
+        question: ambiguityResult.clarifyingQuestions[0],
+        header: 'Clarify',
+        options: [
+          { label: 'Yes, correct', description: 'This interpretation is correct' },
+          { label: 'No', description: 'Please interpret differently' },
+          { label: 'More details', description: 'I will explain in more detail' }
+        ],
+        multiSelect: false
+      }))
     };
   }
 

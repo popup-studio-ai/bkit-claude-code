@@ -3,7 +3,7 @@ name: skill-status
 classification: workflow
 classification-reason: "Reports loaded skill inventory across core and project layers. Read-only status check workflow."
 deprecation-risk: none
-effort: medium
+effort: low
 description: |
   Show loaded skill inventory — bkit core vs project-local, conflicts, coverage gaps.
   Triggers: skill-status, skill list, 스킬 상태, 스킬 목록.

@@ -8,7 +8,7 @@
  * 3. Team 정리 안내 메시지 출력
  */
 
-const { outputAllow } = require('../lib/core/hook-io');
+const { outputAllow } = require('../lib/core/io');
 const { debugLog } = require('../lib/core/debug');
 const { getPdcaStatusFull, addPdcaHistory } = require('../lib/pdca/status');
 

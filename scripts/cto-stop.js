@@ -9,7 +9,7 @@
  */
 
 const { debugLog } = require('../lib/core/debug');
-const { outputAllow } = require('../lib/core/hook-io');
+const { outputAllow } = require('../lib/core/io');
 const { getPdcaStatusFull, addPdcaHistory } = require('../lib/pdca/status');
 
 function run(context) {

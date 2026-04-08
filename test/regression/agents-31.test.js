@@ -111,24 +111,22 @@ for (let i = 0; i < ALL_AGENTS.length; i++) {
 }
 
 // ============================================================
-// AG31-033: v2.0.0 agents with disallowedTools
+// AG31-033: v2.1.1 AS-01 — disallowedTools removed from pdca-iterator, qa-monitor
+// (previously listed "Agent" which is not a valid CC tool name)
 // ============================================================
-console.log('\n--- AG31-033: disallowedTools Agents ---');
-
-const missingDisallowed = [];
+console.log('\n--- AG31-033: disallowedTools removal verified ---');
+const hasInvalidDisallowed = [];
 for (const agent of DISALLOWED_TOOLS_AGENTS) {
   const agentPath = path.join(AGENTS_DIR, `${agent}.md`);
   if (fs.existsSync(agentPath)) {
     const content = fs.readFileSync(agentPath, 'utf-8');
-    if (!content.includes('disallowedTools')) {
-      missingDisallowed.push(agent);
+    if (content.includes('disallowedTools')) {
+      hasInvalidDisallowed.push(agent);
     }
-  } else {
-    missingDisallowed.push(agent);
   }
 }
-assert('AG31-033', missingDisallowed.length === 0,
-  `v2.0.0 agents with disallowedTools (pdca-iterator, qa-monitor)${missingDisallowed.length ? ' MISSING: ' + missingDisallowed.join(', ') : ''}`);
+assert('AG31-033', hasInvalidDisallowed.length === 0,
+  `v2.1.1 AS-01: disallowedTools correctly removed from pdca-iterator, qa-monitor${hasInvalidDisallowed.length ? ' STILL HAS: ' + hasInvalidDisallowed.join(', ') : ''}`);
 
 // ============================================================
 // AG31-034: All agents have memory field set

@@ -148,6 +148,7 @@ try {
 }
 
 // 4. Ambiguity Detection
+let ambiguityUserPrompt = null;
 try {
   const ambiguity = calculateAmbiguityScore(userPrompt, {});
   if (ambiguity && ambiguity.shouldClarify && !ambiguity.bypassed) {
@@ -156,6 +157,22 @@ try {
       score: ambiguity.score,
       factors: ambiguity.factors
     });
+    // v2.1.1 H-02: Generate AskUserQuestion for high-ambiguity requests
+    if (ambiguity.score > 0.7 && ambiguity.clarifyingQuestions && ambiguity.clarifyingQuestions.length > 0) {
+      try {
+        const { formatAskUserQuestion } = require('../lib/pdca/automation');
+        ambiguityUserPrompt = JSON.stringify(formatAskUserQuestion({
+          question: ambiguity.clarifyingQuestions[0],
+          header: 'Clarify Request',
+          options: [
+            { label: 'Yes, correct', description: 'This interpretation is correct' },
+            { label: 'No', description: 'Please interpret differently' },
+            { label: 'More details', description: 'I will explain in more detail' }
+          ],
+          multiSelect: false,
+        }));
+      } catch (_) {}
+    }
   }
 } catch (e) {
   debugLog('UserPrompt', 'Ambiguity detection failed', { error: e.message });
@@ -220,16 +237,22 @@ debugLog('UserPrompt', 'Hook completed', {
 if (contextParts.length > 0) {
   const context = truncateContext(contextParts.join(' | '));
   // ENH-187: Auto session title based on active PDCA feature (CC v2.1.94+)
+  // v2.1.1 QM-04: sessionTitle includes phase for PDCA context
   const pdcaStatus = getPdcaStatusFull();
   const feature = pdcaStatus?.primaryFeature || pdcaStatus?.feature || null;
-  const sessionTitle = feature ? `[bkit] ${feature}` : undefined;
+  const phase = pdcaStatus?.currentPhase || pdcaStatus?.session?.currentPhase || null;
+  const sessionTitle = feature
+    ? (phase ? `[bkit] ${phase.toUpperCase()} ${feature}` : `[bkit] ${feature}`)
+    : undefined;
   console.log(JSON.stringify({
     success: true,
     message: context || undefined,
     hookSpecificOutput: {
       hookEventName: 'UserPromptSubmit',
       additionalContext: context || undefined,
-      sessionTitle
+      sessionTitle,
+      // v2.1.1 H-02: AskUserQuestion for high-ambiguity requests
+      userPrompt: ambiguityUserPrompt || undefined,
     }
   }));
 } else {

@@ -259,6 +259,18 @@
           }
         ]
       }
+    ],
+    "FileChanged": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/file-changed-handler.js\"",
+            "if": "Write|Edit(docs/**/*.md)",
+            "timeout": 3000
+          }
+        ]
+      }
     ]
   }
 }

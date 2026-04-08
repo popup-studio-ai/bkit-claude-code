@@ -14,7 +14,7 @@
  * @module scripts/permission-request-handler
  */
 
-const { readStdinSync } = require('../lib/core/hook-io');
+const { readStdinSync } = require('../lib/core/io');
 const { debugLog } = require('../lib/core/debug');
 const { getAutomationLevel } = require('../lib/pdca/automation');
 

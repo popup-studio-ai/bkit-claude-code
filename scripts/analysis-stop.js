@@ -8,7 +8,7 @@
  * Converted from: scripts/analysis-stop.sh
  */
 
-const { outputAllow } = require('../lib/core/hook-io');
+const { outputAllow } = require('../lib/core/io');
 
 // Output guidance for next steps after gap analysis
 const message = `📊 Gap Analysis completed.
@@ -21,7 +21,7 @@ Next steps:
 
 // v2.0.5: Comprehensive metrics collection (M1, M2, M3, M7)
 try {
-  const { readStdinSync } = require('../lib/core/hook-io');
+  const { readStdinSync } = require('../lib/core/io');
   const mc = require('../lib/quality/metrics-collector');
   const { extractFeatureFromContext, getPdcaStatusFull } = require('../lib/pdca/status');
   const currentStatus = getPdcaStatusFull();

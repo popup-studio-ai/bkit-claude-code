@@ -11,7 +11,7 @@
  */
 
 const path = require('path');
-const { readStdinSync, outputEmpty } = require('../lib/core/hook-io');
+const { readStdinSync, outputEmpty } = require('../lib/core/io');
 const { debugLog } = require('../lib/core/debug');
 
 let input;

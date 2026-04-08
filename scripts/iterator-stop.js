@@ -14,7 +14,7 @@
  * Converted from: scripts/iterator-stop.sh
  */
 
-const { readStdinSync, outputAllow } = require('../lib/core/hook-io');
+const { readStdinSync, outputAllow } = require('../lib/core/io');
 const { debugLog } = require('../lib/core/debug');
 const { getBkitConfig } = require('../lib/core/config');
 const {

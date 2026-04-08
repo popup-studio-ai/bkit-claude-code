@@ -3,7 +3,7 @@ name: cc-version-analysis
 classification: workflow
 classification-reason: Orchestrates multi-phase research and analysis pipeline independent of model capability
 deprecation-risk: none
-effort: medium
+effort: high
 description: |
   CC CLI version upgrade impact analysis — research changes, analyze bkit impact, generate report.
   Triggers: cc-version-analysis, CC upgrade, version analysis, CC 버전 분석, 버전 영향.

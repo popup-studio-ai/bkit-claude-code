@@ -12,7 +12,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { readStdinSync, outputAllow, outputEmpty } = require('../lib/core/hook-io');
+const { readStdinSync, outputAllow, outputEmpty } = require('../lib/core/io');
 const { debugLog } = require('../lib/core/debug');
 
 let input;

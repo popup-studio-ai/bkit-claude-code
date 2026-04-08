@@ -138,6 +138,11 @@ if (!blocked) {
         details: { rules: result.rules.map(r => r.id) },
         result: 'blocked', destructiveOperation: true
       });
+      // v2.1.1 TC-02: Track destructive blocks in session stats
+      try {
+        const ac = require('../lib/control/automation-controller');
+        ac.incrementStat('destructiveBlocked');
+      } catch (_) {}
     }
   } catch (_) {}
 }

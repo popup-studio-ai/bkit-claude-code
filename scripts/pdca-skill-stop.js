@@ -14,7 +14,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Direct module imports
-const { readStdinSync, outputAllow } = require('../lib/core/hook-io');
+const { readStdinSync, outputAllow } = require('../lib/core/io');
 const { debugLog } = require('../lib/core/debug');
 const { getBkitConfig } = require('../lib/core/config');
 const { getPdcaStatusFull, updatePdcaStatus, extractFeatureFromContext } = require('../lib/pdca/status');

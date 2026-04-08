@@ -38,6 +38,10 @@ function auditPath(filename) {
 function docsPath(phase, feature) {
   const dir = PHASE_MAP[phase];
   if (!dir) return null;
+  // analysis docs are stored directly in the phase dir, not in features/
+  if (phase === 'analysis') {
+    return path.join(DOCS_DIR, dir, `${feature}.${phase}.md`);
+  }
   return path.join(DOCS_DIR, dir, 'features', `${feature}.${phase}.md`);
 }
 

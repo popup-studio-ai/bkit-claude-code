@@ -3,7 +3,7 @@ name: deploy
 classification: workflow
 classification-reason: Deployment execution independent of model capability
 deprecation-risk: none
-effort: medium
+effort: high
 description: |
   Deploy feature to target environment (dev/staging/prod) with level-based strategy.
   Triggers: deploy, /pdca deploy, 배포, デプロイ, 部署, desplegar, déployer, bereitstellen, distribuire.

@@ -32,7 +32,7 @@ function assert(id, condition, description) {
 }
 
 // Load all modules
-const common = require(path.join(PROJECT_ROOT, 'lib/common'));
+const common = require(path.join(PROJECT_ROOT, 'lib/core'));
 const core = require(path.join(PROJECT_ROOT, 'lib/core'));
 const pdca = require(path.join(PROJECT_ROOT, 'lib/pdca'));
 const intent = require(path.join(PROJECT_ROOT, 'lib/intent'));

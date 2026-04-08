@@ -16,7 +16,7 @@ reset();
 console.log('\n=== plugin-data-perf.test.js (6 TC) ===\n');
 
 const { backupToPluginData, restoreFromPluginData, STATE_PATHS } = require('../../lib/core/paths');
-const common = require('../../lib/common');
+const common = require('../../lib/core');
 
 // Save and set temp env
 const origPluginData = process.env.CLAUDE_PLUGIN_DATA;

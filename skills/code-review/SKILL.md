@@ -3,7 +3,7 @@ name: code-review
 classification: workflow
 classification-reason: Process automation persists regardless of model advancement
 deprecation-risk: none
-effort: medium
+effort: high
 description: |
   Code review — analyze quality, detect bugs, ensure best practices with actionable feedback.
   Triggers: code review, quality check, bug detection, 코드 리뷰, 품질 검사.

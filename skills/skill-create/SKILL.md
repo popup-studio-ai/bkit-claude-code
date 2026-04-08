@@ -3,7 +3,7 @@ name: skill-create
 classification: workflow
 classification-reason: "Interactive skill creation workflow with user prompts, file generation, and eval scaffolding. Multi-step process requiring user decisions."
 deprecation-risk: none
-effort: medium
+effort: low
 description: |
   Interactive skill creation workflow for project-local skills.
   Triggers: skill-create, create skill, 스킬 생성, 스킬 만들기.
@@ -63,7 +63,7 @@ name: {name}
 classification: {workflow|capability}
 classification-reason: "{reason based on analysis}"
 deprecation-risk: none
-effort: medium
+effort: low
 description: |
   {Generated description}
   Triggers: {trigger commands}

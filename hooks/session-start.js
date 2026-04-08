@@ -65,76 +65,96 @@ try {
   debugLog('SessionStart', 'Session context module failed', { error: e.message });
 }
 
-// --- 6. PDCA Dashboard: Render progress bar into additionalContext ---
+// --- v2.1.1 UI-02: Build dashboard sections in correct display order ---
+// Order: Session Context → Progress Bar → Workflow Map → Impact View → Agent Panel → Control Panel
+const dashboardSections = [];
+
+// Session Context is already in additionalContext (base content)
+// It will be placed first in the final output
+
 let pdcaStatus = null;
+let agentState = null;
+
+// Load shared state once
 try {
-  const { renderPdcaProgressBar } = require('../lib/ui/progress-bar');
   const { getPdcaStatusFull } = require('../lib/pdca/status');
   pdcaStatus = getPdcaStatusFull();
-  if (pdcaStatus && pdcaStatus.primaryFeature) {
-    const dashboardBar = renderPdcaProgressBar(pdcaStatus, { compact: false });
-    if (dashboardBar) {
-      additionalContext = dashboardBar + '\n\n' + additionalContext;
-    }
-  }
-} catch (e) {
-  debugLog('SessionStart', 'PDCA dashboard rendering failed', { error: e.message });
-}
+} catch (_) {}
 
-// --- 7. v2.0.0 Workflow Map: Render PDCA phase visualization ---
 try {
-  const { renderWorkflowMap } = require('../lib/ui/workflow-map');
-  if (!pdcaStatus) {
-    const { getPdcaStatusFull } = require('../lib/pdca/status');
-    pdcaStatus = getPdcaStatusFull();
+  const fs = require('fs');
+  const agentStatePath = require('path').resolve(process.cwd(), '.bkit/runtime/agent-state.json');
+  if (fs.existsSync(agentStatePath)) {
+    agentState = JSON.parse(fs.readFileSync(agentStatePath, 'utf-8'));
   }
-  if (pdcaStatus && pdcaStatus.primaryFeature) {
-    let agentState = null;
-    try {
-      const fs = require('fs');
-      const agentStatePath = require('path').resolve(process.cwd(), '.bkit/runtime/agent-state.json');
-      if (fs.existsSync(agentStatePath)) {
-        agentState = JSON.parse(fs.readFileSync(agentStatePath, 'utf-8'));
-      }
-    } catch (_) { /* non-critical */ }
+} catch (_) { /* non-critical */ }
 
+if (pdcaStatus && pdcaStatus.primaryFeature) {
+  // 6. Progress Bar
+  try {
+    const { renderPdcaProgressBar } = require('../lib/ui/progress-bar');
+    const dashboardBar = renderPdcaProgressBar(pdcaStatus, { compact: false });
+    if (dashboardBar) dashboardSections.push(dashboardBar);
+  } catch (e) {
+    debugLog('SessionStart', 'PDCA dashboard rendering failed', { error: e.message });
+  }
+
+  // 7. Workflow Map
+  try {
+    const { renderWorkflowMap } = require('../lib/ui/workflow-map');
     const workflowMap = renderWorkflowMap(pdcaStatus, agentState, {
       feature: pdcaStatus.primaryFeature,
       showIteration: true,
       showBranch: true
     });
-    if (workflowMap) {
-      additionalContext = workflowMap + '\n\n' + additionalContext;
-    }
+    if (workflowMap) dashboardSections.push(workflowMap);
+  } catch (e) {
+    debugLog('SessionStart', 'v2.0.0 workflow map rendering failed', { error: e.message });
   }
-} catch (e) {
-  debugLog('SessionStart', 'v2.0.0 workflow map rendering failed', { error: e.message });
-}
 
-// --- 8. v2.0.0 Control Panel: Render automation level display ---
-try {
-  const { renderControlPanel } = require('../lib/ui/control-panel');
-  let controlState = null;
+  // 7.1 v2.1.1 UI-01: Impact View
   try {
-    const fs = require('fs');
-    const controlStatePath = require('path').resolve(process.cwd(), '.bkit/runtime/control-state.json');
-    if (fs.existsSync(controlStatePath)) {
-      controlState = JSON.parse(fs.readFileSync(controlStatePath, 'utf-8'));
-    }
-  } catch (_) { /* non-critical */ }
+    const { renderImpactView } = require('../lib/ui/impact-view');
+    const impactView = renderImpactView(pdcaStatus, null, {});
+    if (impactView) dashboardSections.push(impactView);
+  } catch (e) {
+    debugLog('SessionStart', 'v2.1.1 impact view rendering failed', { error: e.message });
+  }
 
-  // Only render control panel if there is an active PDCA feature
-  if (pdcaStatus && pdcaStatus.primaryFeature) {
+  // 7.2 v2.1.1 UI-01: Agent Panel
+  try {
+    const { renderAgentPanel } = require('../lib/ui/agent-panel');
+    const agentPanel = renderAgentPanel(agentState, {});
+    if (agentPanel) dashboardSections.push(agentPanel);
+  } catch (e) {
+    debugLog('SessionStart', 'v2.1.1 agent panel rendering failed', { error: e.message });
+  }
+
+  // 8. Control Panel (last in dashboard)
+  try {
+    const { renderControlPanel } = require('../lib/ui/control-panel');
+    let controlState = null;
+    try {
+      const fs = require('fs');
+      const controlStatePath = require('path').resolve(process.cwd(), '.bkit/runtime/control-state.json');
+      if (fs.existsSync(controlStatePath)) {
+        controlState = JSON.parse(fs.readFileSync(controlStatePath, 'utf-8'));
+      }
+    } catch (_) { /* non-critical */ }
+
     const controlPanel = renderControlPanel(controlState, null, {
       showShortcuts: false,
       showApprovals: true
     });
-    if (controlPanel) {
-      additionalContext = controlPanel + '\n\n' + additionalContext;
-    }
+    if (controlPanel) dashboardSections.push(controlPanel);
+  } catch (e) {
+    debugLog('SessionStart', 'v2.0.0 control panel rendering failed', { error: e.message });
   }
-} catch (e) {
-  debugLog('SessionStart', 'v2.0.0 control panel rendering failed', { error: e.message });
+}
+
+// v2.1.1 UI-02: Combine in correct order (dashboard above session context)
+if (dashboardSections.length > 0) {
+  additionalContext = dashboardSections.join('\n\n') + '\n\n' + additionalContext;
 }
 
 // --- 9. v2.0.0 Stale Feature Detection: Warn about idle features ---
@@ -155,16 +175,26 @@ try {
 }
 
 // --- Output Response ---
+// v2.1.1 QM-04: sessionTitle with PDCA phase context
+const primaryFeature = onboardingContext.onboardingData.primaryFeature || pdcaStatus?.primaryFeature || null;
+const currentPhase = onboardingContext.onboardingData.phase || pdcaStatus?.currentPhase || null;
+const sessionTitle = primaryFeature
+  ? (currentPhase ? `[bkit] ${currentPhase.toUpperCase()} ${primaryFeature}` : `[bkit] ${primaryFeature}`)
+  : undefined;
+
 const response = {
   systemMessage: `bkit Vibecoding Kit v2.1.0 activated (Claude Code)`,
   hookSpecificOutput: {
     hookEventName: "SessionStart",
     onboardingType: onboardingContext.onboardingData.type,
     hasExistingWork: onboardingContext.onboardingData.hasExistingWork,
-    primaryFeature: onboardingContext.onboardingData.primaryFeature || null,
-    currentPhase: onboardingContext.onboardingData.phase || null,
+    primaryFeature: primaryFeature,
+    currentPhase: currentPhase,
     matchRate: onboardingContext.onboardingData.matchRate || null,
-    additionalContext: additionalContext
+    additionalContext: additionalContext,
+    sessionTitle,
+    // v2.1.1 H-01: Pass AskUserQuestion payload from onboarding
+    userPrompt: onboardingContext.onboardingData.userPrompt || undefined,
   }
 };
 

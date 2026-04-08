@@ -26,69 +26,59 @@ function assert(id, condition, message) {
 console.log('\n=== other-modules.test.js ===\n');
 
 // ============================================
-// common.js 241 exports verification
+// core module exports verification (v2.1.1: lib/common removed in v2.0.0)
 // ============================================
-console.log('\n--- common.js exports ---\n');
+console.log('\n--- core module exports ---\n');
 
 let common;
 try {
-  common = require('../../lib/common');
+  common = require('../../lib/core');
 } catch (e) {
-  console.error('common.js load failed:', e.message);
+  console.error('core module load failed:', e.message);
   process.exit(1);
 }
 
 const commonKeys = Object.keys(common);
-assert('U-OTH-001', commonKeys.length >= 210, `common.js has >= 210 exports (got ${commonKeys.length})`);
+assert('U-OTH-001', commonKeys.length >= 30, `core module has >= 30 exports (got ${commonKeys.length})`);
 
-// 6 new exports verification (v1.6.1 additions via common.js bridge)
-// Note: buildAgentTeamPlan is in coordinator.js directly, not re-exported via common.js
-const newExports = [
-  'PHASE_PATTERN_MAP', 'selectOrchestrationPattern',
-  'composeTeamForPhase', 'generateSpawnTeamCommand', 'createPhaseContext',
-  'shouldRecomposeTeam'
-];
+// v2.1.1: lib/common removed in v2.0.0. Test individual module exports instead.
 
-for (let i = 0; i < newExports.length; i++) {
-  assert(`U-OTH-00${i + 2}`, typeof common[newExports[i]] !== 'undefined',
-    `New export: ${newExports[i]} exists in common.js`);
-}
+// Core module exports (lib/core)
+assert('U-OTH-002', typeof common.debugLog === 'function', 'debugLog in core');
+assert('U-OTH-003', typeof common.getConfig === 'function', 'getConfig in core');
+assert('U-OTH-004', typeof common.loadConfig === 'function', 'loadConfig in core');
+assert('U-OTH-005', typeof common.safeJsonParse === 'function', 'safeJsonParse in core');
+assert('U-OTH-006', typeof common.PLUGIN_ROOT === 'string', 'PLUGIN_ROOT in core');
+assert('U-OTH-007', typeof common.PROJECT_DIR === 'string', 'PROJECT_DIR in core');
+assert('U-OTH-008', typeof common.globalCache === 'object', 'globalCache in core');
+assert('U-OTH-009', typeof common.readStdinSync === 'function', 'readStdinSync in core');
+assert('U-OTH-010', typeof common.parseHookInput === 'function', 'parseHookInput in core');
+assert('U-OTH-011', typeof common.outputAllow === 'function', 'outputAllow in core');
+assert('U-OTH-012', typeof common.outputBlock === 'function', 'outputBlock in core');
 
-// buildAgentTeamPlan is in coordinator.js directly
+// PDCA module exports (separate module, not in core)
+const pdca = require('../../lib/pdca');
+assert('U-OTH-013', typeof pdca.getPdcaStatusFull === 'function', 'getPdcaStatusFull in pdca');
+assert('U-OTH-014', typeof pdca.detectLevel === 'function', 'detectLevel in pdca');
+
+// Intent module exports (separate module)
+const intent = require('../../lib/intent');
+assert('U-OTH-015', typeof intent.detectLanguage === 'function', 'detectLanguage in intent');
+assert('U-OTH-016', typeof intent.matchMultiLangPattern === 'function', 'matchMultiLangPattern in intent');
+assert('U-OTH-017', typeof intent.calculateAmbiguityScore === 'function', 'calculateAmbiguityScore in intent');
+
+// Task module exports (separate module)
+const task = require('../../lib/task');
+assert('U-OTH-018', typeof task.classifyTask === 'function', 'classifyTask in task');
+
+// Team module exports (separate module)
+const team = require('../../lib/team');
+assert('U-OTH-019', typeof team.isTeamModeAvailable === 'function', 'isTeamModeAvailable in team');
+assert('U-OTH-020', typeof team.formatTeamStatus === 'function', 'formatTeamStatus in team');
+
+// Coordinator (separate module)
 const coordinator = require('../../lib/team/coordinator');
-assert('U-OTH-008', typeof coordinator.buildAgentTeamPlan === 'function',
-  'buildAgentTeamPlan exists in coordinator.js (not common.js bridge)');
-
-// Core module exports spot check
-assert('U-OTH-009', typeof common.debugLog === 'function', 'debugLog in common');
-assert('U-OTH-010', typeof common.getConfig === 'function', 'getConfig in common');
-assert('U-OTH-011', typeof common.loadConfig === 'function', 'loadConfig in common');
-assert('U-OTH-012', typeof common.safeJsonParse === 'function', 'safeJsonParse in common');
-assert('U-OTH-013', typeof common.PLUGIN_ROOT === 'string', 'PLUGIN_ROOT in common');
-assert('U-OTH-014', typeof common.PROJECT_DIR === 'string', 'PROJECT_DIR in common');
-assert('U-OTH-015', typeof common.globalCache === 'object', 'globalCache in common');
-
-// PDCA module exports
-assert('U-OTH-016', typeof common.getPdcaStatusFull === 'function', 'getPdcaStatusFull in common');
-assert('U-OTH-017', typeof common.readBkitMemory === 'function', 'readBkitMemory in common');
-assert('U-OTH-018', typeof common.writeBkitMemory === 'function', 'writeBkitMemory in common');
-assert('U-OTH-019', typeof common.detectLevel === 'function', 'detectLevel in common');
-assert('U-OTH-020', typeof common.PDCA_PHASES === 'object', 'PDCA_PHASES in common');
-
-// Intent module exports
-assert('U-OTH-021', typeof common.detectLanguage === 'function', 'detectLanguage in common');
-assert('U-OTH-022', typeof common.matchMultiLangPattern === 'function', 'matchMultiLangPattern in common');
-assert('U-OTH-023', typeof common.containsFilePath === 'function', 'containsFilePath in common');
-assert('U-OTH-024', typeof common.calculateAmbiguityScore === 'function', 'calculateAmbiguityScore in common');
-
-// Task module exports
-assert('U-OTH-025', typeof common.classifyTask === 'function', 'classifyTask in common');
-assert('U-OTH-026', typeof common.generatePdcaTaskSubject === 'function', 'generatePdcaTaskSubject in common');
-
-// Team module exports
-assert('U-OTH-027', typeof common.isTeamModeAvailable === 'function', 'isTeamModeAvailable in common');
-assert('U-OTH-028', typeof common.TEAM_STRATEGIES === 'object', 'TEAM_STRATEGIES in common');
-assert('U-OTH-029', typeof common.formatTeamStatus === 'function', 'formatTeamStatus in common');
+assert('U-OTH-021', typeof coordinator.buildAgentTeamPlan === 'function', 'buildAgentTeamPlan in coordinator');
 
 // ============================================
 // pdca/status.js

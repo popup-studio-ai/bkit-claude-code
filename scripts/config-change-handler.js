@@ -11,7 +11,7 @@
  */
 
 const fs = require('fs');
-const { readStdinSync, outputEmpty } = require('../lib/core/hook-io');
+const { readStdinSync, outputEmpty } = require('../lib/core/io');
 const { debugLog } = require('../lib/core/debug');
 
 // Dangerous config patterns that should be flagged

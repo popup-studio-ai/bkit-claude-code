@@ -3,7 +3,7 @@ name: plan-plus
 classification: hybrid
 classification-reason: Combines workflow automation with capability-dependent features
 deprecation-risk: low
-effort: medium
+effort: high
 description: |
   Brainstorming-enhanced PDCA planning with intent discovery and YAGNI review.
   Triggers: plan-plus, brainstorm, plan plus, intent, 브레인스토밍, 플랜플러스.
