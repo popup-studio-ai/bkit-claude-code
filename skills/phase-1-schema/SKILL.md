@@ -3,6 +3,7 @@ name: phase-1-schema
 classification: capability
 classification-reason: Pattern guidance may overlap with model's built-in knowledge as it improves
 deprecation-risk: medium
+effort: medium
 description: |
   Define project terminology, data structures, entities, and relationships.
   Triggers: schema, data model, entity, terminology, 스키마, 데이터 모델, 용어.

@@ -1,6 +1,6 @@
 # Scripts Overview
 
-> 57 Node.js Scripts used by bkit hooks (v2.0.8)
+> 57 Node.js Scripts used by bkit hooks (v2.1.0)
 >
 > **v1.5.0**: Claude Code Exclusive - Gemini CLI support removed, simplified architecture
 > **v1.4.7**: Core Modularization - lib/ split into 4 modules, Task Management Integration

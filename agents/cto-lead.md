@@ -22,7 +22,7 @@ description: |
 model: opus
 effort: high
 maxTurns: 50
-permissionMode: acceptEdits
+# permissionMode: acceptEdits  # CC ignores for plugin agents
 memory: project
 disallowedTools:
   - "Bash(rm -rf*)"
@@ -46,17 +46,11 @@ tools:
   - Task(gap-detector)
   - Task(report-generator)
   - Task(Explore)
-  - TodoWrite
   - WebSearch
 skills:
   - pdca
   - enterprise
   - bkit-rules
-hooks:
-  Stop:
-    - type: command
-      command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/cto-stop.js"
-      timeout: 10000
 ---
 
 ## CC v2.1.69+ Architecture Note

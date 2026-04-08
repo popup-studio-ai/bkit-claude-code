@@ -3,16 +3,13 @@ name: phase-5-design-system
 classification: capability
 classification-reason: Pattern guidance may overlap with model's built-in knowledge as it improves
 deprecation-risk: medium
+effort: medium
+user-invocable: false
 description: |
   Build platform-independent design systems and consistent component libraries.
   Triggers: design system, component library, design tokens, 디자인 시스템, 컴포넌트.
 imports:
   - ${PLUGIN_ROOT}/templates/pipeline/phase-5-design-system.template.md
-hooks:
-  Stop:
-    - type: command
-      command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/phase5-design-stop.js"
-      timeout: 10000
 agents:
   default: bkit:pipeline-guide
   frontend: bkit:frontend-architect

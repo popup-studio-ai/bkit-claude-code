@@ -3,6 +3,7 @@ name: plan-plus
 classification: hybrid
 classification-reason: Combines workflow automation with capability-dependent features
 deprecation-risk: low
+effort: medium
 description: |
   Brainstorming-enhanced PDCA planning with intent discovery and YAGNI review.
   Triggers: plan-plus, brainstorm, plan plus, intent, 브레인스토밍, 플랜플러스.
@@ -25,11 +26,6 @@ imports:
 next-skill: pdca design
 pdca-phase: plan
 task-template: "[Plan Plus] {feature}"
-hooks:
-  Stop:
-    - type: command
-      command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/plan-plus-stop.js"
-      timeout: 10000
 ---
 
 # Plan Plus — Brainstorming-Enhanced PDCA Planning

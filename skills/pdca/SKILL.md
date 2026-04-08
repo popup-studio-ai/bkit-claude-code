@@ -3,6 +3,7 @@ name: pdca
 classification: workflow
 classification-reason: PDCA process automation independent of model capability evolution
 deprecation-risk: none
+effort: medium
 description: |
   Unified PDCA cycle management — plan, design, do, analyze, iterate, report.
   Triggers: pdca, plan, design, analyze, report, status, next, iterate, 계획, 설계, 분석, 보고서.
@@ -37,11 +38,6 @@ imports:
 next-skill: null
 pdca-phase: null
 task-template: "[PDCA] {feature}"
-hooks:
-  Stop:
-    - type: command
-      command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/pdca-skill-stop.js"
-      timeout: 10000
 ---
 
 # PDCA Skill

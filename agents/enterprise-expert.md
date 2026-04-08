@@ -22,7 +22,7 @@ maxTurns: 30
 linked-from-skills:
   - enterprise: default
   - enterprise: architecture
-permissionMode: acceptEdits
+# permissionMode: acceptEdits  # CC ignores for plugin agents
 memory: project
 disallowedTools:
   - "Bash(rm -rf*)"

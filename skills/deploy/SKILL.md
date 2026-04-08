@@ -1,16 +1,25 @@
 ---
 name: deploy
-description: Deploy feature to target environment (dev/staging/prod) with level-based strategy
-version: 3.0.0
-category: workflow
-agent: bkit:infra-architect
-pdca_phase: do
-triggers:
-  - deploy
-  - /pdca deploy
-  - 배포
-  - デプロイ
-  - 部署
+classification: workflow
+classification-reason: Deployment execution independent of model capability
+deprecation-risk: none
+effort: medium
+description: |
+  Deploy feature to target environment (dev/staging/prod) with level-based strategy.
+  Triggers: deploy, /pdca deploy, 배포, デプロイ, 部署, desplegar, déployer, bereitstellen, distribuire.
+argument-hint: "[feature] [--env dev|staging|prod]"
+user-invocable: true
+agents:
+  orchestrator: bkit:infra-architect
+allowed-tools:
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep
+  - Bash
+pdca-phase: do
+task-template: "[Deploy] {feature}"
 ---
 
 # Deploy Skill

@@ -71,7 +71,10 @@ function readAllJsonLines(dirPath) {
 }
 
 function okResponse(data) {
-  return { content: [{ type: 'text', text: JSON.stringify(data, null, 2) }] };
+  return {
+    content: [{ type: 'text', text: JSON.stringify(data, null, 2) }],
+    _meta: { maxResultSizeChars: 500000 } // ENH-176: override default 2KB cap
+  };
 }
 
 function errResponse(code, message, details) {

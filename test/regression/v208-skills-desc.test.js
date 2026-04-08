@@ -4,7 +4,7 @@
  * Regression Test: v2.0.8 Skills Description 250-char Cap (50 TC)
  * SD-001~050: ENH-162 — All skills description ≤250 chars, proper format
  *
- * @version bkit v2.0.8
+ * @version bkit v2.0.9
  * @cc CC v2.1.86 /skills description 250-char cap
  */
 

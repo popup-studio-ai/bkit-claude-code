@@ -1,16 +1,20 @@
 ---
 name: self-healing
-description: >
-  Living Context based Self-Healing agent.
-  Detects errors from Slack/Sentry, loads 4-Layer context,
+description: |
+  Living Context based Self-Healing agent. Detects errors from Slack/Sentry, loads 4-Layer context,
   fixes code with context-aware Claude Code, verifies with scenario runner,
   generates Auto PR or escalates to human.
+
+  Triggers: self-healing, self heal, auto fix, 자동 수정, 自動修復, 自动修复,
+  auto-reparar, auto-réparer, automatisch reparieren, auto-riparare
 model: opus
 effort: high
 maxTurns: 30
-reasoningEffort: high
-permissionMode: code
+# permissionMode: acceptEdits  # CC ignores for plugin agents
 memory: project
+disallowedTools:
+  - WebSearch
+  - WebFetch
 
 tools:
   - Read
@@ -25,23 +29,6 @@ tools:
 
 linked-from-skills:
   - deploy
-
-hooks:
-  Stop:
-    - command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/heal-hook.js"
-      timeout: 5000
-
-triggers:
-  - self-healing
-  - self heal
-  - auto fix
-  - 자동 수정
-  - 自動修復
-  - 自动修复
-  - auto-reparar
-  - auto-réparer
-  - automatisch reparieren
-  - auto-riparare
 ---
 
 # Self-Healing Agent

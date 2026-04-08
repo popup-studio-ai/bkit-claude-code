@@ -3,6 +3,8 @@ name: phase-4-api
 classification: capability
 classification-reason: Pattern guidance may overlap with model's built-in knowledge as it improves
 deprecation-risk: medium
+effort: medium
+user-invocable: false
 description: |
   Design and implement backend APIs with Zero Script QA validation.
   Triggers: API design, REST API, backend, endpoint, 백엔드 API, API 설계.
@@ -10,11 +12,6 @@ imports:
   - ${PLUGIN_ROOT}/templates/pipeline/phase-4-api.template.md
   - ${PLUGIN_ROOT}/templates/shared/api-patterns.md
   - ${PLUGIN_ROOT}/templates/shared/error-handling-patterns.md
-hooks:
-  Stop:
-    - type: command
-      command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/phase4-api-stop.js"
-      timeout: 10000
 agent: bkit:qa-monitor
 allowed-tools:
   - Read

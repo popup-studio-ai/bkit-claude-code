@@ -57,7 +57,7 @@ assert('CB-002',
 const definedExports = common ? Object.values(common).filter(v => v !== undefined).length : 0;
 assert('CB-003',
   definedExports > 200,
-  `lib/common.js has >200 defined (non-undefined) exports (actual: ${definedExports})`
+  `lib/common.js removed (v2.1.0), was: >200 defined (non-undefined) exports (actual: ${definedExports})`
 );
 
 // CB-004: common.js exports include function types

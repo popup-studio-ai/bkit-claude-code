@@ -3,6 +3,7 @@ name: cc-version-analysis
 classification: workflow
 classification-reason: Orchestrates multi-phase research and analysis pipeline independent of model capability
 deprecation-risk: none
+effort: medium
 description: |
   CC CLI version upgrade impact analysis — research changes, analyze bkit impact, generate report.
   Triggers: cc-version-analysis, CC upgrade, version analysis, CC 버전 분석, 버전 영향.
@@ -12,9 +13,7 @@ user-invocable: true
 agents:
   research: bkit:cc-version-researcher
   analyze: bkit:bkit-impact-analyst
-  brainstorm: null
   report: bkit:report-generator
-  default: null
 
 allowed-tools:
   - Read
@@ -42,11 +41,6 @@ next-skill: pdca plan
 pdca-phase: null
 task-template: "[CC-Version-Analysis] CC v{from} → v{to}"
 
-hooks:
-  Stop:
-    - type: command
-      command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/unified-stop.js"
-      timeout: 10000
 ---
 
 # CC Version Analysis — Claude Code CLI 버전 영향 분석 워크플로우

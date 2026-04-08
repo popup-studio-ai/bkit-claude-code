@@ -3,16 +3,13 @@ name: phase-9-deployment
 classification: capability
 classification-reason: Pattern guidance may overlap with model's built-in knowledge as it improves
 deprecation-risk: medium
+effort: medium
+user-invocable: false
 description: |
   Deploy to production — CI/CD pipelines, environment config, deployment strategies.
   Triggers: deployment, CI/CD, production, Vercel, 배포, 프로덕션.
 imports:
   - ${PLUGIN_ROOT}/templates/pipeline/phase-9-deployment.template.md
-hooks:
-  Stop:
-    - type: command
-      command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/phase9-deploy-stop.js"
-      timeout: 10000
 agent: bkit:infra-architect
 allowed-tools:
   - Read

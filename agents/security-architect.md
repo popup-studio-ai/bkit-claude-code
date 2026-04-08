@@ -21,7 +21,7 @@ description: |
 model: opus
 effort: high
 maxTurns: 30
-permissionMode: plan
+# permissionMode: plan  # CC ignores for plugin agents
 memory: project
 disallowedTools:
   - Bash

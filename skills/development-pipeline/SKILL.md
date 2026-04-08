@@ -3,6 +3,7 @@ name: development-pipeline
 classification: workflow
 classification-reason: Process automation persists regardless of model advancement
 deprecation-risk: none
+effort: medium
 description: |
   Complete 9-phase development pipeline guide — from schema to deployment.
   Triggers: development pipeline, where to start, phase, 개발 파이프라인, 순서, 시작.
@@ -12,7 +13,6 @@ allowed-tools:
   - Write
   - Glob
   - Grep
-  - TodoWrite
 user-invocable: true
 # hooks: Managed by hooks/hooks.json (unified-stop.js handles development-pipeline) - GitHub #9354 workaround
 ---

@@ -29,19 +29,14 @@ skills_preload:
   - phase-2-convention
   - phase-8-review
   - code-review
-permissionMode: plan
+# permissionMode: plan  # CC ignores for plugin agents
 memory: project
 tools:
   - Read
   - Glob
   - Grep
-  - Task
+  - Task(Explore)
   - LSP
-hooks:
-  Stop:
-    - type: command
-      command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/analysis-stop.js"
-      timeout: 10000
 ---
 
 # Code Analysis Agent

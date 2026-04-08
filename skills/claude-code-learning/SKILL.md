@@ -3,6 +3,7 @@ name: claude-code-learning
 classification: capability
 classification-reason: Highly likely to be subsumed by model's native capabilities
 deprecation-risk: high
+effort: medium
 description: |
   Claude Code learning — configure and optimize Claude Code settings, tips, and workflows.
   Triggers: learn, setup, claude code, optimize, 학습, 설정, 최적화.
@@ -22,11 +23,6 @@ imports:
 next-skill: null
 pdca-phase: null
 task-template: "[Learn] Claude Code {level}"
-hooks:
-  Stop:
-    - type: command
-      command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/learning-stop.js"
-      timeout: 10000
 ---
 
 # Claude Code Learning Skill

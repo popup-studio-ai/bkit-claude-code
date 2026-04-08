@@ -3,6 +3,7 @@ name: code-review
 classification: workflow
 classification-reason: Process automation persists regardless of model advancement
 deprecation-risk: none
+effort: medium
 description: |
   Code review — analyze quality, detect bugs, ensure best practices with actionable feedback.
   Triggers: code review, quality check, bug detection, 코드 리뷰, 품질 검사.
@@ -21,11 +22,6 @@ imports:
 next-skill: null
 pdca-phase: check
 task-template: "[Code-Review] {feature}"
-hooks:
-  Stop:
-    - type: command
-      command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/code-review-stop.js"
-      timeout: 10000
 ---
 
 # Code Review Skill

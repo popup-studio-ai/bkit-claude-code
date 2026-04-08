@@ -3,16 +3,12 @@ name: phase-6-ui-integration
 classification: capability
 classification-reason: Pattern guidance may overlap with model's built-in knowledge as it improves
 deprecation-risk: medium
+effort: medium
 description: |
   Implement frontend UI and integrate with backend APIs — state management and API clients.
   Triggers: UI integration, frontend-backend, API client, 프론트엔드 통합, UI 구현.
 imports:
   - ${PLUGIN_ROOT}/templates/pipeline/phase-6-ui.template.md
-hooks:
-  Stop:
-    - type: command
-      command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/phase6-ui-stop.js"
-      timeout: 10000
 agents:
   default: bkit:pipeline-guide
   frontend: bkit:frontend-architect

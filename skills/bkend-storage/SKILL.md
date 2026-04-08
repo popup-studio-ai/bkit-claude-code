@@ -3,6 +3,7 @@ name: bkend-storage
 classification: capability
 classification-reason: Pattern guidance may overlap with model's built-in knowledge as it improves
 deprecation-risk: medium
+effort: medium
 description: |
   bkend.ai file storage — upload (presigned URL), download (CDN), visibility levels, buckets.
   Triggers: bkend file, upload, download, presigned URL, storage, 파일 업로드, 스토리지.

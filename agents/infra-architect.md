@@ -21,7 +21,7 @@ effort: high
 maxTurns: 30
 linked-from-skills:
   - enterprise: infra
-permissionMode: acceptEdits
+# permissionMode: acceptEdits  # CC ignores for plugin agents
 memory: project
 disallowedTools:
   - "Bash(rm -rf*)"
@@ -34,7 +34,7 @@ tools:
   - Glob
   - Grep
   - Bash
-  - Task
+  - Task(Explore)
 skills:
   - enterprise
 ---

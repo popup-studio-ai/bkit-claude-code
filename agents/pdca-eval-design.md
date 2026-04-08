@@ -8,11 +8,13 @@ model: sonnet
 memory: project
 effort: medium
 maxTurns: 20
+# permissionMode: plan  # CC ignores for plugin agents
 tools:
   - Read
   - Glob
   - Grep
   - Write
+  - Edit
 ---
 
 # PDCA Evaluation Agent: Design Phase

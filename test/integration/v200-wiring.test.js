@@ -308,8 +308,8 @@ try { config = JSON.parse(bkitConfig); } catch (_) {}
 
 // VW-036: bkit.config.json parses as valid JSON
 assert('VW-036',
-  config !== null && config.version === '2.0.8',
-  'bkit.config.json parses and has version 2.0.8'
+  config !== null && config.version === '2.1.0',
+  'bkit.config.json parses and has version 2.0.9'
 );
 
 // VW-037: bkit.config.json has automation section

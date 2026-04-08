@@ -13,7 +13,7 @@ description: |
 model: sonnet
 effort: medium
 maxTurns: 25
-permissionMode: plan
+# permissionMode: plan  # CC ignores for plugin agents
 memory: project
 tools:
   - Read
@@ -21,15 +21,8 @@ tools:
   - Grep
   - WebSearch
   - WebFetch
-  - TodoWrite
 disallowedTools:
   - Bash
-  - Write
-hooks:
-  Stop:
-    - type: command
-      command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/pdca-skill-stop.js"
-      timeout: 10000
 ---
 
 ## PM Discovery Agent

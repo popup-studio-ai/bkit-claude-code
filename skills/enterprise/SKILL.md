@@ -3,6 +3,7 @@ name: enterprise
 classification: capability
 classification-reason: Specialized domain knowledge with limited model overlap
 deprecation-risk: low
+effort: medium
 description: |
   Enterprise-grade systems with microservices, Kubernetes, Terraform, and AI Native methodology.
   Triggers: microservices, k8s, terraform, monorepo, AI native, 마이크로서비스, init enterprise.

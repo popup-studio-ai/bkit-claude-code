@@ -3,6 +3,7 @@ name: dynamic
 classification: capability
 classification-reason: Pattern guidance may overlap with model's built-in knowledge as it improves
 deprecation-risk: medium
+effort: medium
 description: |
   Fullstack development with bkend.ai BaaS — authentication, database, API integration.
   Triggers: fullstack, BaaS, login, signup, database, web app, 풀스택, 인증, init dynamic.

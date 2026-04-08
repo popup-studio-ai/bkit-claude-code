@@ -4,7 +4,7 @@
  * Regression Test: v2.0.8 Version Consistency (25 TC)
  * VC2-001~025: Version numbers, CC compatibility, hook if field docs
  *
- * @version bkit v2.0.8
+ * @version bkit v2.0.9
  */
 
 const fs = require('fs');
@@ -26,7 +26,7 @@ const sessionCtx = fs.readFileSync(path.join(BASE_DIR, 'hooks', 'startup', 'sess
 const sessionStart = fs.readFileSync(path.join(BASE_DIR, 'hooks', 'session-start.js'), 'utf-8');
 const contextEng = fs.readFileSync(path.join(BASE_DIR, 'bkit-system', 'philosophy', 'context-engineering.md'), 'utf-8');
 
-const EXPECTED_VERSION = '2.0.8';
+const EXPECTED_VERSION = '2.1.0';
 
 // ============================================================
 // VC2-001~005: Config Version Consistency
@@ -67,11 +67,11 @@ assert('VC2-008', pluginJson.version === bkitConfig.version,
 // ============================================================
 console.log('\n--- VC2-009~012: CC Compatibility ---');
 
-assert('VC2-009', pluginJson.engines && pluginJson.engines['claude-code'],
-  'plugin.json has engines.claude-code field');
+assert('VC2-009', !pluginJson.engines /* v2.1.0: engines removed per CC #17272 */,
+  'plugin.json engines field removed (CC #17272 Not Planned)');
 
-assert('VC2-010', pluginJson.engines?.['claude-code']?.includes('2.1.78'),
-  `engines.claude-code = "${pluginJson.engines?.['claude-code']}" (requires >= 2.1.78)`);
+assert('VC2-010', !pluginJson.engines /* v2.1.0: engines removed */,
+  `engines.claude-code = "${pluginJson.engines?.['claude-code']}" (engines removed per CC #17272)`);
 
 // VC2-011: 18 hook events in hooks.json
 const hookEvents = Object.keys(hooksJson.hooks || {});

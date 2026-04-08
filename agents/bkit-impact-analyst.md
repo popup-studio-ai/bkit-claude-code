@@ -22,7 +22,7 @@ description: |
 model: opus
 effort: high
 maxTurns: 40
-permissionMode: plan
+# permissionMode: plan  # CC ignores for plugin agents
 memory: project
 disallowedTools:
   - "Bash(rm*)"
@@ -36,16 +36,10 @@ tools:
   - Bash
   - Task(Explore)
   - Task(code-analyzer)
-  - TodoWrite
 linked-from-skills:
   - cc-version-analysis: analyze
 skills_preload:
   - bkit-rules
-hooks:
-  Stop:
-    - type: command
-      command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/subagent-stop-handler.js"
-      timeout: 5000
 ---
 
 ## bkit Impact Analyst Agent

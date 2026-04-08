@@ -25,7 +25,7 @@ imports:
   - ${PLUGIN_ROOT}/templates/shared/api-patterns.md
 context: fork
 mergeResult: false
-permissionMode: plan
+# permissionMode: plan  # CC ignores for plugin agents
 memory: project
 disallowedTools:
   - Write

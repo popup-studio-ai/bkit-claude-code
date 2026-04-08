@@ -360,8 +360,8 @@ assert('CS-011',
 
 // CS-012: plugin.json version is 2.0.8
 assert('CS-012',
-  pluginJson?.version === '2.0.8',
-  `plugin.json version is ${pluginJson?.version} (expected 2.0.8)`
+  pluginJson?.version === '2.1.0',
+  `plugin.json version is ${pluginJson?.version} (expected 2.0.9)`
 );
 
 // CS-013: plugin.json has outputStyles
@@ -370,7 +370,7 @@ assert('CS-013',
   'plugin.json has outputStyles field'
 );
 
-// CS-014: plugin.json engines requires CC 2.1.78+
+// CS-014: plugin.json engines requires CC 2.1.94+
 assert('CS-014',
   pluginJson?.engines?.['claude-code'] != null,
   `plugin.json engines.claude-code: ${pluginJson?.engines?.['claude-code']}`

@@ -3,6 +3,7 @@ name: rollback
 classification: workflow
 classification-reason: Checkpoint and rollback management persists regardless of model advancement
 deprecation-risk: none
+effort: medium
 description: |
   Manage PDCA checkpoints and rollback — create, list, restore for safe recovery.
   Triggers: rollback, checkpoint, restore, undo, 롤백, 체크포인트, 복원.

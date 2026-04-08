@@ -25,7 +25,7 @@ imports:
   - ${PLUGIN_ROOT}/templates/shared/api-patterns.md
 context: fork
 mergeResult: false
-permissionMode: plan
+# permissionMode: plan  # CC ignores for plugin agents
 memory: project
 disallowedTools:
   - Write
@@ -39,11 +39,6 @@ skills:
   - bkit-templates
   - phase-2-convention
   - pdca
-hooks:
-  Stop:
-    - type: command
-      command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/gap-detector-stop.js"
-      timeout: 10000
 ---
 
 # Design-Implementation Gap Detection Agent

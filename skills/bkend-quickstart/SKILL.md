@@ -3,6 +3,7 @@ name: bkend-quickstart
 classification: capability
 classification-reason: Pattern guidance may overlap with model's built-in knowledge as it improves
 deprecation-risk: medium
+effort: medium
 description: |
   bkend.ai onboarding — MCP setup, resource hierarchy, tenant/user model, first project.
   Triggers: bkend quickstart, onboarding, setup, MCP, 시작하기, 온보딩.

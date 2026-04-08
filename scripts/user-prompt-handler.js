@@ -14,6 +14,7 @@ const { debugLog } = require('../lib/core/debug');
 const { PLUGIN_ROOT } = require('../lib/core/platform');
 const { detectNewFeatureIntent, matchImplicitAgentTrigger, matchImplicitSkillTrigger } = require('../lib/intent/trigger');
 const { calculateAmbiguityScore } = require('../lib/intent/ambiguity');
+const { getPdcaStatusFull } = require('../lib/pdca/status');
 
 // v1.4.2: Import Resolver (FR-02)
 let importResolver;
@@ -218,7 +219,19 @@ debugLog('UserPrompt', 'Hook completed', {
 
 if (contextParts.length > 0) {
   const context = truncateContext(contextParts.join(' | '));
-  outputAllow(context, 'UserPromptSubmit');
+  // ENH-187: Auto session title based on active PDCA feature (CC v2.1.94+)
+  const pdcaStatus = getPdcaStatusFull();
+  const feature = pdcaStatus?.primaryFeature || pdcaStatus?.feature || null;
+  const sessionTitle = feature ? `[bkit] ${feature}` : undefined;
+  console.log(JSON.stringify({
+    success: true,
+    message: context || undefined,
+    hookSpecificOutput: {
+      hookEventName: 'UserPromptSubmit',
+      additionalContext: context || undefined,
+      sessionTitle
+    }
+  }));
 } else {
   outputEmpty();
 }

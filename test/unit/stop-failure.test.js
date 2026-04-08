@@ -26,19 +26,21 @@ console.log('\n--- Section 1: Script & Dependencies ---');
 const scriptPath = path.join(SCRIPTS_DIR, 'stop-failure-handler.js');
 assert('SF-01', fs.existsSync(scriptPath), 'stop-failure-handler.js file exists');
 
-// SF-02: common.js dependency functions exist
-let common;
+// SF-02: core module dependency functions exist (v2.1.0: split from common.js)
+let coreIo, coreDebug, pdcaStatus;
 try {
-  common = require('../../lib/common');
+  coreIo = require('../../lib/core/io');
+  coreDebug = require('../../lib/core/debug');
+  pdcaStatus = require('../../lib/pdca/status');
 } catch (e) {
-  common = null;
+  coreIo = null;
 }
 assert('SF-02',
-  common &&
-  typeof common.readStdinSync === 'function' &&
-  typeof common.debugLog === 'function' &&
-  typeof common.getPdcaStatusFull === 'function' &&
-  typeof common.outputAllow === 'function',
+  coreIo &&
+  typeof coreIo.readStdinSync === 'function' &&
+  typeof coreDebug.debugLog === 'function' &&
+  typeof pdcaStatus.getPdcaStatusFull === 'function' &&
+  typeof coreIo.outputAllow === 'function',
   'common.js has readStdinSync, debugLog, getPdcaStatusFull, outputAllow'
 );
 

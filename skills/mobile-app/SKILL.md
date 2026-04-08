@@ -3,6 +3,7 @@ name: mobile-app
 classification: capability
 classification-reason: Specialized domain knowledge with limited model overlap
 deprecation-risk: low
+effort: medium
 description: |
   Mobile app development guide — React Native, Flutter, Expo for cross-platform.
   Triggers: mobile app, React Native, Flutter, Expo, iOS, Android, 모바일 앱.

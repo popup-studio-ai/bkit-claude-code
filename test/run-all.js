@@ -2,21 +2,23 @@
 'use strict';
 
 /**
- * bkit v2.0.8 Comprehensive Test Runner
- * ~3370+ TC across 10 perspectives
+ * bkit v2.1.0 Comprehensive Test Runner
+ * ~3880+ TC across 12 perspectives
  *
  * Usage:
- *   node test/run-all.js                    # Run all tests (Node layer only, ~1850 TC)
- *   node test/run-all.js --unit             # Run unit tests only (~850 TC)
- *   node test/run-all.js --integration      # Run integration tests only (~200 TC)
- *   node test/run-all.js --security         # Run security tests only (~130 TC)
- *   node test/run-all.js --regression       # Run regression tests only (~260 TC)
- *   node test/run-all.js --performance      # Run performance tests only (~126 TC)
+ *   node test/run-all.js                    # Run all tests (Node layer only, ~2360 TC)
+ *   node test/run-all.js --unit             # Run unit tests only (~1100 TC)
+ *   node test/run-all.js --integration      # Run integration tests only (~560 TC)
+ *   node test/run-all.js --security         # Run security tests only (~250 TC)
+ *   node test/run-all.js --regression       # Run regression tests only (~530 TC)
+ *   node test/run-all.js --performance      # Run performance tests only (~182 TC)
  *   node test/run-all.js --philosophy       # Run philosophy tests only (60 TC)
- *   node test/run-all.js --ux              # Run UX tests only (60 TC)
- *   node test/run-all.js --e2e             # Run E2E tests (node portion, 20 TC)
+ *   node test/run-all.js --ux              # Run UX tests only (~185 TC)
+ *   node test/run-all.js --e2e             # Run E2E tests (node portion, ~90 TC)
  *   node test/run-all.js --architecture    # Run architecture tests only (~100 TC)
  *   node test/run-all.js --controllable-ai # Run controllable AI tests only (~80 TC)
+ *   node test/run-all.js --behavioral      # Run behavioral tests only (~45 TC) ★NEW
+ *   node test/run-all.js --contract        # Run contract tests only (~40 TC) ★NEW
  *
  * For full E2E including claude -p (80 TC):
  *   bash test/e2e/run-e2e.sh
@@ -89,8 +91,22 @@ const CATEGORIES = {
       'unit/v200-mcp-servers.test.js',
       'unit/v200-workflows.test.js',
       'unit/session-guide.test.js',
+      // v2.1.0 comprehensive test strategy additions
+      'unit/paths.test.js',
+      'unit/context-loader.test.js',
+      'unit/impact-analyzer.test.js',
+      'unit/invariant-checker.test.js',
+      'unit/ops-metrics.test.js',
+      'unit/scenario-runner.test.js',
+      'unit/import-resolver.test.js',
+      'unit/skill-orchestrator.test.js',
+      'unit/permission-manager.test.js',
+      'unit/deploy-state-machine.test.js',
+      'unit/strategy.test.js',
+      'unit/cto-logic.test.js',
+      'unit/task-queue.test.js',
     ],
-    expected: 1438,
+    expected: 1700,
   },
   integration: {
     name: 'Integration Tests',
@@ -113,8 +129,15 @@ const CATEGORIES = {
       'integration/pm-skills-integration.test.js',
       'integration/impact-analysis-section.test.js',
       'integration/context-anchor-propagation.test.js',
+      // v2.1.0 hook behavioral tests
+      'integration/hook-behavioral-stop.test.js',
+      'integration/hook-behavioral-user-prompt.test.js',
+      'integration/hook-behavioral-pre-write.test.js',
+      // v2.1.0 MCP functional tests
+      'integration/mcp-pdca-functional.test.js',
+      'integration/mcp-analysis-functional.test.js',
     ],
-    expected: 504,
+    expected: 560,
   },
   security: {
     name: 'Security Tests',
@@ -129,8 +152,12 @@ const CATEGORIES = {
       'security/scope-limiter.test.js',
       'security/trust-score-safety.test.js',
       'security/hook-path-quoting.test.js',
+      // v2.1.0 security additions
+      'security/path-traversal.test.js',
+      'security/integrity-verification.test.js',
+      'security/hook-security.test.js',
     ],
-    expected: 217,
+    expected: 249,
   },
   regression: {
     name: 'Regression Tests',
@@ -153,8 +180,12 @@ const CATEGORIES = {
       'regression/pr55-handoff-loss.test.js',
       'regression/v208-skills-desc.test.js',
       'regression/v208-version-consistency.test.js',
+      // v2.1.0 regression additions
+      'regression/agents-32.test.js',
+      'regression/skills-37.test.js',
+      'regression/agents-effort-32.test.js',
     ],
-    expected: 516,
+    expected: 531,
   },
   performance: {
     name: 'Performance Tests',
@@ -169,8 +200,12 @@ const CATEGORIES = {
       'performance/state-store-perf.test.js',
       'performance/audit-write-perf.test.js',
       'performance/ui-render-perf.test.js',
+      // v2.1.0 performance additions
+      'performance/mcp-response-perf.test.js',
+      'performance/hook-real-execution.test.js',
+      'performance/memory-leak.test.js',
     ],
-    expected: 160,
+    expected: 182,
   },
   philosophy: {
     name: 'Philosophy Tests',
@@ -200,8 +235,12 @@ const CATEGORIES = {
       'ux/agent-panel-ux.test.js',
       'ux/control-panel-ux.test.js',
       'ux/skill-commands.test.js',
+      // v2.1.0 UX additions
+      'ux/accessibility.test.js',
+      'ux/cjk-rendering.test.js',
+      'ux/language-detection-full.test.js',
     ],
-    expected: 160,
+    expected: 185,
   },
   e2e: {
     name: 'E2E Tests (Node)',
@@ -210,8 +249,11 @@ const CATEGORIES = {
       'e2e/checkpoint-rollback.test.js',
       'e2e/pdca-auto-cycle.test.js',
       'e2e/error-recovery.test.js',
+      // v2.1.0 E2E additions
+      'e2e/pdca-lifecycle.test.js',
+      'e2e/pdca-status-persistence.test.js',
     ],
-    expected: 61,
+    expected: 90,
   },
   architecture: {
     name: 'Architecture Tests',
@@ -233,6 +275,25 @@ const CATEGORIES = {
       'controllable-ai/always-interruptible.test.js',
     ],
     expected: 80,
+  },
+  // v2.1.0 new categories
+  behavioral: {
+    name: 'Behavioral Tests',
+    files: [
+      'behavioral/agent-triggers.test.js',
+      'behavioral/skill-orchestration.test.js',
+      'behavioral/team-coordination.test.js',
+    ],
+    expected: 45,
+  },
+  contract: {
+    name: 'Contract Tests',
+    files: [
+      'contract/hook-input-schema.test.js',
+      'contract/hook-output-schema.test.js',
+      'contract/mcp-protocol.test.js',
+    ],
+    expected: 40,
   },
 };
 

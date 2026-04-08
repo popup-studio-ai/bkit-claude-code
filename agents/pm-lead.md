@@ -14,7 +14,7 @@ description: |
 model: opus
 effort: high
 maxTurns: 30
-permissionMode: plan
+# permissionMode: plan  # CC ignores for plugin agents
 memory: project
 tools:
   - Read
@@ -28,16 +28,10 @@ tools:
   - Task(pm-research)
   - Task(pm-prd)
   - Task(Explore)
-  - TodoWrite
   - WebSearch
 skills:
   - pdca
   - bkit-rules
-hooks:
-  Stop:
-    - type: command
-      command: "node ${CLAUDE_PLUGIN_ROOT}/scripts/pdca-skill-stop.js"
-      timeout: 10000
 ---
 
 ## CC v2.1.69+ Architecture Note

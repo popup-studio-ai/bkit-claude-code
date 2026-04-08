@@ -3,6 +3,7 @@ name: audit
 classification: workflow
 classification-reason: Audit logging persists regardless of model advancement
 deprecation-risk: none
+effort: medium
 description: |
   View audit logs, decision traces, and session history for AI transparency.
   Triggers: audit, log, decision trace, history, 감사 로그, 결정 추적.

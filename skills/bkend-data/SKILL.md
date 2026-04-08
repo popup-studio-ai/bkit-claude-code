@@ -3,6 +3,7 @@ name: bkend-data
 classification: capability
 classification-reason: Pattern guidance may overlap with model's built-in knowledge as it improves
 deprecation-risk: medium
+effort: medium
 description: |
   bkend.ai database — CRUD, column types, filtering, sorting, relations, indexing.
   Triggers: bkend table, CRUD, column, filter, sort, relation, 테이블, 데이터.

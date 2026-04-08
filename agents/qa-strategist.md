@@ -21,7 +21,7 @@ description: |
 model: sonnet
 effort: medium
 maxTurns: 20
-permissionMode: plan
+# permissionMode: plan  # CC ignores for plugin agents
 memory: project
 disallowedTools:
   - Write
@@ -35,7 +35,6 @@ tools:
   - Task(gap-detector)
   - Task(code-analyzer)
   - Task(Explore)
-  - TodoWrite
 skills:
   - pdca
   - zero-script-qa

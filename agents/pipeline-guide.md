@@ -20,7 +20,7 @@ description: |
 model: sonnet
 effort: medium
 maxTurns: 20
-permissionMode: plan
+# permissionMode: plan  # CC ignores for plugin agents
 memory: user
 disallowedTools:
   - Write
@@ -35,7 +35,7 @@ when_to_use: |
   Deactivation conditions:
   - When experienced developer says they want to proceed freely
   - Non-development AI work (documents, analysis, etc.)
-tools: [Read, Glob, Grep, TodoWrite]
+tools: [Read, Glob, Grep]
 color: cyan
 skills:
   - development-pipeline

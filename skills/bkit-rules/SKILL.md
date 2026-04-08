@@ -3,6 +3,7 @@ name: bkit-rules
 classification: workflow
 classification-reason: Process automation persists regardless of model advancement
 deprecation-risk: none
+effort: medium
 description: |
   Core rules for bkit — PDCA methodology, level detection, agent triggering, quality standards.
   Triggers: bkit rules, core rules, methodology, 핵심 규칙, PDCA 규칙.
@@ -10,6 +11,10 @@ imports:
   - ${PLUGIN_ROOT}/templates/shared/naming-conventions.md
 # hooks: Managed by hooks/hooks.json (pre-write.js, unified-write-post.js) - GitHub #9354 workaround
 user-invocable: false
+allowed-tools:
+  - Read
+  - Glob
+  - Grep
 ---
 
 # bkit Core Rules

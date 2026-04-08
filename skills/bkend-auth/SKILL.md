@@ -3,6 +3,7 @@ name: bkend-auth
 classification: capability
 classification-reason: Pattern guidance may overlap with model's built-in knowledge as it improves
 deprecation-risk: medium
+effort: medium
 description: |
   bkend.ai authentication — email/social login, JWT tokens, RBAC, session management.
   Triggers: bkend auth, login, signup, JWT, RBAC, 인증, 로그인, 회원가입.

@@ -3,6 +3,7 @@ name: bkend-cookbook
 classification: capability
 classification-reason: Pattern guidance may overlap with model's built-in knowledge as it improves
 deprecation-risk: medium
+effort: medium
 description: |
   bkend.ai project tutorials (todo to SaaS) and common error troubleshooting.
   Triggers: bkend tutorial, cookbook, troubleshooting, 튜토리얼, 에러 해결.

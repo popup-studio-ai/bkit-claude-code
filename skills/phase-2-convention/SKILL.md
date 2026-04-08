@@ -3,6 +3,7 @@ name: phase-2-convention
 classification: workflow
 classification-reason: Process automation persists regardless of model advancement
 deprecation-risk: none
+effort: medium
 description: |
   Define coding rules, conventions, and standards for AI collaboration.
   Triggers: convention, coding style, lint, rules, 코딩 규칙, 컨벤션.

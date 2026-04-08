@@ -21,7 +21,7 @@ description: |
 model: sonnet
 effort: medium
 maxTurns: 20
-permissionMode: acceptEdits
+# permissionMode: acceptEdits  # CC ignores for plugin agents
 memory: project
 disallowedTools:
   - "Bash(rm -rf*)"

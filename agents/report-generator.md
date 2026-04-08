@@ -21,7 +21,7 @@ effort: low
 maxTurns: 15
 linked-from-skills:
   - pdca: report
-permissionMode: acceptEdits
+# permissionMode: acceptEdits  # CC ignores for plugin agents
 memory: project
 disallowedTools:
   - Bash

@@ -3,6 +3,8 @@ name: phase-7-seo-security
 classification: capability
 classification-reason: Pattern guidance may overlap with model's built-in knowledge as it improves
 deprecation-risk: medium
+effort: medium
+user-invocable: false
 description: |
   Enhance SEO (meta tags, semantic HTML) and security (vulnerability checks, hardening).
   Triggers: SEO, security, meta tags, vulnerability, 검색 최적화, 보안.

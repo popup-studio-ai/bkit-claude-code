@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-hooks.json",
-  "description": "bkit Vibecoding Kit v2.0.8 - Claude Code",
+  "description": "bkit Vibecoding Kit v2.1.0 - Claude Code",
   "hooks": {
     "SessionStart": [
       {
@@ -234,6 +234,28 @@
             "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/notification-handler.js\"",
             "timeout": 2000
+          }
+        ]
+      }
+    ],
+    "CwdChanged": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/cwd-changed-handler.js\"",
+            "timeout": 3000
+          }
+        ]
+      }
+    ],
+    "TaskCreated": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/task-created-handler.js\"",
+            "timeout": 3000
           }
         ]
       }
