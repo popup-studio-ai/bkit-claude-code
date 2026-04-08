@@ -146,9 +146,9 @@ After:  L0-L4 levels + trust score + emergency stop → Controllable AI
 
 ## Current Implementation (v2.0.0)
 
-> **v2.0.0**: AI Native Development OS — Declarative PDCA state machine, YAML workflow DSL,
+> **v2.1.0**: AI Native Development OS — Declarative PDCA state machine, YAML workflow DSL,
 > L0-L4 controllable AI, CLI dashboard, audit logging, quality gates, MCP servers,
-> checkpoint/rollback, destructive operation detection, 37 Skills, 32 Agents, 18 Hook Events
+> checkpoint/rollback, destructive operation detection, 37 Skills, 32 Agents, 20 Hook Events
 
 ### Component Counts
 
@@ -156,13 +156,13 @@ After:  L0-L4 levels + trust score + emergency stop → Controllable AI
 |-----------|-------|----------|
 | Skills | 37 (18 Workflow / 18 Capability / 1 Hybrid) | `skills/*/SKILL.md` |
 | Agents | 32 (11 opus / 19 sonnet / 2 haiku) | `agents/*.md` |
-| Hook Events | 18 | `hooks/hooks.json` |
-| Hook Scripts | 57 | `hooks/`, `scripts/` |
-| lib/ Modules | 88 files across 11 subdirs (~620+ exports) | `lib/` |
+| Hook Events | 20 | `hooks/hooks.json` |
+| Hook Scripts | 59 | `hooks/`, `scripts/` |
+| lib/ Modules | 72 files across 11 subdirs (607 exports) | `lib/` |
 | MCP Servers | 2 (16 tools) | `servers/` |
 | Workflow Presets | 3 (default, enterprise, hotfix) | `.bkit/workflows/` |
 | Output Styles | 4 | `output-styles/` |
-| Tests | 130 files (~2,645 TC) | `test/` |
+| Tests | 194 files (~4,028 TC) | `test/` |
 
 ### v2.0.0 Architecture (New Modules)
 

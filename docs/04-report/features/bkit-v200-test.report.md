@@ -1,6 +1,6 @@
 # bkit v2.0.5 Comprehensive Test Report
 
-> Generated: 2026-04-08T06:21:28.194Z
+> Generated: 2026-04-08T06:54:37.351Z
 > Total: 3042 TC, 3010 PASS, 24 FAIL, 13 SKIP
 > Pass Rate: 98.9%
 
@@ -20,13 +20,15 @@
 | E2E Tests (Node) | 61 | 61 | 0 | 0 | 100.0% PASS |
 | Architecture Tests | 100 | 100 | 0 | 0 | 100.0% PASS |
 | Controllable AI Tests | 80 | 80 | 0 | 0 | 100.0% PASS |
+| behavioral | 0 | 0 | 0 | 0 | 0.0% PASS |
+| contract | 0 | 0 | 0 | 0 | 0.0% PASS |
 | **Total** | **3042** | **3010** | **24** | **13** | **98.9%** |
 
 ## Version Comparison: v1.6.2 → v2.0.0
 
 | Metric | v1.6.2 | v2.0.0 | Delta |
 |--------|:------:|:------:|:-----:|
-| Categories | 8 | 10 | +2 |
+| Categories | 8 | 12 | +4 |
 | Total TC | 1151 | 3042 | +1891 |
 | Unit Tests | 450 | 1234 | +784 |
 | Integration Tests | 130 | 442 | +312 |
@@ -38,6 +40,8 @@
 | E2E Tests (Node) | 20 | 61 | +41 |
 | Architecture Tests | N/A | 100 | NEW |
 | Controllable AI Tests | N/A | 80 | NEW |
+| behavioral | N/A | 0 | NEW |
+| contract | N/A | 0 | NEW |
 
 ## Failures
 
