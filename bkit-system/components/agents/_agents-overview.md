@@ -1,6 +1,6 @@
 # Agents Overview
 
-> List of 32 Agents defined in bkit and their roles (v2.1.0)
+> List of 36 Agents defined in bkit and their roles (v2.1.1)
 >
 > **v1.4.1**: Added Context Engineering perspective - Role-based Behavioral Rules Layer
 > **v1.5.0**: Claude Code Exclusive
@@ -61,7 +61,7 @@ Agents form bkit's **Behavioral Rules Layer**, designed according to [[../../phi
 | **sonnet** (19) | bkend-expert, pdca-iterator, pipeline-guide, starter-guide, product-manager, frontend-architect, qa-strategist, pm-lead, pm-discovery, pm-strategy, pm-research, pm-prd, + 7 more | Execution, guidance, iteration |
 | **haiku** (2) | qa-monitor, report-generator | Fast monitoring, document generation |
 
-**Distribution**: 10 opus / 19 sonnet / 2 haiku (31 total)
+**Distribution**: 36 total agents
 
 ## Full List
 
@@ -270,7 +270,7 @@ bkit-claude-code/
 
 ### Agent Memory
 
-All 32 agents have `memory:` frontmatter for cross-session context persistence:
+All 36 agents have `memory:` frontmatter for cross-session context persistence:
 
 | Scope | Agents |
 |-------|--------|

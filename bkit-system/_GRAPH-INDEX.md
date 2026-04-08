@@ -115,8 +115,8 @@ bkit is a practical implementation of **Context Engineering**:
 ┌─────────────────────────────────────────────────────────────────┐
 │              bkit Context Engineering Components                 │
 ├─────────────────────────────────────────────────────────────────┤
-│  Domain Knowledge (37 Skills)  → Structured domain knowledge     │
-│  Behavioral Rules (32 Agents)  → Role-based behavioral rules     │
+│  Domain Knowledge (38 Skills)  → Structured domain knowledge     │
+│  Behavioral Rules (36 Agents)  → Role-based behavioral rules     │
 │  State Management (lib/common) → ~620+ exports                   │
 │  6-Layer Hook System           → Context injection timing ctrl   │
 │  Dynamic Injection             → Conditional context selection   │
@@ -131,7 +131,7 @@ Core design principles and methodology:
 - [[philosophy/ai-native-principles|ai-native-principles]] - AI-Native development & 3 core competencies
 - [[philosophy/pdca-methodology|pdca-methodology]] - PDCA cycle & 9-stage pipeline relationship
 
-## Skills (36)
+## Skills (38)
 
 ### PDCA Skills (2)
 - [[../skills/pdca/SKILL|pdca]] - Unified PDCA cycle management (8 actions) [Workflow]
@@ -177,7 +177,7 @@ The following skills were consolidated:
 - ~~ai-native-development~~ → `enterprise`
 - ~~monorepo-architecture~~ → `enterprise`
 
-## Agents (31)
+## Agents (36)
 
 ### Level-Based Agents
 - [[../agents/starter-guide|starter-guide]] - Starter level guide (beginners)
@@ -216,7 +216,7 @@ The following skills were consolidated:
 - [[../lib/team/hooks|team hooks]] - TaskCompleted and TeammateIdle handlers
 
 ### Agent Memory
-- All 32 agents configured with `memory:` frontmatter
+- All 36 agents configured with `memory:` frontmatter
 - 9 agents: `project` scope, 2 agents: `user` scope
 - Automatic cross-session context persistence
 
@@ -249,7 +249,7 @@ The following skills were consolidated:
 - `/claude-code-learning` - Learning curriculum
 - `/code-review` - Code review and quality analysis
 
-## Hooks (18 events)
+## Hooks (21 events)
 
 ### Global Hooks (hooks/hooks.json)
 - [[components/hooks/_hooks-overview|SessionStart]] - Plugin initialization with AskUserQuestion guidance
@@ -258,7 +258,7 @@ The following skills were consolidated:
 - [[components/hooks/_hooks-overview|PreToolUse]] - Before Write/Edit operations (defined in SKILL.md)
 - [[components/hooks/_hooks-overview|PostToolUse]] - After Write operations (defined in SKILL.md)
 
-## Scripts (54)
+## Scripts (42)
 
 > **Note**: All scripts converted to Node.js (.js) in v1.3.1 for cross-platform compatibility
 >
@@ -425,10 +425,10 @@ bkit supports languages and frameworks organized by tier:
 > **v1.5.0**: bkit is now Claude Code exclusive. Gemini CLI support was removed for simplified architecture.
 
 **Components**:
-- `skills/` - 37 skills
-- `agents/` - 32 agents
-- `scripts/` - 57 scripts (Node.js)
-- `lib/` - 11 subdirectories, 88 modules (~620+ exports)
+- `skills/` - 38 skills
+- `agents/` - 36 agents
+- `scripts/` - 42 scripts (Node.js)
+- `lib/` - 12 subdirectories, 84 modules (~620+ exports)
 - `templates/` - 28 templates
 
 ## Templates (28)

@@ -1,8 +1,8 @@
 {
   "name": "bkit",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "displayName": "bkit — AI Native Development OS",
-  "description": "PDCA-driven development automation with CTO-Led Agent Teams. Living Context System with Self-Healing, 43 PM frameworks (pm-skills MIT), Interactive Checkpoints, Confidence-Based code analysis, workflow engine with state machine, 5-level controllable AI (L0-L4), CLI dashboard, quality gates, audit logging, and MCP servers. 37 Skills, 32 Agents, 20 Hook Events.",
+  "description": "PDCA-driven development automation with CTO-Led Agent Teams. Living Context System with Self-Healing, 43 PM frameworks (pm-skills MIT), Interactive Checkpoints, Confidence-Based code analysis, workflow engine with state machine, 5-level controllable AI (L0-L4), CLI dashboard, quality gates, audit logging, and MCP servers. 38 Skills, 36 Agents, 21 Hook Events.",
   "author": {
     "name": "POPUP STUDIO PTE. LTD.",
     "email": "contact@popupstudio.ai",

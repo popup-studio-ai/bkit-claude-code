@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.1] - 2026-04-09
+
+### Added
+- **QA Phase Integration** — New 11th PDCA state (`qa`) with 5 transitions (QA_PASS, QA_FAIL, QA_SKIP, QA_RETRY), check→qa→report flow, state machine expanded to 11 states / 22 events / 25 transitions
+- **Semantic Gap Analysis Enhancement** — Improved gap detection accuracy with semantic context matching
+- **QA Report Generation** — L1-L5 test level framework with automated QA reports in `docs/05-qa/`
+
+### Fixed
+- **Deep Verification Fixes** — Circular dependency resolution, hook schema validation, token waste reduction, dead code removal
+- **33 Broken Test Assertions** — Fixed across 10 test files for QA phase state machine integration
+- **Dead Context Cleanup** — Removed stale session context reducing token waste
+
+### Changed
+- **Component Counts Updated**: Skills 37→38, Agents 32→36, Hook Events 20→21, Scripts 59→42 (consolidated), Lib Modules 72→84, Lib Subdirs 11→12
+- **Gate Manager Thresholds** — matchRate thresholds updated for Enterprise/Dynamic levels
+- **pdca-iterator Agent** — effort level changed from medium to high for better iteration quality
+
+### Documentation
+- Documentation sync across README.md, CUSTOMIZATION-GUIDE.md, plugin.json, marketplace.json, bkit-system/ docs
+- QA phase reports added to `docs/05-qa/`
+- Test report updated (3,261 TC, 99.6% pass rate, 0 failures)
+
 ## [2.0.6] - 2026-03-25
 
 ### Added — Living Context System + Self-Healing + PDCA Handoff Fix (PR #57)

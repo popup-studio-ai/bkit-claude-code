@@ -3,7 +3,7 @@
 > Optimal token curation for LLM inference — bkit v2.0.0 architecture
 >
 > **v2.0.0**: AI Native Development OS — State machine, workflow engine, controllable AI,
-> audit system, quality gates, CLI dashboard, MCP servers, 72 lib modules, 607 exports
+> audit system, quality gates, CLI dashboard, MCP servers, 84 lib modules, 331 exports
 
 ## What is Context Engineering?
 
@@ -16,7 +16,7 @@ Context Engineering:
    to provide LLMs with optimal context for inference"
 ```
 
-bkit is a **practical implementation of Context Engineering**, providing a systematic context management system for Claude Code with 37 skills, 32 agents, 20 hook events, and 2 MCP servers.
+bkit is a **practical implementation of Context Engineering**, providing a systematic context management system for Claude Code with 38 skills, 36 agents, 21 hook events, and 2 MCP servers.
 
 ---
 
@@ -35,7 +35,7 @@ bkit is a **practical implementation of Context Engineering**, providing a syste
 │                                     │                                        │
 │                                     ▼                                        │
 │  ┌────────────────────────────────────────────────────────────────────────┐  │
-│  │                  20-Event Hook System (6 Layers)                       │  │
+│  │                  21-Event Hook System (6 Layers)                       │  │
 │  │                                                                        │  │
 │  │  L1: hooks.json ─→ SessionStart, UserPromptSubmit, PreCompact,         │  │
 │  │                     PostCompact, Stop, StopFailure, TaskCompleted,     │  │
@@ -46,7 +46,7 @@ bkit is a **practical implementation of Context Engineering**, providing a syste
 │  │  L3: Agent YAML ─→ PreToolUse, PostToolUse                            │  │
 │  │  L4: Triggers   ─→ 8-language keyword detection (EN/KO/JA/ZH/ES/FR/  │  │
 │  │                     DE/IT)                                             │  │
-│  │  L5: Scripts    ─→ 59 Node.js hook scripts                            │  │
+│  │  L5: Scripts    ─→ 42 Node.js hook scripts                            │  │
 │  │  L6: Team Orch. ─→ CTO-led phase routing                             │  │
 │  └────────────────────────────────────────────────────────────────────────┘  │
 │                                     │                                        │
@@ -73,7 +73,7 @@ bkit is a **practical implementation of Context Engineering**, providing a syste
 │  │ Safety Layer     │  │ MCP Servers      │  │ Agent Teams             │   │
 │  │ (NEW v2.0.0)     │  │ (NEW v2.0.0)     │  │ (Enhanced v2.0.0)      │   │
 │  │                  │  │                  │  │                          │   │
-│  │ • Destructive    │  │ • bkit-pdca      │  │ • 32 agents             │   │
+│  │ • Destructive    │  │ • bkit-pdca      │  │ • 36 agents             │   │
 │  │   detector (8)   │  │   (10 tools)     │  │ • effort/maxTurns      │   │
 │  │ • Blast radius   │  │ • bkit-analysis  │  │ • disallowedTools      │   │
 │  │ • Scope limiter  │  │   (6 tools)      │  │ • 3-tier security      │   │
@@ -86,7 +86,7 @@ bkit is a **practical implementation of Context Engineering**, providing a syste
 
 ---
 
-## Library Modules (72 files across 11 subdirectories, 607 exports)
+## Library Modules (84 files across 12 subdirectories, 607 exports)
 
 | Module | Files | Exports | Purpose |
 |--------|:-----:|:-------:|---------|
@@ -102,7 +102,7 @@ bkit is a **practical implementation of Context Engineering**, providing a syste
 | `lib/adapters/` | 0 | 0 | Reserved for future platform adapters |
 | **Top-level** | 7 | 63 | context-fork, context-hierarchy, import-resolver, memory-store, permission-manager, skill-orchestrator, common (bridge) |
 | `lib/context/` | 7 | 30+ | Living Context loader, invariant checker, impact analyzer, scenario runner, self-healing, ops metrics |
-| **Total** | **72** | **607** | |
+| **Total** | **84** | **607** | |
 
 ### v2.0.0 New Modules (vs v1.6.x)
 
@@ -120,11 +120,11 @@ bkit is a **practical implementation of Context Engineering**, providing a syste
 
 ---
 
-## Domain Knowledge Layer (37 Skills)
+## Domain Knowledge Layer (38 Skills)
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                    Domain Knowledge Layer (37 Skills)                    │
+│                    Domain Knowledge Layer (38 Skills)                    │
 ├─────────────────────────────────────────────────────────────────────────┤
 │                                                                         │
 │  ┌─────────────┐  ┌─────────────┐  ┌──────────────┐  ┌─────────────┐  │
@@ -150,7 +150,7 @@ bkit is a **practical implementation of Context Engineering**, providing a syste
 
 ---
 
-## Behavioral Rules Layer (32 Agents)
+## Behavioral Rules Layer (36 Agents)
 
 ### Model Selection Strategy
 
@@ -181,7 +181,7 @@ disallowedTools:      # restricted tools
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│               State Management Layer (v2.0.6 — 11 subdirs)              │
+│               State Management Layer (v2.1.1 — 12 subdirs)              │
 ├─────────────────────────────────────────────────────────────────────────┤
 │                                                                         │
 │  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐      │

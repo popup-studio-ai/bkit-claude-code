@@ -63,7 +63,7 @@ Layer 1: hooks.json          → SessionStart, PreToolUse, PostToolUse hooks
 Layer 2: Skill Frontmatter   → hooks: PreToolUse, PostToolUse, Stop
 Layer 3: Agent Frontmatter   → hooks: PreToolUse, PostToolUse
 Layer 4: Description Triggers → "Triggers:" keyword matching
-Layer 5: Scripts             → Actual Node.js logic execution (59 modules)
+Layer 5: Scripts             → Actual Node.js logic execution (42 scripts)
 ```
 
 This separation allows fine-grained control over when and how automation triggers.
@@ -128,17 +128,17 @@ For deeper understanding, explore the `bkit-system/` folder:
 
 bkit is not just a collection of prompts—it's a **production-grade plugin architecture** with carefully designed components that work together as a cohesive system.
 
-### Component Inventory (v2.1.0)
+### Component Inventory (v2.1.1)
 
 | Component | Count | Purpose |
 |-----------|-------|---------|
-| **Agents** | 32 | Specialized AI subagents with memory persistence |
-| **Skills** | 37 | Domain knowledge and slash commands (Commands deprecated) |
+| **Agents** | 36 | Specialized AI subagents with memory persistence |
+| **Skills** | 38 | Domain knowledge and slash commands (Commands deprecated) |
 | **Commands** | DEPRECATED | Migrated to Skills in v1.4.4+ |
-| **Scripts** | 59 | Hook execution scripts with unified handlers |
+| **Scripts** | 42 | Hook execution scripts with unified handlers |
 | **Templates** | 28 | Document templates (PDCA + 9 phases + shared) |
-| **Hooks** | 20 events | Event-driven automation (centralized in hooks.json) |
-| **lib/** | 72 modules (607 functions) | Modular utility library |
+| **Hooks** | 21 events | Event-driven automation (centralized in hooks.json) |
+| **lib/** | 84 modules (607 functions) | Modular utility library |
 | **Output Styles** | 4 | Level-based response formatting |
 
 **Total: 600+ components** working in harmony.
@@ -219,7 +219,7 @@ bkit is a **practical implementation of Context Engineering**—the art of curat
 │                                                                 │
 │  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────┐  │
 │  │ Domain Knowledge │  │ Behavioral Rules │  │ State Mgmt   │  │
-│  │    (37 Skills)   │  │   (32 Agents)    │  │(lib/common)  │  │
+│  │    (38 Skills)   │  │   (36 Agents)    │  │(lib/common)  │  │
 │  │                  │  │                  │  │              │  │
 │  │ • 9-Phase Guide  │  │ • Role Def.      │  │ • PDCA v2.0  │  │
 │  │ • 3 Levels       │  │ • Constraints    │  │ • Multi-Feat │  │
@@ -230,7 +230,7 @@ bkit is a **practical implementation of Context Engineering**—the art of curat
 │                                 ▼                               │
 │  ┌──────────────────────────────────────────────────────────┐  │
 │  │                6-Layer Hook System                        │  │
-│  │  L1: hooks.json (20 events)                              │  │
+│  │  L1: hooks.json (21 events)                              │  │
 │  │  L2: Skill Frontmatter (PreToolUse/PostToolUse/Stop)     │  │
 │  │  L3: Agent Frontmatter (PreToolUse/PostToolUse)          │  │
 │  │  L4: Description Triggers (keyword matching)             │  │
@@ -739,14 +739,14 @@ A Claude Code plugin like bkit consists of these components:
 | **Templates** | Document templates for standardization | `templates/` |
 | **Scripts** | Helper scripts for automation | `scripts/` |
 
-### bkit Plugin Structure Example (v2.1.0 - Claude Code Exclusive)
+### bkit Plugin Structure Example (v2.1.1 - Claude Code Exclusive)
 
 ```
 bkit-claude-code/
 ├── .claude-plugin/
 │   ├── plugin.json                 # Claude Code plugin metadata
 │   └── marketplace.json            # Marketplace registration
-├── agents/                         # AI subagents (32 total, with memory)
+├── agents/                         # AI subagents (36 total, with memory)
 │   ├── starter-guide.md            # Beginner-friendly agent
 │   ├── enterprise-expert.md        # Enterprise architecture agent
 │   ├── code-analyzer.md            # Code review agent
@@ -755,8 +755,8 @@ bkit-claude-code/
 │   ├── product-manager.md          # Requirements & feature prioritization
 │   ├── qa-strategist.md            # QA strategy coordinator
 │   ├── security-architect.md       # Security & vulnerability expert
-│   └── ... (32 total, including 8 CTO/PM Team + 8 PDCA Eval agents)
-├── skills/                         # Domain knowledge (37 skills)
+│   └── ... (36 total, including 8 CTO/PM Team + 8 PDCA Eval agents)
+├── skills/                         # Domain knowledge (38 skills)
 │   ├── bkit-rules/SKILL.md         # Core PDCA rules
 │   ├── plan-plus/SKILL.md          # Brainstorming-enhanced planning (v1.5.5)
 │   ├── development-pipeline/SKILL.md
@@ -764,9 +764,9 @@ bkit-claude-code/
 ├── commands/
 │   └── *.md                        # Claude Code commands
 ├── hooks/
-│   ├── hooks.json                  # Claude Code hook configuration (20 events)
+│   ├── hooks.json                  # Claude Code hook configuration (21 events)
 │   └── session-start.js            # Session initialization (Node.js)
-├── scripts/                        # Hook execution scripts (59 scripts)
+├── scripts/                        # Hook execution scripts (42 scripts)
 │   └── *.js
 ├── output-styles/                  # Level-based response formatting (v1.5.3)
 │   ├── bkit-learning.md            # Starter level style

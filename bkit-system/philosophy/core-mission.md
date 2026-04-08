@@ -120,7 +120,7 @@ After:  Regression guard + metrics collector → Cross-session learning
 
 ```
 Before: "Setting up config files is tedious"
-After:  37 skills auto-detected by keywords → Zero config needed
+After:  38 skills auto-detected by keywords → Zero config needed
 
 Before: "Writing design docs is annoying"
 After:  Templates + PM Agent Team → Design doc in 5 minutes
@@ -133,7 +133,7 @@ After:  gap-detector + pdca-iterator → Auto gap analysis and fix
 
 ```
 Before: "Each team member uses Claude differently"
-After:  CTO-led Agent Teams (32 agents) → Standardized PDCA workflow
+After:  CTO-led Agent Teams (36 agents) → Standardized PDCA workflow
 
 Before: "AI decisions are opaque"
 After:  Audit logger + decision tracer → Full visibility and traceability
@@ -146,19 +146,19 @@ After:  L0-L4 levels + trust score + emergency stop → Controllable AI
 
 ## Current Implementation (v2.0.0)
 
-> **v2.1.0**: AI Native Development OS — Declarative PDCA state machine, YAML workflow DSL,
+> **v2.1.1**: AI Native Development OS — Declarative PDCA state machine, YAML workflow DSL,
 > L0-L4 controllable AI, CLI dashboard, audit logging, quality gates, MCP servers,
-> checkpoint/rollback, destructive operation detection, 37 Skills, 32 Agents, 20 Hook Events
+> checkpoint/rollback, destructive operation detection, 38 Skills, 36 Agents, 21 Hook Events
 
 ### Component Counts
 
 | Component | Count | Location |
 |-----------|-------|----------|
-| Skills | 37 (18 Workflow / 18 Capability / 1 Hybrid) | `skills/*/SKILL.md` |
-| Agents | 32 (11 opus / 19 sonnet / 2 haiku) | `agents/*.md` |
-| Hook Events | 20 | `hooks/hooks.json` |
-| Hook Scripts | 59 | `hooks/`, `scripts/` |
-| lib/ Modules | 72 files across 11 subdirs (607 exports) | `lib/` |
+| Skills | 38 (18 Workflow / 18 Capability / 1 Hybrid) | `skills/*/SKILL.md` |
+| Agents | 36 | `agents/*.md` |
+| Hook Events | 21 | `hooks/hooks.json` |
+| Hook Scripts | 42 | `hooks/`, `scripts/` |
+| lib/ Modules | 84 files across 12 subdirs (607 exports) | `lib/` |
 | MCP Servers | 2 (16 tools) | `servers/` |
 | Workflow Presets | 3 (default, enterprise, hotfix) | `.bkit/workflows/` |
 | Output Styles | 4 | `output-styles/` |
