@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.3] - 2026-04-12
+
+### Fixed
+- **#65 — `/pdca qa` subcommand integration** — `scripts/pdca-skill-stop.js` actionPattern, `nextStepMap`, `phaseMap` (x2), and state transition whitelist now parse and route the `qa` action. `skills/pdca/SKILL.md` gains a `### qa (QA Phase)` handler block (delegates to the standalone `qa-phase` skill) and a `/pdca qa [feature]` line in the Slash Invoke Pattern section. PDCA state machine now advances `qa → report` on `QA_PASS`.
+- **#66 — `lib/permission-manager.js` TypeError** — `checkPermission()`, `getToolPermissions()`, `getAllPermissions()`, and the `common.debugLog` call site now null-guard the lazy `hierarchy` / `common` requires. When `context-hierarchy.js` / `common.js` are absent (as they have been since commit 21d35d6), the module falls back to `DEFAULT_PERMISSIONS`, restoring the `Bash(rm -rf*): deny` / `Bash(git push --force*): deny` baseline policy and eliminating the per-tool-call `PreToolUse:Edit hook error` noise.
+- **#67 — MCP `bkit_report_read` ignored `bkit.config.json docPaths`** — `servers/bkit-pdca-server/index.js` now loads `bkit.config.json` with an mtime-cached `loadBkitConfig()` helper and resolves `pdca.docPaths.{plan,design,analysis,report}` templates via `getPhaseTemplates()`. `docsPath()` walks the configured templates and returns the first existing file. All four doc-read tools (`bkit_plan_read`, `bkit_design_read`, `bkit_analysis_read`, `bkit_report_read`) honor custom config paths with fallback to built-in defaults for zero-config projects.
+
+### Changed
+- **Version Sync** — `bkit.config.json`, `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, `hooks/hooks.json` bumped to 2.1.3.
+- **Dead Constants Removed** — `servers/bkit-pdca-server/index.js` no longer declares `PHASE_MAP` / `DOCS_DIR` (both were superseded by the new template-based resolver).
+
+### Documentation
+- Full PDCA artifacts for the `v213-issue-fixes` feature under `docs/01-plan/`, `docs/02-design/`, `docs/03-analysis/`, `docs/04-report/`.
+
 ## [2.1.2] - 2026-04-12
 
 ### Added

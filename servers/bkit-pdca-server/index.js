@@ -18,14 +18,44 @@ const readline = require('readline');
 
 const ROOT = process.env.BKIT_ROOT || process.cwd();
 const BKIT_DIR = path.join(ROOT, '.bkit');
-const DOCS_DIR = path.join(ROOT, 'docs');
+const CONFIG_PATH = path.join(ROOT, 'bkit.config.json');
 
-const PHASE_MAP = {
-  plan: '01-plan',
-  design: '02-design',
-  analysis: '03-analysis',
-  report: '04-report',
+// v2.1.3 (#67): Fallback doc path templates used only when bkit.config.json is
+// missing or has no `pdca.docPaths.{phase}` entry. Mirrors the defaults from
+// lib/core/paths.js so single-source-of-truth is still possible later.
+const FALLBACK_DOC_PATHS = {
+  plan:     ['docs/01-plan/features/{feature}.plan.md'],
+  design:   ['docs/02-design/features/{feature}.design.md'],
+  analysis: [
+    'docs/03-analysis/{feature}.analysis.md',
+    'docs/03-analysis/features/{feature}.analysis.md',
+  ],
+  report:   ['docs/04-report/features/{feature}.report.md'],
 };
+
+let _cachedConfig = null;
+let _cachedConfigMtime = 0;
+
+function loadBkitConfig() {
+  try {
+    if (!fs.existsSync(CONFIG_PATH)) return null;
+    const stat = fs.statSync(CONFIG_PATH);
+    if (_cachedConfig && stat.mtimeMs === _cachedConfigMtime) return _cachedConfig;
+    _cachedConfig = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
+    _cachedConfigMtime = stat.mtimeMs;
+    return _cachedConfig;
+  } catch {
+    return null;
+  }
+}
+
+function getPhaseTemplates(phase) {
+  const cfg = loadBkitConfig();
+  const configured = cfg && cfg.pdca && cfg.pdca.docPaths && cfg.pdca.docPaths[phase];
+  if (Array.isArray(configured) && configured.length > 0) return configured;
+  if (typeof configured === 'string' && configured) return [configured];
+  return FALLBACK_DOC_PATHS[phase] || null;
+}
 
 function statePath(filename) {
   return path.join(BKIT_DIR, 'state', filename);
@@ -35,14 +65,22 @@ function auditPath(filename) {
   return path.join(BKIT_DIR, 'audit', filename);
 }
 
+// v2.1.3 (#67): Honor bkit.config.json `pdca.docPaths.{phase}` templates. Returns
+// the first existing resolved path, or the first candidate when none exist so
+// callers can surface an informative NOT_FOUND error.
 function docsPath(phase, feature) {
-  const dir = PHASE_MAP[phase];
-  if (!dir) return null;
-  // analysis docs are stored directly in the phase dir, not in features/
-  if (phase === 'analysis') {
-    return path.join(DOCS_DIR, dir, `${feature}.${phase}.md`);
+  const templates = getPhaseTemplates(phase);
+  if (!templates) return null;
+  const resolved = templates.map(t =>
+    path.join(ROOT, t.replace(/\{feature\}/g, feature))
+  );
+  for (const p of resolved) {
+    try {
+      fs.accessSync(p, fs.constants.R_OK);
+      return p;
+    } catch { /* continue */ }
   }
-  return path.join(DOCS_DIR, dir, 'features', `${feature}.${phase}.md`);
+  return resolved[0];
 }
 
 function readJsonOrNull(filePath) {

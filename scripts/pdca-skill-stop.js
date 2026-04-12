@@ -144,7 +144,7 @@ debugLog('Skill:pdca:Stop', 'Input received', {
 
 // Extract action from skill invocation
 // Patterns: "pdca plan", "pdca design", "/pdca analyze", etc.
-const actionPattern = /pdca\s+(pm|plan|design|do|analyze|iterate|report|status|next)/i;
+const actionPattern = /pdca\s+(pm|plan|design|do|analyze|iterate|qa|report|status|next)/i;
 const actionMatch = inputText.match(actionPattern);
 const action = actionMatch ? actionMatch[1].toLowerCase() : null;
 
@@ -218,6 +218,16 @@ const nextStepMap = {
       { label: 'Completion Report', description: `/pdca report ${feature || '[feature]'}` }
     ]
   },
+  qa: {
+    nextAction: 'report',
+    message: 'QA phase (L1-L5 tests) completed.',
+    question: 'Proceed to completion report?',
+    options: [
+      { label: 'Generate Report (Recommended)', description: `/pdca report ${feature || '[feature]'}` },
+      { label: 'Re-run QA', description: `/pdca qa ${feature || '[feature]'}` },
+      { label: 'Later', description: 'Keep current state' }
+    ]
+  },
   report: {
     nextAction: null,
     message: 'Completion report has been generated.',
@@ -257,6 +267,7 @@ const phaseMap = {
   do: 'do',
   analyze: 'check',
   iterate: 'act',
+  qa: 'qa',
   report: 'completed'
 };
 const currentPhaseForAuto = action ? phaseMap[action] : null;
@@ -290,13 +301,14 @@ if (nextStep && nextStep.message) {
 }
 
 // Update PDCA status if action completed
-if (action && feature && ['plan', 'design', 'do', 'analyze', 'iterate', 'report'].includes(action)) {
+if (action && feature && ['plan', 'design', 'do', 'analyze', 'iterate', 'qa', 'report'].includes(action)) {
   const phaseMap = {
     plan: 'plan',
     design: 'design',
     do: 'do',
     analyze: 'check',
     iterate: 'act',
+    qa: 'qa',
     report: 'completed'
   };
 

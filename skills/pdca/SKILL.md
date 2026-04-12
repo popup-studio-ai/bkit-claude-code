@@ -264,6 +264,28 @@ Run PM Agent Team for product discovery and strategy analysis before Plan phase.
 
 **Output Path**: `docs/03-analysis/{feature}.analysis.md`
 
+### qa (QA Phase)
+
+1. Verify Iterate completion (Match Rate ≥ target or max iterations reached)
+2. **Delegate to qa-phase skill**: Invoke the standalone `/qa-phase {feature}` skill,
+   which owns L1-L5 test planning, generation, execution, and reporting.
+3. The qa-phase skill:
+   - Reads Design doc §8 Test Plan
+   - Calls `qa-test-planner` to refine L1-L5 test specs
+   - Calls `qa-test-generator` to emit runnable test files
+   - Executes L1 (API) / L2 (UI actions) / L3 (E2E) tests via Chrome MCP
+   - Optional L4 (perf) / L5 (security) for Enterprise level
+4. Emit one of:
+   - `QA_PASS` → auto-advance to `report` phase
+   - `QA_FAIL` → fall back to `iterate` phase
+   - `QA_SKIP` → mark qa as skipped, proceed to `report`
+5. Create Task: `[QA] {feature}`
+6. Update `.bkit/state/pdca-status.json`: phase = "qa", qaStatus = <PASS|FAIL|SKIP>
+
+**Output Path**: `docs/05-qa/{feature}.qa-report.md`
+
+**Agent**: `bkit:qa-lead` (mapped via frontmatter `agents.qa`)
+
 ### iterate (Act Phase)
 
 1. Check results (when matchRate < 90%)
@@ -647,6 +669,7 @@ Skills 2.0 enables direct slash invocation for all PDCA commands:
 - `/pdca do [feature]` — Implementation guide
 - `/pdca analyze [feature]` — Gap analysis (Check phase)
 - `/pdca iterate [feature]` — Auto-improvement (Act phase)
+- `/pdca qa [feature]` — Run QA phase (L1-L5 tests)
 - `/pdca report [feature]` — Completion report
 - `/pdca status` — Current PDCA status
 - `/pdca next` — Next phase guide
