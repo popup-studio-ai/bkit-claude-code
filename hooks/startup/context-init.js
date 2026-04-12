@@ -43,6 +43,21 @@ function run(_input) {
     debugLog('SessionStart', 'ensureBkitDirs failed', { error: e.message });
   }
 
+  // #46808: git worktree guard — detect linked worktrees where CC hooks may
+  // not fire and surface a warning + flag file for downstream tooling.
+  try {
+    const { detectAndWarn } = require('../../lib/core/worktree-detector');
+    const info = detectAndWarn();
+    if (info && info.isWorktree) {
+      debugLog('SessionStart', 'git worktree detected (#46808)', {
+        gitDir: info.gitDir,
+        gitCommonDir: info.gitCommonDir,
+      });
+    }
+  } catch (e) {
+    debugLog('SessionStart', 'worktree-detector failed', { error: e.message });
+  }
+
   // Initialize PDCA status file if not exists
   initPdcaStatusIfNotExists();
 

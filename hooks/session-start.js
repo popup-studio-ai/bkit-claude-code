@@ -185,7 +185,7 @@ const sessionTitle = primaryFeature
   : undefined;
 
 const response = {
-  systemMessage: `bkit Vibecoding Kit v2.1.1 activated (Claude Code)`,
+  systemMessage: `bkit Vibecoding Kit v2.1.2 activated (Claude Code)`,
   hookSpecificOutput: {
     hookEventName: "SessionStart",
     onboardingType: onboardingContext.onboardingData.type,

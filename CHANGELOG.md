@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.2] - 2026-04-12
+
+### Added
+- **Worktree Detector** (`lib/core/worktree-detector.js`) — Detects linked git worktrees via `git rev-parse --show-toplevel` vs `--git-common-dir` comparison. On detection, emits stderr warning and writes `.bkit/runtime/worktree-warning.flag`. Addresses anthropics/claude-code#46808 (hooks not firing in linked worktrees).
+- **Startup Worktree Guard** — `hooks/startup/context-init.js` now invokes worktree-detector on session start to warn users before PDCA state writes occur in a linked worktree.
+- **Unit Tests** — `test-scripts/unit/mcp-ok-response.test.js` and `test-scripts/unit/worktree-detector.test.js` (jest, 2 suites / 6 tests).
+
+### Fixed
+- **MCP `_meta` Persist Bypass (ENH-193)** — Both MCP servers (`bkit-pdca-server`, `bkit-analysis-server`) now set `maxResultSizeChars` on both `result._meta` and `content[0]._meta`, restoring the 500K override path after the CC v2.1.98 persistence change.
+- **Jest Runner Stability** — Active unit test suites run clean on Node 20+ under `npx jest --silent`.
+
+### Changed
+- **Version Sync** — `bkit.config.json`, `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, `hooks/hooks.json` bumped to 2.1.2.
+- **Code Simplification** — Consolidated per-field comments in both MCP servers into single block comments; removed dead `try/catch` and merged three nested blocks into one in `worktree-detector.js` (-10 LOC). No behavior change.
+- **CC Compatibility Baseline** — Verified against CC v2.1.98; 63 consecutive compatible releases (v2.1.34 → v2.1.98).
+
+### Documentation
+- PDCA artifacts for the `cc-version-issue-response` feature: plan, design, iterate, qa, simplify, report, and full-QA reports under `docs/01-plan/`, `docs/02-design/`, `docs/03-analysis/`, `docs/04-report/`.
+- Full plugin QA matrix — 7/7 `claude -p --plugin-dir .` smoke tests, 38 skills / 36 agents / 21 hooks / 2 MCP servers validated end-to-end.
+
 ## [2.1.1] - 2026-04-09
 
 ### Added

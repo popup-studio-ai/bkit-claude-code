@@ -64,9 +64,15 @@ function readTextOrNull(filePath) {
 }
 
 function okResponse(data) {
+  // Dual _meta keys: v2.1.98 `_meta` persist-bypass fix strips unexpected
+  // keys, so we set both the pre-v2.1.91 legacy key and the v2.1.91+
+  // namespaced key (ENH-176, ENH-193).
   return {
     content: [{ type: 'text', text: JSON.stringify(data, null, 2) }],
-    _meta: { maxResultSizeChars: 500000 } // ENH-176: override default 2KB cap
+    _meta: {
+      maxResultSizeChars: 500000,
+      'claudecode/maxResultSizeChars': 500000,
+    },
   };
 }
 
