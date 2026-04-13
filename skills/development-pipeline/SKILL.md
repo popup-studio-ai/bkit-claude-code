@@ -3,7 +3,7 @@ name: development-pipeline
 classification: workflow
 classification-reason: Process automation persists regardless of model advancement
 deprecation-risk: none
-effort: medium
+effort: low
 description: |
   Complete 9-phase development pipeline guide — from schema to deployment.
   Triggers: development pipeline, where to start, phase, 개발 파이프라인, 순서, 시작.

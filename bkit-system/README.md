@@ -247,10 +247,10 @@ lib/
 | Commands | DEPRECATED | Migrated to Skills (v1.4.4) | - |
 | Hooks | 21 events | Event-based triggers (unified) | [[components/hooks/_hooks-overview]] |
 | Scripts | 42 | Actual logic execution | [[components/scripts/_scripts-overview]] |
-| Lib | 12 subdirectories, 84 modules | Shared utilities | 607 exports |
+| Lib | 12 subdirectories, 93 modules | Shared utilities | 607 exports |
 | Evals | 28 | Skill evaluation definitions (v1.6.0) | Skill Creator + A/B Testing |
 | Config | 1 | Centralized settings | `bkit.config.json` |
-| Templates | 28 | Document templates | PDCA + Pipeline + Shared |
+| Templates | 18 | Document templates | PDCA + Pipeline + Shared |
 
 ## v1.5.1 Features
 
@@ -270,7 +270,7 @@ Layer 2: Unified Scripts     → unified-stop.js, unified-bash-pre.js, unified-w
 Layer 3: Agent Frontmatter   → Constraints and role definitions (hooks deprecated)
 Layer 4: Description Triggers → "Triggers:" keyword matching
 Layer 5: Scripts             → Actual Node.js logic execution (42 modules)
-Layer 6: Lib Modules         → 12 subdirectories, 607 exports
+Layer 6: Lib Modules         → 12 subdirectories, 93 modules
 ```
 
 > **Note (v1.4.4)**: All hooks centralized in hooks.json. SKILL.md frontmatter hooks deprecated (backward compatible).
@@ -383,16 +383,16 @@ bkit v1.6.0 integrates CC 2.1.0 Skills 2.0 features:
 - `pm-research` — Competitive analysis and data gathering
 - `pm-prd` — PRD document generation
 
-### Component Counts (v2.1.1)
+### Component Counts (v2.1.4)
 
 | Component | Count |
 |-----------|-------|
 | Skills | 38 (18 Workflow / 18 Capability / 1 Hybrid) |
 | Agents | 36 |
-| Library Functions | 607 exports (84 modules, 12 subdirectories) |
+| Lib Modules | 93 (12 subdirectories) |
 | Scripts | 42 |
 | Hook Events | 21 |
 | Output Styles | 4 |
 | Evals | 28 (56 content files) |
-| Tests | ~4,028 TC (194 files) |
-| CC Recommended | v2.1.96+ |
+| Tests | ~4,028 TC (201 files) |
+| CC Recommended | v2.1.104+ |

@@ -5,6 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.4] - 2026-04-13
+
+### Added
+- **QA Scanner Framework** (`lib/qa/scanners/`) — 4 automated pre-release scanners (dead-code, config-audit, completeness, shell-escape) with `ScannerBase` abstract class, `reporter.js` formatter, and `utils/` helpers (file-resolver, pattern-matcher). 9 new lib modules (+93 total).
+- **Pre-Release Check** (`scripts/qa/pre-release-check.sh`) — Shell wrapper running all 4 scanners with CRITICAL/WARNING/INFO severity. Exit 1 on CRITICAL, exit 0 otherwise.
+- **CwdChanged Handler** (`scripts/cwd-changed-handler.js`) — ENH-149 project transition detection with audit logging.
+- **TaskCreated Handler** (`scripts/task-created-handler.js`) — ENH-156 PDCA task creation tracking.
+- **Unit Tests** — 5 test suites (43 tests): scanner-base (19), dead-code (5), config-audit (5), completeness (6), shell-escape (8). All 43/43 PASS.
+
+### Fixed
+- **#71 — Shell escape `$N` collision** — Preventive scanner detects bare `$1` in awk within SKILL.md shell blocks.
+- **#66 — Stale require references** — 5 additional stale require paths fixed across lib modules.
+- **#67 — Config hardcoded values** — 16 WARNING-level hardcoded values identified by config-audit scanner.
+- **#65 — Completeness gaps** — Completeness scanner validates skill→agent references and frontmatter consistency.
+
+### Changed
+- **Version Sync** — `bkit.config.json`, `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, `hooks/hooks.json` bumped to 2.1.4.
+- **effort frontmatter (ENH-134)** — All 38 skills now include effort frontmatter in SKILL.md.
+- **Sequential agent spawn (ENH-143)** — `lib/team/coordinator.js` adds `spawnAgentsSequentially()` workaround for #37520 OAuth 401.
+- **SessionStart defensive cleanup (ENH-148)** — `hooks/session-start.js` clears stale env vars on /clear.
+- **MCP maxResultSizeChars (ENH-176)** — Both MCP servers set 500K override on both `_meta` keys.
+- **CC Compatibility** — Verified against CC v2.1.104; 66 consecutive compatible releases (v2.1.34 → v2.1.104).
+- **Lib Modules** — 84 → 93 modules (9 new in lib/qa/).
+- **Test Files** — 194 → 201 files.
+
+### Documentation
+- Full PDCA artifacts for `bkit-v214-quality-hardening` feature under `docs/01-plan/`, `docs/02-design/`, `docs/03-analysis/`, `docs/04-report/`, `docs/05-qa/`.
+- E2E verification report: Plugin load, 7 skills invoked, 3 agents spawned, 6 MCP tools tested, 3 hooks fired, 43/43 unit tests PASS.
+
 ## [2.1.3] - 2026-04-12
 
 ### Fixed

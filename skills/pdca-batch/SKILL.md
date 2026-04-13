@@ -3,7 +3,7 @@ name: pdca-batch
 classification: workflow
 classification-reason: Batch PDCA management persists regardless of model advancement
 deprecation-risk: none
-effort: medium
+effort: high
 description: |
   Manage multiple PDCA features and batch operations.
   Triggers: pdca-batch, batch, multiple features, 다중 기능, 배치.

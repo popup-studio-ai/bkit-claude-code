@@ -128,7 +128,7 @@ For deeper understanding, explore the `bkit-system/` folder:
 
 bkit is not just a collection of prompts—it's a **production-grade plugin architecture** with carefully designed components that work together as a cohesive system.
 
-### Component Inventory (v2.1.1)
+### Component Inventory (v2.1.4)
 
 | Component | Count | Purpose |
 |-----------|-------|---------|
@@ -136,9 +136,9 @@ bkit is not just a collection of prompts—it's a **production-grade plugin arch
 | **Skills** | 38 | Domain knowledge and slash commands (Commands deprecated) |
 | **Commands** | DEPRECATED | Migrated to Skills in v1.4.4+ |
 | **Scripts** | 42 | Hook execution scripts with unified handlers |
-| **Templates** | 28 | Document templates (PDCA + 9 phases + shared) |
+| **Templates** | 18 | Document templates (PDCA + 9 phases + shared) |
 | **Hooks** | 21 events | Event-driven automation (centralized in hooks.json) |
-| **lib/** | 84 modules (607 functions) | Modular utility library |
+| **lib/** | 93 modules | Modular utility library |
 | **Output Styles** | 4 | Level-based response formatting |
 
 **Total: 600+ components** working in harmony.
@@ -234,7 +234,7 @@ bkit is a **practical implementation of Context Engineering**—the art of curat
 │  │  L2: Skill Frontmatter (PreToolUse/PostToolUse/Stop)     │  │
 │  │  L3: Agent Frontmatter (PreToolUse/PostToolUse)          │  │
 │  │  L4: Description Triggers (keyword matching)             │  │
-│  │  L5: Scripts (59 Node.js modules)                        │  │
+│  │  L5: Scripts (42 Node.js modules)                        │  │
 │  │  L6: Plugin Data Backup (${CLAUDE_PLUGIN_DATA})          │  │
 │  └──────────────────────────────────────────────────────────┘  │
 │                                 │                               │
@@ -271,20 +271,20 @@ For detailed Context Engineering documentation, see [bkit-system/philosophy/cont
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│               bkit Component Architecture (v1.5.3)               │
+│               bkit Component Architecture (v2.1.4)               │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
-│  Knowledge Layer    │ Skills (37)      │ Domain expertise       │
+│  Knowledge Layer    │ Skills (38)      │ Domain expertise       │
 │  ─────────────────────────────────────────────────────────────  │
-│  Execution Layer    │ Agents (32)      │ Autonomous task work   │
+│  Execution Layer    │ Agents (36)      │ Autonomous task work   │
 │  ─────────────────────────────────────────────────────────────  │
-│  Interface Layer    │ Commands (20×2)  │ User interaction       │
+│  Interface Layer    │ Commands (DEPRECATED) │ User interaction  │
 │  ─────────────────────────────────────────────────────────────  │
-│  Automation Layer   │ Hooks + Scripts (59) │ Event-driven triggers│
+│  Automation Layer   │ Hooks + Scripts (42) │ Event-driven triggers│
 │  ─────────────────────────────────────────────────────────────  │
-│  Template Layer     │ Templates (27)   │ Document standards     │
+│  Template Layer     │ Templates (18)   │ Document standards     │
 │  ─────────────────────────────────────────────────────────────  │
-│  Shared Library     │ lib/ (607 funcs)    │ Modular utilities     │
+│  Shared Library     │ lib/ (93 modules)   │ Modular utilities     │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -332,7 +332,7 @@ Layer 3: Agent Frontmatter
 Layer 4: Description Triggers
    └─ "Triggers:" keywords for auto-activation
 
-Layer 5: Scripts (59 Node.js scripts)
+Layer 5: Scripts (42 Node.js scripts)
    └─ Actual logic execution
 ```
 

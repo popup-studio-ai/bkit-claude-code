@@ -3,7 +3,7 @@ name: starter
 classification: capability
 classification-reason: Pattern guidance may overlap with model's built-in knowledge as it improves
 deprecation-risk: medium
-effort: low
+effort: medium
 description: |
   Static web development for beginners — HTML/CSS/JS and Next.js App Router.
   Triggers: static website, portfolio, landing page, beginner, 정적 웹, 초보자, init starter.

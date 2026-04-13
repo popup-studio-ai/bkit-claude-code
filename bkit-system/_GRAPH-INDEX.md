@@ -117,7 +117,7 @@ bkit is a practical implementation of **Context Engineering**:
 ├─────────────────────────────────────────────────────────────────┤
 │  Domain Knowledge (38 Skills)  → Structured domain knowledge     │
 │  Behavioral Rules (36 Agents)  → Role-based behavioral rules     │
-│  State Management (lib/common) → ~620+ exports                   │
+│  State Management (lib/common) → 93 modules, ~620+ exports       │
 │  6-Layer Hook System           → Context injection timing ctrl   │
 │  Dynamic Injection             → Conditional context selection   │
 └─────────────────────────────────────────────────────────────────┘
@@ -428,10 +428,10 @@ bkit supports languages and frameworks organized by tier:
 - `skills/` - 38 skills
 - `agents/` - 36 agents
 - `scripts/` - 42 scripts (Node.js)
-- `lib/` - 12 subdirectories, 84 modules (~620+ exports)
-- `templates/` - 28 templates
+- `lib/` - 12 subdirectories, 93 modules (~620+ exports)
+- `templates/` - 18 templates
 
-## Templates (28)
+## Templates (18)
 
 ### PDCA Templates
 - `plan.template.md` - Plan phase
