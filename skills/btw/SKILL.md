@@ -3,7 +3,7 @@ name: btw
 classification: workflow
 classification-reason: "Manages /btw command lifecycle: record, list, analyze, promote, stats. User-driven workflow with CRUD on btw-suggestions.json"
 deprecation-risk: none
-effort: low
+effort: medium
 description: |
   By-The-Way: 작업 중 개선 제안을 즉시 수집하고 관리하는 스킬.
   Triggers: /btw, /btw list, /btw analyze, /btw promote, /btw stats

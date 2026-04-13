@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * bkit Vibecoding Kit - SessionStart Hook (v2.0.0)
+ * bkit Vibecoding Kit - SessionStart Hook (v2.1.4)
  *
  * Thin orchestrator that delegates to startup modules:
  *   1. migration   - Legacy path migration (docs/ -> .bkit/)
@@ -22,6 +22,25 @@ debugLog('SessionStart', 'Hook executed', {
   cwd: process.cwd(),
   platform: BKIT_PLATFORM
 });
+
+// --- ENH-148: Defensive cleanup for env vars that should reset on /clear ---
+// CC /clear resets conversation but env vars persist across sessions.
+// Clean up bkit-specific runtime env vars to prevent stale state (#37729).
+const BKIT_RUNTIME_ENV_VARS = [
+  'BKIT_PDCA_PHASE',
+  'BKIT_PRIMARY_FEATURE',
+  'BKIT_AUTOMATION_LEVEL',
+  'BKIT_SESSION_ID',
+  'BKIT_AGENT_ACTIVE',
+  'BKIT_CHECKPOINT_PENDING',
+];
+
+for (const envVar of BKIT_RUNTIME_ENV_VARS) {
+  if (process.env[envVar]) {
+    debugLog('SessionStart', 'Cleaning stale env var', { envVar, value: process.env[envVar] });
+    delete process.env[envVar];
+  }
+}
 
 // --- 1. Migration: Legacy path migration ---
 const migration = require('./startup/migration');
@@ -185,7 +204,7 @@ const sessionTitle = primaryFeature
   : undefined;
 
 const response = {
-  systemMessage: `bkit Vibecoding Kit v2.1.3 activated (Claude Code)`,
+  systemMessage: `bkit Vibecoding Kit v2.1.4 activated (Claude Code)`,
   hookSpecificOutput: {
     hookEventName: "SessionStart",
     onboardingType: onboardingContext.onboardingData.type,

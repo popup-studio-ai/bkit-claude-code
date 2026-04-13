@@ -185,7 +185,7 @@ bkit implements **Context Engineering**—the systematic curation of context tok
 | **CLAUDE.md Files** | Project-specific AI instructions |
 | **Skill System (38 skills)** | Domain-specific knowledge (18 Workflow / 18 Capability / 1 Hybrid) |
 | **21-Event Hook System** | Centralized context injection via hooks.json (21 events, 42 scripts) |
-| **lib/ (84 modules, ~620+ functions)** | 12 subdirectories: core, pdca, intent, task, team, ui, audit, control, quality, adapters, context |
+| **lib/ (93 modules, ~620+ functions)** | 12 subdirectories: core, pdca, intent, task, team, ui, audit, control, quality, adapters, context, qa |
 
 **Context Engineering Architecture (v2.0.0)**:
 ```

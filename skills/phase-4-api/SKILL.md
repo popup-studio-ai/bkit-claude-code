@@ -3,7 +3,7 @@ name: phase-4-api
 classification: capability
 classification-reason: Pattern guidance may overlap with model's built-in knowledge as it improves
 deprecation-risk: medium
-effort: medium
+effort: high
 user-invocable: false
 description: |
   Design and implement backend APIs with Zero Script QA validation.

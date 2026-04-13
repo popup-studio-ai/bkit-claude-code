@@ -51,6 +51,46 @@ task-template: "[QA] {feature}"
 4. **Execute**: Run L1-L5 tests (L3-L5 require Chrome MCP)
 5. **Report**: Generate QA report to `docs/05-qa/{feature}.qa-report.md`
 
+## PRE-SCAN: Pre-Release Quality Check
+
+Before running L1 tests, execute the automated quality scanners to catch structural issues early.
+
+### Steps
+
+1. Run `scripts/qa/pre-release-check.sh` via Bash
+2. Parse the output for CRITICAL / WARNING / INFO counts
+3. **If CRITICAL issues found**:
+   - Report all CRITICAL issues with file paths and suggested fixes
+   - Recommend fixing CRITICAL issues before proceeding with L1-L5 tests
+   - Ask user whether to continue or abort QA phase
+4. **If only WARNING/INFO issues (no CRITICAL)**:
+   - Include scanner results in the QA report under "Pre-Release Scan" section
+   - Continue to L1 test planning
+
+### Scanner Coverage
+
+| Scanner | Detects | Severity |
+|---------|---------|----------|
+| dead-code | Stale require/import, unused exports | CRITICAL / WARNING |
+| config-audit | Unreferenced config keys, hardcoded values, missing paths | CRITICAL / WARNING / INFO |
+| completeness | Missing agents, long descriptions, missing effort | CRITICAL / WARNING / INFO |
+| shell-escape | Bare $N in awk, unescaped backticks, unsafe heredocs | CRITICAL / WARNING |
+
+### QA Report Integration
+
+When scanner results are available, include them in the QA report:
+
+```markdown
+## Pre-Release Scan Results
+
+- **Scanner**: dead-code — 0 CRITICAL, 1 WARNING, 0 INFO
+- **Scanner**: config-audit — 0 CRITICAL, 0 WARNING, 2 INFO
+- **Scanner**: completeness — 0 CRITICAL, 0 WARNING, 1 INFO
+- **Scanner**: shell-escape — 0 CRITICAL, 0 WARNING, 0 INFO
+
+**Overall**: PASS (0 CRITICAL issues)
+```
+
 ## Test Levels
 
 | Level | Type | Tool | Chrome Required |

@@ -1,8 +1,8 @@
 # bkit - Vibecoding Kit
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Claude Code](https://img.shields.io/badge/Claude%20Code-v2.1.96+-purple.svg)](https://code.claude.com)
-[![Version](https://img.shields.io/badge/Version-2.1.2-green.svg)](CHANGELOG.md)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-v2.1.104+-purple.svg)](https://code.claude.com)
+[![Version](https://img.shields.io/badge/Version-2.1.4-green.svg)](CHANGELOG.md)
 [![Author](https://img.shields.io/badge/Author-POPUP%20STUDIO-orange.svg)](https://popupstudio.ai)
 
 > **PDCA methodology + CTO-Led Agent Teams + AI coding assistant mastery for AI-native development**
@@ -38,7 +38,7 @@ bkit implements Context Engineering through three interconnected layers:
 |-------|------------|---------|
 | **Domain Knowledge** | 38 Skills | Structured expert knowledge (phases, levels, specialized domains) |
 | **Behavioral Rules** | 36 Agents | Role-based constraints with model selection (opus/sonnet/haiku) |
-| **State Management** | 607 Functions | PDCA state machine, workflow engine, automation control, audit, quality gates, intent detection, team coordination |
+| **State Management** | 93 Lib Modules | PDCA state machine, workflow engine, automation control, audit, quality gates, intent detection, team coordination |
 
 ### 6-Layer Hook System
 
@@ -94,11 +94,11 @@ Layer 6: Plugin Data Backup      → ${CLAUDE_PLUGIN_DATA} persistent state mana
 - **Multilingual Support** - 8 languages (EN, KO, JA, ZH, ES, FR, DE, IT)
 - **38 Skills** - Domain-specific knowledge (18 Workflow / 18 Capability / 1 Hybrid)
 - **36 Agents** - Specialized AI assistants (11 opus / 19 sonnet / 2 haiku) including CTO/PM Team + PDCA Eval agents
-- **4,028+ Test Cases** - 194 test files across 12 categories with 100% export coverage
+- **201 Test Files** - 4,028+ test cases across 12 categories with 100% export coverage
 - **42 Hook Scripts** - Hook execution with unified handlers across 21 event types
-- **607 Utility Functions** - 84 lib modules across 12 subdirectories (core, pdca, intent, task, team, ui, audit, control, quality, adapters, context)
+- **93 Lib Modules** - across 12 subdirectories (core, pdca, intent, task, team, ui, audit, control, quality, adapters, context, qa)
 - **Check-Act Iteration Loop** - Automatic gap analysis and fix cycles with max 5 iterations (90% threshold)
-- **12-Category Test Suite** - Unit, integration, E2E, behavioral, contract, security, performance, UX, philosophy, architecture, controllable-AI, regression (194 files, 4,028+ TC)
+- **12-Category Test Suite** - Unit, integration, E2E, behavioral, contract, security, performance, UX, philosophy, architecture, controllable-AI, regression (201 files, 4,028+ TC)
 
 ---
 
@@ -199,7 +199,7 @@ Skill Evals connect directly to bkit's PDCA workflow:
 
 | Requirement | Minimum Version | Notes |
 |-------------|:---------------:|-------|
-| **Claude Code** | **v2.1.78+** | Required. bkit v2.1.1 uses agent frontmatter (effort/maxTurns/disallowedTools), 21 hook events, MCP servers, and ${CLAUDE_PLUGIN_DATA}. Recommended: v2.1.96+. |
+| **Claude Code** | **v2.1.78+** | Required. bkit v2.1.4 uses agent frontmatter (effort/maxTurns/disallowedTools), 21 hook events, MCP servers, and ${CLAUDE_PLUGIN_DATA}. Recommended: v2.1.104+. |
 | Node.js | v18+ | For hook script execution |
 | Agent Teams (optional) | Set `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` | Required only for CTO-Led Agent Teams feature |
 
@@ -278,7 +278,7 @@ bkit-claude-code/
 ├── evals/                   # Skill eval definitions & runner
 ├── scripts/                 # Hook execution scripts
 ├── servers/                 # MCP servers (bkit-pdca, bkit-analysis)
-├── lib/                     # Shared utilities (84 modules across 12 subdirs)
+├── lib/                     # Shared utilities (93 modules across 12 subdirs)
 ├── output-styles/           # Level-based response formatting
 ├── templates/               # Document templates
 └── bkit.config.json         # Centralized configuration
@@ -584,7 +584,7 @@ The software industry has spent decades refining how humans write code—version
 
 - **Verification over trust.** AI generates plausible code. Plausible is not correct. Every implementation goes through gap analysis against its design document. If the match rate falls below 90%, the system iterates automatically. We do not ship hope.
 
-- **Context over prompts.** A well-structured prompt helps once. A well-structured context system helps every time. bkit's 607 functions across 84 modules, 38 skills, and 36 agents exist to ensure the AI receives the right context at the right moment—not through clever prompting, but through systematic engineering.
+- **Context over prompts.** A well-structured prompt helps once. A well-structured context system helps every time. bkit's 93 lib modules, 38 skills, and 36 agents exist to ensure the AI receives the right context at the right moment—not through clever prompting, but through systematic engineering.
 
 - **Constraints over features.** We intentionally limit what bkit does. Three project levels, not infinite configuration. A fixed 9-stage pipeline, not a customizable workflow builder. Opinionated defaults, not a framework for frameworks. Constraints eliminate decision fatigue and make the system learnable.
 
