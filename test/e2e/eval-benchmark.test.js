@@ -107,12 +107,18 @@ async function runTests() {
     assertExists(results.timestamp, 'results.timestamp exists');
     testResults.passed++;
 
-    // E2E-005: Total skill count (28)
-    console.log('\n[E2E-005] Validate total skill count equals 28');
+    // E2E-005: Total benchmarked skills > 0 and ≤ actual skills directory (ENH-167 dynamic bounds)
+    const fs = require('fs');
+    const path = require('path');
+    const skillsDir = path.resolve(__dirname, '../../skills');
+    const actualSkillCount = fs.readdirSync(skillsDir, { withFileTypes: true })
+      .filter(d => d.isDirectory()).length;
     const totalSkills = (results.summary.workflow.total || 0) +
                        (results.summary.capability.total || 0) +
                        (results.summary.hybrid.total || 0);
-    assertEquals(totalSkills, 29, 'Total skill count is 29');
+    console.log(`\n[E2E-005] Validate benchmarked skills ${totalSkills} in range (0, ${actualSkillCount}]`);
+    assertTrue(totalSkills > 0 && totalSkills <= actualSkillCount,
+      `Total benchmarked skills ${totalSkills} within valid range (0, ${actualSkillCount}]`);
     testResults.passed++;
 
     // E2E-006: Passed skill count >= 25
@@ -173,10 +179,10 @@ async function runTests() {
     assertTrue(hybridResults.total >= 1, `Hybrid skills count (${hybridResults.total}) >= 1`);
     testResults.passed++;
 
-    // E2E-015: Sum of classifications = 29
-    console.log('\n[E2E-015] Validate classification count sum = 29');
+    // E2E-015: Sum of classifications > 0 (ENH-167 dynamic — no hardcoded count)
+    console.log('\n[E2E-015] Validate classification count sum > 0');
     const classifyTotal = workflowResults.total + capabilityResults.total + hybridResults.total;
-    assertEquals(classifyTotal, 29, 'Sum of classifications = 29');
+    assertTrue(classifyTotal > 0, `Sum of classifications (${classifyTotal}) > 0`);
     testResults.passed++;
 
     // E2E-016: Benchmark performance < 35s

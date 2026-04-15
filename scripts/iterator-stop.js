@@ -321,10 +321,9 @@ debugLog('Agent:pdca-iterator:Stop', 'Hook completed', {
   phaseAdvance: phaseAdvance?.nextPhase
 });
 
-// v2.1.1: Build sessionTitle with PDCA context
-const sessionTitle = feature
-  ? `[bkit] ACT ${feature}`
-  : undefined;
+// ENH-227 (Issue #77 Phase A): single-source generator
+const { generateSessionTitle } = require('../lib/pdca/session-title');
+const sessionTitle = generateSessionTitle({ action: 'ACT', feature });
 
 // Claude Code: JSON output conforming to CC hook output schema
 const response = {

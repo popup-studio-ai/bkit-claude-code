@@ -5,6 +5,71 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.6] - 2026-04-15
+
+### 🚨 Critical Hotfix — GitHub Issue #77
+
+**Fix P0 issue where bkit overwrites Claude Code's auto session title on every message, preventing parallel window identification.**
+
+- **[ENH-226] UI hook opt-out 3-way toggle** — Adds `ui.{sessionTitle,dashboard,contextInjection}.enabled` options in `bkit.config.json`. Non-PDCA users can disable UI hooks with a one-line edit. Default `true` (backward compatible).
+- **[ENH-227] Single-source sessionTitle emit** — New single entry point `lib/pdca/session-title.js`. Removes inline logic from 6 files (`scripts/user-prompt-handler.js`, `hooks/session-start.js`, `scripts/{pdca-skill-stop,plan-plus-stop,iterator-stop,gap-detector-stop}.js`).
+- **[ENH-228] Phase-change-only refresh** — `.bkit/runtime/session-title-cache.json` (file-based, atomic write). Returns `undefined` for identical `sessionId+feature+phase+action` combinations to preserve CC auto-title. Emit reduced from 6 per message to 1 per phase change (≈83% reduction).
+- **[ENH-229] Stale feature TTL** — Automatically invalidates PDCA primaryFeature when `lastUpdated > 24h`, auto-cleaning accumulated legacy features (e.g. "ui"). Adjustable via `ui.sessionTitle.staleTTLHours` (`0` disables).
+
+### Added
+- **[ENH-203] PreCompact decision:block** (`scripts/context-compaction.js`) — Blocks `manual` compaction during PDCA `do/check/act` phases using CC v2.1.105+ PreCompact hook blocking.
+- **[ENH-214] Output styles audit script** (`scripts/audit-output-styles.js`) — Defense against CC v2.1.107 regression #47482. Gate G8.
+- **[ENH-167] BKIT_VERSION dynamic lookup** (`lib/core/version.js`) — Single source of truth from `bkit.config.json`, removing version hardcoding across tests and scripts (Docs=Code).
+- **Tests** — `test/unit/session-title.test.js` (10 TC) + `test/integration/issue77-hook-e2e.test.js` (7 TC). **17/17 PASS**.
+
+### Changed
+- **Version** — 2.1.5 → 2.1.6.
+- **Quality Gates** — G1~G7 → G1~G9 (G8: output styles audit, G9: sessionTitle opt-out + single-source).
+- **TC-A3 patch** — `scripts/user-prompt-handler.js` contextInjection opt-out no longer suppresses sessionTitle emission. Separated `contextInjectionEnabled` flag keeps the sessionTitle path independent.
+- **Test version references** — 8 hardcoded version assertions (`VC2-001~025`, `CS-012`, `VW-036`, `SEC-CP-014`, `E2E-005/015`) migrated to dynamic `BKIT_VERSION` lookup.
+- **Documentation sync** — `README.md`, `CUSTOMIZATION-GUIDE.md` version references bumped to v2.1.6.
+
+### Fixed
+- TC-A3 design-implementation mismatch: contextInjection opt-out previously suppressed sessionTitle due to early `outputEmpty()+exit`. Now separated into per-feature guards.
+- Overview markdown headers (`bkit-system/components/{scripts,agents,skills}/_*-overview.md`) version bumped v2.1.1 → v2.1.6.
+- `skills/bkit/SKILL.md` description shortened from 284 to ~160 chars (SD-008/039/050 resolved).
+- `test/run-all.js` — removed missing file reference `performance/direct-import.test.js`.
+
+### Test Results
+- **3268/3280 PASS (99.6%)**, 0 FAIL, 12 SKIP.
+- Unit / Integration / Security / Philosophy / UX / E2E / Architecture / Controllable AI: **100% PASS**.
+- Regression 98.5% (8 SKIP only), Performance 97.1% (4 SKIP only).
+
+### Monitoring
+- **MON-CC-04** — CC v2.1.107 regressions (#47482 / #47810 / #47855 / #47828) remain OPEN in v2.1.108. **Recommendation updated: wait for v2.1.109+ hotfix** (previously v2.1.107 hotfix expectation unmet).
+
+### How to Use the Opt-out
+
+```jsonc
+// bkit.config.json
+{
+  "ui": {
+    "sessionTitle": {
+      "enabled": false,         // Suppresses [bkit] PHASE feature title; CC auto-title is used instead
+      "staleTTLHours": 24       // 0 = TTL disabled (for long-running PDCA sessions)
+    },
+    "dashboard": {
+      "enabled": false,         // Disables SessionStart 5 boxes (progress/workflow/impact/agent/control)
+      "sections": ["progress"]  // Or keep a subset
+    },
+    "contextInjection": {
+      "enabled": false          // Suppresses UserPromptSubmit ambiguity / Previous Work injection
+    }
+  }
+}
+```
+
+### 🚨 Out of Scope (deferred to separate session)
+- M7: Remove deprecated `unified-stop.js` (~4h)
+- M8: 5 remaining refactor ENH items (`catch(_){}` wrapping, Bash pattern extension, dead code elimination, MEMORY.md audit, etc. ~10h)
+
+---
+
 ## [2.1.5] - 2026-04-13
 
 ### Added

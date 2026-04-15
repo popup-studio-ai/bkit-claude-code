@@ -105,10 +105,11 @@ test('TC-07', 'generateAutoTrigger returns object for auto-advanceable phase', (
   assert.strictEqual(result.skill, 'pdca');
 });
 
-// TC-08: generateAutoTrigger — returns null when no auto-advance
-test('TC-08', 'generateAutoTrigger returns null for non-advanceable phase', () => {
+// TC-08: generateAutoTrigger — v2.1.5 #74 fix: 'plan' phase는 이제 design으로 auto-advance 트리거 가능.
+// 진정한 non-advanceable phase('archived')로 검증 변경.
+test('TC-08', 'generateAutoTrigger returns null for non-advanceable (terminal) phase', () => {
   delete process.env.BKIT_PDCA_AUTOMATION;
-  const result = automation.generateAutoTrigger('plan', { feature: 'my-feat' });
+  const result = automation.generateAutoTrigger('archived', { feature: 'my-feat' });
   assert.strictEqual(result, null);
 });
 
@@ -126,10 +127,11 @@ test('TC-10', 'shouldAutoStartPdca returns boolean', () => {
   assert.strictEqual(result, true); // 200 >= 100 threshold, feature not in status
 });
 
-// TC-11: autoAdvancePdcaPhase — returns null for non-advanceable
-test('TC-11', 'autoAdvancePdcaPhase returns null for plan in semi-auto', () => {
+// TC-11: autoAdvancePdcaPhase — v2.1.5 #74 fix: 'plan' is now advanceable to 'design' in semi-auto.
+// Use terminal 'archived' phase (no successor) for the null-return contract.
+test('TC-11', 'autoAdvancePdcaPhase returns null for terminal (archived) phase', () => {
   delete process.env.BKIT_PDCA_AUTOMATION;
-  const result = automation.autoAdvancePdcaPhase('my-feat', 'plan', {});
+  const result = automation.autoAdvancePdcaPhase('my-feat', 'archived', {});
   assert.strictEqual(result, null);
 });
 

@@ -15,6 +15,7 @@ const { PLUGIN_ROOT } = require('../lib/core/platform');
 const { detectNewFeatureIntent, matchImplicitAgentTrigger, matchImplicitSkillTrigger } = require('../lib/intent/trigger');
 const { calculateAmbiguityScore } = require('../lib/intent/ambiguity');
 const { getPdcaStatusFull } = require('../lib/pdca/status');
+const { generateSessionTitle } = require('../lib/pdca/session-title');
 
 // v1.4.2: Import Resolver (FR-02)
 let importResolver;
@@ -70,7 +71,40 @@ if (!userPrompt || userPrompt.length < 3) {
   process.exit(0);
 }
 
+// ENH-226 (Issue #77 Phase A): contextInjection opt-out gate
+// 사용자가 ui.contextInjection.enabled=false 시 ambiguity score, "Previous Work Detected" 등
+// 추가 컨텍스트 주입만 비활성화한다. sessionTitle은 별도 경로로 발행되므로 여기서 조기 종료하지 않는다.
+// TC-A3 fix (2026-04-15): 조기 exit 제거 → contextInjection opt-out + sessionTitle 활성화 조합 정상 동작.
+let contextInjectionEnabled = true;
+try {
+  const { getUIConfig } = require('../lib/core/config');
+  const ui = getUIConfig();
+  if (ui && ui.contextInjection && ui.contextInjection.enabled === false) {
+    contextInjectionEnabled = false;
+  }
+} catch (_e) {
+  // config 읽기 실패는 silent — 기존 동작 유지
+}
+
 const contextParts = [];
+
+// ENH-226 Phase A: contextInjection opt-out — additional context 섹션만 스킵, sessionTitle은 유지.
+if (!contextInjectionEnabled) {
+  // sessionTitle만 발행 (있을 때)
+  const sessionTitle = generateSessionTitle({ sessionId: input.session_id });
+  if (sessionTitle) {
+    console.log(JSON.stringify({
+      success: true,
+      hookSpecificOutput: {
+        hookEventName: 'UserPromptSubmit',
+        sessionTitle,
+      }
+    }));
+  } else {
+    outputEmpty();
+  }
+  process.exit(0);
+}
 
 // 1. New Feature Intent Detection
 try {
@@ -246,16 +280,11 @@ debugLog('UserPrompt', 'Hook completed', {
   contextPartsCount: contextParts.length
 });
 
+// ENH-227 (Issue #77 Phase A): single-source generator with opt-out + phase-change-only + stale TTL
+const sessionTitle = generateSessionTitle({ sessionId: input.session_id });
+
 if (contextParts.length > 0) {
   const context = truncateContext(contextParts.join(' | '));
-  // ENH-187: Auto session title based on active PDCA feature (CC v2.1.94+)
-  // v2.1.1 QM-04: sessionTitle includes phase for PDCA context
-  const pdcaStatus = getPdcaStatusFull();
-  const feature = pdcaStatus?.primaryFeature || pdcaStatus?.feature || null;
-  const phase = pdcaStatus?.currentPhase || pdcaStatus?.session?.currentPhase || null;
-  const sessionTitle = feature
-    ? (phase ? `[bkit] ${phase.toUpperCase()} ${feature}` : `[bkit] ${feature}`)
-    : undefined;
   console.log(JSON.stringify({
     success: true,
     message: context || undefined,
@@ -264,6 +293,15 @@ if (contextParts.length > 0) {
       additionalContext: context || undefined,
       sessionTitle,
       // v2.1.1 H-02: AskUserQuestion for high-ambiguity requests
+      userPrompt: ambiguityUserPrompt || undefined,
+    }
+  }));
+} else if (sessionTitle || ambiguityUserPrompt) {
+  console.log(JSON.stringify({
+    success: true,
+    hookSpecificOutput: {
+      hookEventName: 'UserPromptSubmit',
+      sessionTitle,
       userPrompt: ambiguityUserPrompt || undefined,
     }
   }));

@@ -5,13 +5,8 @@ classification-reason: Plugin self-documentation independent of model capability
 deprecation-risk: none
 effort: low
 description: |
-  bkit plugin help - Show all available bkit functions.
-  Workaround for skills autocomplete issue.
-
-  Use "/bkit" or just type "bkit help" to see available functions list.
-
-  Triggers: bkit, bkit help, bkit functions, show bkit commands,
-  도움말, 기능 목록, ヘルプ, 機能一覧, 帮助, ayuda, aide, Hilfe, aiuto.
+  bkit plugin help - list available functions. Use "/bkit" or "bkit help".
+  Triggers: bkit, help, functions, 도움말, 기능, ヘルプ, 帮助, ayuda, aide, Hilfe, aiuto.
 argument-hint: "[help]"
 user-invocable: true
 allowed-tools:

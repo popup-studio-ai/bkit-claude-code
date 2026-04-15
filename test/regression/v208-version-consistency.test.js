@@ -26,7 +26,8 @@ const sessionCtx = fs.readFileSync(path.join(BASE_DIR, 'hooks', 'startup', 'sess
 const sessionStart = fs.readFileSync(path.join(BASE_DIR, 'hooks', 'session-start.js'), 'utf-8');
 const contextEng = fs.readFileSync(path.join(BASE_DIR, 'bkit-system', 'philosophy', 'context-engineering.md'), 'utf-8');
 
-const EXPECTED_VERSION = '2.1.0';
+// ENH-167 Phase B: 버전 하드코딩 제거 — bkit.config.json 단일 진실원 동적 참조
+const EXPECTED_VERSION = bkitConfig.version;
 
 // ============================================================
 // VC2-001~005: Config Version Consistency

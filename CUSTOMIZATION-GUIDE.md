@@ -128,7 +128,7 @@ For deeper understanding, explore the `bkit-system/` folder:
 
 bkit is not just a collection of prompts—it's a **production-grade plugin architecture** with carefully designed components that work together as a cohesive system.
 
-### Component Inventory (v2.1.5)
+### Component Inventory (v2.1.6)
 
 | Component | Count | Purpose |
 |-----------|-------|---------|
@@ -271,7 +271,7 @@ For detailed Context Engineering documentation, see [bkit-system/philosophy/cont
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│               bkit Component Architecture (v2.1.5)               │
+│               bkit Component Architecture (v2.1.6)               │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
 │  Knowledge Layer    │ Skills (38)      │ Domain expertise       │

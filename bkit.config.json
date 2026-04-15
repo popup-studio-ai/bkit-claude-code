@@ -1,5 +1,20 @@
 {
-  "version": "2.1.5",
+  "version": "2.1.6",
+  "ui": {
+    "sessionTitle": {
+      "enabled": true,
+      "staleTTLHours": 24,
+      "format": "[bkit] {action} {feature}"
+    },
+    "dashboard": {
+      "enabled": true,
+      "sections": ["progress", "workflow", "impact", "agent", "control"]
+    },
+    "contextInjection": {
+      "enabled": true,
+      "ambiguityThreshold": 0.7
+    }
+  },
   "pdca": {
     "docPaths": {
       "plan": [

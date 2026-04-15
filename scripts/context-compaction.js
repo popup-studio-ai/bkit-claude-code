@@ -31,6 +31,33 @@ debugLog('ContextCompaction', 'Hook started', {
 // Get current PDCA status
 const pdcaStatus = getPdcaStatusFull(true);
 
+// ENH-203 (CC v2.1.105 PreCompact blocking, Plan §3): Critical phase 진행 중 'manual' compaction 차단
+// - 'auto' compaction은 차단하지 않음 (사용자 의도 없는 자동 호출은 snapshot만)
+// - 'manual' compaction은 do/check/act 진행 중 차단하여 컨텍스트 손실 방지
+try {
+  const reason = (input && input.reason) ? String(input.reason) : 'unknown';
+  const isManual = reason === 'manual';
+  const criticalPhase = pdcaStatus
+    && pdcaStatus.primaryFeature
+    && ['do', 'check', 'act'].includes(pdcaStatus.currentPhase);
+
+  if (isManual && criticalPhase) {
+    const blockMsg =
+      `[bkit] PDCA ${String(pdcaStatus.currentPhase).toUpperCase()} phase 진행 중 (${pdcaStatus.primaryFeature}). ` +
+      `Manual compaction은 컨텍스트 손실 위험이 있어 차단됨. ` +
+      `먼저 \`/pdca status\`로 진행 상황을 확인하거나, \`/pdca report\` 후 진행하세요.`;
+    console.log(JSON.stringify({
+      decision: 'block',
+      reason: blockMsg,
+      hookSpecificOutput: { hookEventName: 'PreCompact', additionalContext: blockMsg },
+    }));
+    debugLog('ContextCompaction', 'PreCompact blocked', { reason, phase: pdcaStatus.currentPhase, feature: pdcaStatus.primaryFeature });
+    process.exit(2); // CC: exit 2 == block
+  }
+} catch (_e) {
+  // Block 로직 실패는 silent (기존 snapshot 경로 진행)
+}
+
 if (pdcaStatus) {
   // Create compaction snapshot
   const snapshot = {

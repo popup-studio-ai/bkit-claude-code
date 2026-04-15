@@ -327,10 +327,9 @@ if (feature && (action === 'plan' || action === 'design' || action === 'report')
   });
   const formatted = formatAskUserQuestion(questionPayload);
 
-  // v2.1.1: Build sessionTitle with PDCA context
-  const execSessionTitle = feature && action
-    ? `[bkit] ${action.toUpperCase()} ${feature}`
-    : undefined;
+  // ENH-227 (Issue #77 Phase A): single-source generator
+  const { generateSessionTitle } = require('../lib/pdca/session-title');
+  const execSessionTitle = generateSessionTitle({ action: action ? action.toUpperCase() : null, feature });
 
   const execResponse = {
     decision: 'allow',
@@ -360,10 +359,9 @@ if (feature && (action === 'plan' || action === 'design' || action === 'report')
   process.exit(0);
 }
 
-// v2.1.1: Build sessionTitle for default path
-const defaultSessionTitle = feature && action
-  ? `[bkit] ${action.toUpperCase()} ${feature}`
-  : undefined;
+// ENH-227 (Issue #77 Phase A): single-source generator
+const { generateSessionTitle: _genSessionTitleDefault } = require('../lib/pdca/session-title');
+const defaultSessionTitle = _genSessionTitleDefault({ action: action ? action.toUpperCase() : null, feature });
 
 // Claude Code: JSON output conforming to CC hook output schema
 const response = {

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * bkit Vibecoding Kit - SessionStart Hook (v2.1.5)
+ * bkit Vibecoding Kit - SessionStart Hook (v2.1.6)
  *
  * Thin orchestrator that delegates to startup modules:
  *   1. migration   - Legacy path migration (docs/ -> .bkit/)
@@ -88,6 +88,21 @@ try {
 // Order: Session Context → Progress Bar → Workflow Map → Impact View → Agent Panel → Control Panel
 const dashboardSections = [];
 
+// ENH-226 (Issue #77 Phase A): dashboard opt-out gate
+// 사용자가 ui.dashboard.enabled=false 시 5종 박스(progress/workflow/impact/agent/control) 렌더링 전부 스킵.
+let _uiDashboardEnabled = true;
+let _uiDashboardSections = ['progress', 'workflow', 'impact', 'agent', 'control'];
+try {
+  const { getUIConfig } = require('../lib/core/config');
+  const _ui = getUIConfig();
+  if (_ui && _ui.dashboard) {
+    _uiDashboardEnabled = _ui.dashboard.enabled !== false;
+    if (Array.isArray(_ui.dashboard.sections)) _uiDashboardSections = _ui.dashboard.sections;
+  }
+} catch (_e) {
+  // 기본값(true) 유지
+}
+
 // Session Context is already in additionalContext (base content)
 // It will be placed first in the final output
 
@@ -108,9 +123,10 @@ try {
   }
 } catch (_) { /* non-critical */ }
 
-if (pdcaStatus && pdcaStatus.primaryFeature) {
+if (pdcaStatus && pdcaStatus.primaryFeature && _uiDashboardEnabled) {
+  // ENH-226: per-section opt-in control via _uiDashboardSections array
   // 6. Progress Bar
-  try {
+  if (_uiDashboardSections.includes('progress')) try {
     const { renderPdcaProgressBar } = require('../lib/ui/progress-bar');
     const dashboardBar = renderPdcaProgressBar(pdcaStatus, { compact: false });
     if (dashboardBar) dashboardSections.push(dashboardBar);
@@ -119,7 +135,7 @@ if (pdcaStatus && pdcaStatus.primaryFeature) {
   }
 
   // 7. Workflow Map
-  try {
+  if (_uiDashboardSections.includes('workflow')) try {
     const { renderWorkflowMap } = require('../lib/ui/workflow-map');
     const workflowMap = renderWorkflowMap(pdcaStatus, agentState, {
       feature: pdcaStatus.primaryFeature,
@@ -132,7 +148,7 @@ if (pdcaStatus && pdcaStatus.primaryFeature) {
   }
 
   // 7.1 v2.1.1 UI-01: Impact View
-  try {
+  if (_uiDashboardSections.includes('impact')) try {
     const { renderImpactView } = require('../lib/ui/impact-view');
     const impactView = renderImpactView(pdcaStatus, null, {});
     if (impactView) dashboardSections.push(impactView);
@@ -141,7 +157,7 @@ if (pdcaStatus && pdcaStatus.primaryFeature) {
   }
 
   // 7.2 v2.1.1 UI-01: Agent Panel (skip when inactive to save ~300 tokens)
-  if (agentState && agentState.enabled) {
+  if (_uiDashboardSections.includes('agent') && agentState && agentState.enabled) {
     try {
       const { renderAgentPanel } = require('../lib/ui/agent-panel');
       const agentPanel = renderAgentPanel(agentState, {});
@@ -152,7 +168,7 @@ if (pdcaStatus && pdcaStatus.primaryFeature) {
   }
 
   // 8. Control Panel (last in dashboard)
-  try {
+  if (_uiDashboardSections.includes('control')) try {
     const { renderControlPanel } = require('../lib/ui/control-panel');
     let controlState = null;
     try {
@@ -196,15 +212,18 @@ try {
 }
 
 // --- Output Response ---
-// v2.1.1 QM-04: sessionTitle with PDCA phase context
+// ENH-227 (Issue #77 Phase A): single-source generator with opt-out + phase-change-only + stale TTL
+const { generateSessionTitle } = require('../lib/pdca/session-title');
 const primaryFeature = onboardingContext.onboardingData.primaryFeature || pdcaStatus?.primaryFeature || null;
 const currentPhase = onboardingContext.onboardingData.phase || pdcaStatus?.currentPhase || null;
-const sessionTitle = primaryFeature
-  ? (currentPhase ? `[bkit] ${currentPhase.toUpperCase()} ${primaryFeature}` : `[bkit] ${primaryFeature}`)
-  : undefined;
+const sessionTitle = generateSessionTitle({
+  feature: primaryFeature,
+  phase: currentPhase,
+  sessionId: process.env.CLAUDE_SESSION_ID || null,
+});
 
 const response = {
-  systemMessage: `bkit Vibecoding Kit v2.1.5 activated (Claude Code)`,
+  systemMessage: `bkit Vibecoding Kit v2.1.6 activated (Claude Code)`,
   hookSpecificOutput: {
     hookEventName: "SessionStart",
     onboardingType: onboardingContext.onboardingData.type,

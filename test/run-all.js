@@ -192,7 +192,7 @@ const CATEGORIES = {
       'performance/module-load-perf.test.js',
       'performance/plugin-data-perf.test.js',
       'performance/hook-cold-start.test.js',
-      'performance/direct-import.test.js',
+      // 'performance/direct-import.test.js' — ENH-167 Phase B: 파일 미존재로 제거 (run-all 정합성)
       'performance/state-store-perf.test.js',
       'performance/audit-write-perf.test.js',
       'performance/ui-render-perf.test.js',

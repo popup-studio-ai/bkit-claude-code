@@ -358,10 +358,11 @@ assert('CS-011',
   'plugin.json exists and parses as valid JSON'
 );
 
-// CS-012: plugin.json version is 2.0.8
+// CS-012: plugin.json version matches bkit.config.json (ENH-167 dynamic)
+const { BKIT_VERSION } = require('../../lib/core/version');
 assert('CS-012',
-  pluginJson?.version === '2.1.0',
-  `plugin.json version is ${pluginJson?.version} (expected 2.0.9)`
+  pluginJson?.version === BKIT_VERSION,
+  `plugin.json version is ${pluginJson?.version} (expected ${BKIT_VERSION})`
 );
 
 // CS-013: plugin.json has outputStyles
