@@ -5,6 +5,56 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.6] - 2026-04-15 (in progress, branch: feat/v216-integrated-issue77)
+
+### 🚨 Critical Hotfix — GitHub Issue #77
+
+**bkit이 Claude Code의 자동 세션 타이틀을 매 메시지마다 덮어써서 병렬 작업 시 창 구분이 불가능한 P0 문제 해결**
+
+- **[ENH-226] UI hook opt-out 3-way 토글** — `bkit.config.json`의 `ui.{sessionTitle,dashboard,contextInjection}.enabled` 옵션 추가. PDCA 비사용자가 한 줄 편집으로 UI hook 비활성화 가능. 기본값 `true` (호환성).
+- **[ENH-227] sessionTitle emit 단일화** — `lib/pdca/session-title.js` 신규 단일 진입점. 6개 파일(`scripts/user-prompt-handler.js`, `hooks/session-start.js`, `scripts/{pdca-skill-stop,plan-plus-stop,iterator-stop,gap-detector-stop}.js`)의 inline 로직 제거.
+- **[ENH-228] phase-change-only 갱신** — `.bkit/runtime/session-title-cache.json` (file-based, atomic write). 동일 sessionId+feature+phase+action 조합은 `undefined` 반환 → CC auto-title 보존. 매 메시지 6 emit → 변경 시 1 emit (≈83% 감소).
+- **[ENH-229] Stale feature TTL** — `lastUpdated > 24h` PDCA primaryFeature 자동 무효화. 사용자 사례("ui" 같은 과거 feature 누적) 자동 정리. `ui.sessionTitle.staleTTLHours`로 조정 가능 (`0` = 비활성).
+
+### Added
+- **[ENH-203] PreCompact decision:block** (`scripts/context-compaction.js`) — PDCA `do/check/act` 진행 중 `manual` compaction 차단. CC v2.1.105+ PreCompact hook blocking 활용.
+- **[ENH-214] Output styles audit script** (`scripts/audit-output-styles.js`) — CC v2.1.107 회귀 #47482 방어. G8 게이트.
+- **Tests** — `test/unit/session-title.test.js` (10 TC) + `test/integration/issue77-hook-e2e.test.js` (7 TC). **17/17 PASS**.
+
+### Changed
+- **Version** — 2.1.5 → 2.1.6.
+- **Quality Gates** — G1~G7 → G1~G9 (G8: output styles audit, G9: sessionTitle opt-out + single-source).
+
+### Monitoring
+- **MON-CC-04** — CC v2.1.107 회귀 4건 (#47482 / #47810 / #47855 / #47828) 모두 v2.1.108에서도 OPEN. **v2.1.109+ hotfix 대기 권고로 갱신**.
+
+### How to Use the Opt-out
+
+```jsonc
+// bkit.config.json
+{
+  "ui": {
+    "sessionTitle": {
+      "enabled": false,         // bkit의 [bkit] PHASE feature 타이틀 미발행 → CC auto-title 사용
+      "staleTTLHours": 24       // 0 = TTL 비활성 (장기 PDCA 세션용)
+    },
+    "dashboard": {
+      "enabled": false,         // SessionStart 5종 박스 (progress/workflow/impact/agent/control) 비활성
+      "sections": ["progress"]  // 또는 일부만 유지
+    },
+    "contextInjection": {
+      "enabled": false          // UserPromptSubmit ambiguity / Previous Work 등 비주입
+    }
+  }
+}
+```
+
+### 🚨 Out of Scope (이번 릴리스 미포함, 별도 세션)
+- M7: `unified-stop.js` deprecated 제거 (4h)
+- M8: 기존 13 ENH 중 refactor 8건 (`catch(_){}` 래핑, Bash 패턴 확장, dead code 등 ~10h)
+
+---
+
 ## [2.1.5] - 2026-04-13
 
 ### Added
