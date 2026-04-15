@@ -65,10 +65,9 @@ const summaryText = formatExecutiveSummary(summary, 'full');
 const questionPayload = buildNextActionQuestion('plan-plus', feature);
 const formatted = formatAskUserQuestion(questionPayload);
 
-// v2.1.1: Build sessionTitle with PDCA context
-const sessionTitle = feature
-  ? `[bkit] PLAN ${feature}`
-  : undefined;
+// ENH-227 (Issue #77 Phase A): single-source generator
+const { generateSessionTitle } = require('../lib/pdca/session-title');
+const sessionTitle = generateSessionTitle({ action: 'PLAN', feature });
 
 // Claude Code: JSON output conforming to CC hook output schema
 const response = {

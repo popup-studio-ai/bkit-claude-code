@@ -15,6 +15,7 @@ const { PLUGIN_ROOT } = require('../lib/core/platform');
 const { detectNewFeatureIntent, matchImplicitAgentTrigger, matchImplicitSkillTrigger } = require('../lib/intent/trigger');
 const { calculateAmbiguityScore } = require('../lib/intent/ambiguity');
 const { getPdcaStatusFull } = require('../lib/pdca/status');
+const { generateSessionTitle } = require('../lib/pdca/session-title');
 
 // v1.4.2: Import Resolver (FR-02)
 let importResolver;
@@ -68,6 +69,20 @@ debugLog('UserPrompt', 'Hook started', { promptLength: userPrompt.length });
 if (!userPrompt || userPrompt.length < 3) {
   outputEmpty();
   process.exit(0);
+}
+
+// ENH-226 (Issue #77 Phase A): contextInjection opt-out gate
+// 사용자가 ui.contextInjection.enabled=false 시 ambiguity score, "Previous Work Detected" 등
+// 추가 컨텍스트 주입을 전부 비활성화한다. sessionTitle은 별도 가드(generateSessionTitle 내부).
+try {
+  const { getUIConfig } = require('../lib/core/config');
+  const ui = getUIConfig();
+  if (ui && ui.contextInjection && ui.contextInjection.enabled === false) {
+    outputEmpty();
+    process.exit(0);
+  }
+} catch (_e) {
+  // config 읽기 실패는 silent — 기존 동작 유지
 }
 
 const contextParts = [];
@@ -248,14 +263,8 @@ debugLog('UserPrompt', 'Hook completed', {
 
 if (contextParts.length > 0) {
   const context = truncateContext(contextParts.join(' | '));
-  // ENH-187: Auto session title based on active PDCA feature (CC v2.1.94+)
-  // v2.1.1 QM-04: sessionTitle includes phase for PDCA context
-  const pdcaStatus = getPdcaStatusFull();
-  const feature = pdcaStatus?.primaryFeature || pdcaStatus?.feature || null;
-  const phase = pdcaStatus?.currentPhase || pdcaStatus?.session?.currentPhase || null;
-  const sessionTitle = feature
-    ? (phase ? `[bkit] ${phase.toUpperCase()} ${feature}` : `[bkit] ${feature}`)
-    : undefined;
+  // ENH-227 (Issue #77 Phase A): single-source generator with opt-out + phase-change-only + stale TTL
+  const sessionTitle = generateSessionTitle({ sessionId: input.session_id });
   console.log(JSON.stringify({
     success: true,
     message: context || undefined,
