@@ -31,9 +31,10 @@ fs.mkdirSync(fakePluginRoot, { recursive: true });
 fs.mkdirSync(fakeProjDir, { recursive: true });
 fs.mkdirSync(fakeUserConfig, { recursive: true });
 
-// Create mock common.js and context-hierarchy.js in lib/ before requiring import-resolver
+// v2.1.6 회귀 fix: import-resolver는 lib/common.js → lib/core 마이그레이션됨.
+// 환경 변수로 PLUGIN_ROOT/PROJECT_DIR 지정 후 lib/core 모듈 캐시를 clear하여 mock 적용.
 const libDir = path.resolve(__dirname, '../../lib');
-const commonPath = path.join(libDir, 'common.js');
+const commonPath = path.join(libDir, 'common.js');         // legacy 폴백 보존
 const hierarchyPath = path.join(libDir, 'context-hierarchy.js');
 const commonExisted = fs.existsSync(commonPath);
 const hierarchyExisted = fs.existsSync(hierarchyPath);
@@ -51,11 +52,19 @@ if (!hierarchyExisted) {
   };`);
 }
 
-// Clear cached module
+// v2.1.6: lib/core 마이그레이션 후 PLUGIN_ROOT/PROJECT_DIR은 환경변수 우선
+process.env.CLAUDE_PLUGIN_ROOT = fakePluginRoot;
+process.env.CLAUDE_PROJECT_DIR = fakeProjDir;
+
+// Clear cached modules (legacy + new core)
 const irModulePath = path.resolve(libDir, 'import-resolver.js');
 delete require.cache[irModulePath];
 delete require.cache[commonPath];
 delete require.cache[hierarchyPath];
+// lib/core/* 캐시 전부 clear (PLUGIN_ROOT/PROJECT_DIR 재계산)
+Object.keys(require.cache).forEach((k) => {
+  if (k.includes('/lib/core/') || k.includes('/lib/core.js')) delete require.cache[k];
+});
 
 const {
   resolveImports, resolveImportPath, resolveVariables,
@@ -83,8 +92,11 @@ test('UT-IR-003', 'resolveVariables replaces ${PROJECT}', () => {
 });
 
 test('UT-IR-004', 'resolveVariables replaces ${USER_CONFIG}', () => {
+  // v2.1.6 fix: getUserConfigDir() inlined as os.homedir()/.claude/bkit (lib/import-resolver.js:30-32).
+  // Mock 불가 — 실제 home dir 기반 출력 검증.
   const result = resolveVariables('${USER_CONFIG}/settings.json');
-  assert.strictEqual(result, path.join(fakeUserConfig, 'settings.json'));
+  const expected = path.join(os.homedir(), '.claude', 'bkit', 'settings.json');
+  assert.strictEqual(result, expected);
 });
 
 test('UT-IR-005', 'resolveVariables handles no variables', () => {

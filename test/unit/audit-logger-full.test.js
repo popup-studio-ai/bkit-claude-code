@@ -57,7 +57,9 @@ test('C05', 'BLAST_RADII is a non-empty array with expected values', () => {
 test('C06', 'BKIT_VERSION is a valid semver string', () => {
   assert.strictEqual(typeof audit.BKIT_VERSION, 'string');
   assert.ok(/^\d+\.\d+\.\d+/.test(audit.BKIT_VERSION), `BKIT_VERSION "${audit.BKIT_VERSION}" should be semver`);
-  assert.strictEqual(audit.BKIT_VERSION, '2.1.0');
+  // ENH-167 (v2.1.6): hardcoded "2.1.0" assertion 제거 — Docs=Code 원칙으로 단일 진실원(lib/core/version.js)과 일치 검증
+  const { BKIT_VERSION } = require('../../lib/core/version');
+  assert.strictEqual(audit.BKIT_VERSION, BKIT_VERSION, 'audit.BKIT_VERSION must match centralized version source');
 });
 
 // === Helper Function Tests ===
