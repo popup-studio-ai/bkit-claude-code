@@ -156,9 +156,10 @@ test('SEC-CP-013', 'All permission values are valid (allow/deny/ask)', () => {
   }
 });
 
-// SEC-CP-014: Config version matches expected
-test('SEC-CP-014', 'Config version is 2.1.0', () => {
-  assert.strictEqual(config.version, '2.1.0', `Expected version 2.1.0, got ${config.version}`);
+// SEC-CP-014: Config version matches BKIT_VERSION (ENH-167 dynamic)
+test('SEC-CP-014', 'Config version matches BKIT_VERSION', () => {
+  const { BKIT_VERSION } = require('../../lib/core/version');
+  assert.strictEqual(config.version, BKIT_VERSION, `Expected version ${BKIT_VERSION}, got ${config.version}`);
 });
 
 // SEC-CP-015: Permissions section has correct total count

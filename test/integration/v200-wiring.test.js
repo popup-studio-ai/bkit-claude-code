@@ -306,10 +306,11 @@ const bkitConfig = readScript('bkit.config.json');
 let config = null;
 try { config = JSON.parse(bkitConfig); } catch (_) {}
 
-// VW-036: bkit.config.json parses as valid JSON
+// VW-036: bkit.config.json parses and version matches BKIT_VERSION (ENH-167 dynamic)
+const { BKIT_VERSION: VW_BKIT_VERSION } = require('../../lib/core/version');
 assert('VW-036',
-  config !== null && config.version === '2.1.0',
-  'bkit.config.json parses and has version 2.0.9'
+  config !== null && config.version === VW_BKIT_VERSION,
+  `bkit.config.json parses and has version ${VW_BKIT_VERSION}`
 );
 
 // VW-037: bkit.config.json has automation section
