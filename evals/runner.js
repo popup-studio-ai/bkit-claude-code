@@ -380,9 +380,13 @@ async function runBenchmark() {
   const capabilityResults = await runAllEvals({ classification: 'capability' });
   const hybridResults = await runAllEvals({ classification: 'hybrid' });
 
+  // v2.1.8 fix B12 extension (QR7 runtime catch): use BKIT_VERSION dynamic lookup instead of stale config.version
+  let bkitVersion;
+  try { bkitVersion = require('../lib/core/version').BKIT_VERSION; } catch (_) { bkitVersion = config.version; }
+
   return {
     timestamp,
-    version: config.version,
+    version: bkitVersion,
     model: config.benchmarkModel,
     summary: {
       workflow: { total: workflowResults.total, passed: workflowResults.passed },

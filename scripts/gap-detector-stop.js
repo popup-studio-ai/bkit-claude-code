@@ -127,7 +127,8 @@ try {
 const config = getBkitConfig();
 const threshold = config.pdca?.matchRateThreshold || 90;
 const maxIterations = config.pdca?.maxIterations || 5;
-const featureStatus = currentStatus.features?.[feature];
+// v2.1.8 fix B17 (QR11 runtime catch): guard currentStatus itself — null in pre-PDCA-init projects
+const featureStatus = currentStatus?.features?.[feature];
 const iterCount = featureStatus?.iterationCount || 0;
 
 // Generate guidance based on match rate thresholds
