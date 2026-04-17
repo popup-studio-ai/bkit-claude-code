@@ -5,6 +5,63 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.8] - 2026-04-17
+
+### 🚨 Hotfix — GitHub Issue #81 (SessionStart `additionalContext` Re-injection) + Docs=Code Philosophy Restoration
+
+Community user [@scokeepa](https://github.com/popup-studio-ai/bkit-claude-code/issues/81) reported that `session-start.js` generates a ~12,921-byte `additionalContext` that exceeds CC's hook output cap (officially documented at 10,000 chars, not 2 KB as originally hypothesized). This caused SessionStart payloads to be file-replaced with a preview on every session, and — compounded by PreCompact re-firing without honoring `once: true` — resulted in duplicate injections that wasted tokens across long PDCA sessions.
+
+Investigation confirmed **3 root causes** (RC-1 size, RC-2 compaction dedup, RC-3 Docs=Code violation in ENH-226) and found a regression-adjacent CC Desktop app bug (#48963) affecting plugin skill discoverability.
+
+### Added
+- **[ENH-238]** `hooks/startup/session-context.js` guard — 3-way `ui.contextInjection.{enabled,sections}` toggle mirroring the existing `ui.dashboard` pattern. Opt-out returns the header only (47 bytes), per-section opt-in respects the user-defined `sections[]` array. Restores the ENH-226 Docs=Code contract that was declared in `bkit.config.json` and implemented in `scripts/user-prompt-handler.js` but missing from the SessionStart hook.
+- **[ENH-239]** `lib/core/session-ctx-fp.js` — SHA-256 fingerprint dedup store for SessionStart `additionalContext`. 1-hour TTL, session isolation via `CLAUDE_SESSION_ID`, atomic write (`.pid.ts.tmp` + `rename`), inline GC (30-day stale + 100-entry LRU). Blocks PreCompact/PostCompact re-fire duplicate injections that bypass `hooks.json` matcher-group `once: true`.
+- **[ENH-240]** `lib/core/context-budget.js` — PersistedOutputGuard applying an 8,000-char hard cap (CC 10,000 limit minus a 2,000-char safety margin) with priority-preserved truncation. `stripAnsi`-based length measurement to avoid ANSI-escape bias. Appends a truncation notice and debug log when activated.
+- **[ENH-244]** `docs/context-engineering.md` — New ADR-style guide documenting the hook output budget, SessionStart `once: true` limitation (skills-level only per CC docs), bkit's dedup defense, and the Issue #81 cross-reference chain.
+- **Tests** — 4 new QA test files (`tests/qa/session-context.test.js`, `context-budget.test.js`, `session-ctx-fingerprint.test.js`, `ui-opt-out-matrix.test.js`) covering 25 test cases across L1 Unit (13), L2 Integration (5), and L4 QA (8 matrix combinations).
+
+### Fixed
+- **`lib/core/config.js` `getUIConfig()` missing fields (discovered during Iterate)** — Previously exposed only `enabled` and `ambiguityThreshold` for `contextInjection`, dropping the new `sections` / `maxChars` / `priorityPreserve` fields silently. Now returns all five fields with documented defaults, completing the Plan → Design → Config → Runtime contract.
+- **Docs=Code violation (ENH-226)** — The `ui.contextInjection.enabled` toggle was declared in `bkit.config.json` and honored by `scripts/user-prompt-handler.js:82`, but `hooks/startup/session-context.js:build()` ignored it entirely. All 8 SessionStart builders now respect the toggle.
+- **Compaction duplicate injection** — `hooks.json:7` `once: true` lives at matcher-group scope and cannot distinguish `source: "compact"` from an initial SessionStart, so PreCompact re-fire re-emitted the full payload. ENH-239 fingerprint lock suppresses identical payloads within the TTL window, observed to reduce 2–3 injections down to 1 per session.
+
+### Changed
+- **Version** — 2.1.7 → 2.1.8 across `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, `bkit.config.json`, `hooks/hooks.json`, `hooks/session-start.js`, `hooks/startup/session-context.js`.
+- **CC recommended version** — v2.1.110+ → **v2.1.111+** (72 consecutive compatible releases, CC v2.1.111 `/less-permission-prompts` + `/effort` slider + `/ultrareview` + I1/I13/B3/B6 auto-benefits; v2.1.112 single auto-mode hotfix, unaffected by bkit).
+- **`bkit.config.json` schema** — `ui.contextInjection` extended with `sections` (8 builder keys), `maxChars` (8000), `priorityPreserve` (MANDATORY / Previous Work Detected / AskUserQuestion).
+- **`hooks/startup/session-context.js`** — `buildVersionEnhancementsContext` now reports "bkit v2.1.8 (Current)" and "CC recommended: v2.1.111+ | 72 consecutive compatible releases".
+- **Agents** — 17 agent files updated: `CC recommended version: v2.1.78 (stdin freeze fix, background agent recovery)` → `v2.1.111+ (72 consecutive compatible releases, MCP/PreToolUse stability)`.
+- **Documentation sync** — `README.md`, `CUSTOMIZATION-GUIDE.md`, `.claude-plugin/marketplace.json`, `bkit-system/components/{skills,agents,scripts}/_*-overview.md` version references bumped to v2.1.8.
+
+### Test Results
+- **74 / 74 PASS (100%)**, 0 FAIL.
+- New TCs: 25 PASS across 4 suites (`session-context` 6 / `context-budget` 6 / `session-ctx-fingerprint` 5 / `ui-opt-out-matrix` 8).
+- Regression: 43 PASS across 5 legacy QA scanners (`config-audit` 5 / `dead-code` 5 / `completeness` 6 / `shell-escape` 8 / `scanner-base` 19). Zero regressions.
+- Live smoke: `hooks/session-start.js` emits `bkit Vibecoding Kit v2.1.8 activated` with a 16-char SHA-256-truncated fingerprint persisted to `.bkit/runtime/session-ctx-fp.json`.
+- Match Rate (Plan/Design → Code): **100%** (see `docs/03-analysis/cc-v2110-v2112-issue81-response.analysis.md`).
+
+### Monitoring
+- **MON-CC-05 (new)** — [#48963](https://github.com/anthropics/claude-code/issues/48963) v2.1.110 regression: Plugin skills missing from `/` menu on the macOS Desktop app (CLI unaffected). Tracked for ENH-243 manual verification in a later release; CLI usage recommended in the meantime.
+- **MON-CC-01~04 (retained)** — CC v2.1.107 regressions (#47810 skip-perm + PreToolUse bypass, #47855 Opus 1M `/compact` block, #47482 output styles frontmatter, #47828 SessionStart `systemMessage` + remoteControl) remain OPEN across **6 consecutive releases** (v2.1.107 → v2.1.112). **Recommendation updated: wait for v2.1.113+ hotfix** (previously "wait for v2.1.111+" — target unmet).
+
+### Migration
+- Existing users on v2.1.7 receive all improvements automatically on upgrade. Default `ui.contextInjection` values preserve the previous behavior (100% backward compatible). To enable the lean opt-out mode, set `ui.contextInjection.enabled: false` (returns header only) or provide a narrower `sections` array.
+- If you previously relied on a custom `additionalContext` size, the 8,000-char hard cap now applies; raise `ui.contextInjection.maxChars` (e.g. `999999`) in `bkit.config.json` to disable the guard.
+- `.bkit/runtime/session-ctx-fp.json` is auto-generated and gitignored; delete the file to reset the dedup store with no side effects.
+
+### Not Included (Deferred)
+- **ENH-241** (Docs=Code cross-verification scheme + QA report correction for ENH-226 status) — Deferred to v2.1.9 (~2h).
+- **ENH-243** (Issue #48963 Desktop app manual verification + CLI recommendation README note) — Deferred to v2.1.9 (~1.5h).
+- **ENH-242** (Content Trimmer priority-based budget allocation across Dashboard + session-context) — Deferred to v2.1.10 (~4h).
+
+### Stats
+- Files changed: 11 (5 modified Production + 2 new Production + 2 Config + 1 new Docs + 4 new Tests).
+- Lines: +641 operational / +425 tests / +1,540 docs = **+2,606 total**.
+- New LOC: `lib/core/context-budget.js` (95) + `lib/core/session-ctx-fp.js` (115) + `docs/context-engineering.md` (90).
+- CC compatible releases: **72** (v2.1.34 ~ v2.1.112, 0 breaking changes).
+
+---
+
 ## [2.1.7] - 2026-04-16
 
 ### 🚨 Hotfix — GitHub Issue #79 (Opus Drift PDCA Workflow Fixes)

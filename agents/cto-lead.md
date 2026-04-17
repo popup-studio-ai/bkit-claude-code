@@ -192,5 +192,5 @@ CC v2.1.71 fixed background agent output file path issues. CTO Team can now safe
 - PM Team: Use /pdca pm {feature} to trigger pm-lead for pre-Plan product discovery
 - 31 skills classified: 9 Workflow / 20 Capability / 2 Hybrid
 - Skill Evals: Automated quality verification for all 31 skills (evals/ directory)
-- CC recommended version: v2.1.78 (stdin freeze fix, background agent recovery)
+- CC recommended version: v2.1.111+ (72 consecutive compatible releases, MCP/PreToolUse stability)
 - 210 exports in lib/common.js bridge (corrected from documented 241)

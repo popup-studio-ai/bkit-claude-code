@@ -1,6 +1,9 @@
 # Scripts Overview
 
-> 42 Node.js Scripts used by bkit hooks (v2.1.7)
+> 43 Node.js Scripts used by bkit hooks (v2.1.8)
+>
+> **v2.1.8**: Issue #81 hotfix - scripts unchanged (43). Focus was `hooks/session-start.js` (ENH-239 fingerprint dedup integration) + `hooks/startup/session-context.js` (ENH-238/240 guard + budget). Two new `lib/core/` modules: `context-budget.js` (95 LOC) + `session-ctx-fp.js` (115 LOC).
+> **v2.1.7**: Issue #79 hotfix - `skill-post.js` argument order, `pre-write.js` phantom feature guard, `gap-detector-stop.js` analysis doc auto-generation.
 >
 > **v1.5.0**: Claude Code Exclusive - Gemini CLI support removed, simplified architecture
 > **v1.4.7**: Core Modularization - lib/ split into 4 modules, Task Management Integration

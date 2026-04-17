@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * bkit Vibecoding Kit - SessionStart Hook (v2.1.7)
+ * bkit Vibecoding Kit - SessionStart Hook (v2.1.8)
  *
  * Thin orchestrator that delegates to startup modules:
  *   1. migration   - Legacy path migration (docs/ -> .bkit/)
@@ -216,14 +216,32 @@ try {
 const { generateSessionTitle } = require('../lib/pdca/session-title');
 const primaryFeature = onboardingContext.onboardingData.primaryFeature || pdcaStatus?.primaryFeature || null;
 const currentPhase = onboardingContext.onboardingData.phase || pdcaStatus?.currentPhase || null;
+const sessionIdForFp = process.env.CLAUDE_SESSION_ID || 'default';
 const sessionTitle = generateSessionTitle({
   feature: primaryFeature,
   phase: currentPhase,
-  sessionId: process.env.CLAUDE_SESSION_ID || null,
+  sessionId: sessionIdForFp === 'default' ? null : sessionIdForFp,
 });
 
+// ENH-239 (Issue #81 Phase B): SHA-256 fingerprint dedup lock
+// PreCompact/PostCompact 재발화로 인한 동일 payload 중복 주입 차단.
+// TTL 1시간, multi-session 격리, fail-open 설계.
+try {
+  const { computeFingerprint, shouldDedup, record } = require('../lib/core/session-ctx-fp');
+  const fp = computeFingerprint(additionalContext);
+  if (shouldDedup(sessionIdForFp, fp)) {
+    debugLog('SessionStart', 'ENH-239 dedup hit', { sessionId: sessionIdForFp, fp });
+    additionalContext = '';
+  } else {
+    record(sessionIdForFp, fp);
+  }
+} catch (e) {
+  debugLog('SessionStart', 'ENH-239 fingerprint failed', { error: e.message });
+  // fail-open: 기존 동작 유지
+}
+
 const response = {
-  systemMessage: `bkit Vibecoding Kit v2.1.7 activated (Claude Code)`,
+  systemMessage: `bkit Vibecoding Kit v2.1.8 activated (Claude Code)`,
   hookSpecificOutput: {
     hookEventName: "SessionStart",
     onboardingType: onboardingContext.onboardingData.type,

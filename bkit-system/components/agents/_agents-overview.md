@@ -1,6 +1,9 @@
 # Agents Overview
 
-> List of 36 Agents defined in bkit and their roles (v2.1.7)
+> List of 36 Agents defined in bkit and their roles (v2.1.8)
+>
+> **v2.1.8**: Issue #81 hotfix - agents unchanged. Hook/lib layer focus (`lib/core/context-budget.js`, `session-ctx-fp.js`). CC recommended: v2.1.111+ (72 consecutive compatible).
+> **v2.1.7**: Issue #79 hotfix, PDCA workflow stabilization.
 >
 > **v1.4.1**: Added Context Engineering perspective - Role-based Behavioral Rules Layer
 > **v1.5.0**: Claude Code Exclusive

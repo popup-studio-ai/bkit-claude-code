@@ -1,6 +1,9 @@
 # Skills Overview
 
-> 38 Skills defined in bkit (v2.1.7)
+> 39 Skills defined in bkit (v2.1.8)
+>
+> **v2.1.8**: Issue #81 hotfix - Docs=Code philosophy restored. Skills unchanged (cc-version-analysis, qa-phase retained). Focus was hook/lib layer (`lib/core/context-budget.js`, `session-ctx-fp.js`).
+> **v2.1.7**: Issue #79 hotfix, 38 skills.
 >
 > **v1.4.1**: Added Context Engineering perspective - Domain Knowledge Layer
 > **v1.5.0**: Claude Code Exclusive
