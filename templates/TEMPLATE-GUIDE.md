@@ -163,5 +163,31 @@ docs/
 
 ---
 
-**Version**: 1.0.0
-**Last Updated**: 2026-01-20
+## Variable Substitution Convention (v1.1.0)
+
+bkit uses **single-brace, lowercase, snake_case** placeholders for runtime substitution. The substitution engine (`lib/core/paths.js`, `lib/pdca/session-title.js`) only recognizes this form — any other style is emitted verbatim into generated documents.
+
+### Canonical Variables
+
+| Variable | Meaning | Source |
+|----------|---------|--------|
+| `{feature}` | Feature name (kebab-case) | User arg to `/pdca plan <feature>` |
+| `{date}` | ISO date (YYYY-MM-DD) | Generation timestamp |
+| `{level}` | Project level: `Starter` / `Dynamic` / `Enterprise` | `lib/pdca/level.js` detectLevel() |
+| `{phase}` | PDCA phase: `plan` / `design` / `do` / `check` / `act` / `report` / `qa` | PDCA state machine |
+| `{author}` | Author name | `bkit.config.json` or git user |
+| `{version}` | Document version | Template-specific |
+| `{project}` | Project slug | `bkit.config.json` |
+
+### Handlebars Blocks (template-only, not substituted by bkit)
+
+`{{#if X}}...{{/if}}` and `{{#X}}...{{/X}}` are Handlebars-style conditional / iteration blocks used in `CLAUDE.template.md` and `iteration-report.template.md`. These are consumed by downstream template engines (not bkit's simple substitution). Do NOT mix with `{var}` runtime variables.
+
+### Migration Note
+
+v2.1.8 Round 4 audit (2026-04-17) found 6 templates using `{{var}}` double-brace and `{UPPER_CASE}` casing that bkit's substitution engine cannot process. All have been normalized to `{lower_snake}`. If you add a new variable, follow the canonical form or it will silently leak into output.
+
+---
+
+**Version**: 1.1.0
+**Last Updated**: 2026-04-17

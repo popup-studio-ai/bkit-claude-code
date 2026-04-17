@@ -1,6 +1,6 @@
-# {{PROJECT_NAME}}
+# {project_name}
 
-> {{PROJECT_DESCRIPTION}}
+> {project_description}
 
 ---
 
@@ -32,11 +32,11 @@ Never guess
 
 | Item | Value |
 |------|-------|
-| Language | {{LANGUAGE}} |
-| Framework | {{FRAMEWORK}} |
-| Package Manager | {{PACKAGE_MANAGER}} |
-| Level | {{LEVEL}} |
-| Tier | {{TIER}} |
+| Language | {language} |
+| Framework | {framework} |
+| Package Manager | {package_manager} |
+| Level | {level} |
+| Tier | {tier} |
 
 ### Language Tier Context (v1.3.0)
 
@@ -75,16 +75,16 @@ Never guess
 ### Commands
 ```bash
 # Type check
-{{TYPECHECK_COMMAND}}
+{typecheck_command}
 
 # Test
-{{TEST_COMMAND}}
+{test_command}
 
 # Lint
-{{LINT_COMMAND}}
+{lint_command}
 
 # Build
-{{BUILD_COMMAND}}
+{build_command}
 ```
 
 ---
@@ -125,7 +125,7 @@ import type { User, ApiResponse } from '@/types'
 import './styles.css'
 ```
 
-### Clean Architecture (Level: {{LEVEL}})
+### Clean Architecture (Level: {level})
 
 | Layer | Location | Responsibility | Can Import |
 |-------|----------|----------------|------------|
@@ -145,14 +145,14 @@ import './styles.css'
 
 ### Additional Conventions
 
-{{CONVENTIONS}}
+{conventions}
 
 ---
 
 ## Project Structure
 
 ```
-{{FOLDER_STRUCTURE}}
+{folder_structure}
 ```
 
 ---

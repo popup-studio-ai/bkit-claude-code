@@ -1,10 +1,10 @@
-# {{project_name}} Coding Conventions
+# {project_name} Coding Conventions
 
 > PDCA Convention Document - 코드 작성 규칙 정의
 
 **Version**: 1.0
-**Created**: {{date}}
-**Level**: {{level}}
+**Created**: {date}
+**Level**: {level}
 
 ---
 

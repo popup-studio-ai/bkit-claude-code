@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.1.8] - 2026-04-17
 
+### 🧪 Round 4 Runtime Matrix Verification (25 parallel agents, 2026-04-17)
+
+Comprehensive runtime verification of all bkit functionality via 25 parallel agents covering 7 verification areas: Agents/Skills/Events matrix (M1–M10), Agent Teams orchestration (AT1–AT3), MCP tools (MC1–MC2), 8-language × 3-level matrix (L1–L2), full PDCA cycle (P1–P3), quality gates (Q1–Q2), hook chain integration (H1–H2), plus full regression test run (TEST). Result: **22 PASS / 3 ISSUE discovered and fixed**. Runtime-verified (not static): JSON-RPC `tools/call` against both MCP servers (16 tools), live hook chain invocation with ENH-239 fingerprint dedup observed at 88% byte reduction, 8-language and 3-level detection fixtures executed. See `docs/04-report/features/bkit-v218-round4-matrix.report.md` for full results.
+
+### Fixed (Round 4 discoveries)
+- **`lib/intent/language.js` — 4/8 languages mis-classified as `en`.** Previous `detectLanguage()` only tested CJK Unicode blocks (KO/JA/ZH) and fell through to English for ES/FR/DE/IT. Added `LATIN_STOPWORDS` (4 languages × 13 language-exclusive stopwords) and `LATIN_DIACRITIC_HINTS` (4 patterns: `ñ¿¡`→es, `äöüß`→de, `çœæ`+French contractions→fr, `gli/della/degli`→it). Score-based winner selection with ≥1-hit threshold to avoid false positives on pure English. Verified 8/8 correct + 4 guardrail cases (code/URL/emoji→en, mixed EN+KO→ko via script precedence).
+- **`templates/design-starter.template.md` + `templates/design-enterprise.template.md` — missing Option A/B/C section.** Default `design.template.md` enforces 3-option architecture selection via Checkpoint 3 (v1.7.0), but level-specific variants omitted the section entirely, bypassing the architecture decision artefact. Inserted an appropriate 3-option table in each: starter gets a simplified Minimal/Clean/Componentized comparison; enterprise gets NFR Fit / Risk / Blast Radius criteria.
+- **6 templates using broken variable syntax — `{{var}}` double-brace and `{UPPER_SNAKE_CASE}` casing.** bkit's runtime substitution engine (`lib/core/paths.js:213`, `lib/pdca/session-title.js:61`) only recognises `{lower_snake_case}` placeholders; any other form leaks verbatim into generated documents. Normalized `iteration-report.template.md` (40+ vars), `CLAUDE.template.md` (10+ vars), `convention.template.md`, `schema.template.md`, `qa-report.template.md`, `qa-test-plan.template.md`. Handlebars blocks (`{{#if}}` / `{{#each}}` / `{{^X}}` / `{{/X}}`) preserved — they are consumed by separate template engines, not bkit substitution.
+
+### Added (Round 4)
+- **`templates/TEMPLATE-GUIDE.md` v1.1.0 — Variable Substitution Convention section.** Documents the 7 canonical variables (`{feature}`, `{date}`, `{level}`, `{phase}`, `{author}`, `{version}`, `{project}`), clarifies bkit single-brace substitution vs Handlebars conditional blocks, and notes the Round 4 migration so future contributors don't re-introduce the bug.
+- **49 Round 4 regression assertions** pinning the three fixes: 12 for L1 language detection (8 positive + 4 guardrail), 3 for P2 design-template Option A/B/C, 34 for M8 template variable hygiene (18 templates × 2 checks each). Test lives in `tests/qa/round4-runtime-matrix.test.js`.
+
+### Round 4 Baseline (informational)
+- **Architecture inventory verified** — 36 agents (13 opus / 21 sonnet / 2 haiku), 39 skills (1 `context: fork`, 39/39 with `effort` frontmatter), 21 hook events (24 handlers, 0 syntax errors), 2 MCP servers × 16 tools (JSON-RPC `tools/call` all OK), 4 output-styles (plugin.json `outputStyles` declared), 44 hook scripts (all syntax-clean, 5-script stdin `{}` smoke → exit 0).
+- **MEMORY.md baseline refresh needed (follow-up)** — Skills 3-classification baseline 18/18/1 is outdated; actual is 19 Workflow / 12 Capability / 8 Hybrid. Agent count entries citing "32 agents" should read 36. Left for a dedicated memory sync session.
+
 ### 🚨 Hotfix — GitHub Issue #81 (SessionStart `additionalContext` Re-injection) + Docs=Code Philosophy Restoration
 
 Community user [@scokeepa](https://github.com/popup-studio-ai/bkit-claude-code/issues/81) reported that `session-start.js` generates a ~12,921-byte `additionalContext` that exceeds CC's hook output cap (officially documented at 10,000 chars, not 2 KB as originally hypothesized). This caused SessionStart payloads to be file-replaced with a preview on every session, and — compounded by PreCompact re-firing without honoring `once: true` — resulted in duplicate injections that wasted tokens across long PDCA sessions.

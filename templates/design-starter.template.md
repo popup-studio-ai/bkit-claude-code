@@ -20,6 +20,23 @@ level: Starter
 
 ---
 
+## Architecture Options (v1.7.0)
+
+Pick one of three approaches before detailed design. Even Starter projects benefit from an explicit tradeoff decision.
+
+| Criteria | Option A: Minimal | Option B: Clean | Option C: Pragmatic |
+|----------|:-:|:-:|:-:|
+| **Approach** | Single HTML file, inline styles | Separate HTML/CSS/JS files | Componentized partials |
+| **New Files** | {N} | {N} | {N} |
+| **Complexity** | Low | Medium | Medium |
+| **Maintainability** | Low | High | High |
+| **Effort** | Low | Medium | Medium |
+| **Recommendation** | Tiny one-pager | Portfolio/landing | **Default choice** |
+
+**Selected**: {Option A/B/C} — **Rationale**: {why}
+
+---
+
 ## How It Works
 
 {Simple explanation of how the feature works}

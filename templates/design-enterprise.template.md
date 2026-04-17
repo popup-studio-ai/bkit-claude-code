@@ -40,6 +40,28 @@ level: Enterprise
 
 ---
 
+## 1.5 Architecture Options (v1.7.0)
+
+Three candidate architectures are evaluated before detailed design. User selects one via Checkpoint 3, and the remaining sections flesh out the chosen option.
+
+| Criteria | Option A: Minimal | Option B: Clean | Option C: Pragmatic |
+|----------|:-:|:-:|:-:|
+| **Approach** | Least change, reuse shared services | Full hexagonal / Clean Architecture | Balanced boundaries, selective DDD |
+| **New Services** | {N} | {N} | {N} |
+| **Modified Services** | {N} | {N} | {N} |
+| **Complexity** | Low | High | Medium |
+| **Maintainability** | Medium | High | High |
+| **Effort** | Low | High | Medium |
+| **Risk** | Low (coupled) | Low (clean) | Low (balanced) |
+| **NFR Fit** | Meets SLA at current scale | Future-proofs 10× scale | Clears SLA + leaves room |
+| **Recommendation** | Hotfix / compliance patch | Greenfield, long-lived | **Default choice** |
+
+**Selected**: {Option A/B/C} — **Rationale**: {enterprise-specific rationale — regulatory, scale, team skills, blast radius}
+
+> Sections 2–10 below describe the **selected** architecture option in full detail.
+
+---
+
 ## 2. Non-Functional Requirements
 
 ### 2.1 Performance

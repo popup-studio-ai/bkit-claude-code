@@ -1,10 +1,10 @@
-# {{project_name}} Schema Definition
+# {project_name} Schema Definition
 
 > PDCA Schema Document - 데이터 구조 및 용어 정의
 
 **Version**: 1.0
-**Created**: {{date}}
-**Level**: {{level}}
+**Created**: {date}
+**Level**: {level}
 
 ---
 
@@ -44,7 +44,7 @@
 **Relationships**:
 - 1:N → Post (작성한 글)
 
-### 3.2 {{Entity2}}
+### 3.2 {Entity2}
 
 **Description**:
 
