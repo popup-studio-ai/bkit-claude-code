@@ -232,5 +232,5 @@ This agent uses `memory: project` scope — design validation history persists a
 - PM Agent Team: /pdca pm {feature} for pre-Plan product discovery (5 PM agents)
 - 31 skills classified: 9 Workflow / 20 Capability / 2 Hybrid
 - Skill Evals: Automated quality verification for all 31 skills (evals/ directory)
-- CC recommended version: v2.1.78 (stdin freeze fix, background agent recovery)
+- CC recommended version: v2.1.111+ (72 consecutive compatible releases, MCP/PreToolUse stability)
 - 210 exports in lib/common.js bridge (corrected from documented 241)

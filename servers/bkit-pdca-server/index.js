@@ -11,6 +11,8 @@
 const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
+// v2.1.8 fix B12b: BKIT_VERSION dynamic lookup (ENH-167)
+const { BKIT_VERSION } = require('../../lib/core/version');
 
 // ---------------------------------------------------------------------------
 // Utilities
@@ -102,8 +104,8 @@ function readTextOrNull(filePath) {
 }
 
 function okResponse(data) {
-  // Dual _meta keys: v2.1.98 `_meta` persist-bypass fix strips unexpected
-  // keys, so we set both the pre-v2.1.91 legacy key and the v2.1.91+
+  // Dual _meta keys: v2.1.88 `_meta` persist-bypass fix strips unexpected
+  // keys, so we set both the pre-v2.1.81 legacy key and the v2.1.81+
   // namespaced key (ENH-176, ENH-193).
   return {
     content: [{ type: 'text', text: JSON.stringify(data, null, 2) }],
@@ -517,14 +519,16 @@ function handleMessage(msg) {
   const { id, method, params } = msg;
 
   // Notifications (no id) — ignore
-  if (id === undefined && method === 'notifications/initialized') return null;
-  if (id === undefined) return null;
+  // v2.1.8 fix B5: use "id" in msg to correctly handle explicit null id per JSON-RPC 2.0
+  // v2.1.8 fix B14: any keyless message is a notification per JSON-RPC 2.0 (was duplicate check)
+  if (!('id' in msg)) return null;
 
   switch (method) {
     case 'initialize':
       return jsonRpcOk(id, {
         protocolVersion: '2024-11-05',
-        serverInfo: { name: 'bkit-pdca-server', version: '2.0.4' },
+        // v2.1.8 fix B12b: BKIT_VERSION dynamic lookup (ENH-167)
+        serverInfo: { name: 'bkit-pdca-server', version: BKIT_VERSION },
         capabilities: { tools: {}, resources: {} },
       });
 

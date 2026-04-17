@@ -9,13 +9,13 @@ variables:
   - criticalCount
 ---
 
-# QA Report: {{feature}}
+# QA Report: {feature}
 
-> **Date**: {{date}}
-> **Verdict**: {{verdict}}
-> **Pass Rate**: {{passRate}}%
-> **Critical Issues**: {{criticalCount}}
-> **Feature**: {{feature}}
+> **Date**: {date}
+> **Verdict**: {verdict}
+> **Pass Rate**: {passRate}%
+> **Critical Issues**: {criticalCount}
+> **Feature**: {feature}
 
 ---
 
@@ -65,4 +65,4 @@ variables:
 
 | Version | Date | Changes |
 |---------|------|---------|
-| 0.1 | {{date}} | Initial QA report |
+| 0.1 | {date} | Initial QA report |

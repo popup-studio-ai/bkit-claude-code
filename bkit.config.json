@@ -1,5 +1,5 @@
 {
-  "version": "2.1.7",
+  "version": "2.1.8",
   "ui": {
     "sessionTitle": {
       "enabled": true,
@@ -12,7 +12,23 @@
     },
     "contextInjection": {
       "enabled": true,
-      "ambiguityThreshold": 0.7
+      "ambiguityThreshold": 0.7,
+      "sections": [
+        "onboarding",
+        "agentTeams",
+        "outputStyles",
+        "bkendMcp",
+        "enterpriseBatch",
+        "pdcaCoreRules",
+        "automation",
+        "versionEnhancements"
+      ],
+      "maxChars": 8000,
+      "priorityPreserve": [
+        "MANDATORY",
+        "Previous Work Detected",
+        "AskUserQuestion"
+      ]
     }
   },
   "pdca": {

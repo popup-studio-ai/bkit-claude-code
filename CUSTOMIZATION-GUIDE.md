@@ -128,17 +128,17 @@ For deeper understanding, explore the `bkit-system/` folder:
 
 bkit is not just a collection of prompts—it's a **production-grade plugin architecture** with carefully designed components that work together as a cohesive system.
 
-### Component Inventory (v2.1.7)
+### Component Inventory (v2.1.8)
 
 | Component | Count | Purpose |
 |-----------|-------|---------|
 | **Agents** | 36 | Specialized AI subagents with memory persistence |
-| **Skills** | 38 | Domain knowledge and slash commands (Commands deprecated) |
+| **Skills** | 39 | Domain knowledge and slash commands (Commands deprecated) |
 | **Commands** | DEPRECATED | Migrated to Skills in v1.4.4+ |
-| **Scripts** | 42 | Hook execution scripts with unified handlers |
+| **Scripts** | 43 | Hook execution scripts with unified handlers |
 | **Templates** | 18 | Document templates (PDCA + 9 phases + shared) |
 | **Hooks** | 21 events | Event-driven automation (centralized in hooks.json) |
-| **lib/** | 93 modules | Modular utility library |
+| **lib/** | 101 modules (14 subdirs) | Modular utility library (includes v2.1.8 `lib/core/context-budget.js` + `session-ctx-fp.js`) |
 | **Output Styles** | 4 | Level-based response formatting |
 
 **Total: 600+ components** working in harmony.
@@ -271,7 +271,7 @@ For detailed Context Engineering documentation, see [bkit-system/philosophy/cont
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│               bkit Component Architecture (v2.1.7)               │
+│               bkit Component Architecture (v2.1.8)               │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
 │  Knowledge Layer    │ Skills (38)      │ Domain expertise       │

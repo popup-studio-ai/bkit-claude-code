@@ -6,11 +6,11 @@ variables:
   - date
 ---
 
-# Test Plan: {{feature}}
+# Test Plan: {feature}
 
-> **Date**: {{date}}
-> **Feature**: {{feature}}
-> **Design Doc**: docs/02-design/features/{{feature}}.design.md
+> **Date**: {date}
+> **Feature**: {feature}
+> **Design Doc**: docs/02-design/features/{feature}.design.md
 
 ---
 
@@ -79,4 +79,4 @@ variables:
 
 | Version | Date | Changes |
 |---------|------|---------|
-| 0.1 | {{date}} | Initial test plan |
+| 0.1 | {date} | Initial test plan |

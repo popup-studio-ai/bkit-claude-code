@@ -45,6 +45,23 @@ function loadEvalDefinition(skillName) {
 }
 
 /**
+ * Strip matching outer quotes from a value (conservative).
+ * v2.1.8 fix B6: only strips when value has BOTH matching leading and
+ * trailing quotes. Preserves internal colons and other content verbatim.
+ * @param {string} value
+ * @returns {string}
+ */
+function stripMatchingQuotes(value) {
+  if (typeof value !== 'string' || value.length < 2) return value;
+  const first = value[0];
+  const last = value[value.length - 1];
+  if ((first === '"' && last === '"') || (first === "'" && last === "'")) {
+    return value.slice(1, -1);
+  }
+  return value;
+}
+
+/**
  * Parse eval YAML content (no external dependency)
  * @param {string} content - YAML content string
  * @returns {Object} Parsed eval definition
@@ -66,7 +83,10 @@ function parseEvalYaml(content) {
       if (topMatch) {
         const [, key, value] = topMatch;
         if (value && !value.startsWith('{') && !value.startsWith('[')) {
-          result[key] = value.replace(/^["']|["']$/g, '');
+          // v2.1.8 fix B6: preserve internal colons in quoted values.
+          // Only strip quotes if value has BOTH matching leading and trailing
+          // quotes (conservative: avoids regressions with existing eval.yaml).
+          result[key] = stripMatchingQuotes(value);
         }
         currentSection = key;
         if (key === 'evals') {
@@ -82,22 +102,25 @@ function parseEvalYaml(content) {
       // Calculate indent level
       const indent = line.length - line.trimStart().length;
 
-      // New list item at indent=2 (  - name: ...)
-      if (indent <= 2 && trimmed.startsWith('- ')) {
+      // v2.1.8 fix B7: disambiguate new eval entry vs nested criteria list item.
+      // Only treat indent<=2 "- " as a new eval entry when we are NOT currently
+      // inside a `criteria:` block. When inCriteria is true, an indent-2 "- "
+      // is still a criterion belonging to the current eval item.
+      if (indent <= 2 && trimmed.startsWith('- ') && !inCriteria) {
         if (currentItem) result.evals.push(currentItem);
         currentItem = {};
         inCriteria = false;
         const kvMatch = trimmed.slice(2).match(/^([\w_]+)\s*:\s*(.+)$/);
         if (kvMatch) {
-          currentItem[kvMatch[1]] = kvMatch[2].replace(/^["']|["']$/g, '');
+          currentItem[kvMatch[1]] = stripMatchingQuotes(kvMatch[2]);
         }
         continue;
       }
 
       if (currentItem) {
-        // Criteria list items (indent >= 6, e.g. "      - ...")
+        // Criteria list items (indent >= 4, e.g. "    - ...") — only while inCriteria.
         if (inCriteria && indent >= 4 && trimmed.startsWith('- ')) {
-          currentItem.criteria.push(trimmed.slice(2).replace(/^["']|["']$/g, ''));
+          currentItem.criteria.push(stripMatchingQuotes(trimmed.slice(2)));
           continue;
         }
 
@@ -105,7 +128,7 @@ function parseEvalYaml(content) {
         const kvMatch = trimmed.match(/^([\w_]+)\s*:\s*(.*)$/);
         if (kvMatch) {
           const key = kvMatch[1];
-          const val = kvMatch[2].replace(/^["']|["']$/g, '');
+          const val = stripMatchingQuotes(kvMatch[2]);
           if (key === 'criteria') {
             currentItem.criteria = [];
             inCriteria = true;
@@ -121,7 +144,7 @@ function parseEvalYaml(content) {
 
         // Bare criteria list items
         if (inCriteria && trimmed.startsWith('-')) {
-          currentItem.criteria.push(trimmed.slice(1).trim().replace(/^["']|["']$/g, ''));
+          currentItem.criteria.push(stripMatchingQuotes(trimmed.slice(1).trim()));
           continue;
         }
       }
@@ -131,7 +154,7 @@ function parseEvalYaml(content) {
     if (currentSection === 'parity_test' || currentSection === 'benchmark') {
       const kvMatch = trimmed.match(/^([\w_]+)\s*:\s*(.+)$/);
       if (kvMatch) {
-        const val = kvMatch[2].replace(/^["']|["']$/g, '');
+        const val = stripMatchingQuotes(kvMatch[2]);
         if (!result[currentSection]) result[currentSection] = {};
         result[currentSection][kvMatch[1]] = val === 'true' ? true : val === 'false' ? false : val;
       }
@@ -220,8 +243,12 @@ function evaluateAgainstCriteria(prompt, expected, criteria) {
     ? matchedCriteria.length / effectiveCriteria.length
     : 0;
 
+  // v2.1.8 fix B8: if zero failures, score is 1.0 by construction.
+  // When partial scoring is introduced, re-introduce score threshold here.
+  const pass = failedCriteria.length === 0;
+
   return {
-    pass: failedCriteria.length === 0 && score >= 0.8,
+    pass,
     matchedCriteria,
     failedCriteria,
     score
@@ -353,9 +380,13 @@ async function runBenchmark() {
   const capabilityResults = await runAllEvals({ classification: 'capability' });
   const hybridResults = await runAllEvals({ classification: 'hybrid' });
 
+  // v2.1.8 fix B12 extension (QR7 runtime catch): use BKIT_VERSION dynamic lookup instead of stale config.version
+  let bkitVersion;
+  try { bkitVersion = require('../lib/core/version').BKIT_VERSION; } catch (_) { bkitVersion = config.version; }
+
   return {
     timestamp,
-    version: config.version,
+    version: bkitVersion,
     model: config.benchmarkModel,
     summary: {
       workflow: { total: workflowResults.total, passed: workflowResults.passed },

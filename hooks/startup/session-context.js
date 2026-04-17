@@ -11,6 +11,8 @@ const path = require('path');
 const { detectLevel } = require('../../lib/pdca/level');
 const { debugLog } = require('../../lib/core/debug');
 const { getPdcaStatusFull } = require('../../lib/pdca/status');
+const { getUIConfig } = require('../../lib/core/config');
+const { applyBudget } = require('../../lib/core/context-budget');
 
 /**
  * Build onboarding context section.
@@ -228,8 +230,8 @@ function buildVersionEnhancementsContext(detectedLevel) {
   let ctx = '';
 
   // v2.1.1: Consolidated version summary (reduced from 4 blocks to 1)
-  ctx += `\n## bkit v2.1.1 (Current)\n`;
-  ctx += `- CC recommended: v2.1.96+ | 62 consecutive compatible releases\n`;
+  ctx += `\n## bkit v2.1.8 (Current)\n`;
+  ctx += `- CC recommended: v2.1.111+ | 72 consecutive compatible releases\n`;
   ctx += `- Architecture: 37 Skills, 32 Agents, 19 Hook Events, 2 MCP Servers\n`;
   ctx += `- PDCA: state machine (20 transitions), L0-L4 automation, quality gates (M1-M10)\n`;
   ctx += `- Dashboard: progress-bar, workflow-map, impact-view, agent-panel, control-panel\n`;
@@ -339,6 +341,12 @@ AskUserQuestion, SessionStart Hook, Read, Write, Edit, Bash
 
 /**
  * Build the full additionalContext string for the SessionStart hook response.
+ *
+ * ENH-238 (Issue #81 Phase B): ui.contextInjection.enabled + sections[] opt-out gate.
+ * Mirrors the dashboard 3-way toggle pattern from hooks/session-start.js:89-104.
+ *
+ * ENH-240 (Issue #81 Phase B): applies context budget guard before return.
+ *
  * @param {object} _input - Hook input (unused, reserved for future use)
  * @param {object} context - Context from onboarding module { onboardingData, triggerTable }
  * @returns {string} The complete additionalContext string
@@ -347,18 +355,58 @@ function build(_input, context) {
   const { onboardingData, triggerTable } = context;
   const detectedLevel = detectLevel();
 
-  let additionalContext = `# bkit Vibecoding Kit v2.1.7 - Session Startup\n\n`;
+  // ENH-238: contextInjection opt-out + per-section opt-in gate
+  let _ciEnabled = true;
+  let _ciSections = [
+    'onboarding', 'agentTeams', 'outputStyles', 'bkendMcp',
+    'enterpriseBatch', 'pdcaCoreRules', 'automation', 'versionEnhancements',
+  ];
+  let _ciMaxChars;
+  let _ciPriorityPreserve;
+  try {
+    const _ui = getUIConfig();
+    if (_ui && _ui.contextInjection) {
+      _ciEnabled = _ui.contextInjection.enabled !== false;
+      if (Array.isArray(_ui.contextInjection.sections)) {
+        _ciSections = _ui.contextInjection.sections;
+      }
+      if (Number.isFinite(_ui.contextInjection.maxChars)) {
+        _ciMaxChars = _ui.contextInjection.maxChars;
+      }
+      if (Array.isArray(_ui.contextInjection.priorityPreserve)) {
+        _ciPriorityPreserve = _ui.contextInjection.priorityPreserve;
+      }
+    }
+  } catch (_e) {
+    // fail-open: 기본값 유지 → 기존 동작 보존
+  }
 
-  additionalContext += buildOnboardingContext(onboardingData);
-  additionalContext += buildAgentTeamsContext(detectedLevel);
-  additionalContext += buildOutputStylesAndMemoryContext(detectedLevel);
-  additionalContext += buildBkendMcpContext(detectedLevel);
-  additionalContext += buildEnterpriseBatchContext(detectedLevel);
-  additionalContext += buildPdcaCoreRules();
-  additionalContext += buildAutomationContext(triggerTable);
-  additionalContext += buildVersionEnhancementsContext(detectedLevel);
-  // v2.1.1: Executive Summary and Feature Usage rules moved to output styles
-  // Saves ~900 tokens per session
+  const header = `# bkit Vibecoding Kit v2.1.8 - Session Startup\n\n`;
+
+  if (!_ciEnabled) {
+    return header;
+  }
+
+  let additionalContext = header;
+
+  if (_ciSections.includes('onboarding'))          additionalContext += buildOnboardingContext(onboardingData);
+  if (_ciSections.includes('agentTeams'))          additionalContext += buildAgentTeamsContext(detectedLevel);
+  if (_ciSections.includes('outputStyles'))        additionalContext += buildOutputStylesAndMemoryContext(detectedLevel);
+  if (_ciSections.includes('bkendMcp'))            additionalContext += buildBkendMcpContext(detectedLevel);
+  if (_ciSections.includes('enterpriseBatch'))     additionalContext += buildEnterpriseBatchContext(detectedLevel);
+  if (_ciSections.includes('pdcaCoreRules'))       additionalContext += buildPdcaCoreRules();
+  if (_ciSections.includes('automation'))          additionalContext += buildAutomationContext(triggerTable);
+  if (_ciSections.includes('versionEnhancements')) additionalContext += buildVersionEnhancementsContext(detectedLevel);
+
+  // ENH-240: Context budget guard (CC 10,000-char cap defense)
+  try {
+    const budgetOpts = {};
+    if (_ciMaxChars != null) budgetOpts.maxChars = _ciMaxChars;
+    if (_ciPriorityPreserve) budgetOpts.priorityPreserve = _ciPriorityPreserve;
+    additionalContext = applyBudget(additionalContext, budgetOpts);
+  } catch (_e) {
+    // fail-open: 원본 반환
+  }
 
   return additionalContext;
 }
