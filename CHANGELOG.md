@@ -5,6 +5,67 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.15] - 2026-05-18 (branch: `feature/v2115-issue-89-pdca-status-fix`)
+
+> **Status**: Patch release — Issue [#89](https://github.com/popup-studio-ai/bkit-claude-code/issues/89) 대응 (`.pdca-status.json` 무한 오염 fix).
+> **Reporter**: @doing27 — 실측 사례 294KB, features 147 중 138 garbage, history 1669 중 1661 garbage.
+
+### Fixed — Issue #89: `.pdca-status.json` 무한 오염 (6-Layer Defense)
+
+매 source 파일 편집마다 `.pdca-status.json`에 garbage feature 누적되던 문제를 6-Layer 방어로 종결.
+
+- **L1 `extractFeature` 강화** (`lib/core/file.js`):
+  - 패턴 매칭 시 캡처값이 파일(확장자 보유)이면 skip (`app/services/foo.py` → `'foo.py'` 오추출 차단)
+  - `GENERIC_NAMES` 19 → **65 디렉토리 확장** — 일반 백엔드/프론트 레이아웃 (`api`/`web`/`mobile`/`client`/`server`/`backend`/`frontend`/`admin`/`auth`/`cms`/`database`/`config`/`core`/`helpers`/`middleware`/`plugins`/`scripts`/`styles`/`static`/`public`/`assets`/`tests`/`tenants`/`versions`/`tmp`/`audit`/`dashboard`) + 버전 디렉토리 (`v1`~`v9`) + Next.js 라우트 그룹 (`(dashboard)`/`(auth)`/`(public)`/`(admin)`/`(api)`)
+  - Fallback (부모 디렉토리 거슬러 올라가기)을 **explicit opt-in (default OFF)** — 기존 호출자는 모두 새 default 받음
+  - 함수 시그니처: `extractFeature(filePath, opts = {})` (backward-compat)
+- **L2 `extractFeatureFromContext` DRY** (`lib/pdca/status-core.js`):
+  - 중복 패턴 매칭 코드 제거, `extractFeature`로 위임 — 동일 fix 공유
+- **L3 `updatePdcaStatus` 검증 게이트** (`lib/pdca/status-core.js`):
+  - `opts.requireDocs` (default true): `docs/01-plan/features/${feature}.plan.md` 또는 `docs/02-design/features/${feature}.design.md` 부재 시 silent no-op
+  - 16개 기존 호출자 모두 default behavior 통과 (PDCA workflow는 plan 문서 작성 후 진입)
+  - `shouldUpdate` 헬퍼로 추출 (testability)
+- **L4 `scripts/pre-write.js` schema 정정**:
+  - `currentStatus?.currentFeature` → `currentStatus?.primaryFeature` 정정 (v2/v3 schema에는 `currentFeature` 필드 부재 — `status-migration.js:31,74`에서 normalize됨)
+  - v2.1.7 "Issue #79 P4" fix가 실제로는 모든 케이스에서 false-negative였던 잠재 버그 해결
+- **L5 `history` dedup + ring buffer** (`lib/pdca/status-core.js`):
+  - `appendHistoryEntry` 헬퍼로 분리. consecutive 동일 `feature/phase/action` entry는 timestamp만 갱신 (push 안 함)
+  - Ring buffer limit 100 적용 — 100회 동일 편집 시 history는 항상 1개
+- **L6 단위 테스트 48 TC** (회귀 방지):
+  - `tests/unit/file-extract-feature.test.js` (20 TC)
+  - `tests/unit/extract-feature-from-context.test.js` (10 TC)
+  - `tests/unit/pdca-status-gating.test.js` (18 TC, L3+L5 헬퍼 검증)
+
+### Changed
+
+- `extractFeature(filePath)` → `extractFeature(filePath, opts = {})` — `opts.allowFallback: false` default (backward-compat)
+- `updatePdcaStatus(feature, phase, data)` → `updatePdcaStatus(feature, phase, data, opts = {})` — `opts.requireDocs: true` default + `opts.docCheckFn` 테스트 주입 가능
+- `lib/pdca/status-core.js` exports: `shouldUpdate` + `appendHistoryEntry` 헬퍼 추가
+- `lib/core/file.js` exports: `GENERIC_NAMES` 추가
+
+### Compatibility
+
+- **Breaking changes**: 0건 (모든 기존 호출자는 default behavior로 안전)
+- **Migration**: 불요 — 기존 `.pdca-status.json` garbage는 사용자가 별도 cleanup 가능 (본 PR 외)
+- **v3 schema**: 변경 없음
+- **bkit Trust Level**: 영향 없음
+- **Sprint Management (v2.1.13)**: 영향 없음
+
+### Documentation
+
+- `docs/01-plan/features/issue-89-pdca-status-fix.plan.md` (한국어)
+- `docs/02-design/features/issue-89-pdca-status-fix.design.md` (한국어, 6-Layer Defense 설계)
+- `docs/04-report/features/issue-89-pdca-status-fix.report.md` (한국어, Phase 4 산출물)
+
+### 검증
+
+- `node --test tests/unit/file-extract-feature.test.js` → 20/20 PASS
+- `node --test tests/unit/extract-feature-from-context.test.js` → 10/10 PASS
+- `node --test tests/unit/pdca-status-gating.test.js` → 18/18 PASS
+- 누적 **48/48 PASS**
+
+---
+
 ## [2.1.13] - 2026-05-12 (branch: `feature/v2113-sprint-management`)
 
 > **Status**: GA — Sprint Management feature release + tech debt cleanup.

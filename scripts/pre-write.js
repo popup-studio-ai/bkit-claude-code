@@ -9,7 +9,7 @@
  * Philosophy: Automation First — Guide, don't block (exception: permission=deny / explicit danger).
  *
  * @module scripts/pre-write
- * @version 2.1.10
+ * @version 2.1.15
  */
 
 const {
@@ -95,11 +95,17 @@ function runPdcaDocCheck(ctx) {
   out.designDoc = findDesignDoc(feature);
   out.planDoc = findPlanDoc(feature);
 
-  // v2.1.7: Only update PDCA status if feature matches active PDCA feature (Issue #79 P4).
+  // v2.1.7 (Issue #79 P4) + v2.1.15 (Issue #89): primaryFeature 정정.
+  //   - currentFeature는 v2/v3 schema에 존재하지 않는 필드
+  //     (status-migration.js:31,74에서 normalize됨 → primaryFeature)
+  //   - 이전 코드는 항상 undefined를 읽어 phantom 차단이 false-true로 항상 작동했으나,
+  //     `updatePdcaStatus`가 호출되지 않는 false-negative 부작용도 가짐.
+  //     본 fix는 활성 feature 일치 시 정상 호출 + L3 게이트(plan/design 문서 존재)로 추가 방어.
   try {
     const currentStatus = getPdcaStatusFull();
-    const activeFeature = currentStatus?.currentFeature;
+    const activeFeature = currentStatus?.primaryFeature;
     if (activeFeature && activeFeature === feature) {
+      // L3 게이트가 plan/design 문서 부재 시 silent no-op 보장
       updatePdcaStatus(feature, 'do', { lastFile: ctx.filePath });
       debugLog('PreToolUse', 'PDCA status updated', {
         feature,
