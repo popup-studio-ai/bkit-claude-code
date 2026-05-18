@@ -150,7 +150,7 @@ try {
   fs.mkdirSync(dir, { recursive: true });
   let state = {};
   try { state = JSON.parse(fs.readFileSync(file, 'utf8')); } catch (_) { state = {}; }
-  state.bash_post = { ts: new Date().toISOString(), version: '2.1.14' };
+  state.bash_post = { ts: new Date().toISOString(), version: '2.1.15' };
   const tmp = file + '.tmp';
   fs.writeFileSync(tmp, JSON.stringify(state, null, 2), 'utf8');
   fs.renameSync(tmp, file);

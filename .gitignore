@@ -28,6 +28,9 @@ test-scripts/
 # v2.1.13 Sprint 5: L3 Contract Test (cross-sprint contract drift CI Gate) — tracked
 !tests/contract/
 !tests/contract/**
+# v2.1.15 (Issue #89): Unit Tests — tracked for CI Gate (regression prevention)
+!tests/unit/
+!tests/unit/**
 
 # Obsidian - Root level (personal settings, not for sharing)
 .obsidian/
