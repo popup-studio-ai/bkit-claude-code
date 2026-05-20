@@ -55,8 +55,31 @@ EXPECTED_SKILLS.forEach((name) => {
 // v2.1.16 hardening: 36 → 34. Removed 6 pdca-eval-* agents (v2.1.10 Sprint 6
 // cleanup), added 4 sprint-* agents (v2.1.13 Sprint Management).
 // Net: 36 - 6 + 4 = 34.
-const agentFiles = fs.readdirSync(agentsDir).filter((f) => f.endsWith('.md'));
-test('Agents count exactly 34', () => assert.strictEqual(agentFiles.length, 34));
+// v2.1.17: 6 pdca-eval-* deprecation tombstones re-added as stubs (frontmatter
+// `deprecatedIn` flag); excluded from the active count. Total files = 40.
+// See docs/06-guide/contract-baseline-rollforward.guide.md.
+const allAgentFiles = fs.readdirSync(agentsDir).filter((f) => f.endsWith('.md'));
+
+function hasDeprecatedInFrontmatter(filePath) {
+  try {
+    const content = fs.readFileSync(filePath, 'utf8');
+    const m = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+    if (!m) return false;
+    return /^\s*deprecatedIn\s*:\s*\S+/m.test(m[1]);
+  } catch {
+    return false;
+  }
+}
+
+const agentFiles = allAgentFiles.filter(
+  (f) => !hasDeprecatedInFrontmatter(path.join(agentsDir, f))
+);
+const deprecatedAgentFiles = allAgentFiles.filter(
+  (f) => hasDeprecatedInFrontmatter(path.join(agentsDir, f))
+);
+
+test('Active Agents count exactly 34', () => assert.strictEqual(agentFiles.length, 34));
+test('Deprecated Agent tombstones exactly 6', () => assert.strictEqual(deprecatedAgentFiles.length, 6));
 
 const EXPECTED_AGENTS = [
   'bkend-expert', 'bkit-impact-analyst', 'cc-version-researcher', 'code-analyzer', 'cto-lead',
@@ -70,6 +93,16 @@ const EXPECTED_AGENTS = [
 ];
 EXPECTED_AGENTS.forEach((name) => {
   test(`Agent '${name}.md' exists`, () => assert.ok(agentFiles.includes(`${name}.md`)));
+});
+
+const EXPECTED_DEPRECATED_AGENTS = [
+  'pdca-eval-act', 'pdca-eval-check', 'pdca-eval-design',
+  'pdca-eval-do', 'pdca-eval-plan', 'pdca-eval-pm',
+];
+EXPECTED_DEPRECATED_AGENTS.forEach((name) => {
+  test(`Deprecated Agent stub '${name}.md' exists with deprecatedIn`, () => {
+    assert.ok(deprecatedAgentFiles.includes(`${name}.md`));
+  });
 });
 
 // ==================== Hooks Count ====================

@@ -1,0 +1,169 @@
+{
+  "ConfigChange": {
+    "blockCount": 1,
+    "handlerBasenames": [
+      "config-change-handler.js\""
+    ],
+    "matchers": [
+      "project_settings|skills"
+    ]
+  },
+  "CwdChanged": {
+    "blockCount": 1,
+    "handlerBasenames": [
+      "cwd-changed-handler.js\""
+    ],
+    "matchers": []
+  },
+  "FileChanged": {
+    "blockCount": 1,
+    "handlerBasenames": [
+      "file-changed-handler.js\""
+    ],
+    "matchers": []
+  },
+  "InstructionsLoaded": {
+    "blockCount": 1,
+    "handlerBasenames": [
+      "instructions-loaded-handler.js\""
+    ],
+    "matchers": []
+  },
+  "Notification": {
+    "blockCount": 1,
+    "handlerBasenames": [
+      "notification-handler.js\""
+    ],
+    "matchers": [
+      "permission_prompt|idle_prompt"
+    ]
+  },
+  "PermissionRequest": {
+    "blockCount": 1,
+    "handlerBasenames": [
+      "permission-request-handler.js\""
+    ],
+    "matchers": [
+      "Write|Edit|Bash"
+    ]
+  },
+  "PostCompact": {
+    "blockCount": 1,
+    "handlerBasenames": [
+      "post-compaction.js\""
+    ],
+    "matchers": []
+  },
+  "PostToolUse": {
+    "blockCount": 3,
+    "handlerBasenames": [
+      "skill-post.js\"",
+      "unified-bash-post.js\"",
+      "unified-write-post.js\""
+    ],
+    "matchers": [
+      "Bash",
+      "Skill",
+      "Write"
+    ]
+  },
+  "PostToolUseFailure": {
+    "blockCount": 1,
+    "handlerBasenames": [
+      "tool-failure-handler.js\""
+    ],
+    "matchers": [
+      "Bash|Write|Edit"
+    ]
+  },
+  "PreCompact": {
+    "blockCount": 1,
+    "handlerBasenames": [
+      "context-compaction.js\""
+    ],
+    "matchers": [
+      "auto|manual"
+    ]
+  },
+  "PreToolUse": {
+    "blockCount": 2,
+    "handlerBasenames": [
+      "pre-write.js\"",
+      "unified-bash-pre.js\""
+    ],
+    "matchers": [
+      "Bash",
+      "Write|Edit"
+    ]
+  },
+  "SessionEnd": {
+    "blockCount": 1,
+    "handlerBasenames": [
+      "session-end-handler.js\""
+    ],
+    "matchers": []
+  },
+  "SessionStart": {
+    "blockCount": 1,
+    "handlerBasenames": [
+      "session-start.js\""
+    ],
+    "matchers": []
+  },
+  "Stop": {
+    "blockCount": 1,
+    "handlerBasenames": [
+      "unified-stop.js\""
+    ],
+    "matchers": []
+  },
+  "StopFailure": {
+    "blockCount": 1,
+    "handlerBasenames": [
+      "stop-failure-handler.js\""
+    ],
+    "matchers": []
+  },
+  "SubagentStart": {
+    "blockCount": 1,
+    "handlerBasenames": [
+      "subagent-start-handler.js\""
+    ],
+    "matchers": []
+  },
+  "SubagentStop": {
+    "blockCount": 1,
+    "handlerBasenames": [
+      "subagent-stop-handler.js\""
+    ],
+    "matchers": []
+  },
+  "TaskCompleted": {
+    "blockCount": 1,
+    "handlerBasenames": [
+      "pdca-task-completed.js\""
+    ],
+    "matchers": []
+  },
+  "TaskCreated": {
+    "blockCount": 1,
+    "handlerBasenames": [
+      "task-created-handler.js\""
+    ],
+    "matchers": []
+  },
+  "TeammateIdle": {
+    "blockCount": 1,
+    "handlerBasenames": [
+      "team-idle-handler.js\""
+    ],
+    "matchers": []
+  },
+  "UserPromptSubmit": {
+    "blockCount": 1,
+    "handlerBasenames": [
+      "user-prompt-handler.js\""
+    ],
+    "matchers": []
+  }
+}

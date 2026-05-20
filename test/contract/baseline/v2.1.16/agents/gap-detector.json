@@ -1,0 +1,10 @@
+{
+  "deprecatedIn": null,
+  "descriptionLength": 1,
+  "effort": "high",
+  "fileName": "gap-detector",
+  "hasTools": true,
+  "model": "opus",
+  "name": "gap-detector",
+  "replacedBy": null
+}

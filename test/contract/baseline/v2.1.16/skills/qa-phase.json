@@ -1,0 +1,10 @@
+{
+  "context": "fork",
+  "deprecatedIn": null,
+  "descriptionLength": 1,
+  "dirName": "qa-phase",
+  "effort": "high",
+  "name": "qa-phase",
+  "replacedBy": null,
+  "userInvocable": true
+}

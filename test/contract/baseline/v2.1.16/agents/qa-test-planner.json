@@ -1,0 +1,10 @@
+{
+  "deprecatedIn": null,
+  "descriptionLength": 1,
+  "effort": "medium",
+  "fileName": "qa-test-planner",
+  "hasTools": true,
+  "model": "sonnet",
+  "name": "qa-test-planner",
+  "replacedBy": null
+}

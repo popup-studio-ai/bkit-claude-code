@@ -1,0 +1,10 @@
+{
+  "context": null,
+  "deprecatedIn": null,
+  "descriptionLength": 1,
+  "dirName": "deploy",
+  "effort": "high",
+  "name": "deploy",
+  "replacedBy": null,
+  "userInvocable": true
+}

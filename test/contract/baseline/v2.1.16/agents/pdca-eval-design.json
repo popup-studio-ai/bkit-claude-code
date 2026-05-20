@@ -1,0 +1,10 @@
+{
+  "deprecatedIn": "v2.1.13",
+  "descriptionLength": 255,
+  "effort": "medium",
+  "fileName": "pdca-eval-design",
+  "hasTools": true,
+  "model": "sonnet",
+  "name": "pdca-eval-design",
+  "replacedBy": "design-validator"
+}

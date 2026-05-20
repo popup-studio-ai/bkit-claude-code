@@ -1,0 +1,10 @@
+{
+  "context": null,
+  "deprecatedIn": null,
+  "descriptionLength": 1,
+  "dirName": "code-review",
+  "effort": "high",
+  "name": "code-review",
+  "replacedBy": null,
+  "userInvocable": true
+}

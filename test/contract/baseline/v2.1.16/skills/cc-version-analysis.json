@@ -1,0 +1,10 @@
+{
+  "context": null,
+  "deprecatedIn": null,
+  "descriptionLength": 1,
+  "dirName": "cc-version-analysis",
+  "effort": "high",
+  "name": "cc-version-analysis",
+  "replacedBy": null,
+  "userInvocable": true
+}

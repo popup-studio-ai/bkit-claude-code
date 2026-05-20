@@ -1,0 +1,10 @@
+{
+  "deprecatedIn": null,
+  "descriptionLength": 1,
+  "effort": "high",
+  "fileName": "self-healing",
+  "hasTools": true,
+  "model": "opus",
+  "name": "self-healing",
+  "replacedBy": null
+}

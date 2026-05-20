@@ -1,0 +1,10 @@
+{
+  "deprecatedIn": "v2.1.13",
+  "descriptionLength": 237,
+  "effort": "medium",
+  "fileName": "pdca-eval-do",
+  "hasTools": true,
+  "model": "sonnet",
+  "name": "pdca-eval-do",
+  "replacedBy": "code-analyzer"
+}

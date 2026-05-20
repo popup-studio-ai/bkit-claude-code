@@ -1,0 +1,10 @@
+{
+  "deprecatedIn": null,
+  "descriptionLength": 1,
+  "effort": "high",
+  "fileName": "pdca-iterator",
+  "hasTools": true,
+  "model": "opus",
+  "name": "pdca-iterator",
+  "replacedBy": null
+}

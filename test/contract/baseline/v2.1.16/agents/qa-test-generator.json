@@ -1,0 +1,10 @@
+{
+  "deprecatedIn": null,
+  "descriptionLength": 1,
+  "effort": "medium",
+  "fileName": "qa-test-generator",
+  "hasTools": true,
+  "model": "sonnet",
+  "name": "qa-test-generator",
+  "replacedBy": null
+}

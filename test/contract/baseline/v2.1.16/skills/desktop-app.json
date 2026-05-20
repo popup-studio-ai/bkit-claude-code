@@ -1,0 +1,10 @@
+{
+  "context": null,
+  "deprecatedIn": null,
+  "descriptionLength": 1,
+  "dirName": "desktop-app",
+  "effort": "low",
+  "name": "desktop-app",
+  "replacedBy": null,
+  "userInvocable": true
+}

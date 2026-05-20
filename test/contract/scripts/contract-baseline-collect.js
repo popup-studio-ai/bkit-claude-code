@@ -92,7 +92,10 @@ function writeJSON(filePath, data) {
   fs.writeFileSync(filePath, JSON.stringify(sortKeysDeep(data), null, 2) + '\n', 'utf8');
 }
 
-function collectSkills() {
+// v2.1.17: collect* functions accept { persist, baseDir } options for read-only invocation
+// from contract-test-run.js. Default persist=true preserves backward-compat with main().
+function collectSkills(opts = {}) {
+  const { persist = true, baseDir = BASE_DIR } = opts;
   const skillsDir = path.join(PROJECT_ROOT, 'skills');
   if (!fs.existsSync(skillsDir)) return { count: 0 };
   const dirs = fs.readdirSync(skillsDir).filter((d) => {
@@ -111,15 +114,21 @@ function collectSkills() {
       context: fm.context || null,
       userInvocable: fm['user-invocable'] !== undefined ? fm['user-invocable'] : null,
       descriptionLength: typeof fm.description === 'string' ? fm.description.length : 0,
+      // v2.1.17: deprecation governance metadata (optional, captured when present)
+      deprecatedIn: fm.deprecatedIn || null,
+      replacedBy: fm.replacedBy || null,
     };
-    writeJSON(path.join(BASE_DIR, 'skills', `${projected.name}.json`), projected);
+    if (persist) {
+      writeJSON(path.join(baseDir, 'skills', `${projected.name}.json`), projected);
+    }
     out.names.push(projected.name);
     out.count++;
   }
   return out;
 }
 
-function collectAgents() {
+function collectAgents(opts = {}) {
+  const { persist = true, baseDir = BASE_DIR } = opts;
   const agentsDir = path.join(PROJECT_ROOT, 'agents');
   if (!fs.existsSync(agentsDir)) return { count: 0 };
   const files = fs.readdirSync(agentsDir).filter((f) => f.endsWith('.md'));
@@ -136,15 +145,21 @@ function collectAgents() {
       effort: fm.effort || null,
       hasTools: fm.tools !== undefined,
       descriptionLength: typeof fm.description === 'string' ? fm.description.length : 0,
+      // v2.1.17: deprecation governance metadata (optional, captured when present)
+      deprecatedIn: fm.deprecatedIn || null,
+      replacedBy: fm.replacedBy || null,
     };
-    writeJSON(path.join(BASE_DIR, 'agents', `${projected.name}.json`), projected);
+    if (persist) {
+      writeJSON(path.join(baseDir, 'agents', `${projected.name}.json`), projected);
+    }
     out.names.push(projected.name);
     out.count++;
   }
   return out;
 }
 
-function collectMCPTools() {
+function collectMCPTools(opts = {}) {
+  const { persist = true, baseDir = BASE_DIR } = opts;
   const serversDir = path.join(PROJECT_ROOT, 'servers');
   const out = { count: 0, servers: {} };
   if (!fs.existsSync(serversDir)) return out;
@@ -167,8 +182,10 @@ function collectMCPTools() {
       }
     }
     toolNames.sort();
-    for (const tn of toolNames) {
-      writeJSON(path.join(BASE_DIR, 'mcp-tools', server, `${tn}.json`), { server, name: tn });
+    if (persist) {
+      for (const tn of toolNames) {
+        writeJSON(path.join(baseDir, 'mcp-tools', server, `${tn}.json`), { server, name: tn });
+      }
     }
     out.servers[server] = toolNames;
     out.count += toolNames.length;
@@ -176,7 +193,8 @@ function collectMCPTools() {
   return out;
 }
 
-function collectHooks() {
+function collectHooks(opts = {}) {
+  const { persist = true, baseDir = BASE_DIR } = opts;
   const hooksJson = path.join(PROJECT_ROOT, 'hooks', 'hooks.json');
   if (!fs.existsSync(hooksJson)) return { events: 0, blocks: 0 };
   const data = JSON.parse(fs.readFileSync(hooksJson, 'utf8'));
@@ -192,11 +210,14 @@ function collectHooks() {
     };
     blocks += entries.length;
   }
-  writeJSON(path.join(BASE_DIR, 'hook-events.json'), summary);
+  if (persist) {
+    writeJSON(path.join(baseDir, 'hook-events.json'), summary);
+  }
   return { events: Object.keys(summary).length, blocks };
 }
 
-function collectSlashCommands() {
+function collectSlashCommands(opts = {}) {
+  const { persist = true, baseDir = BASE_DIR } = opts;
   const out = { plugin: [], custom: [] };
   // Plugin bundled: skill dirnames that are user-invocable
   const skillsDir = path.join(PROJECT_ROOT, 'skills');
@@ -218,7 +239,9 @@ function collectSlashCommands() {
     const files = fs.readdirSync(cmdDir).filter((f) => f.endsWith('.md'));
     for (const f of files) out.custom.push('/' + f.replace(/\.md$/, ''));
   }
-  writeJSON(path.join(BASE_DIR, 'slash-commands.json'), out);
+  if (persist) {
+    writeJSON(path.join(baseDir, 'slash-commands.json'), out);
+  }
   return out;
 }
 

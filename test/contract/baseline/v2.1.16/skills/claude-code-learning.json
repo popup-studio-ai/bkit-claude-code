@@ -1,0 +1,10 @@
+{
+  "context": null,
+  "deprecatedIn": null,
+  "descriptionLength": 1,
+  "dirName": "claude-code-learning",
+  "effort": "low",
+  "name": "claude-code-learning",
+  "replacedBy": null,
+  "userInvocable": true
+}

@@ -23,6 +23,9 @@ test/
 tests/*
 test-scripts/
 # v2.1.10: Contract Test (Invocation Contract baseline) — tracked for CI Gate
+# Note: `test/` line above blocks directory traversal. New baseline directories
+# (e.g., test/contract/baseline/vX.X.X/) must be added with `git add -f` on first
+# commit; subsequent commits track them normally. See docs/06-guide/contract-baseline-rollforward.guide.md.
 !test/contract/
 !test/contract/**
 # v2.1.13 Sprint 5: L3 Contract Test (cross-sprint contract drift CI Gate) — tracked

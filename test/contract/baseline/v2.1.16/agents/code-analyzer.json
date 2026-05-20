@@ -1,0 +1,10 @@
+{
+  "deprecatedIn": null,
+  "descriptionLength": 1,
+  "effort": "high",
+  "fileName": "code-analyzer",
+  "hasTools": true,
+  "model": "opus",
+  "name": "code-analyzer",
+  "replacedBy": null
+}
