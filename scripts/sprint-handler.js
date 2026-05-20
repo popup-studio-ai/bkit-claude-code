@@ -326,10 +326,15 @@ async function handlePhase(args, infra, deps) {
   if (!sprint) return { ok: false, error: 'Sprint not found: ' + args.id };
   // v2.1.16 (Issue #95, F2): forward --approve / --reason to advancePhase Step 2.
   // approve is single-use; the handler does NOT persist it into sprint.autoRun.scope.
+  // v2.1.16 (Issue #93, F4): inject failureReporter so advancePhase auto-generates
+  // a markdown report under docs/03-analysis/ when gate_fail occurs. The reporter
+  // owns the FS write via the handler-provided fileWriter (advance-phase stays pure).
+  const failureReporter = buildFailureReporterForHandler();
   const advanceDeps = Object.assign({
     eventEmitter: infra.eventEmitter.emit,
     approve: args.approve === true || args.approve === 'true',
     reason: typeof args.reason === 'string' ? args.reason : null,
+    failureReporter: failureReporter,
   }, deps.lifecycleDeps || {});
   const result = await lifecycle.advancePhase(sprint, args.to, advanceDeps);
   // v2.1.16 (Issue #95, F2): record scope_boundary_approved when the
@@ -338,11 +343,12 @@ async function handlePhase(args, infra, deps) {
   // Sprint 4.5 — no double-write risk). Layer split preserved: the
   // application use case stays pure; the handler (Presentation/Sprint 4)
   // owns the cross-cutting audit emission.
-  if (result.ok && result.approvalRecord) {
+  let audit = null;
+  try {
+    audit = require('../lib/audit/audit-logger');
+  } catch (_e) { audit = null; }
+  if (audit && result.ok && result.approvalRecord) {
     try {
-      // Lazy require so Sprint 2 unit tests that import only the use case
-      // do not pull the audit-logger module graph.
-      const audit = require('../lib/audit/audit-logger');
       audit.writeAuditLog({
         actor: 'user',
         action: 'scope_boundary_approved',
@@ -355,8 +361,71 @@ async function handlePhase(args, infra, deps) {
       });
     } catch (_e) { /* audit best-effort */ }
   }
-  if (result.ok && result.sprint) await infra.stateStore.save(result.sprint);
+  // v2.1.16 (Issue #93, F4): persist lastGateFailure even on gate_fail so the
+  // failure state is durable for /sprint status surfacing and audit cross-reference.
+  if (result.sprint && (result.ok || result.reason === 'gate_fail')) {
+    try { await infra.stateStore.save(result.sprint); } catch (_e) { /* save best-effort on gate_fail */ }
+  }
+  // v2.1.16 (Issue #93, F4): emit gate_failed audit entry with expanded details
+  // schema (reportPath + failedGates summary). Pre-v2.1.16 details shapes from
+  // tool-failure-handler / gap-detector-stop remain unchanged — audit details
+  // is pass-through sanitized.
+  if (audit && !result.ok && result.reason === 'gate_fail') {
+    try {
+      const failedGates = [];
+      const resultsMap = (result.gateResults && result.gateResults.results) || {};
+      for (const [gateKey, r] of Object.entries(resultsMap)) {
+        if (r && !r.passed) {
+          failedGates.push({
+            gateKey: gateKey,
+            current: r.current,
+            threshold: r.threshold,
+            reason: r.reason || null,
+          });
+        }
+      }
+      audit.writeAuditLog({
+        actor: 'system',
+        action: 'gate_failed',
+        category: 'sprint',
+        target: args.id,
+        targetType: 'feature',
+        details: {
+          sprintId: args.id,
+          phase: sprint.phase,
+          targetPhase: args.to,
+          failedGates: failedGates,
+          reportPath: result.reportPath || null,
+        },
+        result: 'failure',
+        reason: 'Quality gate(s) failed at ' + sprint.phase + ' exit',
+      });
+    } catch (_e) { /* audit best-effort */ }
+  }
   return result;
+}
+
+/**
+ * Build the failure-reporter function passed to advancePhase deps. Owns the
+ * FS write (mkdirSync + writeFileSync) so the advance-phase use case stays
+ * Application-layer pure (Master Plan §1 RISK invariant for Sprint 2).
+ *
+ * @returns {function|null}
+ */
+function buildFailureReporterForHandler() {
+  try {
+    const fr = require('../lib/application/quality-gates/failure-reporter');
+    const fsLocal = require('fs');
+    const pathLocal = require('path');
+    return fr.createFailureReporter({
+      projectRoot: process.cwd(),
+      fileWriter: function (absPath, content) {
+        const dir = pathLocal.dirname(absPath);
+        if (!fsLocal.existsSync(dir)) fsLocal.mkdirSync(dir, { recursive: true });
+        fsLocal.writeFileSync(absPath, content, 'utf8');
+      },
+    });
+  } catch (_e) { return null; }
 }
 
 async function handleIterate(args, infra, deps) {

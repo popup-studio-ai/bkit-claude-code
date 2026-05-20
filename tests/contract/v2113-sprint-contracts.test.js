@@ -710,9 +710,163 @@ async function sc13() {
     'sprint-orchestrator agent must reference GATE_MEASUREMENT_ROUTES');
 }
 
+// === SC-14: gate_fail auto-report contract (v2.1.16 Issue #93 F4) ===
+//
+// Behavioral contract for the failure-reporter infrastructure introduced in F4:
+//   - failure-reporter: pure path/markdown builders + factory with FS write
+//   - advance-phase: gate_fail returns reportPath + sprint(lastGateFailure)
+//   - handler: failureReporter injected → file written, state persisted,
+//     gate_failed audit emitted with expanded details schema
+//   - template: 6-column table (Sprint Phase / Gate / Status / Expected /
+//     Actual / Suggested Action) per Issue #93 expected behavior
+//   - cross-feature enriched data: M4 measurement (F1), --approve audit
+//     (F2), gate_measured audit (F3) all surface in the report when relevant
+async function sc14() {
+  const fr = require(path.join(projectRoot, 'lib/application/quality-gates/failure-reporter'));
+  const adv = require(path.join(projectRoot, 'lib/application/sprint-lifecycle/advance-phase.usecase'));
+  const domain = require(path.join(projectRoot, 'lib/domain/sprint'));
+
+  // 1) Pure path builder — timestamp normalization, canonical layout.
+  const p = fr.buildReportPath('sc14-test', 'design', '2026-05-20T01:23:45.678Z');
+  assert.strictEqual(p, 'docs/03-analysis/sc14-test-gate-fail-design-2026-05-20T01-23-45-678Z.md');
+
+  // 2) Template exists at canonical path.
+  const tplPath = path.join(projectRoot, fr.TEMPLATE_REL);
+  assert(fs.existsSync(tplPath), 'gate-failure-report.template.md must exist at ' + fr.TEMPLATE_REL);
+  const tplContent = fs.readFileSync(tplPath, 'utf8');
+  assert(tplContent.includes('| Sprint Phase | Gate | Status | Expected | Actual | Suggested Action |'),
+    'template must include the 6-column header per Master Plan §11.4 AC2');
+
+  // 3) buildMarkdown — composes substituted markdown without FS write.
+  const sprint = { id: 'sc14', name: 'SC14 Sprint', autoRun: { trustLevelAtStart: 'L2' } };
+  const gateResults = {
+    allPassed: false, phase: 'design',
+    results: {
+      M4: { gateKey: 'M4', current: null, threshold: 95, passed: false, reason: 'not_measured' },
+      M8: { gateKey: 'M8', current: 100, threshold: 85, passed: true },
+    },
+  };
+  const md = fr.buildMarkdown(sprint, 'design', gateResults, '2026-05-20T02:00:00.000Z', { toPhase: 'do' });
+  assert(md.includes('design→do'), 'markdown header must include fromPhase→toPhase');
+  assert(md.includes('| design | `M4` | FAIL'), 'markdown table must include failing M4 row');
+  assert(md.includes('| design | `M8` | PASS'), 'markdown table must include passing M8 row');
+  assert(md.includes('not_measured'), 'markdown must surface evaluator reason (not_measured)');
+  assert(md.includes('/sprint measure --gate M4'), 'markdown must suggest F3 measure command for not_measured gates');
+  assert(md.includes('/sprint phase'), 'markdown must surface F2 --approve command in next-steps');
+
+  // 4) advancePhase — gate_fail return includes reportPath + sprint.lastGateFailure.
+  const failingSprint = domain.cloneSprint(
+    domain.createSprint({ id: 'sc14-adv', name: 'SC14', trustLevelAtStart: 'L4', features: ['x'] }),
+    { phase: 'design' } // M4/M8 both null → fail
+  );
+  const captured = [];
+  const fakeReporter = async (s, fromPhase, gr, ts, perCall) => {
+    captured.push({ id: s.id, fromPhase, toPhase: perCall && perCall.toPhase, gateCount: Object.keys(gr.results || {}).length });
+    return { reportPath: 'docs/03-analysis/' + s.id + '-fake.md', written: true };
+  };
+  const advRes = await adv.advancePhase(failingSprint, 'do', { failureReporter: fakeReporter });
+  assert.strictEqual(advRes.ok, false);
+  assert.strictEqual(advRes.reason, 'gate_fail');
+  assert.strictEqual(advRes.reportPath, 'docs/03-analysis/sc14-adv-fake.md',
+    'advancePhase must surface reporter reportPath in result');
+  assert(advRes.sprint, 'advancePhase gate_fail must include cloned sprint (was missing pre-v2.1.16)');
+  assert(advRes.sprint.lastGateFailure, 'sprint.lastGateFailure must be populated');
+  assert.strictEqual(advRes.sprint.lastGateFailure.phase, 'design');
+  assert.strictEqual(advRes.sprint.lastGateFailure.toPhase, 'do');
+  assert.strictEqual(advRes.sprint.lastGateFailure.reportPath, 'docs/03-analysis/sc14-adv-fake.md');
+  assert(advRes.sprint.lastGateFailure.timestamp, 'timestamp must be ISO string');
+  // Reporter received toPhase via per-call opts (F4 fix).
+  assert.strictEqual(captured.length, 1);
+  assert.strictEqual(captured[0].toPhase, 'do',
+    'failureReporter must receive toPhase via per-call opts');
+
+  // 5) advancePhase — no failureReporter: still returns sprint.lastGateFailure
+  //    (with reportPath=null), Issue #93 expected behavior item 3.
+  const advNoReporter = await adv.advancePhase(failingSprint, 'do');
+  assert.strictEqual(advNoReporter.ok, false);
+  assert.strictEqual(advNoReporter.reason, 'gate_fail');
+  assert.strictEqual(advNoReporter.reportPath, null);
+  assert(advNoReporter.sprint.lastGateFailure,
+    'lastGateFailure must populate even when reporter is absent');
+  assert.strictEqual(advNoReporter.sprint.lastGateFailure.reportPath, null);
+
+  // 6) Handler E2E — gate_fail writes report file, persists state, emits audit.
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'sc14-'));
+  const prevCwd = process.cwd();
+  const modules = [
+    'lib/core/platform', 'lib/core/index', 'lib/audit/audit-logger',
+    'lib/infra/sprint/sprint-paths', 'lib/infra/sprint/sprint-state-store.adapter',
+    'lib/infra/sprint/sprint-telemetry.adapter', 'lib/infra/sprint/sprint-doc-scanner.adapter',
+    'lib/infra/sprint/matrix-sync.adapter', 'lib/infra/sprint/index', 'lib/infra/sprint',
+    'scripts/sprint-handler',
+  ];
+  const resetModules = () => {
+    for (const m of modules) {
+      try { delete require.cache[require.resolve(path.join(projectRoot, m))]; } catch (_e) { /* */ }
+    }
+  };
+  try {
+    process.chdir(tmp);
+    fs.mkdirSync(path.join(tmp, '.bkit', 'state', 'sprints'), { recursive: true });
+    fs.mkdirSync(path.join(tmp, '.bkit', 'audit'), { recursive: true });
+    fs.writeFileSync(path.join(tmp, '.bkit', 'state', 'sprints', 'sc14-h.json'),
+      JSON.stringify(failingSprint, null, 2).replace(/"sc14-adv"/g, '"sc14-h"'));
+    resetModules();
+    const handler = require(path.join(projectRoot, 'scripts/sprint-handler'));
+    const hr = await handler.handleSprintAction('phase', { id: 'sc14-h', to: 'do' });
+    assert.strictEqual(hr.ok, false);
+    assert.strictEqual(hr.reason, 'gate_fail');
+    assert(hr.reportPath);
+    // Report file exists.
+    const reportAbs = path.join(tmp, hr.reportPath);
+    assert(fs.existsSync(reportAbs), 'report file must exist at ' + reportAbs);
+    const reportContent = fs.readFileSync(reportAbs, 'utf8');
+    assert(reportContent.includes('design→do'));
+    assert(reportContent.includes('| Sprint Phase | Gate | Status | Expected | Actual | Suggested Action |'));
+    // State persisted with lastGateFailure (even on gate_fail).
+    const savedState = JSON.parse(fs.readFileSync(
+      path.join(tmp, '.bkit', 'state', 'sprints', 'sc14-h.json'), 'utf8'));
+    assert(savedState.lastGateFailure,
+      'sprint state must persist lastGateFailure even on gate_fail');
+    assert.strictEqual(savedState.lastGateFailure.reportPath, hr.reportPath);
+    // Audit log gate_failed entry with expanded details.
+    const today = new Date().toISOString().slice(0, 10);
+    const auditFile = path.join(tmp, '.bkit', 'audit', today + '.jsonl');
+    assert(fs.existsSync(auditFile), 'audit log file must exist');
+    const entries = fs.readFileSync(auditFile, 'utf8')
+      .split('\n').filter(Boolean).map(JSON.parse);
+    const failedEntry = entries.find((e) => e.action === 'gate_failed');
+    assert(failedEntry, 'audit log must contain gate_failed entry');
+    assert.strictEqual(failedEntry.actor, 'system');
+    assert.strictEqual(failedEntry.category, 'sprint');
+    assert.strictEqual(failedEntry.target, 'sc14-h');
+    assert.deepStrictEqual(Object.keys(failedEntry.details).sort(),
+      ['failedGates', 'phase', 'reportPath', 'sprintId', 'targetPhase']);
+    assert.strictEqual(failedEntry.details.reportPath, hr.reportPath);
+    assert(Array.isArray(failedEntry.details.failedGates));
+    assert(failedEntry.details.failedGates.length >= 1,
+      'failedGates array must include at least one failing gate');
+  } finally {
+    process.chdir(prevCwd);
+    resetModules();
+    try { fs.rmSync(tmp, { recursive: true, force: true }); } catch (_e) { /* */ }
+  }
+
+  // 7) AC7 cross-feature enrichment — failure-reporter narrative must
+  //    reference F2 (--approve), F3 (/sprint measure) commands so users can
+  //    recover without trust escalation.
+  const recoveryMd = fr.buildMarkdown(sprint, 'design', gateResults, '2026-05-20T02:00:00.000Z', { toPhase: 'do' });
+  assert(recoveryMd.includes('/sprint phase') && recoveryMd.includes('--approve'),
+    'recovery commands must include F2 --approve hint');
+  assert(recoveryMd.includes('/sprint measure'),
+    'recovery commands must include F3 /sprint measure hint');
+  assert(recoveryMd.includes('/sprint pause') && recoveryMd.includes('/sprint resume'),
+    'recovery commands must include pause/resume controls');
+}
+
 // === Runner ===
 (async () => {
-  console.log('=== L3 Contract Tests (Sprint 5 SC-01~08 + S4-UX SC-09~10 + v2.1.16 SC-11~13) ===\n');
+  console.log('=== L3 Contract Tests (Sprint 5 SC-01~08 + S4-UX SC-09~10 + v2.1.16 SC-11~14) ===\n');
   record('SC-01 Sprint entity shape (12 core keys)', sc01);
   record('SC-02 deps interface (start: 7 + iterate: 2 + verify: 1)', sc02);
   record('SC-03 createSprintInfra 4 adapters + Sprint 5 3 scaffolds', sc03);
@@ -726,6 +880,7 @@ async function sc13() {
   record('SC-11 Sprint 2 quality-gates logic invariant (v2.1.16 evolution, Issue #92)', sc11);
   await record('SC-12 advance-phase --approve escape hatch contract (v2.1.16 Issue #95 F2, 7 assertions + handler E2E)', sc12);
   await record('SC-13 /sprint measure routing + measure-router + measure-gate.usecase + handler E2E (v2.1.16 Issue #94 F3, 8 assertion groups)', sc13);
+  await record('SC-14 gate_fail auto-report (failure-reporter + advancePhase + handler E2E, v2.1.16 Issue #93 F4, 7 assertion groups)', sc14);
   console.log('\n=== L3 Contract: ' + passed + '/' + (passed + failed) + ' PASS ===');
   if (failed > 0) {
     console.error('\n❌ ' + failed + ' contract(s) FAILED — cross-sprint drift detected.');
