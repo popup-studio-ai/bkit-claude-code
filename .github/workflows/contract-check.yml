@@ -46,6 +46,19 @@ jobs:
       - name: Aggregate all tests (summary)
         run: node test/contract/scripts/qa-aggregate.js | tail -10
 
+      # v2.1.16 release-hardening: explicit release gate.
+      # bkit-full-system verifies version-sync across README/hooks/manifests +
+      # agent/skill structure. docs-code-sync detects counts drift between SoT
+      # (lib/domain/rules/docs-code-invariants.js) and live filesystem.
+      # Both were previously visible only via local `qa-aggregate` run; promoting
+      # them to mandatory CI steps prevents v2.1.14/15/16-style release defects
+      # where stale metadata shipped despite tests existing.
+      - name: Release Gate — bkit-full-system (version sync + agent/skill structure)
+        run: node tests/qa/bkit-full-system.test.js
+
+      - name: Release Gate — docs-code-sync (counts SoT drift detector)
+        run: node test/contract/docs-code-sync.test.js
+
   contract-l5-e2e:
     name: Contract Test L5 (관찰 전용 — 머지 차단 아님)
     runs-on: ubuntu-latest

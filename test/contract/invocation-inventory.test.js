@@ -31,8 +31,9 @@ test('servers/bkit-pdca-server/index.js exists', () => assert.ok(fs.existsSync(p
 test('servers/bkit-analysis-server/index.js exists', () => assert.ok(fs.existsSync(path.join(ROOT, 'servers', 'bkit-analysis-server', 'index.js'))));
 
 // ==================== Skills Count ====================
+// v2.1.16 hardening: 43 → 44 (v2.1.13 added 'sprint' for Sprint Management)
 const skillDirs = fs.readdirSync(skillsDir).filter((d) => fs.statSync(path.join(skillsDir, d)).isDirectory());
-test('Skills count exactly 43', () => assert.strictEqual(skillDirs.length, 43));
+test('Skills count exactly 44', () => assert.strictEqual(skillDirs.length, 44));
 
 const EXPECTED_SKILLS = [
   'audit', 'bkend-auth', 'bkend-cookbook', 'bkend-data', 'bkend-quickstart', 'bkend-storage',
@@ -43,7 +44,7 @@ const EXPECTED_SKILLS = [
   'phase-1-schema', 'phase-2-convention',
   'phase-3-mockup', 'phase-4-api', 'phase-5-design-system', 'phase-6-ui-integration',
   'phase-7-seo-security', 'phase-8-review', 'phase-9-deployment', 'plan-plus', 'pm-discovery',
-  'qa-phase', 'rollback', 'skill-create', 'skill-status', 'starter', 'zero-script-qa',
+  'qa-phase', 'rollback', 'skill-create', 'skill-status', 'sprint', 'starter', 'zero-script-qa',
 ];
 EXPECTED_SKILLS.forEach((name) => {
   test(`Skill '${name}' exists`, () => assert.ok(skillDirs.includes(name), `missing: ${name}`));
@@ -51,18 +52,21 @@ EXPECTED_SKILLS.forEach((name) => {
 });
 
 // ==================== Agents Count ====================
+// v2.1.16 hardening: 36 → 34. Removed 6 pdca-eval-* agents (v2.1.10 Sprint 6
+// cleanup), added 4 sprint-* agents (v2.1.13 Sprint Management).
+// Net: 36 - 6 + 4 = 34.
 const agentFiles = fs.readdirSync(agentsDir).filter((f) => f.endsWith('.md'));
-test('Agents count exactly 36', () => assert.strictEqual(agentFiles.length, 36));
+test('Agents count exactly 34', () => assert.strictEqual(agentFiles.length, 34));
 
 const EXPECTED_AGENTS = [
   'bkend-expert', 'bkit-impact-analyst', 'cc-version-researcher', 'code-analyzer', 'cto-lead',
   'design-validator', 'enterprise-expert', 'frontend-architect', 'gap-detector',
-  'infra-architect', 'pdca-eval-act', 'pdca-eval-check', 'pdca-eval-design', 'pdca-eval-do',
-  'pdca-eval-plan', 'pdca-eval-pm', 'pdca-iterator', 'pipeline-guide', 'pm-discovery',
+  'infra-architect', 'pdca-iterator', 'pipeline-guide', 'pm-discovery',
   'pm-lead-skill-patch', 'pm-lead', 'pm-prd', 'pm-research', 'pm-strategy', 'product-manager',
   'qa-debug-analyst', 'qa-lead', 'qa-monitor', 'qa-strategist', 'qa-test-generator',
   'qa-test-planner', 'report-generator', 'security-architect', 'self-healing',
-  'skill-needs-extractor', 'starter-guide',
+  'skill-needs-extractor', 'sprint-master-planner', 'sprint-orchestrator', 'sprint-qa-flow',
+  'sprint-report-writer', 'starter-guide',
 ];
 EXPECTED_AGENTS.forEach((name) => {
   test(`Agent '${name}.md' exists`, () => assert.ok(agentFiles.includes(`${name}.md`)));

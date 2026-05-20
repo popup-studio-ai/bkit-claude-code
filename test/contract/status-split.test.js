@@ -49,7 +49,9 @@ const core = require('../../lib/pdca/status-core');
 const migration = require('../../lib/pdca/status-migration');
 const cleanup = require('../../lib/pdca/status-cleanup');
 
-test('status-core exports 17 functions', () => assert.strictEqual(Object.keys(core).length, 17));
+// v2.1.16 hardening: status-core exports grew 17 → 19 (added shouldUpdate +
+// appendHistoryEntry helpers as part of v2.1.15 #89 6-Layer Defense refactor).
+test('status-core exports 19 functions', () => assert.strictEqual(Object.keys(core).length, 19));
 test('status-migration exports 3 functions', () => assert.strictEqual(Object.keys(migration).length, 3));
 test('status-cleanup exports 5 functions', () => assert.strictEqual(Object.keys(cleanup).length, 5));
 

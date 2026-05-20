@@ -60,10 +60,15 @@ assert('AL-003', entry.actor === 'system', 'Entry has correct actor');
 assert('AL-004', typeof entry.id === 'string' && entry.id.length > 0, 'Entry has UUID id');
 assert('AL-005', typeof entry.timestamp === 'string' && entry.timestamp.includes('T'), 'Entry has ISO timestamp');
 
-// --- AL-006~010: 16 ACTION_TYPES all valid ---
+// --- AL-006~010: ACTION_TYPES all valid (count evolves per release) ---
+// v2.1.10 baseline 16 + v2.1.13 4 (sprint_paused/resumed/master_plan_created/task_created)
+// + v2.1.14 7 (layer_6_audit_completed/alarm_triggered, heredoc_bypass_blocked,
+//             git_push_intercepted, post_tool_block_recorded, hook_reachability_lost,
+//             memory_directive_enforced)
+// + v2.1.16 2 (scope_boundary_approved [#95 F2], gate_measured [#94 F3]) = 29.
 
 assert('AL-006', Array.isArray(mod.ACTION_TYPES), 'ACTION_TYPES is an array');
-assert('AL-007', mod.ACTION_TYPES.length === 16, `ACTION_TYPES has 16 entries (got ${mod.ACTION_TYPES.length})`);
+assert('AL-007', mod.ACTION_TYPES.length === 29, `ACTION_TYPES has 29 entries (got ${mod.ACTION_TYPES.length})`);
 assert('AL-008', mod.ACTION_TYPES.includes('phase_transition'), 'Includes phase_transition');
 assert('AL-009', mod.ACTION_TYPES.includes('destructive_blocked'), 'Includes destructive_blocked');
 assert('AL-010', mod.ACTION_TYPES.includes('checkpoint_created'), 'Includes checkpoint_created');

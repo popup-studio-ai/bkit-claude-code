@@ -73,7 +73,10 @@ assert('U-TRG-013', itResult !== null && itResult.agent.includes('gap-detector')
 // --- confidence threshold ---
 assert('U-TRG-014', enResult !== null && enResult.confidence >= 0.7, 'Confidence >= confidenceThreshold (0.7)');
 assert('U-TRG-015', enResult !== null && enResult.confidence <= 1.0, 'Confidence <= 1.0 (Math.min cap)');
-assert('U-TRG-016', enResult !== null && enResult.confidence === Math.min(1, 0.7 + 0.1), 'Confidence = Math.min(1, threshold+0.1) = 0.8');
+// v2.1.16 hardening: Math.min(1, 0.7+0.1) = 0.7999999999999999 (JS floating
+// point), but matchImplicitAgentTrigger returns the clean literal 0.8. The
+// === comparison fails despite equal mathematical value. Use epsilon comparison.
+assert('U-TRG-016', enResult !== null && Math.abs(enResult.confidence - 0.8) < 1e-9, 'Confidence ≈ 0.8 (= threshold+0.1, capped at 1, within ε)');
 
 // --- Null returns ---
 assert('U-TRG-017', mod.matchImplicitAgentTrigger(null) === null, 'Null input returns null');

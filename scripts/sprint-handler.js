@@ -43,6 +43,7 @@ const VALID_ACTIONS = Object.freeze([
   'iterate', 'qa', 'report', 'archive', 'list',
   'feature', 'pause', 'resume', 'fork', 'help',
   'master-plan', // S2-UX v2.1.13 — 16th action
+  'measure',     // F3 v2.1.16 (Issue #94) — 17th action
 ]);
 
 /**
@@ -222,6 +223,7 @@ async function handleSprintAction(action, args, deps) {
     case 'watch':   return handleWatch(a, infra);
     case 'help':    return handleHelp();
     case 'master-plan': return handleMasterPlan(a, infra, d);
+    case 'measure': return handleMeasure(a, infra, d);
     default:        return { ok: false, error: 'Unreachable action: ' + action };
   }
 }
@@ -322,11 +324,108 @@ async function handlePhase(args, infra, deps) {
   }
   const sprint = await infra.stateStore.load(args.id);
   if (!sprint) return { ok: false, error: 'Sprint not found: ' + args.id };
-  const result = await lifecycle.advancePhase(sprint, args.to, Object.assign({
+  // v2.1.16 (Issue #95, F2): forward --approve / --reason to advancePhase Step 2.
+  // approve is single-use; the handler does NOT persist it into sprint.autoRun.scope.
+  // v2.1.16 (Issue #93, F4): inject failureReporter so advancePhase auto-generates
+  // a markdown report under docs/03-analysis/ when gate_fail occurs. The reporter
+  // owns the FS write via the handler-provided fileWriter (advance-phase stays pure).
+  const failureReporter = buildFailureReporterForHandler();
+  const advanceDeps = Object.assign({
     eventEmitter: infra.eventEmitter.emit,
-  }, deps.lifecycleDeps || {}));
-  if (result.ok && result.sprint) await infra.stateStore.save(result.sprint);
+    approve: args.approve === true || args.approve === 'true',
+    reason: typeof args.reason === 'string' ? args.reason : null,
+    failureReporter: failureReporter,
+  }, deps.lifecycleDeps || {});
+  const result = await lifecycle.advancePhase(sprint, args.to, advanceDeps);
+  // v2.1.16 (Issue #95, F2): record scope_boundary_approved when the
+  // single-use --approve actually bypassed the Trust Level scope. Direct
+  // writeAuditLog call (audit-logger internally mirrors to OTEL since
+  // Sprint 4.5 — no double-write risk). Layer split preserved: the
+  // application use case stays pure; the handler (Presentation/Sprint 4)
+  // owns the cross-cutting audit emission.
+  let audit = null;
+  try {
+    audit = require('../lib/audit/audit-logger');
+  } catch (_e) { audit = null; }
+  if (audit && result.ok && result.approvalRecord) {
+    try {
+      audit.writeAuditLog({
+        actor: 'user',
+        action: 'scope_boundary_approved',
+        category: 'sprint',
+        target: result.approvalRecord.sprintId,
+        targetType: 'feature',
+        details: result.approvalRecord,
+        result: 'success',
+        reason: result.approvalRecord.reason || 'user-approved scope boundary',
+      });
+    } catch (_e) { /* audit best-effort */ }
+  }
+  // v2.1.16 (Issue #93, F4): persist lastGateFailure even on gate_fail so the
+  // failure state is durable for /sprint status surfacing and audit cross-reference.
+  if (result.sprint && (result.ok || result.reason === 'gate_fail')) {
+    try { await infra.stateStore.save(result.sprint); } catch (_e) { /* save best-effort on gate_fail */ }
+  }
+  // v2.1.16 (Issue #93, F4): emit gate_failed audit entry with expanded details
+  // schema (reportPath + failedGates summary). Pre-v2.1.16 details shapes from
+  // tool-failure-handler / gap-detector-stop remain unchanged — audit details
+  // is pass-through sanitized.
+  if (audit && !result.ok && result.reason === 'gate_fail') {
+    try {
+      const failedGates = [];
+      const resultsMap = (result.gateResults && result.gateResults.results) || {};
+      for (const [gateKey, r] of Object.entries(resultsMap)) {
+        if (r && !r.passed) {
+          failedGates.push({
+            gateKey: gateKey,
+            current: r.current,
+            threshold: r.threshold,
+            reason: r.reason || null,
+          });
+        }
+      }
+      audit.writeAuditLog({
+        actor: 'system',
+        action: 'gate_failed',
+        category: 'sprint',
+        target: args.id,
+        targetType: 'feature',
+        details: {
+          sprintId: args.id,
+          phase: sprint.phase,
+          targetPhase: args.to,
+          failedGates: failedGates,
+          reportPath: result.reportPath || null,
+        },
+        result: 'failure',
+        reason: 'Quality gate(s) failed at ' + sprint.phase + ' exit',
+      });
+    } catch (_e) { /* audit best-effort */ }
+  }
   return result;
+}
+
+/**
+ * Build the failure-reporter function passed to advancePhase deps. Owns the
+ * FS write (mkdirSync + writeFileSync) so the advance-phase use case stays
+ * Application-layer pure (Master Plan §1 RISK invariant for Sprint 2).
+ *
+ * @returns {function|null}
+ */
+function buildFailureReporterForHandler() {
+  try {
+    const fr = require('../lib/application/quality-gates/failure-reporter');
+    const fsLocal = require('fs');
+    const pathLocal = require('path');
+    return fr.createFailureReporter({
+      projectRoot: process.cwd(),
+      fileWriter: function (absPath, content) {
+        const dir = pathLocal.dirname(absPath);
+        if (!fsLocal.existsSync(dir)) fsLocal.mkdirSync(dir, { recursive: true });
+        fsLocal.writeFileSync(absPath, content, 'utf8');
+      },
+    });
+  } catch (_e) { return null; }
 }
 
 async function handleIterate(args, infra, deps) {
@@ -540,7 +639,9 @@ function handleHelp() {
       '  start    /sprint start <id> [--trust L0-L4]',
       '  status   /sprint status <id>',
       '  list     /sprint list',
-      '  phase    /sprint phase <id> --to <phase>',
+      '  phase    /sprint phase <id> --to <phase> [--approve] [--reason "<text>"]',
+      '             --approve: single-use Trust Level scope-boundary escape hatch (v2.1.16 #95)',
+      '             --reason : optional rationale recorded under audit action scope_boundary_approved',
       '  iterate  /sprint iterate <id>',
       '  qa       /sprint qa <id> --feature <name>',
       '  report   /sprint report <id>',
@@ -551,9 +652,151 @@ function handleHelp() {
       '  fork     /sprint fork <id> --new <newId>',
       '  feature  /sprint feature <id> --action list|add|remove --feature <name>',
       '  master-plan /sprint master-plan <project> --name <name> --features <a,b,c>',
+      '  measure  /sprint measure <id> --gate <key> | --gates <CSV> | --phase <phase>',
+      '             v2.1.16 (Issue #94 F3): partial gate measurement via measure-router',
+      '             routed agents: M1/M3/M4 → gap-detector, M2/M7 → code-analyzer,',
+      '                            M8 → sprint-orchestrator, S1 → sprint-qa-flow',
+      '             Trust L0/L1: preview mode (no state mutation, no audit)',
+      '             Trust L2+ : recorded + audit action gate_measured',
       '  help     /sprint help',
     ].join('\n'),
   };
+}
+
+// =====================================================================
+// v2.1.16 (Issue #94 F3) — /sprint measure handler (17th action)
+// =====================================================================
+
+/**
+ * Handle `/sprint measure <id> --gate <key> | --gates <CSV> | --phase <p>`.
+ *
+ * Routes per Master Plan §11.3 AC1-AC7:
+ *   - Single gate    : args.gate         → measure-gate.usecase.measureGate
+ *   - Multiple gates : args.gates        → measure-gate.usecase.measureGates
+ *   - Phase batch    : args.phase        → measure-gate.usecase.measurePhaseGates
+ *
+ * Trust Level scope (Master Plan AC5): L0/L1 preview-only (sprint.qualityGates
+ * unchanged, no audit), L2+ record + audit. measure-gate UC enforces this.
+ *
+ * Agent dispatch (Master Plan AC4): measure-router.js maps gateKey → agent.
+ * agentTaskRunner is taken from `deps.agentTaskRunner` (same as
+ * wireAgentAdapters). When the dispatcher (Claude Code session) does not
+ * inject one, the use case returns `reason: 'no_agent_runner'` per gate.
+ *
+ * @param {Object} args - { id, gate? (string), gates? (CSV string|string[]), phase? (string), trustLevel?, source? ('manual'|'auto') }
+ * @param {Object} infra - SprintInfra bundle (state-store)
+ * @param {Object} deps  - { agentTaskRunner? }
+ * @returns {Promise<{ ok: boolean, sprintId?: string, gateKeys?: string[], mode?: string, results?: Array, successCount?: number, failureCount?: number, error?: string }>}
+ */
+async function handleMeasure(args, infra, deps) {
+  if (!args || !args.id) {
+    return { ok: false, error: 'measure requires { id }' };
+  }
+  const sprint = await infra.stateStore.load(args.id);
+  if (!sprint) return { ok: false, error: 'Sprint not found: ' + args.id };
+
+  // Resolve which gates to measure (mutually exclusive precedence).
+  let gateKeys = [];
+  let resolveSource = null;
+  if (typeof args.gate === 'string' && args.gate.length > 0) {
+    gateKeys = [args.gate];
+    resolveSource = 'gate';
+  } else if (args.gates) {
+    gateKeys = Array.isArray(args.gates)
+      ? args.gates.slice()
+      : parseFeaturesFlag(args.gates);
+    resolveSource = 'gates';
+  } else if (typeof args.phase === 'string' && args.phase.length > 0) {
+    // Defer to measurePhaseGates UC which knows ACTIVE_GATES_BY_PHASE.
+    return runPhaseGates(sprint, args, infra, deps);
+  }
+  if (gateKeys.length === 0) {
+    return {
+      ok: false,
+      error: 'measure requires one of: --gate <key> | --gates <CSV> | --phase <phase>',
+      validActions: ['--gate', '--gates', '--phase'],
+    };
+  }
+
+  const trustLevel = typeof args.trustLevel === 'string'
+    ? args.trustLevel
+    : (sprint.autoRun && sprint.autoRun.trustLevelAtStart);
+  const source = (args.source === 'auto' || args.source === 'manual') ? args.source : 'manual';
+
+  // Sequential dispatch (ENH-292) via the UC's aggregator.
+  const ucDeps = {
+    agentTaskRunner: deps.agentTaskRunner,
+    trustLevel,
+    source,
+  };
+  const agg = await lifecycle.measureGates(sprint, gateKeys, ucDeps);
+
+  // Persist + audit per successful record-mode result.
+  await persistAndAudit(agg, infra, args.id);
+
+  return {
+    ok: agg.ok,
+    sprintId: args.id,
+    resolveSource,
+    gateKeys,
+    trustLevel,
+    successCount: agg.successCount,
+    failureCount: agg.failureCount,
+    results: agg.results,
+  };
+}
+
+async function runPhaseGates(sprint, args, infra, deps) {
+  const trustLevel = typeof args.trustLevel === 'string'
+    ? args.trustLevel
+    : (sprint.autoRun && sprint.autoRun.trustLevelAtStart);
+  const source = (args.source === 'auto' || args.source === 'manual') ? args.source : 'manual';
+  const ucDeps = {
+    agentTaskRunner: deps.agentTaskRunner,
+    trustLevel,
+    source,
+  };
+  const agg = await lifecycle.measurePhaseGates(sprint, args.phase, ucDeps);
+  await persistAndAudit(agg, infra, args.id);
+  return {
+    ok: agg.ok,
+    sprintId: args.id,
+    resolveSource: 'phase',
+    phase: agg.phase,
+    gateKeys: agg.results.map((r) => r.gateKey),
+    skippedUnsupported: agg.skippedUnsupported,
+    trustLevel,
+    successCount: agg.successCount,
+    failureCount: agg.failureCount,
+    results: agg.results,
+  };
+}
+
+async function persistAndAudit(agg, infra, sprintId) {
+  // Single state save at the end (cumulative qualityGates from UC aggregator).
+  let saved = false;
+  if (agg && agg.sprint && agg.results.some((r) => r.ok && r.mode === 'record')) {
+    await infra.stateStore.save(agg.sprint);
+    saved = true;
+  }
+  // Per-gate audit emission for record-mode successes.
+  try {
+    const audit = require('../lib/audit/audit-logger');
+    for (const r of (agg.results || [])) {
+      if (r.ok && r.mode === 'record' && r.auditRecord) {
+        audit.writeAuditLog({
+          actor: 'user',
+          action: 'gate_measured',
+          category: 'sprint',
+          target: sprintId,
+          targetType: 'feature',
+          details: r.auditRecord,
+          result: r.auditRecord.passed === false ? 'failure' : 'success',
+        });
+      }
+    }
+  } catch (_e) { /* audit best-effort */ }
+  return saved;
 }
 
 // =====================================================================

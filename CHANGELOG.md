@@ -5,6 +5,151 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.16] - 2026-05-20 (branch: `feature/v2116-issue-fixes`)
+
+> **Status**: Patch release — 4 GitHub issues 종결 (Quality Gates & Approval UX).
+> **Reporter**: @pruge (v2.1.14, CC v2.1.140, L2 trust) — L2 기본 사용자가 sprint 진행 중 quality gate에 의해 발생하는 deadlock 4종을 사용자 명시 명령으로 해소.
+
+### Fixed — Issue #92: sprint-orchestrator M4+M8 dual record at design exit (F1)
+
+`sprint-orchestrator` agent가 design phase §14 self-assessment 종료 시 `M8_designCompleteness`만 기록하고 `M4_apiComplianceRate`를 누락 → `evaluateGate(null)` returns `reason: 'not_measured'` → `advancePhase` returns `reason: 'gate_fail'` → start-sprint loop가 `QUALITY_GATE_FAIL`로 pause. L2 사용자 deadlock.
+
+- **agent body §96-102 Quality Standards 확장** + **Design Phase Exit Procedure 신설** — orchestrator가 design exit 전 M4 + M8 둘 다 측정 책임 명시 (Option A, Issue #92 reporter suggested).
+- **quality-gates.js JSDoc evolution** — measurement responsibility 명시 (single SoT per gate). Logic 무변경 (Master Plan §1 RISK invariant — gate matrix target 동일).
+- **Cross-Sprint Integration (F3 ships 후)**: agent body가 `measure-router.measureGate('M4', sprint, { agentTaskRunner })` 호출 명시 — `/sprint phase` 자동 advance와 `/sprint measure --gate M4` 수동 호출이 단일 SoT 공유.
+- **Contract test SC-11 신규** — Sprint 2 quality-gates logic structural invariant (legacy git-diff freeze evolution, INV-05 hooks.json 패턴).
+- Atomic commit `b8f85b9`.
+
+### Added — Issue #95: `/sprint phase --approve` scope-boundary single-use escape hatch (F2)
+
+L2 trust (`scope.stopAfter = "design"`, `requireApproval = true`)에서 `/sprint phase --to do` 호출 시 `requires_user_approval` 반환되지만 사용자가 approval 줄 명령 없음 → deadlock. workaround는 trust escalation 또는 state JSON 직접 편집 (bkit 철학 위반).
+
+- **`--approve` flag (단일 호출 escape hatch)** + optional `--reason "<text>"` — `sprint.autoRun.scope` 무변경 (single-use), 다음 phase 전이 시 재차 scope check.
+- **`audit-logger.ACTION_TYPES.scope_boundary_approved` 신규** (28번째) + details schema `{ sprintId, from, to, trustLevel, stopAfter, approvedBy, reason }`.
+- **`advance-phase.usecase.js` Step 2 확장** — `deps.approve === true` 시 scope check skip + `approvalRecord` 반환. Pure-module 유지 (handler가 audit emit).
+- **`advancePhase` 응답에 `hint` field 추가** — legacy `requires_user_approval` 결과에 사용자 안내 ("Re-run with --approve. Approval is single-use and does NOT change trust level.").
+- **SKILL.md §10.1 phase row 확장 + §10.1.1 dedicated semantics section** (R4 misunderstanding mitigation).
+- **Contract test SC-12 신규** — 7 behavioral assertions + handler E2E.
+- Atomic commit `3c615fd`.
+
+### Added — Issue #94: `/sprint measure` partial-gate measurement command (F3)
+
+quality gate가 null (not_measured)이고 phase 전이 차단 시 사용자가 단일 gate 측정할 명령 없음. 기존 `/sprint phase`/`/sprint iterate`/`/sprint qa`는 전체 workflow advance 또는 다른 scope. 측정 작업은 subagent (gap-detector, code-analyzer, sprint-orchestrator)가 수행하지만 user-invokable slash command 없음.
+
+- **`lib/application/quality-gates/measure-router.js` 신규 디렉토리 + 모듈** — gateKey → agent 매핑 (Master Plan §11.3 AC4): M1/M3/M4 → gap-detector, M2/M7 → code-analyzer, M8 → sprint-orchestrator, S1 → sprint-qa-flow. 7 supported gates × 4 agents + 4 unsupported (M5/M10/S2/S4 carry to v2.1.17). Pure module — `agentTaskRunner` inject, 6 deterministic error reasons (no silent fail).
+- **`lib/application/sprint-lifecycle/measure-gate.usecase.js` 신규** — Trust Level scope (L0/L1 preview / L2+ record), sequential aggregators (ENH-292 cache-friendly): `measureGate` / `measureGates` / `measurePhaseGates`.
+- **`audit-logger.ACTION_TYPES.gate_measured` 신규** (29번째) + 11-field details (sprintId/gateKey/field/agent/value/threshold/passed/source/phase/trustLevel/previousValue). Preview mode (L0/L1) NO audit (noise 0).
+- **`sprint-handler.js` 17번째 VALID_ACTION `measure`** — 3 modes precedence (`--gate` > `--gates` CSV > `--phase`), per-gate gate_measured audit emit, cumulative state save.
+- **F1 self-assessment refactor — single SoT 통합** — agent body가 inline §14 heuristic 제거 → measure-router 호출 명시 (Master Plan AC7 code-sharing).
+- **SKILL.md §10.1 measure row + §10.1.2 dedicated semantics section** (agent routing table, Trust Level scope 명시).
+- **Contract test SC-13 신규** — 8 assertion groups (router routing, error paths, UC modes, aggregators, handler E2E, F1 cross-reference invariant).
+- Atomic commit `126a7c0`.
+
+### Added — Issue #93: Gate-failure auto-report at advancePhase gate_fail (F4)
+
+`gate_fail` 시 raw JSON 한 줄만 stderr 출력 + disk 작성 0. 사용자가 LLM 해석 의존 (bkit "controllable AI" 철학 위반).
+
+- **`templates/gate-failure-report.template.md` 신규** — 6열 표 outer skeleton (Sprint Phase / Gate / Status / Expected / Actual / Suggested Action per Issue #93 example) + `{gateRows}/{failedGateBlocks}/{passingGateBlocks}` placeholder.
+- **`lib/application/quality-gates/failure-reporter.js` 신규** — 3-tier pattern (pure builders + side-effect writeReport + createFailureReporter factory). PLUGIN_ROOT vs projectRoot 분리 (template lookup ↔ output dir).
+- **`advance-phase.usecase.js` Step 3 gate_fail 분기 통합** — `deps.failureReporter` dispatch (best-effort, never blocks), `sprint.lastGateFailure { phase, toPhase, gateResults, reportPath, timestamp }` 동적 추가 (Sprint 1 domain 무변경, INV-01 안전), 응답에 reportPath + sprint 추가.
+- **`audit-logger.gate_failed` details schema 확장** (no new enum — re-use). 11-field details (sprintId/phase/targetPhase/failedGates[]/reportPath).
+- **`audit-logger.sanitizeDetails` Array preservation (generalized fix)** — v2.1.10 sanitizeDetails가 Array를 `{ '0': {...} }` Object로 coerce하던 잠재 회귀를 F4가 발견 + Array branch 추가. 모든 미래 audit array fields에 benefit.
+- **sprint-handler `handlePhase` 확장** — `buildFailureReporterForHandler` (fileWriter inject) + state save on gate_fail + gate_failed audit emit (expanded details).
+- **per-call opts merging** (`createFailureReporter`) — toPhase는 advancePhase 호출 시점에만 알 수 있음 → per-call opts merged with factory opts.
+- **Cross-feature enrichment (AC7)** — report Suggested Action column이 `not_measured` → F3 `/sprint measure --gate <K>` command, Next User Commands 섹션이 F2 `--approve` + F3 `/sprint measure` substituted with sprintId/toPhase.
+- **Contract test SC-14 신규** — 7 assertion groups + handler E2E (temp project root, audit log file content verification).
+- Atomic commit `72559ce`.
+
+### Changed — Cross-Feature Invariant Evolution
+
+- **`tests/contract/v2113-sprint-contracts.test.js` SC-04/SC-06 갱신**:
+  - SC-04: VALID_ACTIONS 16 → **17** (`measure` 추가)
+  - SC-06: ACTION_TYPES 27 → **29** (scope_boundary_approved + gate_measured, evolved from regex source-text counting to module-level assertion to avoid JSDoc literal false-positives)
+- **`tests/qa/v2113-sprint-4-presentation.test.js` INV-02/H-01/AUDIT-01 evolved** (local-only, `.gitignore tests/qa/*`):
+  - INV-02: git diff freeze → logic structure invariant (INV-05 hooks.json 패턴)
+  - H-01: VALID_ACTIONS 16 → 17
+  - AUDIT-01: 27 → 29 (scope_boundary_approved + gate_measured)
+- **`test/unit/audit-logger.test.js` AL-007 evolved (16 → 29)** — v2.1.10 baseline 누적 evolution 갱신.
+
+### Verification
+
+- **L3 Contract**: 14/14 PASS (SC-11/SC-12/SC-13/SC-14 신규, SC-04/SC-06 evolved)
+- **Tracked unit (test/unit/)**: 90/90 files PASS (AL-007 갱신 후)
+- **Tracked unit (tests/unit/)**: 3/3 files PASS
+- **bkit-deep-system**: 111/111 PASS
+- **sprint-2-application**: 79/79 PASS (회귀 0)
+- **sprint-3-infrastructure**: 66/66 PASS (회귀 0)
+- **sprint-4-presentation** (3 evolved tests): 41/41 PASS
+- **Local QA** (v2116-sprint-phase-approve 7 + v2116-sprint-measure-command 9 + v2116-gate-fail-report 8): 24/24 PASS
+- **Total tracked**: ~150+ test files / 478+ assertions, 0 FAIL
+- **claude plugin validate**: ✔ Exit 0 (F9-120 closure 17-cycle 확장)
+
+### Live Dogfooding
+
+- **ENH-310 heredoc-bypass guard live-fire 3회 연속** (F1+F2+F3 atomic commit 시도에서 `git commit -m "$(cat <<EOF ... EOF)"` 패턴 차단) — bkit 차별화 #6 결정적 강화. -F file 방식으로 우회 (학습 적용 후 F4 commit은 trigger 없이 성공).
+- **audit-logger sanitizeDetails Array 회귀 발견 + generalized fix** — F4가 failedGates array를 audit 하면서 v2.1.10 회귀 발견. 모든 미래 audit entry array fields에 benefit.
+- **bkit v2.1.16 sprint 자체가 PDCA + Sprint Management의 self-dogfooding** — 4 GitHub issues가 bkit이 발견한 bkit 자체 deadlock 4건을 bkit 도구로 해소.
+
+### Architecture
+
+- **신규 디렉토리**: `lib/application/quality-gates/` (measure-router + failure-reporter)
+- **신규 lib 모듈**: 3 (measure-router.js, measure-gate.usecase.js, failure-reporter.js)
+- **신규 template**: 1 (gate-failure-report.template.md)
+- **수정 lib 모듈**: 4 (advance-phase.usecase.js, quality-gates.js, sprint-handler.js, audit-logger.js)
+- **수정 agent**: 1 (sprint-orchestrator.md — Phase Exit Self-Assessment 신설 + Design Phase Exit Procedure)
+- **수정 skill**: 1 (sprint SKILL.md — §10.1 measure/approve rows + §10.1.1 + §10.1.2)
+- **수정 contract**: 1 (v2113-sprint-contracts.test.js — SC-11/SC-12/SC-13/SC-14 신규 + SC-04/SC-06 evolved)
+- **신규 ACTION_TYPES**: 2 (scope_boundary_approved [#95 F2], gate_measured [#94 F3])
+- **신규 VALID_ACTIONS**: 1 (measure [#94 F3])
+- **신규 bkit 차별화**: #7 "recovery-friendly automation" — sprint deadlock 4종을 사용자 명시 명령으로 해소
+
+### Cross-Sprint References
+
+- bkit v2.1.15 (PR #91, `b65d336`) — Issue #89 .pdca-status.json 6-Layer Defense (본 sprint 진행 중 활성)
+- bkit v2.1.14 차별화 6/6 (memory enforcer + Layer 6 Defense + sequential dispatch + effort-aware + PostToolUse continueOnBlock + heredoc-bypass) — 본 sprint 진행 중 활성 (특히 ENH-310 3회 live-fire)
+- bkit v2.1.13 Sprint Management — 본 sprint가 Sprint Lifecycle 8-phase 활용 + Sprint 2 Application Layer 확장
+- CC v2.1.140 환경 호환성 100 consecutive PASS 유지
+
+### Release Hardening Sub-Sprint (post-release)
+
+> v2.1.14/15 반복 패턴 종결 — 본 hardening 사이클은 4-feature fix 와 별도로 release metadata + test maintenance + CI gate 강화를 일괄 진행. Plan: `docs/01-plan/features/v2116-release-hardening.plan.md`, Report: `docs/04-report/features/v2116-release-hardening.report.md`.
+
+**Layer A — Release Metadata 동기 (3 files)**:
+- `README.md` Version badge `Version-2.1.14-green` → `Version-2.1.16-green` (GitHub 첫 인상 정합)
+- `hooks/session-start.js` line 3 주석 `(v2.1.13, ...)` → `(v2.1.16, ...)` (runtime BKIT_VERSION dynamic import 유지)
+- `hooks/startup/session-context.js` line 2 헤더 `(v2.0.0)` → `(v2.1.16)`
+
+**Layer B — Test Maintenance (15 files, 31 stale FAIL → 0)**:
+- Orphan test 4 file 삭제 (v2.1.10 Sprint 6에서 lib/context/* 모듈 제거 후 미정리 — `context-loader/impact-analyzer/invariant-checker/scenario-runner` test files)
+- Stale baseline 11 file 갱신:
+  - `test/unit/runner.test.js` U-RUN-015/016/069/071 — skills 30→31, workflow 11→12
+  - `test/contract/extended-scenarios.test.js` 5 TC — SoT 동기 (`lib/domain/rules/docs-code-invariants.js` 기준: skills 44, agents 34, mcpTools 19)
+  - `test/contract/invocation-inventory.test.js` 8 TC — counts 동기 + 6 pdca-eval-* (v2.1.10 삭제됨) 제거 + 4 sprint-* (v2.1.13 추가) 추가
+  - `test/contract/docs-code-sync.test.js` 11 TC — counts cascade + tmp fixture (`correct.md`) 갱신
+  - `test/contract/v2112-deep-qa-invariants.contract.test.js` L3-006/002 — lib 모듈 count `142→≥142` (growth-tolerant) + L3-002 runtime-conditional skip
+  - `test/contract/orchestrator.test.js` 2 TC — "회원가입" 라우팅 정책 진화 반영 (`bkend-expert` agent 허용)
+  - `test/contract/status-split.test.js` — status-core exports 17→19 (v2.1.15 #89 `shouldUpdate` + `appendHistoryEntry` 추가)
+  - `test/unit/pdca-status-full.test.js` PS-026 — Issue #89 fix 의도된 동작 반영 (`src/features/auth/login.js` → `'auth'` 추출 금지)
+  - `test/unit/trigger.test.js` U-TRG-016 — JS 부동소수점 (`0.7+0.1 = 0.7999999999999999`) 비교를 epsilon `< 1e-9`로 교정
+  - `test/unit/project-isolation.test.js` ISO-09 — v2.1.10 facade split 반영 (`status.js` → `status-core.js`)
+  - `tests/qa/v2113-sprint-5-quality-docs.test.js` — L3 contract `10/10 PASS` → `14/14 PASS` (v2.1.16 SC-11/12/13/14 추가 반영)
+
+**Layer C — CI Gate Reinforcement** (`.github/workflows/contract-check.yml`):
+- 신규 step `Release Gate — bkit-full-system (version sync + agent/skill structure)` — 추후 release metadata stale defect 자동 차단
+- 신규 step `Release Gate — docs-code-sync (counts SoT drift detector)` — skills/agents/mcpTools 카운트 drift 자동 검출
+
+**Verification (post-hardening)**:
+- `node test/contract/scripts/qa-aggregate.js`: PASS 3808 → **3844** (+36), FAIL 31 → **0**, errors 15 → **0**, file count 151 → 147 (-4 orphan)
+- `node tests/qa/bkit-full-system.test.js`: 33 PASS / 3 FAIL → **36 PASS / 0 FAIL**
+- `node tests/contract/v2113-sprint-contracts.test.js`: **14/14 PASS** 유지 (SC-01 ~ SC-14)
+- 모든 11 갱신 file 단독 실행 시 0 FAIL
+
+**Lessons Learned (carry to v2.1.17)**:
+- L1 "Tests exist but unused" — `bkit-full-system.test.js`가 v2.1.14부터 release defect를 검출했으나 CI 미연결로 무시. 본 cycle Layer C로 해소.
+- L2 Stale baseline은 zero-interest debt 아님 — 누적되면 "FAIL count는 거짓 양성" 패턴이 진짜 결함도 가림.
+- L3 SoT pattern 미준수 — `EXPECTED_COUNTS` SoT가 정확했음에도 테스트가 literal 하드코딩 → cascade drift. Carry CO-1: 테스트가 SoT를 import하도록 리팩토링.
+- L4 사용자 healthy skepticism 가치 — "정말 5개가 다야?" 질문 없이는 31 FAIL stale이 v2.1.17+로 이월됐을 가능성.
+
 ## [2.1.15] - 2026-05-18 (branch: `feature/v2115-issue-89-pdca-status-fix`)
 
 > **Status**: Patch release — Issue [#89](https://github.com/popup-studio-ai/bkit-claude-code/issues/89) 대응 (`.pdca-status.json` 무한 오염 fix).

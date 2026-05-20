@@ -129,22 +129,26 @@ assert('ISO-08',
 // ============================================================
 console.log('\n--- Section 4: globalCache namespace ---');
 
-// ISO-09: _getCacheKey returns project-scoped key
-const statusSource = fs.readFileSync(
-  path.join(__dirname, '../../lib/pdca/status.js'), 'utf8'
+// v2.1.16 hardening: lib/pdca/status.js was split in v2.1.10 — the file is
+// now a re-export facade and the actual _getCacheKey logic lives in
+// lib/pdca/status-core.js. Test source path migrated accordingly.
+
+// ISO-09: _getCacheKey returns project-scoped key (now lives in status-core.js)
+const statusCoreSource = fs.readFileSync(
+  path.join(__dirname, '../../lib/pdca/status-core.js'), 'utf8'
 );
 assert('ISO-09',
-  statusSource.includes('_getCacheKey()') &&
-  statusSource.includes('`pdca-status:${PROJECT_DIR}`'),
-  'status.js uses _getCacheKey() with project-scoped key format'
+  statusCoreSource.includes('_getCacheKey()') &&
+  statusCoreSource.includes('`pdca-status:${PROJECT_DIR}`'),
+  'status-core.js uses _getCacheKey() with project-scoped key format (v2.1.10 facade split)'
 );
 
 // ISO-10: No hardcoded 'pdca-status' cache key in get/set calls
 const cacheCallPattern = /globalCache\.(get|set)\('pdca-status'/g;
-const hardcodedMatches = statusSource.match(cacheCallPattern);
+const hardcodedMatches = statusCoreSource.match(cacheCallPattern);
 assert('ISO-10',
   hardcodedMatches === null,
-  'No hardcoded "pdca-status" in globalCache.get/set calls'
+  'No hardcoded "pdca-status" in globalCache.get/set calls (status-core.js)'
 );
 
 // ============================================================

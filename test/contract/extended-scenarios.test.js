@@ -305,18 +305,22 @@ const invariants = require('../../lib/domain/rules/docs-code-invariants');
 test('EXPECTED_COUNTS is frozen', () => {
   assert.ok(Object.isFrozen(invariants.EXPECTED_COUNTS));
 });
-test('EXPECTED_COUNTS.skills = 43', () => assert.strictEqual(invariants.EXPECTED_COUNTS.skills, 43));
-test('EXPECTED_COUNTS.agents = 36', () => assert.strictEqual(invariants.EXPECTED_COUNTS.agents, 36));
+// v2.1.16 hardening: counts synced to SoT (lib/domain/rules/docs-code-invariants.js).
+// skills 43→44 (Sprint major), agents 36→34 (v2.1.12 baseline correction +4 sprint
+// agents = 34, prior 36 was a miscount), mcpTools 16→19 (+3 sprint MCP tools).
+test('EXPECTED_COUNTS.skills = 44', () => assert.strictEqual(invariants.EXPECTED_COUNTS.skills, 44));
+test('EXPECTED_COUNTS.agents = 34', () => assert.strictEqual(invariants.EXPECTED_COUNTS.agents, 34));
 test('EXPECTED_COUNTS.hookEvents = 21', () => assert.strictEqual(invariants.EXPECTED_COUNTS.hookEvents, 21));
 test('EXPECTED_COUNTS.hookBlocks = 24', () => assert.strictEqual(invariants.EXPECTED_COUNTS.hookBlocks, 24));
 test('EXPECTED_COUNTS.mcpServers = 2', () => assert.strictEqual(invariants.EXPECTED_COUNTS.mcpServers, 2));
-test('EXPECTED_COUNTS.mcpTools = 16', () => assert.strictEqual(invariants.EXPECTED_COUNTS.mcpTools, 16));
+test('EXPECTED_COUNTS.mcpTools = 19', () => assert.strictEqual(invariants.EXPECTED_COUNTS.mcpTools, 19));
 test('diffCounts with correct counts returns []', () => {
-  const d = invariants.diffCounts({ skills: 43, agents: 36, hookEvents: 21, hookBlocks: 24, mcpServers: 2, mcpTools: 16 });
+  const d = invariants.diffCounts({ skills: 44, agents: 34, hookEvents: 21, hookBlocks: 24, mcpServers: 2, mcpTools: 19 });
   assert.deepStrictEqual(d, []);
 });
 test('diffCounts detects skills drift', () => {
-  const d = invariants.diffCounts({ skills: 44, agents: 36, hookEvents: 21, hookBlocks: 24, mcpServers: 2, mcpTools: 16 });
+  // Drift case: pass measured=45 while SoT=44 (drift +1 should be detected)
+  const d = invariants.diffCounts({ skills: 45, agents: 34, hookEvents: 21, hookBlocks: 24, mcpServers: 2, mcpTools: 19 });
   assert.strictEqual(d.length, 1);
   assert.strictEqual(d[0].field, 'skills');
 });

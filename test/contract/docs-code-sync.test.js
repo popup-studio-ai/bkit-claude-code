@@ -35,24 +35,25 @@ test('scanner exports countScripts', () => assert.strictEqual(typeof scanner.cou
 // ============================================================
 // Scanner accuracy (live filesystem)
 // ============================================================
-test('countSkills = 43', () => assert.strictEqual(scanner.countSkills(), 43));
-test('countAgents = 36', () => assert.strictEqual(scanner.countAgents(), 36));
+// v2.1.16 hardening: SoT baselines synced (43→44 skills, 36→34 agents, 16→19 mcpTools).
+test('countSkills = 44', () => assert.strictEqual(scanner.countSkills(), 44));
+test('countAgents = 34', () => assert.strictEqual(scanner.countAgents(), 34));
 test('countHooks.events = 21', () => assert.strictEqual(scanner.countHooks().events, 21));
 test('countHooks.blocks = 24', () => assert.strictEqual(scanner.countHooks().blocks, 24));
 test('countMCPServers = 2', () => assert.strictEqual(scanner.countMCPServers(), 2));
-test('countMCPTools = 16', () => assert.strictEqual(scanner.countMCPTools(), 16));
+test('countMCPTools = 19', () => assert.strictEqual(scanner.countMCPTools(), 19));
 test('countLibModules > 100', () => assert.ok(scanner.countLibModules() > 100));
 test('countScripts > 30', () => assert.ok(scanner.countScripts() > 30));
 
 // measure() returns full inventory
 await testAsync('measure() returns full inventory', async () => {
   const m = await scanner.measure();
-  assert.ok(m.skills >= 43);
-  assert.ok(m.agents >= 36);
+  assert.ok(m.skills >= 44);
+  assert.ok(m.agents >= 34);
   assert.strictEqual(m.hookEvents, 21);
   assert.strictEqual(m.hookBlocks, 24);
   assert.strictEqual(m.mcpServers, 2);
-  assert.strictEqual(m.mcpTools, 16);
+  assert.strictEqual(m.mcpTools, 19);
   assert.ok(m.libModules > 100);
   assert.ok(m.scripts > 30);
 });
@@ -73,31 +74,35 @@ await testAsync('EXPECTED_COUNTS aligned with measure()', async () => {
 // ============================================================
 // diffCounts behavior
 // ============================================================
+// v2.1.16 hardening: baselines synced to current SoT (skills=44, agents=34, mcpTools=19).
 test('diffCounts match → []', () => {
   const d = invariants.diffCounts({
-    skills: 43, agents: 36, hookEvents: 21, hookBlocks: 24, mcpServers: 2, mcpTools: 16,
+    skills: 44, agents: 34, hookEvents: 21, hookBlocks: 24, mcpServers: 2, mcpTools: 19,
   });
   assert.deepStrictEqual(d, []);
 });
 test('diffCounts skills drift +1 detected', () => {
+  // SoT=44, measured=45 → +1 drift detected
   const d = invariants.diffCounts({
-    skills: 44, agents: 36, hookEvents: 21, hookBlocks: 24, mcpServers: 2, mcpTools: 16,
+    skills: 45, agents: 34, hookEvents: 21, hookBlocks: 24, mcpServers: 2, mcpTools: 19,
   });
   assert.strictEqual(d.length, 1);
   assert.strictEqual(d[0].field, 'skills');
-  assert.strictEqual(d[0].declared || d[0].expected, 43);
-  assert.strictEqual(d[0].actual, 44);
+  assert.strictEqual(d[0].declared || d[0].expected, 44);
+  assert.strictEqual(d[0].actual, 45);
 });
 test('diffCounts agents drift -1 detected', () => {
+  // SoT=34, measured=33 → -1 drift detected
   const d = invariants.diffCounts({
-    skills: 43, agents: 35, hookEvents: 21, hookBlocks: 24, mcpServers: 2, mcpTools: 16,
+    skills: 44, agents: 33, hookEvents: 21, hookBlocks: 24, mcpServers: 2, mcpTools: 19,
   });
   assert.strictEqual(d.length, 1);
   assert.strictEqual(d[0].field, 'agents');
 });
 test('diffCounts multiple drifts', () => {
+  // 6 simultaneous drifts: all fields differ from SoT
   const d = invariants.diffCounts({
-    skills: 44, agents: 35, hookEvents: 22, hookBlocks: 25, mcpServers: 3, mcpTools: 17,
+    skills: 45, agents: 33, hookEvents: 22, hookBlocks: 25, mcpServers: 3, mcpTools: 20,
   });
   assert.strictEqual(d.length, 6);
 });
@@ -138,7 +143,8 @@ await testAsync('crossCheck detects synthetic drift (42 skills)', async () => {
   const skillsDrift = d.find((x) => x.field === 'skills');
   assert.ok(skillsDrift);
   assert.strictEqual(skillsDrift.declared, 42);
-  assert.strictEqual(skillsDrift.actual, 43);
+  // v2.1.16 hardening: actual count synced (43→44)
+  assert.strictEqual(skillsDrift.actual, 44);
 });
 await testAsync('crossCheck detects synthetic drift (99 agents)', async () => {
   const d = await scanner.crossCheck(tmpDoc);
@@ -147,7 +153,8 @@ await testAsync('crossCheck detects synthetic drift (99 agents)', async () => {
   assert.strictEqual(agentsDrift.declared, 99);
 });
 const tmpCorrect = path.join(tmpDir, 'correct.md');
-fs.writeFileSync(tmpCorrect, 'We have 43 Skills and 36 Agents and 21 Hook Events.\n', 'utf8');
+// v2.1.16 hardening: fixture counts synced to current SoT
+fs.writeFileSync(tmpCorrect, 'We have 44 Skills and 34 Agents and 21 Hook Events.\n', 'utf8');
 await testAsync('crossCheck correct counts → []', async () => {
   const d = await scanner.crossCheck(tmpCorrect);
   assert.deepStrictEqual(d, []);

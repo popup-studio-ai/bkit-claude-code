@@ -396,12 +396,17 @@ console.log('\n--- Section 19: extractFeatureFromContext ---');
   }
 }
 
-// PS-026: extractFeatureFromContext extracts from filePath
+// PS-026 (Issue #89, v2.1.15+): extractFeatureFromContext does NOT extract
+// arbitrary path segments as feature names. This prevents the .pdca-status.json
+// garbage accumulation bug where every Edit/Write under src/features/,
+// app/services/, packages/, etc. registered a fake feature.
+// Expected: function returns either a string fallback (primaryFeature) or
+// empty string, but NOT 'auth' extracted from the path.
 {
   if (moduleLoaded) {
     const result = status.extractFeatureFromContext({ filePath: 'src/features/auth/login.js' });
-    assert('PS-026', result === 'auth',
-      'extractFeatureFromContext extracts feature from filePath');
+    assert('PS-026', typeof result === 'string' && result !== 'auth',
+      'extractFeatureFromContext does NOT extract "auth" from arbitrary filePath (Issue #89 fix)');
   } else {
     skip('PS-026', 'Module not loaded');
   }
