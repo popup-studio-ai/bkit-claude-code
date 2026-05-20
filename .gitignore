@@ -18,22 +18,29 @@ node_modules/
 *.swp
 *.swo
 
-# Test directories (local testing only)
-test/
-tests/*
+# v2.1.18 (CO-6): Test directories tracked policy.
+#
+# History: Pre-v2.1.18 used `test/` + `tests/*` blanket ignore with explicit
+# `!test/contract/` etc. negate patterns. Git's directory traversal halts at
+# the first ignored directory boundary — so deep negates like `!test/foo/**`
+# did NOT actually re-include files. This led to several CI-referenced test
+# files (l2-hook-attribution, l3-mcp-runtime, bkit-full-system, bkit-deep-
+# system, 29 tests/qa/*.test.js) silently staying untracked across multiple
+# v2.1.14~v2.1.16 releases, only surfacing when CI ran them and reported
+# `Cannot find module`.
+#
+# v2.1.18 new policy: production test directories are tracked by default.
+# Only explicit local/temporary patterns are ignored. New `.test.js` files
+# are automatically picked up by `git status` — no `git add -f` needed.
+#
+# See docs/06-guide/test-file-tracking-policy.guide.md.
 test-scripts/
-# v2.1.10: Contract Test (Invocation Contract baseline) — tracked for CI Gate
-# Note: `test/` line above blocks directory traversal. New baseline directories
-# (e.g., test/contract/baseline/vX.X.X/) must be added with `git add -f` on first
-# commit; subsequent commits track them normally. See docs/06-guide/contract-baseline-rollforward.guide.md.
-!test/contract/
-!test/contract/**
-# v2.1.13 Sprint 5: L3 Contract Test (cross-sprint contract drift CI Gate) — tracked
-!tests/contract/
-!tests/contract/**
-# v2.1.15 (Issue #89): Unit Tests — tracked for CI Gate (regression prevention)
-!tests/unit/
-!tests/unit/**
+test/contract/baseline/tmp/
+test/contract/baseline/.tmp/
+test/local/
+test/manual-only/
+tests/local/
+tests/manual-only/
 
 # Obsidian - Root level (personal settings, not for sharing)
 .obsidian/

@@ -1,0 +1,24 @@
+{
+  "agents": {
+    "count": 1,
+    "names": ["old-agent"]
+  },
+  "collectedAt": "2026-05-20T00:00:00.000Z",
+  "hooks": {
+    "blocks": 0,
+    "events": 0
+  },
+  "mcpTools": {
+    "count": 0,
+    "servers": {}
+  },
+  "skills": {
+    "count": 0,
+    "names": []
+  },
+  "slashCommands": {
+    "custom": [],
+    "plugin": []
+  },
+  "version": "fixture"
+}

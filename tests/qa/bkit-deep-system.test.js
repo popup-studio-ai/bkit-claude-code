@@ -834,17 +834,11 @@ group('A8-mcp/evals: mcp syntax + evals framework', () => {
 // A9 — agents/skills/templates/output-styles metadata (15 TC)
 // ============================================================================
 group('A9-metadata: agents/skills/templates/output-styles', () => {
-  function parseFm(file) {
-    const raw = fs.readFileSync(file, 'utf8');
-    const m = raw.match(/^---\n([\s\S]*?)\n---/);
-    if (!m) return null;
-    const obj = {};
-    for (const line of m[1].split('\n')) {
-      const m2 = line.match(/^([a-zA-Z_-][a-zA-Z0-9_-]*):\s*(.*)$/);
-      if (m2) obj[m2[1]] = m2[2].trim();
-    }
-    return obj;
-  }
+  // v2.1.18 (CO-5): parseFm replaced with lib/util/frontmatter.parseFrontmatterFile.
+  // Returns {} (not null) when no frontmatter — existing call sites use
+  // `if (!fm || !fm.name)` which remains correct because empty-object .name is undefined.
+  const { parseFrontmatterFile } = require('../../lib/util/frontmatter');
+  const parseFm = (file) => parseFrontmatterFile(file);
 
   tc('A9-1 active agents count is 34', () => {
     // v2.1.14 Sub-Sprint 6 (Observation): baseline 36 → 34 (intervening

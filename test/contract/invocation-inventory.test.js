@@ -11,6 +11,8 @@
 const assert = require('node:assert');
 const fs = require('node:fs');
 const path = require('node:path');
+// v2.1.18: frontmatter helpers centralized in lib/util/frontmatter (CO-5).
+const { hasDeprecatedInFrontmatterFile } = require('../../lib/util/frontmatter');
 
 const ROOT = path.resolve(__dirname, '..', '..');
 const baselineDir = path.join(ROOT, 'test', 'contract', 'baseline', 'v2.1.9');
@@ -60,22 +62,12 @@ EXPECTED_SKILLS.forEach((name) => {
 // See docs/06-guide/contract-baseline-rollforward.guide.md.
 const allAgentFiles = fs.readdirSync(agentsDir).filter((f) => f.endsWith('.md'));
 
-function hasDeprecatedInFrontmatter(filePath) {
-  try {
-    const content = fs.readFileSync(filePath, 'utf8');
-    const m = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
-    if (!m) return false;
-    return /^\s*deprecatedIn\s*:\s*\S+/m.test(m[1]);
-  } catch {
-    return false;
-  }
-}
-
+// v2.1.18: hasDeprecatedInFrontmatterFile imported from lib/util/frontmatter (CO-5).
 const agentFiles = allAgentFiles.filter(
-  (f) => !hasDeprecatedInFrontmatter(path.join(agentsDir, f))
+  (f) => !hasDeprecatedInFrontmatterFile(path.join(agentsDir, f))
 );
 const deprecatedAgentFiles = allAgentFiles.filter(
-  (f) => hasDeprecatedInFrontmatter(path.join(agentsDir, f))
+  (f) => hasDeprecatedInFrontmatterFile(path.join(agentsDir, f))
 );
 
 test('Active Agents count exactly 34', () => assert.strictEqual(agentFiles.length, 34));

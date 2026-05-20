@@ -81,18 +81,23 @@ jobs:
         run: node test/contract/docs-code-sync.test.js
 
   contract-l5-e2e:
-    name: Contract Test L5 (관찰 전용 — 머지 차단 아님)
+    name: Contract Test L5 (Invocation Inventory)
     runs-on: ubuntu-latest
-    continue-on-error: true
+    needs: contract-l1-l4
+    # v2.1.18 (CO-3): promoted from observational (continue-on-error: true)
+    # to mandatory gate. Depends on contract-l1-l4 — only runs after L1+L4
+    # passes (avoids redundant fail reports). invocation-inventory.test.js
+    # baseline as of v2.1.18: 203 TC across skills/agents/hooks/MCP tools.
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: L5 smoke (static inventory)
+      - name: L5 Invocation Inventory (static surface verification)
         run: |
           if [ -f test/contract/invocation-inventory.test.js ]; then
             node test/contract/invocation-inventory.test.js
           else
-            echo "L5 not yet implemented"
+            echo "ERROR: test/contract/invocation-inventory.test.js missing"
+            exit 1
           fi
