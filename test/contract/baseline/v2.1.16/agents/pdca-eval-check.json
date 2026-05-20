@@ -1,0 +1,10 @@
+{
+  "deprecatedIn": "v2.1.13",
+  "descriptionLength": 215,
+  "effort": "medium",
+  "fileName": "pdca-eval-check",
+  "hasTools": true,
+  "model": "sonnet",
+  "name": "pdca-eval-check",
+  "replacedBy": "gap-detector"
+}

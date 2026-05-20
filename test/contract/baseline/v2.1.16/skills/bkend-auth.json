@@ -1,0 +1,10 @@
+{
+  "context": null,
+  "deprecatedIn": null,
+  "descriptionLength": 1,
+  "dirName": "bkend-auth",
+  "effort": "medium",
+  "name": "bkend-auth",
+  "replacedBy": null,
+  "userInvocable": false
+}

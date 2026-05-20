@@ -1,0 +1,10 @@
+{
+  "context": "fork",
+  "deprecatedIn": null,
+  "descriptionLength": 1,
+  "dirName": "zero-script-qa",
+  "effort": "high",
+  "name": "zero-script-qa",
+  "replacedBy": null,
+  "userInvocable": true
+}

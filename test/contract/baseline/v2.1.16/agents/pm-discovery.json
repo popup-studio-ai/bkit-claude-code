@@ -1,0 +1,10 @@
+{
+  "deprecatedIn": null,
+  "descriptionLength": 1,
+  "effort": "medium",
+  "fileName": "pm-discovery",
+  "hasTools": true,
+  "model": "sonnet",
+  "name": "pm-discovery",
+  "replacedBy": null
+}

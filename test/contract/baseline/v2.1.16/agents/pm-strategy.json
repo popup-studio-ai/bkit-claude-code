@@ -1,0 +1,10 @@
+{
+  "deprecatedIn": null,
+  "descriptionLength": 1,
+  "effort": "medium",
+  "fileName": "pm-strategy",
+  "hasTools": true,
+  "model": "sonnet",
+  "name": "pm-strategy",
+  "replacedBy": null
+}

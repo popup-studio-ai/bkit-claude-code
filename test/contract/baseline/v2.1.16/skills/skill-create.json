@@ -1,0 +1,10 @@
+{
+  "context": null,
+  "deprecatedIn": null,
+  "descriptionLength": 1,
+  "dirName": "skill-create",
+  "effort": "low",
+  "name": "skill-create",
+  "replacedBy": null,
+  "userInvocable": true
+}

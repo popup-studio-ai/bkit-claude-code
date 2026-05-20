@@ -1,0 +1,10 @@
+{
+  "context": "fork",
+  "deprecatedIn": null,
+  "descriptionLength": 1,
+  "dirName": "skill-status",
+  "effort": "low",
+  "name": "skill-status",
+  "replacedBy": null,
+  "userInvocable": true
+}

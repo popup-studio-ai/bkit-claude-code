@@ -1,0 +1,10 @@
+{
+  "deprecatedIn": null,
+  "descriptionLength": 1,
+  "effort": "medium",
+  "fileName": "bkend-expert",
+  "hasTools": true,
+  "model": "sonnet",
+  "name": "bkend-expert",
+  "replacedBy": null
+}

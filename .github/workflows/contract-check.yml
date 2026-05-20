@@ -28,8 +28,14 @@ jobs:
       - name: Domain Layer Purity Check (Sprint 5.5 — Clean Architecture enforcement)
         run: node scripts/check-domain-purity.js
 
-      - name: L1 Frontmatter Schema + L4 Deprecation (CI Gate)
+      - name: L1+L4 vs v2.1.9 LTS baseline (long-term drift detection)
         run: node test/contract/scripts/contract-test-run.js --compare v2.1.9 --level L1,L4
+
+      # v2.1.17: Dual baseline — Latest snapshot acts as noise floor for
+      # immediate regression detection between minor releases. See
+      # docs/06-guide/contract-baseline-rollforward.guide.md for rollforward SOP.
+      - name: L1+L4 vs v2.1.16 Latest baseline (noise floor)
+        run: node test/contract/scripts/contract-test-run.js --compare v2.1.16 --level L1,L4
 
       - name: Guard Registry validation
         run: node scripts/check-guards.js
@@ -42,6 +48,21 @@ jobs:
 
       - name: Runtime Integration Tests (Sprint 4.5 — recursion guard + prod hook paths)
         run: node test/contract/integration-runtime.test.js
+
+      # v2.1.17: L2 + L3 layer tests promoted from observational to mandatory.
+      # 5/12 cleanup masked Agent removal because only L1+L4 ran in CI.
+      # L2 = hook smoke + attribution, L3 = MCP static compat + runtime.
+      - name: L2 Smoke (hook handler invocation)
+        run: node test/contract/l2-smoke.test.js
+
+      - name: L2 Hook Attribution (cc-regression + PreCompact counter)
+        run: node test/contract/l2-hook-attribution.test.js
+
+      - name: L3 MCP Compatibility (static schema)
+        run: node test/contract/l3-mcp-compat.test.js
+
+      - name: L3 MCP Runtime (stdio JSON-RPC lifecycle)
+        run: node test/contract/l3-mcp-runtime.test.js
 
       - name: Aggregate all tests (summary)
         run: node test/contract/scripts/qa-aggregate.js | tail -10

@@ -1,0 +1,10 @@
+{
+  "deprecatedIn": null,
+  "descriptionLength": 1,
+  "effort": "medium",
+  "fileName": "skill-needs-extractor",
+  "hasTools": true,
+  "model": "sonnet",
+  "name": "skill-needs-extractor",
+  "replacedBy": null
+}

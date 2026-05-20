@@ -1,0 +1,10 @@
+{
+  "deprecatedIn": null,
+  "descriptionLength": 1,
+  "effort": "high",
+  "fileName": "design-validator",
+  "hasTools": true,
+  "model": "opus",
+  "name": "design-validator",
+  "replacedBy": null
+}

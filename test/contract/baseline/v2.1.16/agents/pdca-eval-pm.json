@@ -1,0 +1,10 @@
+{
+  "deprecatedIn": "v2.1.13",
+  "descriptionLength": 244,
+  "effort": "medium",
+  "fileName": "pdca-eval-pm",
+  "hasTools": true,
+  "model": "sonnet",
+  "name": "pdca-eval-pm",
+  "replacedBy": "pm-lead"
+}

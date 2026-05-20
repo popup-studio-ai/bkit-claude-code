@@ -1,0 +1,35 @@
+{
+  "custom": [
+    "/github-stats"
+  ],
+  "plugin": [
+    "/bkit:audit",
+    "/bkit:bkit",
+    "/bkit:bkit-evals",
+    "/bkit:bkit-explore",
+    "/bkit:btw",
+    "/bkit:cc-version-analysis",
+    "/bkit:claude-code-learning",
+    "/bkit:code-review",
+    "/bkit:control",
+    "/bkit:deploy",
+    "/bkit:desktop-app",
+    "/bkit:development-pipeline",
+    "/bkit:dynamic",
+    "/bkit:enterprise",
+    "/bkit:mobile-app",
+    "/bkit:pdca",
+    "/bkit:pdca-batch",
+    "/bkit:pdca-fast-track",
+    "/bkit:pdca-watch",
+    "/bkit:plan-plus",
+    "/bkit:pm-discovery",
+    "/bkit:qa-phase",
+    "/bkit:rollback",
+    "/bkit:skill-create",
+    "/bkit:skill-status",
+    "/bkit:sprint",
+    "/bkit:starter",
+    "/bkit:zero-script-qa"
+  ]
+}

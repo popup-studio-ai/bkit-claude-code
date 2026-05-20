@@ -1,0 +1,10 @@
+{
+  "context": null,
+  "deprecatedIn": null,
+  "descriptionLength": 1,
+  "dirName": "pdca-batch",
+  "effort": "high",
+  "name": "pdca-batch",
+  "replacedBy": null,
+  "userInvocable": true
+}

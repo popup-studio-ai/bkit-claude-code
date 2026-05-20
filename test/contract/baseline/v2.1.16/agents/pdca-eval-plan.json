@@ -1,0 +1,10 @@
+{
+  "deprecatedIn": "v2.1.13",
+  "descriptionLength": 230,
+  "effort": "medium",
+  "fileName": "pdca-eval-plan",
+  "hasTools": true,
+  "model": "sonnet",
+  "name": "pdca-eval-plan",
+  "replacedBy": "product-manager"
+}

@@ -134,7 +134,7 @@ function runL1Agents() {
 }
 
 function runL1MCP() {
-  const current = collectMCPTools();
+  const current = collectMCPTools({ persist: false });
   const baseline = loadBaselineManifest().mcpTools;
   for (const [server, tools] of Object.entries(baseline.servers || {})) {
     const currentTools = (current.servers && current.servers[server]) || [];
@@ -148,7 +148,7 @@ function runL1MCP() {
 }
 
 function runL1Hooks() {
-  const current = collectHooks();
+  const current = collectHooks({ persist: false });
   const baseline = loadBaselineManifest().hooks;
   assert(
     current.events === baseline.events,
@@ -178,7 +178,7 @@ function runL1Hooks() {
 function runL4Deprecation() {
   const manifest = loadBaselineManifest();
   // Skills
-  const currentSkills = collectSkills();
+  const currentSkills = collectSkills({ persist: false });
   for (const skillName of manifest.skills.names) {
     if (!currentSkills.names.includes(skillName)) {
       const skillDir = path.join(PROJECT_ROOT, 'skills', skillName);
@@ -194,20 +194,46 @@ function runL4Deprecation() {
       );
     }
   }
-  // Agents
-  const currentAgents = collectAgents();
+  // Agents — Skills 패턴과 동일하게 deprecatedIn frontmatter 우회 지원 (v2.1.17)
+  const currentAgents = collectAgents({ persist: false });
   for (const agentName of manifest.agents.names) {
     if (!currentAgents.names.includes(agentName)) {
-      assert(false, `L4 FAIL agent '${agentName}' removed (check deprecation)`);
+      const baselineFile = path.join(BASE_DIR, 'agents', `${agentName}.json`);
+      const baselineMeta = fs.existsSync(baselineFile)
+        ? JSON.parse(fs.readFileSync(baselineFile, 'utf8'))
+        : {};
+      const agentMd = path.join(
+        PROJECT_ROOT,
+        'agents',
+        `${baselineMeta.fileName || agentName}.md`
+      );
+      let deprecated = false;
+      if (fs.existsSync(agentMd)) {
+        const fm = parseFrontmatter(fs.readFileSync(agentMd, 'utf8'));
+        deprecated = !!fm.deprecatedIn;
+      }
+      assert(
+        deprecated,
+        `L4 FAIL agent '${agentName}' missing from current without deprecatedIn declaration`
+      );
     }
   }
-  // MCP tools
-  const currentMCP = collectMCPTools();
+  // MCP tools — same pattern (v2.1.17): baseline JSON's deprecatedIn field acts as tombstone
+  const currentMCP = collectMCPTools({ persist: false });
   for (const [server, tools] of Object.entries(manifest.mcpTools.servers || {})) {
     const currentTools = (currentMCP.servers && currentMCP.servers[server]) || [];
     for (const tn of tools) {
       if (!currentTools.includes(tn)) {
-        assert(false, `L4 FAIL MCP tool '${server}.${tn}' removed`);
+        const baselineToolFile = path.join(BASE_DIR, 'mcp-tools', server, `${tn}.json`);
+        let deprecated = false;
+        if (fs.existsSync(baselineToolFile)) {
+          const meta = JSON.parse(fs.readFileSync(baselineToolFile, 'utf8'));
+          deprecated = !!meta.deprecatedIn;
+        }
+        assert(
+          deprecated,
+          `L4 FAIL MCP tool '${server}.${tn}' missing from current without deprecatedIn declaration`
+        );
       }
     }
   }

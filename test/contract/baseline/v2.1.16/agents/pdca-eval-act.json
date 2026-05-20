@@ -1,0 +1,10 @@
+{
+  "deprecatedIn": "v2.1.13",
+  "descriptionLength": 206,
+  "effort": "medium",
+  "fileName": "pdca-eval-act",
+  "hasTools": true,
+  "model": "sonnet",
+  "name": "pdca-eval-act",
+  "replacedBy": "report-generator"
+}

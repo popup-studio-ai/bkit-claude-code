@@ -1,0 +1,10 @@
+{
+  "context": "fork",
+  "deprecatedIn": null,
+  "descriptionLength": 1,
+  "dirName": "phase-1-schema",
+  "effort": "medium",
+  "name": "phase-1-schema",
+  "replacedBy": null,
+  "userInvocable": false
+}
