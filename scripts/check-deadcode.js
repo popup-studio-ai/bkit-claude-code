@@ -59,6 +59,12 @@ const EXEMPT_PATTERNS = [
   // v2.1.11 Sprint δ: Port + governance surfaces
   /^lib\/infra\/mcp-port-registry\.js$/, // servers/* MCP runtime dynamic load
   /^lib\/pdca\/token-report\.js$/, // skills/pdca token-report subcommand
+  // v2.1.13 Sprint barrels (depth-3 facades) — re-exported by sibling modules.
+  // The original depth-2 facade pattern (/^lib\/[^/]+\/index\.js$/) does not
+  // cover sprint hierarchy. Sprint 1/2/3 added these explicitly.
+  /^lib\/application\/sprint-lifecycle\/index\.js$/,
+  /^lib\/domain\/sprint\/index\.js$/,
+  /^lib\/infra\/sprint\/index\.js$/,
 ];
 
 // v2.1.10 Sprint 6: legacy 3 modules removed (ops-metrics 150, hook-io 10,
