@@ -40,6 +40,12 @@ jobs:
       - name: Guard Registry validation
         run: node scripts/check-guards.js
 
+      # v2.1.17 (CO-7): detect untracked production test files. Defends
+      # against silent .gitignore regression that previously masked CI-
+      # referenced test files (Cannot find module errors).
+      - name: Test File Tracking validation
+        run: node scripts/check-test-tracking.js
+
       - name: Docs=Code cross-check (Sprint 4, ENH-241)
         run: node scripts/docs-code-sync.js
 

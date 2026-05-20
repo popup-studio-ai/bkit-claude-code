@@ -23,6 +23,20 @@ const PROJECT_ROOT = path.resolve(__dirname, '..', '..', '..');
 const args = process.argv.slice(2);
 const versionArgIdx = args.indexOf('--version');
 const version = versionArgIdx >= 0 ? args[versionArgIdx + 1] : 'v2.1.9';
+
+// v2.1.17 (CO-1.1): validate --version to prevent path-injection via
+// concatenation into BASE_DIR. Only allow [A-Za-z0-9._-]+ — matches
+// version tags (v2.1.9), simple identifiers (fixture, latest, dev),
+// rejects path-like inputs (/tmp/foo, ../bar, baseline/x).
+if (!/^[A-Za-z0-9._-]+$/.test(version)) {
+  // eslint-disable-next-line no-console
+  console.error(
+    `[contract] Invalid --version '${version}'. ` +
+      `Must match /^[A-Za-z0-9._-]+$/ (e.g., 'v2.1.9', 'fixture').`
+  );
+  process.exit(2);
+}
+
 const BASE_DIR = path.join(PROJECT_ROOT, 'test', 'contract', 'baseline', version);
 
 function sortKeysDeep(obj) {

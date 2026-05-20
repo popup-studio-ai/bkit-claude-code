@@ -5,6 +5,147 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.17] - 2026-05-20 (branch: `feature/v2117-final`)
+
+> **Status**: CI/CD Hardening — 5/12 ~ 5/20 8-day red contract class 영구 종결. **5축 매트릭스 5/5 close** (Detection, Enforcement, Recovery, Governance, Evolution).
+> **Scope**: 2 PR merge — PR #97 (v2117 main scope) + PR #99 (v2117 final + 5 carryover absorbed).
+> **Origin**: commit `967cd8f` (refactor v2.1.13, 2026-05-12)에서 6 `pdca-eval-*` agent 제거 → 8일 누적 contract red. v2.1.15, v2.1.16 GA가 red 상태로 release 진행. 본 v2.1.17 release로 사고 클래스 모든 잔여 결함 해소.
+
+### Added — 5축 매트릭스 close
+
+#### Detection (검출)
+- **Dual baseline**: v2.1.9 LTS (long-term drift) + v2.1.16 Latest (noise floor) 동시 비교
+- **L2 mandatory**: `test/contract/l2-smoke.test.js` (98 TC) + `l2-hook-attribution.test.js` (13 TC) workflow 통합
+- **L3 mandatory**: `l3-mcp-compat.test.js` (92 TC) + `l3-mcp-runtime.test.js` (48 TC) workflow 통합
+- **L5 mandatory**: `invocation-inventory.test.js` `continue-on-error: true` 제거 + `needs: contract-l1-l4` (203 TC → 210 TC with SoT-driven lists)
+- **MCP deprecation schema**: `// @deprecated since vX.X.X replacedBy=Y` 인라인 주석 파싱 (`parseMCPToolBlocks`)
+- **`scripts/check-test-tracking.js`**: 18 production test 경로의 untracked `*.test.js` 검출 (CO-7)
+
+#### Enforcement (강제)
+- **`scripts/setup-branch-protection.sh`**: idempotent `gh api` wrapper (dry-run default + `--apply`). main 브랜치에 자동 적용됨 — Required Status Check 2개 (`Contract Test (L1 Frontmatter + L4 Deprecation)`, `Contract Test L5 (Invocation Inventory)`), `allow_force_pushes: false`, `allow_deletions: false`, `strict: true`.
+- **`docs/06-guide/branch-protection-setup.guide.md`**: admin SOP
+
+#### Recovery (복구)
+- **`docs/06-guide/contract-baseline-rollforward.guide.md`**: LTS vs Latest 정책, 의사결정 트리, 캡처 절차, deprecation stub 작성, PR self-review 체크리스트, 사고 기록 (8 section)
+- **`docs/06-guide/test-file-tracking-policy.guide.md`**: `.gitignore` policy + PR checklist + 사고 기록 (9 section)
+
+#### Governance (거버넌스)
+- **Agent deprecation governance**: `agents/<name>.md` frontmatter에 `deprecatedIn: vX.X.X` 명시 시 L4 우회 — Skill 패턴 대칭 적용
+- **6 `pdca-eval-*` deprecation tombstones**: `agents/pdca-eval-{act,check,design,do,plan,pm}.md` — `deprecatedReason`, `replacedBy`, `deprecationCommit: 967cd8f` 명시
+- **MCP tool deprecation governance**: baseline JSON `deprecatedIn` 필드 기반 L4 우회 (`contract-test-run.js` Skill/Agent/MCP 3 surface 대칭)
+- **Agent-deprecation isolated test** (CO-4): `test/contract/agent-deprecation.test.js` 5 scenario fixture (positive, missing-stub, no-deprecated-in, model-mismatch, non-mutation), 5/5 PASS
+- **MCP-deprecation e2e test** (CO-2.1): `test/contract/mcp-deprecation.test.js` 6 scenario fixture (active, simple, full, JSDoc-style 외), 6/6 PASS
+
+#### Evolution (진화)
+- **`lib/util/frontmatter.js`** (CO-5): 5 site duplication 통합 — `parseFrontmatter`, `parseFrontmatterFile`, `hasDeprecatedInFrontmatter`, `hasDeprecatedInFrontmatterFile`, `coerce` (pure FS-free 핵심)
+- **v2.1.16 baseline 추가 캡처**: `test/contract/baseline/v2.1.16/` (106 file) — 다음 PDCA 작업의 noise floor 기준
+- **SoT canonical names list** (CO-3.1): `lib/domain/rules/docs-code-invariants.js`에 `EXPECTED_ACTIVE_AGENT_NAMES` (34), `EXPECTED_DEPRECATED_AGENT_NAMES` (6), `EXPECTED_SKILL_NAMES` (44), `EXPECTED_HOOK_EVENT_NAMES` (21), `EXPECTED_PDCA_MCP_TOOLS` (13), `EXPECTED_ANALYSIS_MCP_TOOLS` (6) 추가 — invocation-inventory.test.js가 dynamic 참조
+
+### Fixed
+
+#### Framework 부작용
+- **collect 함수 implicit write 부작용 차단**: `collectSkills/Agents/MCPTools/Hooks/SlashCommands` 5개 함수에 `{ persist = true, baseDir = BASE_DIR, projectRoot = PROJECT_ROOT }` 옵션 추가. contract-test-run.js가 `{ persist: false }` 명시로 baseline self-mutation 차단.
+- **`--version` 인자 path-injection validation** (CO-1.1): `^[A-Za-z0-9._-]+$` 정규식 미일치 시 exit 2 (`/tmp/foo` 같은 path concat 사고 방지)
+- **`--project-root` flag** (CO-4 prerequisite): contract-test-run.js + contract-baseline-collect.js — fixture-aware testing
+
+#### `.gitignore` 위장 결함 해소 (CO-6)
+- **`test/`, `tests/*` blanket ignore 제거** — production test 디렉터리 default tracked. 5/20 사고 클래스 (`Cannot find module` 위장) 영구 차단.
+- **35+ 잔여 untracked test files 일괄 추적**: `tests/qa/` 29 file (bug-fixes-v218, v2113-sprint-1~5, v2114-* 10개, v2116-* 3개 등) + `test/contract/` 5 file + `test/e2e/` 6 file + `test/integration/` 3 file + `test/unit/` 2 file + `test/v2110-qa/` 2 file
+- **`docs-code-scanner.js` `countAgents`**: deprecation tombstone 제외 (active count 정합성)
+- **5/20 release 위장 결함 정상화**: `tests/qa/bkit-full-system.test.js`, `bkit-deep-system.test.js`, `test/contract/l2-hook-attribution.test.js`, `l3-mcp-runtime.test.js` 4 file force-tracked (v2.1.17 PR #97 + 본 PR)
+
+#### Hygiene
+- **v2.1.9 baseline 12 orphan JSON 삭제**: manifest 미등재 (sprint agents/MCP tools/skills) — runner 동작 무관하나 baseline hygiene 손상. 정리 후 `node test/contract/scripts/contract-test-run.js --compare v2.1.9 --level L1,L4` 252 → 234 assertions (의미 없는 12 assertion 제거).
+- **`scripts/check-deadcode.js` EXEMPT 패턴 보완**: v2.1.13 sprint barrel 3 file (`lib/{application/sprint-lifecycle,domain/sprint,infra/sprint}/index.js`) EXEMPT 추가. 5/12 이전부터 잠재된 결함이 Invocation Contract red로 위장되어 있었음.
+
+### Changed
+
+- **`.github/workflows/contract-check.yml`**: 13 → **18 step** (+1 dual baseline 비교, +4 L2/L3, +1 check-test-tracking, +L5 mandatory needs)
+- **agents count semantics**: "total" → **"active" (34) + "deprecated" (6)**. SoT (`docs-code-invariants.js`) `agents: 34` 유지, count 측정 5 site에서 filter 적용.
+- **workflow L5 job name**: "관찰 전용 — 머지 차단 아님" → **"Invocation Inventory"** (mandatory)
+
+### Architecture
+
+#### New Layer
+- **`lib/util/`** (NEW utility layer) — pure FS-free modules. 첫 module: `frontmatter.js`.
+
+#### New Modules / Scripts
+- `lib/util/frontmatter.js` (75 LOC, pure)
+- `scripts/setup-branch-protection.sh` (executable, idempotent)
+- `scripts/check-test-tracking.js` (CI gate)
+- `test/contract/agent-deprecation.test.js` (5 scenario, fixture-based)
+- `test/contract/mcp-deprecation.test.js` (6 scenario, fixture-based)
+- `test/contract/fixtures/agent-deprecation/` (4 fixtures)
+- `test/contract/fixtures/mcp-deprecation/` (1 fixture server)
+- `test/contract/baseline/v2.1.16/` (106 file Latest snapshot)
+
+### Verification
+
+로컬 dry-run 18/18 PASS:
+- domain purity: 18 files, 0 forbidden
+- L1+L4 vs v2.1.9 LTS: 234 assertions
+- L1+L4 vs v2.1.16 Latest: 255 assertions
+- guard registry: 21 guards
+- **check-test-tracking** (NEW): 0 untracked production test files
+- docs-code-sync: all counts consistent
+- check-deadcode: Dead 0
+- integration runtime: 23/23
+- L2 smoke: 98/98
+- L2 hook attribution: 13/13
+- L3 MCP compat: 92/92
+- L3 MCP runtime: 48/48
+- **L5 invocation inventory** (mandatory): 210/210 (SoT-driven, +7 from v2.1.16)
+- **agent-deprecation isolated** (NEW): 5/5
+- **mcp-deprecation e2e** (NEW): 6/6
+- bkit-full-system: 36/36
+- bkit-deep-system: 111/111
+- docs-code-sync test: 36/36
+- branch-protection script (dry-run): preview valid
+
+**qa-aggregate**: 4090+ PASS / 0 FAIL / 0 Errors (v2.1.16 GA의 3,808 PASS / 31 FAIL / 4 Errors 대비 35건 회귀 close + 280+ TC 증가)
+
+### Closure 매트릭스
+
+| 항목 | v2.1.16 GA | v2.1.17 |
+|------|:---:|:---:|
+| Contract red 누적 | 8일 | **0일** |
+| Workflow steps (mandatory) | 13 | **18** |
+| Baseline snapshots | 1 (v2.1.9) | **2 (v2.1.9 LTS + v2.1.16 Latest)** |
+| Active agents | 34 | 34 (with explicit deprecation governance) |
+| Deprecation tombstones | 0 | **6** |
+| Frontmatter parse sites | 5 (duplicate) | **1** (`lib/util/frontmatter.js`) |
+| Hardcoded EXPECTED lists | 7 (stale-prone) | **0** (SoT `docs-code-invariants.js`) |
+| Branch protection | ✗ | **Required Status Checks 2개 자동 적용** |
+| 5축 매트릭스 | 0/5 | **5/5** ✅ |
+
+### Closure 항목 (Carryover 영구 종결)
+
+| ID | Description | Status |
+|----|-------------|:---:|
+| CO-1 | Branch protection 자동화 | ✅ script + apply 적용 완료 |
+| CO-1.1 | --version path-injection validation | ✅ regex validation |
+| CO-2 | MCP tool deprecation schema 정형화 | ✅ `parseMCPToolBlocks` |
+| CO-2.1 | MCP deprecation 실전 e2e test | ✅ 6/6 PASS |
+| CO-3 | L5 E2E mandatory 승격 | ✅ continue-on-error 제거 |
+| CO-3.1 | L5 inventory dynamic EXPECTED lists | ✅ SoT 통합 (210/210) |
+| CO-4 | Agent-deprecation isolated unit test | ✅ 5/5 PASS |
+| CO-5 | frontmatter util 추출 | ✅ 5 site → 1 |
+| CO-6 | Tracked file policy | ✅ .gitignore narrow + 35+ file 추적 + 가이드 |
+| CO-7 | tests/qa dependency 자동화 | ✅ check-test-tracking.js + workflow step |
+| CO-8 | branch-protection 실제 apply audit | ✅ popup-kay admin 적용 검증 |
+
+**11 carryover 항목 모두 close** — 5/12 ~ 5/20 사고 클래스 완전 종결.
+
+### References
+
+- PR #97 (v2.1.17 main scope, merged 2026-05-20 `7acdd4f`): https://github.com/popup-studio-ai/bkit-claude-code/pull/97
+- PR #99 (v2.1.17 final + 5 carryover): https://github.com/popup-studio-ai/bkit-claude-code/pull/99
+- Plan: `docs/01-plan/features/v2117-ci-cd-hardening.plan.md`, `v2118-carryover-cleanup.plan.md`
+- SOP guides: `docs/06-guide/contract-baseline-rollforward.guide.md`, `branch-protection-setup.guide.md`, `test-file-tracking-policy.guide.md`
+- Origin incident: commit `967cd8f` (refactor v2.1.13, 2026-05-12)
+
+---
+
 ## [2.1.16] - 2026-05-20 (branch: `feature/v2116-issue-fixes`)
 
 > **Status**: Patch release — 4 GitHub issues 종결 (Quality Gates & Approval UX).
