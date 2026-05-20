@@ -347,9 +347,80 @@ function sc10() {
   assert.strictEqual(r2.error, 'dependency_cycle');
 }
 
+// === SC-11: Sprint 2 quality-gates logic invariant (v2.1.16 evolution) ===
+//
+// v2.1.16 (Issue #92 F1, #95 F2, #94 F3, #93 F4) modifies the Sprint 2
+// `lib/application/sprint-lifecycle/` directory intentionally (per
+// Master Plan §1 SCOPE: quality-gates / advance-phase / sprint-handler /
+// audit-logger). The v2.1.13 freeze-by-`git diff` invariant evolves into
+// a structural assertion (INV-05 hooks.json pattern). The gate matrix
+// itself remains unchanged (Master Plan §1 RISK invariant).
+//
+// This contract is the canonical tracked enforcement (`tests/qa/*` is
+// gitignored). Local `tests/qa/v2113-sprint-4-presentation.test.js` INV-02
+// keeps an equivalent assertion for the local feedback loop.
+function sc11() {
+  const qg = require(path.join(projectRoot, 'lib/application/sprint-lifecycle/quality-gates'));
+
+  // 1) ACTIVE_GATES_BY_PHASE — exact baseline (8 phases, Master Plan §12.1).
+  const expectedActiveGates = {
+    prd:      [],
+    plan:     ['M8'],
+    design:   ['M4', 'M8'],
+    do:       ['M1', 'M2', 'M3', 'M4', 'M5', 'M7'],
+    iterate:  ['M1', 'M2', 'M3', 'M5', 'M7'],
+    qa:       ['M1', 'M2', 'M3', 'M4', 'M5', 'M7', 'S1', 'S2'],
+    report:   ['M1', 'M2', 'M3', 'M4', 'M5', 'M7', 'M8', 'M10', 'S1', 'S2', 'S4'],
+    archived: [],
+  };
+  const phaseKeys = Object.keys(qg.ACTIVE_GATES_BY_PHASE).sort();
+  assert.deepStrictEqual(phaseKeys, Object.keys(expectedActiveGates).sort(),
+    'ACTIVE_GATES_BY_PHASE phase set drifted');
+  for (const [phase, gates] of Object.entries(expectedActiveGates)) {
+    assert.deepStrictEqual(
+      [...qg.ACTIVE_GATES_BY_PHASE[phase]],
+      gates,
+      'ACTIVE_GATES_BY_PHASE.' + phase + ' drifted from v2.1.13 baseline'
+    );
+  }
+
+  // 2) ACTIVE_GATES_BY_PHASE.design — Issue #92 critical baseline asserted explicitly.
+  assert.deepStrictEqual([...qg.ACTIVE_GATES_BY_PHASE.design], ['M4', 'M8'],
+    'design exit gates must remain [M4, M8] (Master Plan §11.1 AC4 — Option B rejected)');
+
+  // 3) GATE_DEFINITIONS — 11 gates, M4/M8 field/op/threshold invariants.
+  assert.strictEqual(Object.keys(qg.GATE_DEFINITIONS).length, 11,
+    'GATE_DEFINITIONS count invariant: 11 (M1, M2, M3, M4, M5, M7, M8, M10, S1, S2, S4)');
+  assert.strictEqual(qg.GATE_DEFINITIONS.M4.field, 'M4_apiComplianceRate');
+  assert.strictEqual(qg.GATE_DEFINITIONS.M4.op, '>=');
+  assert.strictEqual(qg.GATE_DEFINITIONS.M4.defaultThreshold, 95);
+  assert.strictEqual(qg.GATE_DEFINITIONS.M8.field, 'M8_designCompleteness');
+  assert.strictEqual(qg.GATE_DEFINITIONS.M8.op, '>=');
+  assert.strictEqual(qg.GATE_DEFINITIONS.M8.defaultThreshold, 85);
+
+  // 4) evaluateGate behavioral invariant — null current is the Issue #92 trigger
+  //    surface. F1 documentation makes the orchestrator responsible for
+  //    populating both M4 and M8 before advancePhase, so this behavior is the
+  //    canonical "deadlock symptom" we are documenting against.
+  const rNull = qg.evaluateGate(
+    { qualityGates: { M4_apiComplianceRate: { current: null, threshold: 95 } } },
+    'M4'
+  );
+  assert.strictEqual(rNull.passed, false);
+  assert.strictEqual(rNull.reason, 'not_measured',
+    'null current must surface as not_measured (Issue #92 deadlock symptom contract)');
+
+  const rOk = qg.evaluateGate(
+    { qualityGates: { M4_apiComplianceRate: { current: 100, threshold: 95 } } },
+    'M4'
+  );
+  assert.strictEqual(rOk.passed, true);
+  assert.strictEqual(rOk.current, 100);
+}
+
 // === Runner ===
 (async () => {
-  console.log('=== L3 Contract Tests (Sprint 5 SC-01~08 + S4-UX SC-09~10) ===\n');
+  console.log('=== L3 Contract Tests (Sprint 5 SC-01~08 + S4-UX SC-09~10 + v2.1.16 SC-11) ===\n');
   record('SC-01 Sprint entity shape (12 core keys)', sc01);
   record('SC-02 deps interface (start: 7 + iterate: 2 + verify: 1)', sc02);
   record('SC-03 createSprintInfra 4 adapters + Sprint 5 3 scaffolds', sc03);
@@ -360,6 +431,7 @@ function sc10() {
   record('SC-08 hooks.json 21 events 24 blocks invariant', sc08);
   await record('SC-09 master-plan 4-layer chain (handler → state + markdown + audit)', sc09);
   record('SC-10 context-sizer pure function contract (5 assertions)', sc10);
+  record('SC-11 Sprint 2 quality-gates logic invariant (v2.1.16 evolution, Issue #92)', sc11);
   console.log('\n=== L3 Contract: ' + passed + '/' + (passed + failed) + ' PASS ===');
   if (failed > 0) {
     console.error('\n❌ ' + failed + ' contract(s) FAILED — cross-sprint drift detected.');
