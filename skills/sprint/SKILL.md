@@ -84,6 +84,7 @@ and consumed transparently along the way.
 | `fork <id>` | Fork into a new sprint (Sprint 5) | `/sprint fork my-launch --new my-launch-v2` |
 | `help` | Print sub-action help | `/sprint help` |
 | `master-plan <project>` | Generate multi-sprint Master Plan (agent isolated spawn) | `/sprint master-plan q2-launch --name "Q2 Launch" --features auth,payment` |
+| `measure <id>` | Measure single gate / multi-gate / phase batch (v2.1.16 #94) | `/sprint measure my-launch --gate M4` |
 
 ## Trust Level Scope (auto-run boundary)
 
@@ -173,6 +174,70 @@ via `scripts/sprint-handler.js`.
 | `fork` | `id`, `newId` | — | `args = { id: "my-launch", newId: "my-launch-v2" }` |
 | `help` | — | — | `args = {}` |
 | `master-plan` | `id` (projectId), `name` (projectName) | `features` (CSV or array), `trust`/`trustLevel`, `context`, `projectRoot`, `force` (boolean), `duration` | `args = { id: "q2-launch", name: "Q2 Launch", features: ["auth", "payment"] }` |
+| `measure` | `id` | one of: `gate` (string) / `gates` (CSV or array) / `phase` (string); plus `trustLevel`, `source` ('manual'\|'auto'), `agentTaskRunner` (function in deps) | `args = { id: "my-launch", gate: "M4" }` |
+
+### 10.1.2 `measure` action semantics (v2.1.16, Issue #94 F3)
+
+`/sprint measure <id>` is the user-invokable partial-gate measurement command
+added in v2.1.16. It routes the requested gate(s) through
+`lib/application/quality-gates/measure-router.js` (single SoT shared with
+sprint-orchestrator self-assessment) and persists results into
+`sprint.qualityGates` subject to Trust Level scope.
+
+**Three invocation modes (mutually exclusive precedence: gate > gates > phase)**:
+
+```bash
+/sprint measure my-launch --gate M4                       # single gate
+/sprint measure my-launch --gates M4,M8                   # multi-gate (CSV)
+/sprint measure my-launch --phase design                  # phase batch (ACTIVE_GATES_BY_PHASE[design])
+```
+
+**Agent routing** (Master Plan §11.3 AC4 — 7 gates × 4 agents):
+
+| Gate | Agent              | Source artifact                                  |
+|------|--------------------|--------------------------------------------------|
+| M1   | gap-detector       | Design §9 API Contract ↔ shipped implementation  |
+| M2   | code-analyzer      | lib/ + tests/ quality scan                       |
+| M3   | gap-detector       | critical severity issue scan                     |
+| M4   | gap-detector       | Design §9 API Contract ↔ module boundaries (#92) |
+| M7   | code-analyzer      | style + naming convention scan                   |
+| M8   | sprint-orchestrator| design §14 self-assessment checklist             |
+| S1   | sprint-qa-flow     | 7-Layer hop traversal                            |
+
+Gates outside this table (M5, M10, S2, S4) return
+`{ ok: false, reason: 'unsupported_gate' }` — carried to v2.1.17.
+
+**Trust Level scope** (Master Plan AC5):
+
+- `L0` / `L1`: **preview mode** — measurement returned but
+  `sprint.qualityGates` NOT updated, no `gate_measured` audit entry.
+- `L2` / `L3` / `L4`: **record mode** — qualityGates updated +
+  `gate_measured` audit entry emitted per gate.
+
+**Audit emission** (when in record mode):
+
+```json
+{
+  "action": "gate_measured",
+  "category": "sprint",
+  "actor": "user",
+  "target": "<sprintId>",
+  "details": {
+    "sprintId": "...", "gateKey": "M4", "field": "M4_apiComplianceRate",
+    "agent": "gap-detector", "value": 100, "threshold": 95, "passed": true,
+    "source": "manual", "phase": "design", "trustLevel": "L3",
+    "previousValue": null
+  }
+}
+```
+
+**ENH-292 alignment**: multi-gate / phase batch dispatches measurements
+sequentially (no Promise.all) to avoid #56293 sub-agent caching 10x.
+
+**Dispatcher requirement**: the LLM dispatcher (main session) must inject
+`deps.agentTaskRunner: ({ subagent_type, prompt }) => Promise<{ output }>`
+wrapping Claude Code's Task tool. Without it the use case returns
+`reason: 'no_agent_runner'` per gate (deterministic, not silent fail).
 
 ### 10.1.1 `phase --approve` semantics (v2.1.16, Issue #95)
 

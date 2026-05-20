@@ -139,29 +139,38 @@ Master Plan §11.1 AC1-AC5).
      accepts §14 as the SoT and records the same proportion (default 100
      for `[x]`, 0 for `[ ]`).
    - Field: `sprint.qualityGates.M4_apiComplianceRate.current` (number).
-   - Tool (from v2.1.16 Layer 2 onward): delegate to
-     `lib/application/quality-gates/measure-router.js` so M4 measurement has
-     a single source of truth across `/sprint phase` and `/sprint measure`.
-     Until that route ships, the orchestrator computes M4 inline using the
-     §14 checkbox heuristic above.
+   - **Tool (canonical from v2.1.16 Layer 2 onward)**: dispatch via
+     `lib/application/quality-gates/measure-router.measureGate('M4', sprint,
+     { agentTaskRunner })` → routed to `agents/gap-detector.md` per
+     `GATE_MEASUREMENT_ROUTES.M4`. Same router serves `/sprint measure
+     --gate M4` so design-exit auto-measurement and manual user invocation
+     produce identical values (single SoT per Master Plan §11.3 AC7).
+     Persistence + audit (`gate_measured` action) handled by
+     `lib/application/sprint-lifecycle/measure-gate.usecase.measureGate`
+     (Trust Level scope honored: L0/L1 preview-only, L2+ recorded).
 
-3. **Persist both atomically**:
+3. **Persist both atomically** — canonical path from v2.1.16 Layer 2:
    ```javascript
-   const updated = cloneSprint(sprint, {
-     qualityGates: {
-       ...sprint.qualityGates,
-       M4_apiComplianceRate:  { current: m4, threshold: 95, passed: m4 >= 95 },
-       M8_designCompleteness: { current: m8, threshold: 85, passed: m8 >= 85 },
-     },
+   // Single SoT for design-exit dual record.
+   const lifecycle = require('lib/application/sprint-lifecycle');
+   const agg = await lifecycle.measurePhaseGates(sprint, 'design', {
+     agentTaskRunner,        // injected by handler (wraps Claude Code Task tool)
+     source: 'auto',         // orchestrator self-assessment, not /sprint measure
+     trustLevel: sprint.autoRun.trustLevelAtStart,
    });
-   await infra.stateStore.save(updated);
+   // agg.sprint contains qualityGates.M4 + qualityGates.M8 both populated.
+   await infra.stateStore.save(agg.sprint);
    ```
+   Falls back to inline cloneSprint only if `lifecycle.measurePhaseGates`
+   is unavailable in older bkit builds (defensive; v2.1.16+ always available).
 
-4. **Audit** — emit one audit entry per gate measured (`gate_passed` /
-   `gate_failed`) via Sprint 3 telemetry adapter so the audit log records
-   measurement provenance, not only final advance success.
+4. **Audit** — `measure-gate.usecase` already emits a `gate_measured` audit
+   entry per recorded gate when Trust Level is L2+ (preview at L0/L1).
+   The orchestrator does NOT double-write `gate_passed/gate_failed` here —
+   those audit actions belong to `advancePhase` Step 3 (gate evaluation)
+   rather than the measurement step.
 
-5. **THEN** invoke `lifecycle.advancePhase(updated, 'do', deps)`.
+5. **THEN** invoke `lifecycle.advancePhase(agg.sprint, 'do', deps)`.
 
 ### Quality Standards
 
@@ -178,9 +187,16 @@ Master Plan §11.1 AC1-AC5).
   with `current: null` for any active gate.
 - **M4 measurement SoT** — `M4_apiComplianceRate` at design exit derives
   from the design doc §14 self-assessment "API Contract" checkbox
-  (single source of truth). From v2.1.16 Layer 2 the measurement may be
-  delegated to `quality-gates/measure-router.js`; both paths must agree
-  on the same input artifact (§14 checkbox / §9 API Contract).
+  (single source of truth). v2.1.16 Layer 2 `lib/application/quality-gates/
+  measure-router.js` is the canonical dispatch path; both `/sprint phase`
+  auto-advance and `/sprint measure --gate M4` route through the same
+  `GATE_MEASUREMENT_ROUTES.M4 → gap-detector` agent to ensure equal values.
+- **Measurement-vs-advancement separation** — measurement (gate value
+  population) and advancement (gate evaluation + phase transition) are
+  distinct concerns. The orchestrator MUST run measurement first
+  (`measurePhaseGates`) and only then invoke `advancePhase`. Mixing them
+  in a single call surface re-introduces the Issue #92 deadlock where
+  a missing measurement is mistaken for a failing gate.
 
 ## Failure Modes
 

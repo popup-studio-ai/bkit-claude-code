@@ -123,19 +123,20 @@ function sc03() {
   assert.strictEqual(typeof infraMod.createDataFlowValidator, 'function');
 }
 
-// === SC-04: Sprint 4 sprint-handler signature ===
+// === SC-04: Sprint 4 sprint-handler signature (17 VALID_ACTIONS as of v2.1.16) ===
 function sc04() {
   const handlerMod = require(path.join(projectRoot, 'scripts/sprint-handler'));
   assert.strictEqual(typeof handlerMod.handleSprintAction, 'function');
   assert.strictEqual(handlerMod.handleSprintAction.length, 3,
     'handleSprintAction must take (action, args, deps)');
   assert(Array.isArray(handlerMod.VALID_ACTIONS));
-  assert.strictEqual(handlerMod.VALID_ACTIONS.length, 16,
-    'VALID_ACTIONS must list 16 sub-actions');
-  // 16 expected actions (S2-UX v2.1.13 added master-plan)
+  // v2.1.13 S2-UX: 16 (added master-plan). v2.1.16 Issue #94 F3: 17 (added measure).
+  assert.strictEqual(handlerMod.VALID_ACTIONS.length, 17,
+    'VALID_ACTIONS must list 17 sub-actions (v2.1.16 added measure)');
   const expected = ['init', 'start', 'status', 'list', 'phase', 'iterate',
                     'qa', 'report', 'archive', 'pause', 'resume', 'fork',
-                    'feature', 'watch', 'help', 'master-plan'];
+                    'feature', 'watch', 'help', 'master-plan',
+                    'measure']; // v2.1.16 (Issue #94 F3)
   expected.forEach(a => assert(handlerMod.VALID_ACTIONS.includes(a),
     'VALID_ACTIONS missing: ' + a));
 }
@@ -185,8 +186,9 @@ function sc06() {
   //   git_push_intercepted, post_tool_block_recorded, hook_reachability_lost) → 26.
   // v2.1.14 Sub-Sprint 4 (E Defense): +memory_directive_enforced → 27.
   // v2.1.16 (Issue #95 F2): +scope_boundary_approved → 28.
-  assert.strictEqual(al.ACTION_TYPES.length, 28,
-    'ACTION_TYPES expected 28 entries, got ' + al.ACTION_TYPES.length +
+  // v2.1.16 (Issue #94 F3): +gate_measured → 29.
+  assert.strictEqual(al.ACTION_TYPES.length, 29,
+    'ACTION_TYPES expected 29 entries, got ' + al.ACTION_TYPES.length +
     ' — entries: [' + al.ACTION_TYPES.join(', ') + ']');
   const required = [
     'sprint_paused',                // v2.1.13
@@ -195,6 +197,7 @@ function sc06() {
     'task_created',                 // v2.1.13 DEEP-4
     'memory_directive_enforced',    // v2.1.14 ENH-286
     'scope_boundary_approved',      // v2.1.16 Issue #95 F2
+    'gate_measured',                // v2.1.16 Issue #94 F3
   ];
   for (const a of required) {
     assert(al.ACTION_TYPES.includes(a), a + ' missing from ACTION_TYPES');
@@ -561,21 +564,168 @@ async function sc12() {
   }
 }
 
+// === SC-13: /sprint measure routing + measure-router + measure-gate UC (v2.1.16 Issue #94 F3) ===
+//
+// Behavioral contract for the measurement infrastructure introduced in F3:
+//   - measure-router: 7 supported gates × 4 routed agents (M1/M3/M4 → gap-detector,
+//     M2/M7 → code-analyzer, M8 → sprint-orchestrator, S1 → sprint-qa-flow).
+//   - measure-gate.usecase: Trust Level scope (L0/L1 preview, L2+ record),
+//     sequential dispatch (ENH-292), measureGates + measurePhaseGates aggregators.
+//   - handleMeasure: --gate / --gates (CSV) / --phase mutually exclusive
+//     precedence; per-gate gate_measured audit emission; cumulative state save.
+async function sc13() {
+  const mr = require(path.join(projectRoot, 'lib/application/quality-gates/measure-router'));
+  const lifecycle = require(path.join(projectRoot, 'lib/application/sprint-lifecycle'));
+  const domain = require(path.join(projectRoot, 'lib/domain/sprint'));
+
+  // 1) Router routing table — 7 supported, 4 unsupported (Master Plan §11.3 AC4).
+  assert.deepStrictEqual(mr.SUPPORTED_GATES.slice().sort(),
+    ['M1', 'M2', 'M3', 'M4', 'M7', 'M8', 'S1'].sort());
+  assert.deepStrictEqual(mr.UNSUPPORTED_GATES.slice().sort(),
+    ['M5', 'M10', 'S2', 'S4'].sort());
+  const routes = mr.GATE_MEASUREMENT_ROUTES;
+  assert.strictEqual(routes.M1.agent, 'gap-detector');
+  assert.strictEqual(routes.M3.agent, 'gap-detector');
+  assert.strictEqual(routes.M4.agent, 'gap-detector');
+  assert.strictEqual(routes.M2.agent, 'code-analyzer');
+  assert.strictEqual(routes.M7.agent, 'code-analyzer');
+  assert.strictEqual(routes.M8.agent, 'sprint-orchestrator');
+  assert.strictEqual(routes.S1.agent, 'sprint-qa-flow');
+
+  // 2) Router error paths (no agentTaskRunner / unsupported gate / no JSON / non-numeric value).
+  assert.strictEqual((await mr.measureGate('M5', { id: 'x' }, {})).reason, 'unsupported_gate');
+  assert.strictEqual((await mr.measureGate('M4', { id: 'x' }, {})).reason, 'no_agent_runner');
+  const runnerNoJson = { agentTaskRunner: async () => ({ output: 'no json' }) };
+  assert.strictEqual((await mr.measureGate('M4', { id: 'x' }, runnerNoJson)).reason, 'no_json');
+  const runnerBadVal = { agentTaskRunner: async () => ({ output: '{"value": "abc"}' }) };
+  assert.strictEqual((await mr.measureGate('M4', { id: 'x' }, runnerBadVal)).reason, 'invalid_value');
+
+  // 3) Use case: record mode (L2+) updates sprint.qualityGates.
+  const fakeRunner = { agentTaskRunner: async ({ subagent_type }) =>
+    ({ output: '{"value": 96, "details": "agent ' + subagent_type + '"}' }) };
+  const sprintL3 = domain.cloneSprint(
+    domain.createSprint({ id: 'sc13', name: 'SC13', trustLevelAtStart: 'L3', features: ['x'] }),
+    { phase: 'design' }
+  );
+  const recordRes = await lifecycle.measureGate(sprintL3, 'M4', {
+    agentTaskRunner: fakeRunner.agentTaskRunner,
+  });
+  assert.strictEqual(recordRes.mode, 'record');
+  assert.strictEqual(recordRes.sprint.qualityGates.M4_apiComplianceRate.current, 96);
+  assert.strictEqual(recordRes.sprint.qualityGates.M4_apiComplianceRate.passed, true);
+  assert(recordRes.sprint.qualityGates.M4_apiComplianceRate.lastMeasuredAt,
+    'lastMeasuredAt must be set in record mode');
+  assert(recordRes.auditRecord, 'auditRecord must be populated in record mode');
+  assert.strictEqual(recordRes.auditRecord.agent, 'gap-detector');
+
+  // 4) Use case: preview mode (L1) does NOT mutate sprint and emits no auditRecord.
+  const previewRes = await lifecycle.measureGate(sprintL3, 'M4', {
+    agentTaskRunner: fakeRunner.agentTaskRunner,
+    trustLevel: 'L1',
+  });
+  assert.strictEqual(previewRes.mode, 'preview');
+  assert.strictEqual(previewRes.sprint, sprintL3,
+    'preview mode must return the input sprint reference unchanged');
+  assert.strictEqual(previewRes.auditRecord, null,
+    'preview mode must NOT produce auditRecord');
+  assert.strictEqual(previewRes.measurement.value, 96,
+    'measurement still returned in preview mode for caller display');
+
+  // 5) measureGates aggregator — sequential, cumulative state.
+  const multi = await lifecycle.measureGates(sprintL3, ['M4', 'M8'], {
+    agentTaskRunner: fakeRunner.agentTaskRunner,
+  });
+  assert.strictEqual(multi.ok, true);
+  assert.strictEqual(multi.successCount, 2);
+  assert.strictEqual(multi.failureCount, 0);
+  assert.strictEqual(multi.sprint.qualityGates.M4_apiComplianceRate.current, 96);
+  assert.strictEqual(multi.sprint.qualityGates.M8_designCompleteness.current, 96);
+
+  // 6) measurePhaseGates — ACTIVE_GATES_BY_PHASE['design'] = [M4, M8].
+  const phaseRes = await lifecycle.measurePhaseGates(sprintL3, 'design', {
+    agentTaskRunner: fakeRunner.agentTaskRunner,
+  });
+  assert.strictEqual(phaseRes.ok, true);
+  assert.strictEqual(phaseRes.phase, 'design');
+  assert.strictEqual(phaseRes.results.length, 2);
+  assert.deepStrictEqual(phaseRes.skippedUnsupported, [],
+    'design phase should not have unsupported gates');
+
+  // 7) Handler integration — /sprint measure --gate writes audit and persists sprint.
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'sc13-'));
+  const prevCwd = process.cwd();
+  const modules = [
+    'lib/core/platform', 'lib/core/index', 'lib/audit/audit-logger',
+    'lib/infra/sprint/sprint-paths', 'lib/infra/sprint/sprint-state-store.adapter',
+    'lib/infra/sprint/sprint-telemetry.adapter', 'lib/infra/sprint/sprint-doc-scanner.adapter',
+    'lib/infra/sprint/matrix-sync.adapter', 'lib/infra/sprint/index', 'lib/infra/sprint',
+    'scripts/sprint-handler',
+  ];
+  const resetModules = () => {
+    for (const m of modules) {
+      try { delete require.cache[require.resolve(path.join(projectRoot, m))]; } catch (_e) { /* */ }
+    }
+  };
+  try {
+    process.chdir(tmp);
+    fs.mkdirSync(path.join(tmp, '.bkit', 'state', 'sprints'), { recursive: true });
+    fs.mkdirSync(path.join(tmp, '.bkit', 'audit'), { recursive: true });
+    fs.writeFileSync(path.join(tmp, '.bkit', 'state', 'sprints', 'sc13.json'),
+      JSON.stringify(sprintL3, null, 2));
+    resetModules();
+    const handler = require(path.join(projectRoot, 'scripts/sprint-handler'));
+    const hr = await handler.handleSprintAction('measure', {
+      id: 'sc13', gate: 'M4',
+    }, { agentTaskRunner: fakeRunner.agentTaskRunner });
+    assert.strictEqual(hr.ok, true);
+    assert.strictEqual(hr.successCount, 1);
+    const today = new Date().toISOString().slice(0, 10);
+    const auditFile = path.join(tmp, '.bkit', 'audit', today + '.jsonl');
+    const entries = fs.readFileSync(auditFile, 'utf8').split('\n').filter(Boolean).map(JSON.parse);
+    const measured = entries.find((e) => e.action === 'gate_measured');
+    assert(measured, 'audit log must contain gate_measured entry');
+    assert.strictEqual(measured.category, 'sprint');
+    assert.strictEqual(measured.details.gateKey, 'M4');
+    assert.strictEqual(measured.details.agent, 'gap-detector');
+    assert.strictEqual(measured.details.source, 'manual');
+    // State persisted with measurement.
+    const saved = JSON.parse(fs.readFileSync(
+      path.join(tmp, '.bkit', 'state', 'sprints', 'sc13.json'), 'utf8'));
+    assert.strictEqual(saved.qualityGates.M4_apiComplianceRate.current, 96);
+  } finally {
+    process.chdir(prevCwd);
+    resetModules();
+    try { fs.rmSync(tmp, { recursive: true, force: true }); } catch (_e) { /* ignore */ }
+  }
+
+  // 8) Cross-feature SoT: F1 agent body references measure-router (AC7 code-sharing).
+  const agentBody = fs.readFileSync(
+    path.join(projectRoot, 'agents/sprint-orchestrator.md'), 'utf8'
+  );
+  assert(agentBody.includes('measure-router'),
+    'sprint-orchestrator agent must reference measure-router (AC7 single SoT)');
+  assert(agentBody.includes('measure-gate.usecase'),
+    'sprint-orchestrator agent must reference measure-gate.usecase');
+  assert(agentBody.includes('GATE_MEASUREMENT_ROUTES'),
+    'sprint-orchestrator agent must reference GATE_MEASUREMENT_ROUTES');
+}
+
 // === Runner ===
 (async () => {
-  console.log('=== L3 Contract Tests (Sprint 5 SC-01~08 + S4-UX SC-09~10 + v2.1.16 SC-11~12) ===\n');
+  console.log('=== L3 Contract Tests (Sprint 5 SC-01~08 + S4-UX SC-09~10 + v2.1.16 SC-11~13) ===\n');
   record('SC-01 Sprint entity shape (12 core keys)', sc01);
   record('SC-02 deps interface (start: 7 + iterate: 2 + verify: 1)', sc02);
   record('SC-03 createSprintInfra 4 adapters + Sprint 5 3 scaffolds', sc03);
-  record('SC-04 handleSprintAction(action,args,deps) + 16 VALID_ACTIONS', sc04);
+  record('SC-04 handleSprintAction(action,args,deps) + 17 VALID_ACTIONS (v2.1.16 +measure)', sc04);
   await record('SC-05 4-layer end-to-end chain (init → status → list)', sc05);
-  record('SC-06 ACTION_TYPES enum 28 entries (incl sprint_paused/resumed/master_plan_created/task_created/scope_boundary_approved)', sc06);
+  record('SC-06 ACTION_TYPES enum 29 entries (incl scope_boundary_approved + gate_measured)', sc06);
   record('SC-07 SPRINT_AUTORUN_SCOPE inline ↔ lib/control mirror (5 levels)', sc07);
   record('SC-08 hooks.json 21 events 24 blocks invariant', sc08);
   await record('SC-09 master-plan 4-layer chain (handler → state + markdown + audit)', sc09);
   record('SC-10 context-sizer pure function contract (5 assertions)', sc10);
   record('SC-11 Sprint 2 quality-gates logic invariant (v2.1.16 evolution, Issue #92)', sc11);
   await record('SC-12 advance-phase --approve escape hatch contract (v2.1.16 Issue #95 F2, 7 assertions + handler E2E)', sc12);
+  await record('SC-13 /sprint measure routing + measure-router + measure-gate.usecase + handler E2E (v2.1.16 Issue #94 F3, 8 assertion groups)', sc13);
   console.log('\n=== L3 Contract: ' + passed + '/' + (passed + failed) + ' PASS ===');
   if (failed > 0) {
     console.error('\n❌ ' + failed + ' contract(s) FAILED — cross-sprint drift detected.');
