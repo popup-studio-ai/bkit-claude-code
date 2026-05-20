@@ -283,16 +283,10 @@ tc('C7. hooks.json schema valid + SessionStart registered', () => {
 // ---------------------------------------------------------------------------
 group('D. Frontmatter validity (agents + skills)');
 
-function parseFrontmatter(md) {
-  const m = md.match(/^---\n([\s\S]*?)\n---/);
-  if (!m) return null;
-  const obj = {};
-  for (const line of m[1].split('\n')) {
-    const m2 = line.match(/^([a-zA-Z_-][a-zA-Z0-9_-]*):\s*(.*)$/);
-    if (m2) obj[m2[1]] = m2[2].trim();
-  }
-  return obj;
-}
+// v2.1.18 (CO-5): parseFrontmatter centralized in lib/util/frontmatter.
+// Returns {} (not null) when no frontmatter — callers using `if (!fm || !fm.name)`
+// remain correct because empty-object name lookup is undefined.
+const { parseFrontmatter } = require('../../lib/util/frontmatter');
 
 const allAgentFiles = fs.readdirSync(path.join(PROJECT_ROOT, 'agents'))
   .filter(f => f.endsWith('.md'));

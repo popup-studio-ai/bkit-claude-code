@@ -1,0 +1,8 @@
+{
+  "descriptionLength": 50,
+  "effort": "medium",
+  "fileName": "old-agent",
+  "hasTools": true,
+  "model": "sonnet",
+  "name": "old-agent"
+}

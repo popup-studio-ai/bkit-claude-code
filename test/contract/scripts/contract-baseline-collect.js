@@ -16,60 +16,28 @@
 
 const fs = require('fs');
 const path = require('path');
+// v2.1.18: frontmatter parsing moved to lib/util/frontmatter.js (CO-5).
+const { parseFrontmatter, coerce } = require('../../../lib/util/frontmatter');
 
 const PROJECT_ROOT = path.resolve(__dirname, '..', '..', '..');
 const args = process.argv.slice(2);
 const versionArgIdx = args.indexOf('--version');
 const version = versionArgIdx >= 0 ? args[versionArgIdx + 1] : 'v2.1.9';
+
+// v2.1.17 (CO-1.1): validate --version to prevent path-injection via
+// concatenation into BASE_DIR. Only allow [A-Za-z0-9._-]+ — matches
+// version tags (v2.1.9), simple identifiers (fixture, latest, dev),
+// rejects path-like inputs (/tmp/foo, ../bar, baseline/x).
+if (!/^[A-Za-z0-9._-]+$/.test(version)) {
+  // eslint-disable-next-line no-console
+  console.error(
+    `[contract] Invalid --version '${version}'. ` +
+      `Must match /^[A-Za-z0-9._-]+$/ (e.g., 'v2.1.9', 'fixture').`
+  );
+  process.exit(2);
+}
+
 const BASE_DIR = path.join(PROJECT_ROOT, 'test', 'contract', 'baseline', version);
-
-/** Minimal YAML frontmatter parser — supports scalars, lists, booleans, ints, strings (single line). */
-function parseFrontmatter(markdown) {
-  if (typeof markdown !== 'string') return {};
-  const m = markdown.match(/^---\r?\n([\s\S]*?)\r?\n---/);
-  if (!m) return {};
-  const body = m[1];
-  const lines = body.split(/\r?\n/);
-  const out = {};
-  let currentKey = null;
-  let currentList = null;
-  for (const rawLine of lines) {
-    if (!rawLine.trim()) continue;
-    const listMatch = rawLine.match(/^\s+-\s+(.*)$/);
-    if (listMatch && currentList) {
-      currentList.push(coerce(listMatch[1].trim()));
-      continue;
-    }
-    const kv = rawLine.match(/^([a-zA-Z0-9_-]+)\s*:\s*(.*)$/);
-    if (kv) {
-      currentKey = kv[1];
-      const rawVal = kv[2].trim();
-      if (rawVal === '') {
-        currentList = [];
-        out[currentKey] = currentList;
-      } else {
-        out[currentKey] = coerce(rawVal);
-        currentList = null;
-      }
-    }
-  }
-  return out;
-}
-
-function coerce(v) {
-  if (v === 'true') return true;
-  if (v === 'false') return false;
-  if (/^-?\d+$/.test(v)) return parseInt(v, 10);
-  if (/^-?\d+\.\d+$/.test(v)) return parseFloat(v);
-  if (/^\[.*\]$/.test(v)) {
-    try {
-      return JSON.parse(v.replace(/'/g, '"'));
-    } catch {
-      /* fall through */
-    }
-  }
-  return v.replace(/^['"]|['"]$/g, '');
-}
 
 function sortKeysDeep(obj) {
   if (Array.isArray(obj)) return obj.map(sortKeysDeep);
@@ -95,8 +63,8 @@ function writeJSON(filePath, data) {
 // v2.1.17: collect* functions accept { persist, baseDir } options for read-only invocation
 // from contract-test-run.js. Default persist=true preserves backward-compat with main().
 function collectSkills(opts = {}) {
-  const { persist = true, baseDir = BASE_DIR } = opts;
-  const skillsDir = path.join(PROJECT_ROOT, 'skills');
+  const { persist = true, baseDir = BASE_DIR, projectRoot = PROJECT_ROOT } = opts;
+  const skillsDir = path.join(projectRoot, 'skills');
   if (!fs.existsSync(skillsDir)) return { count: 0 };
   const dirs = fs.readdirSync(skillsDir).filter((d) => {
     return fs.statSync(path.join(skillsDir, d)).isDirectory();
@@ -128,8 +96,8 @@ function collectSkills(opts = {}) {
 }
 
 function collectAgents(opts = {}) {
-  const { persist = true, baseDir = BASE_DIR } = opts;
-  const agentsDir = path.join(PROJECT_ROOT, 'agents');
+  const { persist = true, baseDir = BASE_DIR, projectRoot = PROJECT_ROOT } = opts;
+  const agentsDir = path.join(projectRoot, 'agents');
   if (!fs.existsSync(agentsDir)) return { count: 0 };
   const files = fs.readdirSync(agentsDir).filter((f) => f.endsWith('.md'));
   const out = { count: 0, names: [] };
@@ -158,9 +126,59 @@ function collectAgents(opts = {}) {
   return out;
 }
 
+/**
+ * Parse MCP tool definition blocks from a server's index.js source.
+ *
+ * v2.1.18 (CO-2): Recognizes inline deprecation annotations placed in the
+ * comment block immediately preceding the `name: 'bkit_xxx'` line:
+ *
+ *   // @deprecated since v2.1.13 replacedBy=bkit_new_tool reason="superseded"
+ *   {
+ *     name: 'bkit_old_tool',
+ *     ...
+ *   }
+ *
+ * @param {string} source — index.js full content
+ * @returns {Array<{ name: string, deprecatedIn: string|null, replacedBy: string|null }>}
+ */
+function parseMCPToolBlocks(source) {
+  const lines = source.split(/\r?\n/);
+  const nameRe = /(?:^|[\s{,])["']?name["']?\s*:\s*['"](bkit_[a-z_]+)['"]/;
+  const depRe = /@deprecated\s+since\s+(v[\d.]+)(?:\s+replacedBy=([\w-]+))?/i;
+  const out = [];
+  const seen = new Set();
+  for (let i = 0; i < lines.length; i++) {
+    const nameMatch = lines[i].match(nameRe);
+    if (!nameMatch) continue;
+    const toolName = nameMatch[1];
+    if (seen.has(toolName)) continue;
+    seen.add(toolName);
+    // Look back up to 10 lines for @deprecated annotation
+    let deprecatedIn = null;
+    let replacedBy = null;
+    const lookbackStart = Math.max(0, i - 10);
+    for (let j = i - 1; j >= lookbackStart; j--) {
+      const line = lines[j].trim();
+      if (line.startsWith('//') || line.startsWith('*')) {
+        const m = line.match(depRe);
+        if (m) {
+          deprecatedIn = m[1];
+          replacedBy = m[2] || null;
+          break;
+        }
+      } else if (line !== '' && line !== '{' && !line.startsWith('/*')) {
+        // Hit a non-comment, non-empty line — stop scanning
+        break;
+      }
+    }
+    out.push({ name: toolName, deprecatedIn, replacedBy });
+  }
+  return out;
+}
+
 function collectMCPTools(opts = {}) {
-  const { persist = true, baseDir = BASE_DIR } = opts;
-  const serversDir = path.join(PROJECT_ROOT, 'servers');
+  const { persist = true, baseDir = BASE_DIR, projectRoot = PROJECT_ROOT } = opts;
+  const serversDir = path.join(projectRoot, 'servers');
   const out = { count: 0, servers: {} };
   if (!fs.existsSync(serversDir)) return out;
   const servers = fs.readdirSync(serversDir).filter((s) => {
@@ -168,34 +186,33 @@ function collectMCPTools(opts = {}) {
   });
   for (const server of servers) {
     const serverDir = path.join(serversDir, server);
-    // Heuristic: grep tool name patterns from index.js
     const indexPath = path.join(serverDir, 'index.js');
-    const toolNames = [];
+    let tools = [];
     if (fs.existsSync(indexPath)) {
       const content = fs.readFileSync(indexPath, 'utf8');
-      // Match unquoted-key `name: 'bkit_xxx'` (observed pattern in servers/*/index.js)
-      // and also `"name": "bkit_xxx"` for future-proofing.
-      const re = /(?:^|[\s{,])["']?name["']?\s*:\s*['"](bkit_[a-z_]+)['"]/gm;
-      let m;
-      while ((m = re.exec(content)) !== null) {
-        if (!toolNames.includes(m[1])) toolNames.push(m[1]);
-      }
+      tools = parseMCPToolBlocks(content);
     }
-    toolNames.sort();
+    tools.sort((a, b) => a.name.localeCompare(b.name));
     if (persist) {
-      for (const tn of toolNames) {
-        writeJSON(path.join(baseDir, 'mcp-tools', server, `${tn}.json`), { server, name: tn });
+      for (const tool of tools) {
+        writeJSON(path.join(baseDir, 'mcp-tools', server, `${tool.name}.json`), {
+          server,
+          name: tool.name,
+          // v2.1.18 (CO-2): deprecation metadata captured from inline annotation
+          deprecatedIn: tool.deprecatedIn || null,
+          replacedBy: tool.replacedBy || null,
+        });
       }
     }
-    out.servers[server] = toolNames;
-    out.count += toolNames.length;
+    out.servers[server] = tools.map((t) => t.name);
+    out.count += tools.length;
   }
   return out;
 }
 
 function collectHooks(opts = {}) {
-  const { persist = true, baseDir = BASE_DIR } = opts;
-  const hooksJson = path.join(PROJECT_ROOT, 'hooks', 'hooks.json');
+  const { persist = true, baseDir = BASE_DIR, projectRoot = PROJECT_ROOT } = opts;
+  const hooksJson = path.join(projectRoot, 'hooks', 'hooks.json');
   if (!fs.existsSync(hooksJson)) return { events: 0, blocks: 0 };
   const data = JSON.parse(fs.readFileSync(hooksJson, 'utf8'));
   const summary = {};
@@ -217,10 +234,10 @@ function collectHooks(opts = {}) {
 }
 
 function collectSlashCommands(opts = {}) {
-  const { persist = true, baseDir = BASE_DIR } = opts;
+  const { persist = true, baseDir = BASE_DIR, projectRoot = PROJECT_ROOT } = opts;
   const out = { plugin: [], custom: [] };
   // Plugin bundled: skill dirnames that are user-invocable
-  const skillsDir = path.join(PROJECT_ROOT, 'skills');
+  const skillsDir = path.join(projectRoot, 'skills');
   if (fs.existsSync(skillsDir)) {
     const dirs = fs.readdirSync(skillsDir).filter((d) => {
       return fs.statSync(path.join(skillsDir, d)).isDirectory();
@@ -234,7 +251,7 @@ function collectSlashCommands(opts = {}) {
     }
   }
   // Custom
-  const cmdDir = path.join(PROJECT_ROOT, '.claude', 'commands');
+  const cmdDir = path.join(projectRoot, '.claude', 'commands');
   if (fs.existsSync(cmdDir)) {
     const files = fs.readdirSync(cmdDir).filter((f) => f.endsWith('.md'));
     for (const f of files) out.custom.push('/' + f.replace(/\.md$/, ''));

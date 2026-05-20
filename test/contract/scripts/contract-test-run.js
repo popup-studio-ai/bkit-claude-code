@@ -26,12 +26,18 @@ const {
   collectSlashCommands,
 } = require('./contract-baseline-collect');
 
-const PROJECT_ROOT = path.resolve(__dirname, '..', '..', '..');
-
 function arg(name, def) {
   const i = process.argv.indexOf(name);
   return i >= 0 ? process.argv[i + 1] : def;
 }
+
+// v2.1.18 (CO-4): --project-root override enables fixture-based isolated tests.
+// Default = repo root (../../.. from this script). When overridden, both
+// the agents/ scan path AND the baseline directory are rooted at the fixture.
+const projectRootArg = arg('--project-root', null);
+const PROJECT_ROOT = projectRootArg
+  ? path.resolve(projectRootArg)
+  : path.resolve(__dirname, '..', '..', '..');
 
 const compareVersion = arg('--compare', 'v2.1.9');
 const levels = arg('--level', 'L1,L4').split(',').map((l) => l.trim());
@@ -134,7 +140,7 @@ function runL1Agents() {
 }
 
 function runL1MCP() {
-  const current = collectMCPTools({ persist: false });
+  const current = collectMCPTools({ persist: false, projectRoot: PROJECT_ROOT });
   const baseline = loadBaselineManifest().mcpTools;
   for (const [server, tools] of Object.entries(baseline.servers || {})) {
     const currentTools = (current.servers && current.servers[server]) || [];
@@ -148,7 +154,7 @@ function runL1MCP() {
 }
 
 function runL1Hooks() {
-  const current = collectHooks({ persist: false });
+  const current = collectHooks({ persist: false, projectRoot: PROJECT_ROOT });
   const baseline = loadBaselineManifest().hooks;
   assert(
     current.events === baseline.events,
@@ -178,7 +184,7 @@ function runL1Hooks() {
 function runL4Deprecation() {
   const manifest = loadBaselineManifest();
   // Skills
-  const currentSkills = collectSkills({ persist: false });
+  const currentSkills = collectSkills({ persist: false, projectRoot: PROJECT_ROOT });
   for (const skillName of manifest.skills.names) {
     if (!currentSkills.names.includes(skillName)) {
       const skillDir = path.join(PROJECT_ROOT, 'skills', skillName);
@@ -195,7 +201,7 @@ function runL4Deprecation() {
     }
   }
   // Agents — Skills 패턴과 동일하게 deprecatedIn frontmatter 우회 지원 (v2.1.17)
-  const currentAgents = collectAgents({ persist: false });
+  const currentAgents = collectAgents({ persist: false, projectRoot: PROJECT_ROOT });
   for (const agentName of manifest.agents.names) {
     if (!currentAgents.names.includes(agentName)) {
       const baselineFile = path.join(BASE_DIR, 'agents', `${agentName}.json`);
@@ -219,7 +225,7 @@ function runL4Deprecation() {
     }
   }
   // MCP tools — same pattern (v2.1.17): baseline JSON's deprecatedIn field acts as tombstone
-  const currentMCP = collectMCPTools({ persist: false });
+  const currentMCP = collectMCPTools({ persist: false, projectRoot: PROJECT_ROOT });
   for (const [server, tools] of Object.entries(manifest.mcpTools.servers || {})) {
     const currentTools = (currentMCP.servers && currentMCP.servers[server]) || [];
     for (const tn of tools) {

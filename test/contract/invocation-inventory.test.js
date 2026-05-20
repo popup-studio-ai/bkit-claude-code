@@ -11,6 +11,18 @@
 const assert = require('node:assert');
 const fs = require('node:fs');
 const path = require('node:path');
+// v2.1.18: frontmatter helpers centralized in lib/util/frontmatter (CO-5).
+const { hasDeprecatedInFrontmatterFile } = require('../../lib/util/frontmatter');
+// v2.1.17 (CO-3.1): canonical names lists imported from single SoT.
+// Replaces ~6 hardcoded EXPECTED_* arrays previously inline below.
+const {
+  EXPECTED_ACTIVE_AGENT_NAMES,
+  EXPECTED_DEPRECATED_AGENT_NAMES,
+  EXPECTED_SKILL_NAMES,
+  EXPECTED_HOOK_EVENT_NAMES,
+  EXPECTED_PDCA_MCP_TOOLS,
+  EXPECTED_ANALYSIS_MCP_TOOLS,
+} = require('../../lib/domain/rules/docs-code-invariants');
 
 const ROOT = path.resolve(__dirname, '..', '..');
 const baselineDir = path.join(ROOT, 'test', 'contract', 'baseline', 'v2.1.9');
@@ -32,21 +44,12 @@ test('servers/bkit-analysis-server/index.js exists', () => assert.ok(fs.existsSy
 
 // ==================== Skills Count ====================
 // v2.1.16 hardening: 43 → 44 (v2.1.13 added 'sprint' for Sprint Management)
+// v2.1.17 (CO-3.1): EXPECTED_SKILLS imported from docs-code-invariants SoT.
 const skillDirs = fs.readdirSync(skillsDir).filter((d) => fs.statSync(path.join(skillsDir, d)).isDirectory());
 test('Skills count exactly 44', () => assert.strictEqual(skillDirs.length, 44));
+test('Skills count matches SoT', () => assert.strictEqual(skillDirs.length, EXPECTED_SKILL_NAMES.length));
 
-const EXPECTED_SKILLS = [
-  'audit', 'bkend-auth', 'bkend-cookbook', 'bkend-data', 'bkend-quickstart', 'bkend-storage',
-  'bkit', 'bkit-evals', 'bkit-explore', 'bkit-rules', 'bkit-templates', 'btw',
-  'cc-version-analysis', 'claude-code-learning',
-  'code-review', 'control', 'deploy', 'desktop-app', 'development-pipeline', 'dynamic',
-  'enterprise', 'mobile-app', 'pdca', 'pdca-batch', 'pdca-fast-track', 'pdca-watch',
-  'phase-1-schema', 'phase-2-convention',
-  'phase-3-mockup', 'phase-4-api', 'phase-5-design-system', 'phase-6-ui-integration',
-  'phase-7-seo-security', 'phase-8-review', 'phase-9-deployment', 'plan-plus', 'pm-discovery',
-  'qa-phase', 'rollback', 'skill-create', 'skill-status', 'sprint', 'starter', 'zero-script-qa',
-];
-EXPECTED_SKILLS.forEach((name) => {
+EXPECTED_SKILL_NAMES.forEach((name) => {
   test(`Skill '${name}' exists`, () => assert.ok(skillDirs.includes(name), `missing: ${name}`));
   test(`Skill '${name}' has SKILL.md`, () => assert.ok(fs.existsSync(path.join(skillsDir, name, 'SKILL.md'))));
 });
@@ -60,63 +63,38 @@ EXPECTED_SKILLS.forEach((name) => {
 // See docs/06-guide/contract-baseline-rollforward.guide.md.
 const allAgentFiles = fs.readdirSync(agentsDir).filter((f) => f.endsWith('.md'));
 
-function hasDeprecatedInFrontmatter(filePath) {
-  try {
-    const content = fs.readFileSync(filePath, 'utf8');
-    const m = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
-    if (!m) return false;
-    return /^\s*deprecatedIn\s*:\s*\S+/m.test(m[1]);
-  } catch {
-    return false;
-  }
-}
-
+// v2.1.18: hasDeprecatedInFrontmatterFile imported from lib/util/frontmatter (CO-5).
 const agentFiles = allAgentFiles.filter(
-  (f) => !hasDeprecatedInFrontmatter(path.join(agentsDir, f))
+  (f) => !hasDeprecatedInFrontmatterFile(path.join(agentsDir, f))
 );
 const deprecatedAgentFiles = allAgentFiles.filter(
-  (f) => hasDeprecatedInFrontmatter(path.join(agentsDir, f))
+  (f) => hasDeprecatedInFrontmatterFile(path.join(agentsDir, f))
 );
 
+// v2.1.17 (CO-3.1): EXPECTED_*_AGENT_NAMES imported from docs-code-invariants SoT.
 test('Active Agents count exactly 34', () => assert.strictEqual(agentFiles.length, 34));
+test('Active Agents count matches SoT', () => assert.strictEqual(agentFiles.length, EXPECTED_ACTIVE_AGENT_NAMES.length));
 test('Deprecated Agent tombstones exactly 6', () => assert.strictEqual(deprecatedAgentFiles.length, 6));
+test('Deprecated Agent count matches SoT', () => assert.strictEqual(deprecatedAgentFiles.length, EXPECTED_DEPRECATED_AGENT_NAMES.length));
 
-const EXPECTED_AGENTS = [
-  'bkend-expert', 'bkit-impact-analyst', 'cc-version-researcher', 'code-analyzer', 'cto-lead',
-  'design-validator', 'enterprise-expert', 'frontend-architect', 'gap-detector',
-  'infra-architect', 'pdca-iterator', 'pipeline-guide', 'pm-discovery',
-  'pm-lead-skill-patch', 'pm-lead', 'pm-prd', 'pm-research', 'pm-strategy', 'product-manager',
-  'qa-debug-analyst', 'qa-lead', 'qa-monitor', 'qa-strategist', 'qa-test-generator',
-  'qa-test-planner', 'report-generator', 'security-architect', 'self-healing',
-  'skill-needs-extractor', 'sprint-master-planner', 'sprint-orchestrator', 'sprint-qa-flow',
-  'sprint-report-writer', 'starter-guide',
-];
-EXPECTED_AGENTS.forEach((name) => {
+EXPECTED_ACTIVE_AGENT_NAMES.forEach((name) => {
   test(`Agent '${name}.md' exists`, () => assert.ok(agentFiles.includes(`${name}.md`)));
 });
 
-const EXPECTED_DEPRECATED_AGENTS = [
-  'pdca-eval-act', 'pdca-eval-check', 'pdca-eval-design',
-  'pdca-eval-do', 'pdca-eval-plan', 'pdca-eval-pm',
-];
-EXPECTED_DEPRECATED_AGENTS.forEach((name) => {
+EXPECTED_DEPRECATED_AGENT_NAMES.forEach((name) => {
   test(`Deprecated Agent stub '${name}.md' exists with deprecatedIn`, () => {
     assert.ok(deprecatedAgentFiles.includes(`${name}.md`));
   });
 });
 
 // ==================== Hooks Count ====================
+// v2.1.17 (CO-3.1): EXPECTED_HOOK_EVENT_NAMES imported from docs-code-invariants SoT.
 const hooksJson = JSON.parse(fs.readFileSync(hooksJsonPath, 'utf8'));
 const hookEventNames = Object.keys(hooksJson.hooks);
 test('Hooks count exactly 21 events', () => assert.strictEqual(hookEventNames.length, 21));
+test('Hooks count matches SoT', () => assert.strictEqual(hookEventNames.length, EXPECTED_HOOK_EVENT_NAMES.length));
 
-const EXPECTED_HOOKS = [
-  'SessionStart', 'PreToolUse', 'PostToolUse', 'Stop', 'StopFailure', 'UserPromptSubmit',
-  'PreCompact', 'PostCompact', 'TaskCompleted', 'SubagentStart', 'SubagentStop',
-  'TeammateIdle', 'SessionEnd', 'PostToolUseFailure', 'InstructionsLoaded', 'ConfigChange',
-  'PermissionRequest', 'Notification', 'CwdChanged', 'TaskCreated', 'FileChanged',
-];
-EXPECTED_HOOKS.forEach((name) => {
+EXPECTED_HOOK_EVENT_NAMES.forEach((name) => {
   test(`Hook '${name}' registered`, () => assert.ok(hookEventNames.includes(name), `missing: ${name}`));
 });
 
@@ -130,26 +108,20 @@ test('PreToolUse has 2 blocks', () => assert.strictEqual(hooksJson.hooks.PreTool
 test('PostToolUse has 3 blocks', () => assert.strictEqual(hooksJson.hooks.PostToolUse.length, 3));
 
 // ==================== MCP Tools (via server index.js grep) ====================
+// v2.1.17 (CO-3.1): EXPECTED_*_MCP_TOOLS imported from docs-code-invariants SoT.
+// v2.1.13 added 3 sprint tools (bkit_sprint_list, bkit_sprint_status, bkit_master_plan_read)
+// — pre-v2.1.17 hardcoded list (16) was stale; SoT (19) is current.
 const pdcaServer = fs.readFileSync(path.join(ROOT, 'servers', 'bkit-pdca-server', 'index.js'), 'utf8');
 const analysisServer = fs.readFileSync(path.join(ROOT, 'servers', 'bkit-analysis-server', 'index.js'), 'utf8');
 
-const EXPECTED_PDCA_TOOLS = [
-  'bkit_pdca_status', 'bkit_pdca_history', 'bkit_feature_list', 'bkit_feature_detail',
-  'bkit_plan_read', 'bkit_design_read', 'bkit_analysis_read', 'bkit_report_read',
-  'bkit_metrics_get', 'bkit_metrics_history',
-];
-const EXPECTED_ANALYSIS_TOOLS = [
-  'bkit_code_quality', 'bkit_gap_analysis', 'bkit_regression_rules',
-  'bkit_checkpoint_list', 'bkit_checkpoint_detail', 'bkit_audit_search',
-];
-EXPECTED_PDCA_TOOLS.forEach((tn) => {
+EXPECTED_PDCA_MCP_TOOLS.forEach((tn) => {
   test(`MCP pdca tool '${tn}' registered`, () => assert.ok(pdcaServer.includes(`name: '${tn}'`)));
 });
-EXPECTED_ANALYSIS_TOOLS.forEach((tn) => {
+EXPECTED_ANALYSIS_MCP_TOOLS.forEach((tn) => {
   test(`MCP analysis tool '${tn}' registered`, () => assert.ok(analysisServer.includes(`name: '${tn}'`)));
 });
-test('Total MCP tools = 16', () => {
-  assert.strictEqual(EXPECTED_PDCA_TOOLS.length + EXPECTED_ANALYSIS_TOOLS.length, 16);
+test('Total MCP tools = 19', () => {
+  assert.strictEqual(EXPECTED_PDCA_MCP_TOOLS.length + EXPECTED_ANALYSIS_MCP_TOOLS.length, 19);
 });
 
 // ==================== Baseline JSON files exist ====================
