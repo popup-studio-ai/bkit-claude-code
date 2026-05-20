@@ -47,10 +47,19 @@ produce a **comprehensive, accurate diff report** between two CC versions.
 
 ### Research Sources (Priority Order)
 
-1. **Official Documentation** — code.claude.com/docs (authoritative)
-2. **GitHub Repository** — anthropics/claude-code (issues, PRs, commits, releases)
-3. **npm Registry** — @anthropic-ai/claude-code (version metadata, changelog)
-4. **Technical Blogs** — Official Anthropic blog, verified community sources
+1. **raw CHANGELOG.md** — `https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md` (authoritative for bullet text and count — model-processed release pages may paraphrase or under-count)
+2. **GitHub Release tag page** — `https://github.com/anthropics/claude-code/releases/tag/v{version}` (secondary; cross-check only)
+3. **Official Documentation** — code.claude.com/docs
+4. **GitHub Repository** — anthropics/claude-code (issues, PRs, commits)
+5. **npm Registry** — @anthropic-ai/claude-code (version metadata, publish date, dist-tags)
+6. **Technical Blogs** — Official Anthropic blog, verified community sources
+
+**Source Triangulation Rule (v2.1.16 errata learning)**:
+Every bullet count, issue count, and release metadata claim MUST be cross-checked
+against ≥2 sources from the list above. When sources conflict, raw CHANGELOG.md
+takes precedence. The v2.1.145 cycle revealed that the model-processed release
+tag page under-reported Added by 1 bullet — raw CHANGELOG.md recovered the
+missing item. Always fetch raw CHANGELOG.md first.
 
 ### Research Protocol
 
@@ -83,24 +92,35 @@ Produce structured output in this format:
 ```markdown
 ## CC v{from} → v{to} Change Report
 
+### Source Verification (NEW — v2.1.16 errata learning)
+| Source | URL | Bullet count by heading | Fetched |
+|--------|-----|------------------------|---------|
+| raw CHANGELOG.md | https://raw.githubusercontent.com/... | Added:N / Fixed:N / Improved:N / Breaking:N | ISO8601 |
+| GitHub release tag | https://github.com/.../releases/tag/v{to} | Added:N / Fixed:N / ... | ISO8601 |
+| Conflict resolution | (if mismatch: raw CHANGELOG.md wins) | — | — |
+
 ### Summary
-- Total changes: N
+- Total changes: N (per raw CHANGELOG.md)
 - HIGH impact: N
 - MEDIUM impact: N
 - LOW impact: N
 - bkit-relevant: N
 
-### Breaking Changes
-| Change | Impact | bkit Affected | Migration |
-|--------|--------|---------------|-----------|
+### Breaking Changes (verbatim)
+| Bullet (raw verbatim) | Impact | bkit Affected | Migration |
+|----------------------|--------|---------------|-----------|
 
-### New Features
-| Feature | Description | bkit Opportunity (ENH-N) |
-|---------|-------------|-------------------------|
+### Added (verbatim, raw CHANGELOG order)
+| # | Bullet (raw verbatim, English) | Impact | bkit Opportunity (ENH-N or "auto-benefit"/"no-op") |
+|---|-------------------------------|--------|---------------------------------------------------|
 
-### Bug Fixes
-| Issue | Description | bkit Impact |
-|-------|-------------|-------------|
+### Fixed (verbatim, raw CHANGELOG order)
+| # | Bullet (raw verbatim, English) | Impact | bkit Surface (grep result or "no surface") |
+|---|-------------------------------|--------|-------------------------------------------|
+
+### Improved (verbatim, raw CHANGELOG order)
+| # | Bullet (raw verbatim, English) | Impact | bkit Impact |
+|---|-------------------------------|--------|-------------|
 
 ### System Prompt Changes
 - Token delta: +/- N tokens
@@ -119,10 +139,18 @@ Produce structured output in this format:
 ### Quality Standards
 
 - **Accuracy**: Every claim must have a source link
+- **Verbatim quotation**: Release-note bullets MUST be quoted verbatim in
+  English under their original heading (Added/Fixed/Improved/Breaking),
+  not paraphrased or summarized. Korean commentary may follow each bullet.
+- **Source triangulation**: Bullet counts and metadata require ≥2 sources;
+  raw CHANGELOG.md wins on conflict.
 - **Completeness**: No known change should be missing
 - **Objectivity**: Report facts, not opinions
 - **Structured**: Use tables for scannable comparison
 - **Korean docs reference**: Note which changes affect Korean documentation
+- **No invented bullets**: If a "Key Items of Interest" section is generated
+  by a model-processed source, cross-check each item against raw CHANGELOG
+  before including it — model summaries may hallucinate items.
 
 ### Anti-Patterns (Do NOT)
 
@@ -130,6 +158,11 @@ Produce structured output in this format:
 - Do NOT conflate changes from different versions
 - Do NOT skip "minor" changes — they may affect bkit
 - Do NOT include unverified blog rumors as facts
+- **Do NOT paraphrase release-note bullets** — quote verbatim in English
+- **Do NOT report a bullet count from a single source** — require ≥2 sources
+- **Do NOT trust model-processed summaries** (WebFetch with a prompt) as
+  primary — they may omit, paraphrase, or hallucinate. Use raw URLs.
+- **Do NOT report "Key Items of Interest" not present in raw CHANGELOG**
 
 ### R-Series Regression Tracker (v2.1.14 Sub-Sprint 5 — ENH-296 + ENH-306)
 

@@ -49,19 +49,44 @@ CC version changes to concrete bkit impact and improvement opportunities.
 
 ### bkit Architecture Knowledge
 
-#### Core Structure (v1.6.2)
+#### Core Structure — DYNAMIC, MEASURE FIRST
+
+**CRITICAL**: Counts below are illustrative scaffolding ONLY. They change every release.
+You MUST measure actual counts via Bash BEFORE any analysis (anti-pattern: trusting
+stale snapshots). The hard-coded counts in this section are intentionally absent
+to force measurement.
+
 ```
 bkit-claude-code/
-├── agents/ (29)        — Agent definitions (.md frontmatter)
-├── skills/ (31)        — Skill definitions (SKILL.md)
-├── hooks/ (hooks.json) — 12 hook events
-├── scripts/ (50)       — Hook handler scripts
-├── lib/ (41 modules)   — Core library (~10K LOC, 210 exports)
-├── templates/ (14)     — PDCA document templates
-├── bkit-system/        — Philosophy & component catalog
-├── test/ (1,186 TC)    — 8-category test suite
-└── evals/              — Skill evaluation framework
+├── agents/            — Agent definitions (.md frontmatter)
+├── skills/            — Skill definitions (SKILL.md)
+├── hooks/hooks.json   — Hook event registry
+├── scripts/           — Hook handler scripts
+├── lib/               — Core library (subdirs include domain/, application/, orchestrator/, defense/, infra/, audit/, team/)
+├── templates/         — PDCA + Sprint document templates
+├── mcp-servers/       — MCP server implementations (bkit-pdca, bkit-analysis)
+├── docs/              — Korean planning/design/analysis/report docs
+├── memory/            — Project memory (cc_version_history_*.md, MEMORY.md)
+├── test/              — Multi-layer test suite
+└── evals/             — Skill evaluation framework
 ```
+
+**Required measurement protocol (run before any Phase 1 analysis)**:
+
+```bash
+echo "agents:" && ls -1 agents/ | wc -l
+echo "skills:" && ls -1 -d skills/*/ | wc -l
+echo "hook events:" && jq '.hooks | keys | length' hooks/hooks.json
+echo "hook blocks:" && jq '[.hooks | to_entries[] | .value | length] | add' hooks/hooks.json
+echo "scripts:" && ls -1 scripts/ | wc -l
+echo "lib subdirs:" && ls -d lib/*/ | wc -l
+echo "lib modules:" && find lib -name "*.js" | wc -l
+echo "bkit version:" && jq -r '.version' bkit.config.json
+echo "plugin version:" && jq -r '.version' .claude-plugin/plugin.json
+```
+
+Report measured values inline with the source tool, e.g.:
+`agents: 34 (source: ls -1 agents/)`.
 
 #### 3 Core Philosophies
 1. **Automation First** — Zero manual verification; all changes auto-validated by TC
@@ -81,11 +106,29 @@ bkit-claude-code/
 
 ### Analysis Protocol
 
+#### Phase 0: Direct Measurement Baseline (MANDATORY)
+Before any analysis, run the measurement protocol above and record results
+in your output as "Baseline measurements" table. Every subsequent claim about
+counts (skills, agents, hooks, files, grep occurrences) MUST cite the Bash
+command that produced it. Memory snapshots and prior reports are advisory ONLY.
+
 #### Phase 1: Component Mapping
 For each CC change from the researcher's report:
 1. Identify which bkit components are affected
 2. Trace dependency chain (change → lib → script → hook/agent/skill)
 3. Classify impact: Breaking / Enhancement / Neutral
+4. **For every grep claim**: include the exact grep pattern + result count + sample line
+
+#### Numeric Correction Protocol (NEW — v2.1.16 errata learning)
+
+When proposing a memory correction such as "agents 34 → 36":
+1. Run the measurement command yourself (e.g. `ls -1 agents/ | wc -l`)
+2. If your measurement differs from memory, prefer YOUR measurement (cite source)
+3. If memory and measurement disagree, flag as "errata candidate" — never
+   silently propose an unverified correction
+4. Do NOT propose a correction that increases a count without `ls`/`find`
+   evidence in the same response (the v2.1.145 cycle leaked an unverified
+   `34 → 36` correction that polluted memory until raw cross-check caught it)
 
 #### Phase 2: ENH Opportunity Identification
 For each CC new feature:
@@ -158,3 +201,7 @@ For each ENH, identify:
 - Do NOT skip philosophy compliance checks
 - Do NOT assign ENH numbers that conflict with existing ones
 - Do NOT recommend changes without checking current implementation first
+- **Do NOT trust hard-coded stats in this file or in memory** — measure first via Bash
+- **Do NOT propose a numeric correction (e.g. "X → Y") without showing the measurement command**
+- **Do NOT report a grep result without including the exact pattern + count**
+- **Do NOT cite a line range (e.g. "line 46-48") without actually Read()-ing those lines first**
