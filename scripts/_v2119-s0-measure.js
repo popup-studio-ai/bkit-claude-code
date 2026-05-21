@@ -34,6 +34,10 @@ const ROOT = process.cwd();
 
 const sqmCalc = require(path.join(ROOT, 'lib/quality/sqm-calculator.js'));
 const auditLogger = require(path.join(ROOT, 'lib/audit/audit-logger.js'));
+// v2.1.19 S5 F5-1 (CO-S2-2 + CO-S0-1): delegate docs-code drift detection to
+// the S2 code-block-aware checker. Eliminates 2 false positives originally
+// observed in S0 baseline (phase-3-mockup + phase-9-deployment).
+const SKILLS_CHECKER = require(path.join(ROOT, 'scripts/check-skills-docs-code-sync.js'));
 
 // ============================================================
 // Raw data collectors (Infrastructure adapters)
@@ -92,6 +96,10 @@ function evaluateSkillInvariant(name, skillsRoot, bkitRoot) {
 }
 
 function collectDocsCodeData() {
+  // v2.1.19 S5 F5-1 (CO-S2-2): delegate to S2 checker which uses
+  // code-block-aware stripCodeBlocks (lib/util/markdown-parse.js). The
+  // local `evaluateSkillInvariant` above is kept as legacy fallback if
+  // SKILLS_CHECKER fails to load.
   const skillsRoot = path.join(ROOT, 'skills');
   if (!fs.existsSync(skillsRoot)) {
     return { skills: [] };
@@ -101,17 +109,39 @@ function collectDocsCodeData() {
       try { return fs.statSync(path.join(skillsRoot, d)).isDirectory(); }
       catch (_) { return false; }
     });
-  const skills = skillNames.map(name => evaluateSkillInvariant(name, skillsRoot, ROOT));
+  const skills = skillNames.map(name => {
+    try {
+      const r = SKILLS_CHECKER.evaluateSkillInvariant(name);
+      return {
+        name: r.name,
+        skillMdPath: r.skillMdPath,
+        invariantPass: r.invariantPass,
+        failures: r.failures || [],
+      };
+    } catch (_) {
+      // Fallback to local evaluator (legacy S0 path) if checker unavailable
+      return evaluateSkillInvariant(name, skillsRoot, ROOT);
+    }
+  });
   return { skills };
 }
 
 /**
- * Find first file matching simple glob (only supports * wildcard in last segment).
+ * Find first file matching a regex pattern.
+ *
+ * v2.1.19 S5 F5-1 (CO-S0-5 fix): the previous implementation
+ * `pattern.replace(/\\./g, '\\\\.')` over-escaped already-escaped patterns
+ * — `v2116-.*\\.master-plan\\.md` became `v2116-\\.\\..*\\\\\\.master-plan\\\\\\.md`
+ * which never matched any real file. Result: v2.1.16 master plan was
+ * silently reported as missing (S0 sprintSelfDogfoodRunRate raw data wrong).
+ *
+ * New contract (S5 ADR S5-001): caller passes a regex-ready string.
+ * Anchored with ^...$.
  */
-function findFirstMatching(dirRelative, pattern) {
+function findFirstMatching(dirRelative, regexStr) {
   const dir = path.join(ROOT, dirRelative);
   if (!fs.existsSync(dir)) return null;
-  const re = new RegExp('^' + pattern.replace(/\./g, '\\.').replace(/\*/g, '.*') + '$');
+  const re = new RegExp('^' + regexStr + '$');
   for (const f of fs.readdirSync(dir)) {
     if (re.test(f)) return path.join(dir, f);
   }
