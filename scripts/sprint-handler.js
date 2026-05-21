@@ -44,6 +44,7 @@ const VALID_ACTIONS = Object.freeze([
   'feature', 'pause', 'resume', 'fork', 'help',
   'master-plan', // S2-UX v2.1.13 — 16th action
   'measure',     // F3 v2.1.16 (Issue #94) — 17th action
+  'trust',       // F2 v2.1.18 (Issue #101) — 18th action — /sprint trust mutation
 ]);
 
 /**
@@ -71,6 +72,78 @@ function normalizeTrustLevel(args) {
   if (typeof raw !== 'string') return DEFAULT_TRUST_LEVEL;
   const upper = raw.toUpperCase();
   return VALID_TRUST_LEVELS.includes(upper) ? upper : DEFAULT_TRUST_LEVEL;
+}
+
+// ============================================================
+// v2.1.18 (Issue #101, F2) — Trust mutation helpers
+// ============================================================
+
+/** Numeric rank for trust level comparison (downgrade/severity calc). */
+const LEVEL_RANK = Object.freeze({ L0: 0, L1: 1, L2: 2, L3: 3, L4: 4 });
+
+/**
+ * Check if a trust-level transition is a downgrade.
+ * @param {string} from
+ * @param {string} to
+ * @returns {boolean}
+ */
+function isDowngrade(from, to) {
+  return LEVEL_RANK[to] < LEVEL_RANK[from];
+}
+
+/**
+ * Classify trust-level transition severity.
+ * @param {string} from
+ * @param {string} to
+ * @returns {'upgrade'|'minor'|'major'} 'major' for ≥2-level downgrade.
+ */
+function severity(from, to) {
+  const diff = LEVEL_RANK[from] - LEVEL_RANK[to];
+  if (diff <= 0) return 'upgrade';     // L1 → L3
+  if (diff === 1) return 'minor';      // L3 → L2
+  return 'major';                       // L4 → L1 (or larger)
+}
+
+/**
+ * Load trust score from .bkit/state/trust-profile.json (0-100, 6-component
+ * weighted sum). Returns deps.trustScore when injected (for testing) or 0
+ * when trust-profile is absent/unreadable.
+ *
+ * @param {{ trustScore?: number }} [deps]
+ * @returns {Promise<number>}
+ */
+async function loadTrustScore(deps) {
+  if (deps && typeof deps.trustScore === 'number') return deps.trustScore;
+  try {
+    const fsp = require('fs').promises;
+    const path = require('path');
+    const projectRoot = process.cwd();
+    const tp = await fsp.readFile(
+      path.join(projectRoot, '.bkit', 'state', 'trust-profile.json'),
+      'utf8'
+    );
+    const parsed = JSON.parse(tp);
+    if (typeof parsed.trustScore === 'number') return parsed.trustScore;
+  } catch (_) {
+    // trust-profile missing or unreadable — fall back to 0 (most restrictive)
+  }
+  return 0;
+}
+
+/**
+ * Resolve effective actor for audit (CTO §E6 spoofing mitigation).
+ * Priority: explicit args.actor (if valid) > env CLAUDE_AGENT_ID → 'agent' >
+ * default 'user'.
+ *
+ * @param {Object} args
+ * @returns {'user'|'agent'|'system'}
+ */
+function resolveActor(args) {
+  if (args && typeof args.actor === 'string') {
+    if (['user', 'agent', 'system'].includes(args.actor)) return args.actor;
+  }
+  if (process.env.CLAUDE_AGENT_ID) return 'agent';
+  return 'user';
 }
 
 /**
@@ -224,6 +297,7 @@ async function handleSprintAction(action, args, deps) {
     case 'help':    return handleHelp();
     case 'master-plan': return handleMasterPlan(a, infra, d);
     case 'measure': return handleMeasure(a, infra, d);
+    case 'trust':   return handleTrust(a, infra, d);
     default:        return { ok: false, error: 'Unreachable action: ' + action };
   }
 }
@@ -316,6 +390,153 @@ async function handleList(_args, infra) {
     merged.push({ source: 'docs', id: d.id, masterPlanPath: d.masterPlanPath });
   }
   return { ok: true, sprints: merged, count: merged.length };
+}
+
+/**
+ * v2.1.18 (Issue #101, F2) — /sprint trust mutation command.
+ *
+ * Mutates sprint.autoRun.trustLevelAtStart with downgrade guardrail (major
+ * downgrade = ≥2-level diff blocked unless trustScore >= 80 OR --force) and
+ * audit emission (always, including idempotent from===to noop path — CTO §C3).
+ *
+ * Recovers @pruge dandi-village-ledger s1-foundation L1 lockout scenario
+ * (Plan §1.2, PRD US-101 + US-RECOVERY).
+ *
+ * @param {Object} args
+ * @param {string} args.id              - sprint id (required)
+ * @param {string} args.to              - target level 'L0'..'L4' (required, case-insensitive)
+ * @param {string} [args.reason]        - mutation reason (audit trail, recommended)
+ * @param {boolean} [args.force]        - bypass downgrade guardrail
+ * @param {'user'|'agent'|'system'} [args.actor]  - explicit actor override
+ * @param {Object} infra                - SprintInfra (stateStore)
+ * @param {{ trustScore?: number, currentLevel?: number }} [deps] - DI for tests
+ * @returns {Promise<Object>}
+ */
+async function handleTrust(args, infra, deps) {
+  if (!args || !args.id) {
+    return { ok: false, blockReason: 'sprint_not_found', error: 'trust requires { id }' };
+  }
+  if (!args.to || typeof args.to !== 'string') {
+    return { ok: false, blockReason: 'missing_to', error: 'trust requires --to <L0|L1|L2|L3|L4>' };
+  }
+  const to = args.to.toUpperCase();
+  if (!VALID_TRUST_LEVELS.includes(to)) {
+    return {
+      ok: false,
+      blockReason: 'invalid_level',
+      error: `--to must be one of ${VALID_TRUST_LEVELS.join('|')} (got: ${args.to})`,
+    };
+  }
+
+  const sprint = await infra.stateStore.load(args.id);
+  if (!sprint) {
+    return { ok: false, blockReason: 'sprint_not_found', error: 'Sprint not found: ' + args.id };
+  }
+
+  const from = (sprint.autoRun && sprint.autoRun.trustLevelAtStart) || DEFAULT_TRUST_LEVEL;
+  const actor = resolveActor(args);
+  const now = new Date().toISOString();
+  const audit = require('../lib/audit/audit-logger');
+
+  // Idempotent path — emit audit with noop:true (CTO §C3 모니터링 사각지대 차단)
+  if (from === to) {
+    try {
+      await audit.writeAuditLog({
+        action: 'sprint_trust_changed',
+        category: 'sprint',
+        actor: actor,
+        result: 'success',
+        target: args.id,
+        targetType: 'feature',
+        blastRadius: 'low',
+        details: {
+          sprintId: args.id,
+          from,
+          to,
+          reason: args.reason || null,
+          trustScoreAtMutation: null,
+          forced: !!args.force,
+          noop: true,
+          actor,
+          timestamp: now,
+        },
+      });
+    } catch (_) { /* audit failure is non-fatal for no-op path */ }
+    return {
+      ok: true,
+      sprintId: args.id,
+      from,
+      to,
+      noop: true,
+      actor,
+      reason: args.reason || null,
+    };
+  }
+
+  // Downgrade guardrail — major (≥2 levels) downgrade requires trustScore >= 80
+  // OR --force (CTO §A5 redline: trust-profile.json 'trustScore' field, 0-100)
+  let trustScore = null;
+  if (isDowngrade(from, to) && severity(from, to) === 'major') {
+    trustScore = await loadTrustScore(deps);
+    if (trustScore < 80 && !args.force) {
+      return {
+        ok: false,
+        blockReason: 'guardrail_blocked',
+        sprintId: args.id,
+        from,
+        to,
+        trustScoreAtMutation: trustScore,
+        error: `Major downgrade ${from} → ${to} requires trustScore >= 80 (current: ${trustScore}) or --force`,
+      };
+    }
+  }
+
+  // Mutation
+  sprint.autoRun = sprint.autoRun || {};
+  sprint.autoRun.trustLevelAtStart = to;
+  await infra.stateStore.save(sprint);
+
+  // Audit — --force OR major downgrade → blastRadius 'high' (Defense Layer 6 alarm)
+  const blastRadius = args.force ? 'high' :
+    (severity(from, to) === 'major' ? 'high' : 'low');
+
+  let auditEntryId = null;
+  try {
+    const entry = await audit.writeAuditLog({
+      action: 'sprint_trust_changed',
+      category: 'sprint',
+      actor: actor,
+      result: 'success',
+      target: args.id,
+      targetType: 'feature',
+      blastRadius,
+      details: {
+        sprintId: args.id,
+        from,
+        to,
+        reason: args.reason || null,
+        trustScoreAtMutation: trustScore,
+        forced: !!args.force,
+        noop: false,
+        actor,
+        timestamp: now,
+      },
+    });
+    auditEntryId = (entry && entry.id) || null;
+  } catch (_) { /* audit failure does not roll back mutation (decision: persistence priority) */ }
+
+  return {
+    ok: true,
+    sprintId: args.id,
+    from,
+    to,
+    reason: args.reason || null,
+    actor,
+    forced: !!args.force,
+    trustScoreAtMutation: trustScore,
+    blastRadius,
+    auditEntryId,
+  };
 }
 
 async function handlePhase(args, infra, deps) {
@@ -718,9 +939,14 @@ async function handleMeasure(args, infra, deps) {
     };
   }
 
-  const trustLevel = typeof args.trustLevel === 'string'
-    ? args.trustLevel
-    : (sprint.autoRun && sprint.autoRun.trustLevelAtStart);
+  // v2.1.18 (Issue #102, F3): normalize via normalizeTrustLevel (chain:
+  //   args.trustLevel > args.trust > args.trustLevelAtStart) — previously this
+  //   path checked args.trustLevel only, silently ignoring --trust per skill
+  //   docs §10.2. Falls back to sprint state when all args.* absent.
+  let trustLevel = normalizeTrustLevel(args);
+  if (!args.trustLevel && !args.trust && !args.trustLevelAtStart) {
+    trustLevel = (sprint.autoRun && sprint.autoRun.trustLevelAtStart) || trustLevel;
+  }
   const source = (args.source === 'auto' || args.source === 'manual') ? args.source : 'manual';
 
   // Sequential dispatch (ENH-292) via the UC's aggregator.
@@ -747,9 +973,11 @@ async function handleMeasure(args, infra, deps) {
 }
 
 async function runPhaseGates(sprint, args, infra, deps) {
-  const trustLevel = typeof args.trustLevel === 'string'
-    ? args.trustLevel
-    : (sprint.autoRun && sprint.autoRun.trustLevelAtStart);
+  // v2.1.18 (Issue #102, F3): normalize via normalizeTrustLevel — see handleMeasure for rationale.
+  let trustLevel = normalizeTrustLevel(args);
+  if (!args.trustLevel && !args.trust && !args.trustLevelAtStart) {
+    trustLevel = (sprint.autoRun && sprint.autoRun.trustLevelAtStart) || trustLevel;
+  }
   const source = (args.source === 'auto' || args.source === 'manual') ? args.source : 'manual';
   const ucDeps = {
     agentTaskRunner: deps.agentTaskRunner,

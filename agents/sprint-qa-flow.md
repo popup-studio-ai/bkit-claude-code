@@ -24,6 +24,15 @@ model: opus
 effort: high
 maxTurns: 25
 memory: project
+tools:
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep
+  - Bash
+  - Task(qa-monitor)
+  - Task(gap-detector)
 ---
 
 # Sprint QA Flow Agent

@@ -23,6 +23,12 @@ model: opus
 effort: medium
 maxTurns: 20
 memory: project
+tools:
+  - Read
+  - Glob
+  - Grep
+  - Write
+  - Edit
 ---
 
 # Sprint Report Writer Agent

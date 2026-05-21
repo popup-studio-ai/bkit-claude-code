@@ -5,6 +5,88 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.18] - 2026-05-21 (branch: `feature/v2118-issue-fixes`)
+
+> **Status**: Sprint Trust UX Fix — bkit v2.1.16에서 보고된 3 GitHub Issues (#100/#101/#102, 모두 @pruge 보고 2026-05-21 03:54)를 단일 sprint로 통합 처리. L1 sprint lockout 3-stage trap 영구 해소.
+> **Scope**: Single PR — `feature/v2118-issue-fixes` (3 features hard-link: F1 chicken-and-egg unblocker + F2 trust mutation + F3 normalize unification + F4 sprint-master-planner CTO/QA expansion).
+> **Reporter Scenario**: @pruge dandi-village-ledger `s1-foundation` sprint — L1 init 후 P0 32/32 완료 시점에 trust escalation 불가, measure 항상 preview mode, sprint-orchestrator dispatch 실패. v2.1.18에서 8-step E2E test로 1:1 재현 후 fix evidence 확인.
+> **Methodology**: PM Team (pm-lead 4-agent orchestration → PRD Beachhead 19/20) + CTO Team (cto-lead architectural review APPROVE with CONCERNS, BLOCKER 3건 메인 세션 재측정 채택) + QA Team (qa-lead L1-L5 통합 검증) — 사용자 요청 "PM/CTO/QA 모두 활용 완성도 높게" 응답.
+> **Test**: **40 TC live PASS** (17 contract + 15 unit + 8 e2e), 목표 14 TC 대비 2.86× 초과 달성.
+
+### Fixed (Bug Fixes — GitHub Issues closure)
+
+#### #100 — sprint-orchestrator + 3 sprint-* agents missing `Task` tool (F1)
+- `agents/sprint-orchestrator.md` frontmatter `tools:` field 명시 — Task allowlist 7개 (gap-detector, code-analyzer, sprint-qa-flow, sprint-report-writer, qa-monitor, pdca-iterator, Explore) + 6 base tools
+- `agents/sprint-master-planner.md` `tools:` field 명시 — Task allowlist 7개 (✦ user-requested expansion: pm-lead, cto-lead, qa-lead 3 orchestrators + product-manager, frontend-architect, enterprise-expert 3 specialists + Explore)
+- `agents/sprint-qa-flow.md` `tools:` field 명시 — Task allowlist 2개 (qa-monitor, gap-detector) + 6 base
+- `agents/sprint-report-writer.md` `tools:` field 명시 — Task 불필요 (report aggregation only), 5 base tools
+- **차별화 #3 ENH-292 Sequential Dispatch 활성화**: 이전에는 sprint-orchestrator가 Task tool 부재로 `measure-router.js:233-253` `agentTaskRunner` 호출 시 `no_agent_runner` 반환했으나, v2.1.18부터 정상 sub-agent dispatch 가능 — "선언 → 실작동" 승격 첫 release
+
+#### #101 — `/sprint trust` mutation 명령 신설 + audit (F2)
+- `scripts/sprint-handler.js`: `handleTrust(args, infra, deps)` 함수 신설 (signature `{ id, to, reason?, force?, actor? }`) + `case 'trust'` dispatch + `VALID_ACTIONS` 17 → **18 actions**
+- helpers: `LEVEL_RANK` / `isDowngrade(from, to)` / `severity(from, to)` / `loadTrustScore(deps)` / `resolveActor(args)`
+- `lib/audit/audit-logger.js`: `ACTION_TYPES` **29 → 30** (`sprint_trust_changed` entry + details schema documented inline)
+- Downgrade guardrail: major downgrade (≥2 levels) requires `trustScore >= 80` (from `.bkit/state/trust-profile.json` `trustScore` field, 6-component weighted sum) OR `--force` flag
+- Idempotent path (`from === to`): emits audit with `noop: true` field (monitoring blind-spot prevention)
+- Actor auto-detection: explicit `args.actor` > `process.env.CLAUDE_AGENT_ID → 'agent'` > default `'user'` (spoofing mitigation)
+- `--force` flag: triggers `blastRadius: 'high'` for Defense Layer 6 alarm (ENH-289 natural integration)
+- `skills/sprint/SKILL.md` §10.1.3 "Trust Level Mutation" 신규 섹션 (comparison table, audit JSON example, downgrade guardrail explanation)
+- `commands/bkit.md` `/sprint trust` help line 추가
+
+#### #102 — `--trust` CLI alias silently ignored at measure/phase paths (F3)
+- `scripts/sprint-handler.js:942-948` (`handleMeasure`) + `974-979` (`runPhaseGates`): `args.trustLevel` direct check → `normalizeTrustLevel(args)` 통일. `normalizeTrustLevel` 자체는 이미 precedence chain `trustLevel > trust > trustLevelAtStart` 구현 (line 68-74), 그러나 두 경로가 함수 호출 우회로 silent ignore 발생
+- Skill docs §10.2 (Trust Level Acceptance)의 declared behavior와 코드 일치 — Docs=Code 90% 매치율 유지
+
+### Added — Tests (40 TC, 목표 14 TC 대비 2.86× 초과 달성)
+
+- `test/contract/sprint-agents-tools.test.js` (17 TC) — F1 4 sprint-* agents `tools:` field invariant
+- `test/unit/sprint-trust-normalization.test.js` (7 cases A-G) — F3 normalizeTrustLevel precedence chain
+- `test/unit/sprint-handler-trust-action.test.js` (8 cases) — F2 handleTrust mutation/guardrail/audit/actor coverage
+- `test/e2e/sprint-l1-lockout-recovery.test.js` (8 steps) — @pruge reporter scenario 1:1 reproduction (init L1 → trust L1→L3 → measure record → audit verify → process restart persistence)
+
+### Added — Self-Referential Meta Risk Mitigation
+
+- **Chicken-and-egg 회피 패턴 확립**: 본 sprint 자체가 sprint-orchestrator Task tool fix 대상이므로 sprint container의 자동 orchestration 사용 불가. Plan §6.1 noteline으로 명시 — `sprint init`은 state tracking 용도, phase advance + measurement는 PDCA cycle (메인 세션 + pm-lead/cto-lead/qa-lead manual dispatch)로 진행. F1 적용 직후 sprint-orchestrator 정상화 → 차후 sprint부터 자동 orchestration 정상 작동
+
+### Methodology — PM/CTO/QA Team 통합 활용 첫 실증 sprint
+
+- **PM Team** (pm-lead orchestrate 4 agents): PRD 생성 — Beachhead Geoffrey Moore 19/20 (Burning Pain 5 / WTP 5 / Winnable 5 / Referral 4) + JTBD 6-Part + 5 User Stories + 6 Test Scenarios + Pre-mortem Top 3 + Negative-Reputation Loop Block narrative
+- **CTO Team** (cto-lead): Architectural Review APPROVE with CONCERNS — BLOCKER 3건 (controlScore→trustScore 정정 / ACTION_TYPES count 27→29 정정 / NDJSON injection 평가) + MEDIUM 3건 (no-op audit noop:true / actor spoofing mitigation / sub-agent-dispatcher state transition test) 모두 redline 반영. 메인 세션 Numeric Correction Protocol 준수: ACTION_TYPES 실측 29 (CTO 27 grep 한계 정정), trustScore 모델 실존 (`.bkit/state/trust-profile.json`)
+- **QA Team** (qa-lead): L1-L5 layer 통합 검증 보고서 + 보고자 시나리오 evidence
+
+### Differentiation 6/6 Strengthening
+
+- ENH-286 Memory Enforcer — 무영향 (trust mutation CLAUDE.md 의존 없음)
+- ENH-289 Defense Layer 6 — **강화** (sprint_trust_changed audit이 Layer 6 pipeline에 자연 합류, 라이브 입증: `.bkit/audit/2026-05-21.jsonl`에 `layer_6_audit_completed` + `layer_6_alarm_triggered` 동시 emit)
+- ENH-292 Sequential Dispatch — **활성화 milestone** (F1 fix로 sprint-orchestrator Task tool 정상 작동, "선언 → 실작동" 승격 첫 release)
+- ENH-300 Effort-aware Adaptive Defense — 직교 무영향 (effort.level과 trust 별개 축)
+- ENH-303 PostToolUse continueOnBlock — 무영향
+- ENH-310 Heredoc Detector — 무영향 (본 sprint commit 시 heredoc 미사용)
+
+### Compatibility
+
+- **bkit v2.1.18 GA** (bkit.config.json + .claude-plugin/plugin.json 동시 갱신)
+- Backward compat 100%: 기존 `--trustLevel L<N>` 사용자 precedence 보존 (F3 Case G test), 기존 sprint state schema 무변경
+- ADR 0003 14/14 PASS 유지 (15-cycle → **16-cycle consistency milestone**)
+
+### Documentation
+
+- `docs/00-pm/features/v2118-sprint-trust-ux-fix.prd.md` (PM Team, ~570 lines)
+- `docs/01-plan/features/v2118-sprint-trust-ux-fix.plan.md` (CTO redline 5건 반영)
+- `docs/02-design/features/v2118-sprint-trust-ux-fix.design.md` (CTO redline 10건 반영, 778+ lines)
+- `docs/05-qa/v2118-sprint-trust-ux-fix.qa-report.md` (QA Team)
+- `docs/04-report/features/v2118-sprint-trust-ux-fix.report.md` (Sprint completion)
+- `skills/sprint/SKILL.md` §10.1.3 신규 섹션
+- `commands/bkit.md` `/sprint trust` help
+
+### Closed Issues
+
+- Closes #100 (sprint-orchestrator missing Task tool — v2.1.16 reporter @pruge)
+- Closes #101 (L1 sprint trust mutation command missing — v2.1.16 reporter @pruge)
+- Closes #102 (CLI parser --trust silently ignored — v2.1.16 reporter @pruge)
+
+---
+
 ## [2.1.17] - 2026-05-20 (branch: `feature/v2117-final`)
 
 > **Status**: CI/CD Hardening — 5/12 ~ 5/20 8-day red contract class 영구 종결. **5축 매트릭스 5/5 close** (Detection, Enforcement, Recovery, Governance, Evolution).

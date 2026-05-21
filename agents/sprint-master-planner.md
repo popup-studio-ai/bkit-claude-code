@@ -23,6 +23,24 @@ model: opus
 effort: high
 maxTurns: 25
 memory: project
+tools:
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep
+  - Bash
+  # PM Team orchestrator (pm-discovery / pm-strategy / pm-research / pm-prd 내부 spawn)
+  - Task(pm-lead)
+  # CTO Team orchestrator (enterprise-expert / security-architect / infra-architect / frontend-architect 내부 spawn)
+  - Task(cto-lead)
+  # QA Team orchestrator (qa-strategist / qa-test-planner / qa-monitor / qa-debug-analyst 내부 spawn)
+  - Task(qa-lead)
+  # Specialist 직접 호출 (lead orchestrator 우회 필요한 경우)
+  - Task(product-manager)       # single-feature PRD (legacy 호환)
+  - Task(frontend-architect)    # UI/UX design layer 직접 호출
+  - Task(enterprise-expert)     # architecture decisions 직접 호출 (legacy 호환)
+  - Task(Explore)               # template + ref scanning
 ---
 
 # Sprint Master Planner Agent

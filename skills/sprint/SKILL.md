@@ -270,6 +270,103 @@ Use this when you want to advance past the scope boundary for one specific
 transition (e.g., L2 design → do after design review) without permanently
 relaxing the trust level.
 
+### 10.1.3 Trust Level Mutation (Persistent) — v2.1.18 (Issue #101)
+
+`/sprint trust <sprintId> --to <Level> [--reason "<text>"] [--force]`
+
+Mutate the **stored** `sprint.autoRun.trustLevelAtStart` for a specific
+sprint. Unlike `--approve` (single-use scope boundary override, §10.1.2) or
+`--trustLevel L<N>` (per-call volatile override), this command **persists**
+the trust level across all subsequent operations on the sprint.
+
+**Use cases**:
+- L1 sprint started conservatively, ready to escalate after design review.
+- Demoting L4 sprint to L2 mid-flight after security concern.
+- Recovering from L1 "preview-mode lockout" (#101 v2.1.16 root cause — @pruge
+  dandi-village-ledger `s1-foundation` scenario).
+
+**Example**:
+
+```bash
+$ /sprint trust s1-foundation --to L3 --reason "P0 32/32 ready for measurement"
+{
+  "ok": true,
+  "sprintId": "s1-foundation",
+  "from": "L1",
+  "to": "L3",
+  "reason": "P0 32/32 ready for measurement",
+  "actor": "user",
+  "forced": false,
+  "trustScoreAtMutation": null,
+  "blastRadius": "low",
+  "auditEntryId": "..."
+}
+
+$ /sprint measure s1-foundation --gate M1
+{ "trustLevel": "L3", "mode": "record", "value": 92.3, ... }  # ✦ now record mode
+```
+
+**Downgrade Guardrail**:
+
+Major downgrades (≥2 levels, e.g. L4 → L2 or L3 → L1) require:
+- `trustScore >= 80` (from `.bkit/state/trust-profile.json` `trustScore` field
+  — 6-component weighted sum: pdcaCompletionRate 0.25 / gatePassRate 0.2 /
+  rollbackFrequency 0.15 / destructiveBlockRate 0.15 / iterationEfficiency 0.15
+  / userOverrideRate 0.1), **OR**
+- `--force` flag (explicit override + `forced: true` audit + `blastRadius: 'high'`
+  for Defense Layer 6 alarm).
+
+Minor downgrades (1-level diff, e.g. L3 → L2) are not blocked.
+
+**Idempotent Path**:
+
+`from === to` (e.g. `--to L3` when sprint already at L3) returns
+`{ ok: true, noop: true }` and **also emits audit with `noop: true`** field
+(CTO §C3 review: monitoring blind-spot prevention — surfaces automation
+patterns hitting idempotent paths).
+
+**Actor Auto-Detection** (CTO §E6 spoofing mitigation):
+
+`actor` field is auto-detected:
+- explicit `args.actor` (if 'user'|'agent'|'system'), else
+- `process.env.CLAUDE_AGENT_ID` set → `'agent'`, else
+- default `'user'`.
+
+**Audit**:
+
+Every mutation (including no-op) emits an `audit-logger` entry:
+
+```json
+{
+  "action": "sprint_trust_changed",
+  "category": "sprint",
+  "actor": "user",
+  "target": "s1-foundation",
+  "targetType": "feature",
+  "blastRadius": "low",
+  "details": {
+    "sprintId": "s1-foundation",
+    "from": "L1",
+    "to": "L3",
+    "reason": "...",
+    "trustScoreAtMutation": null,
+    "forced": false,
+    "noop": false,
+    "actor": "user",
+    "timestamp": "2026-05-21T..."
+  }
+}
+```
+
+**Comparison Table**:
+
+| Command | Scope | Persistence | Use When |
+|---------|-------|------------|----------|
+| `/sprint phase --to ... --approve` | Single transition | Single-use (state 무변경) | 1회 boundary 우회 (#95) |
+| `/sprint trust --to <L>` ✦ | Sprint 전체 (this sprint only) | Persistent (sprint.autoRun.trustLevelAtStart) | 본 sprint 정책 영구 변경 |
+| `/bkit:control level <N>` | Global (all sprints + PDCA) | Persistent (~/.bkit/state/control.json) | 전역 automation 정책 변경 |
+| `--trustLevel <L>` (per-call) | Single call | Volatile (state 무변경) | 1회 debug override |
+
 ### 10.2 Trust Level Acceptance
 
 All actions that accept a Trust Level recognize three input forms (handled

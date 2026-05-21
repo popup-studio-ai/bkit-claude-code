@@ -61,6 +61,8 @@ Sprint Management (v2.1.13 — meta-container for 1+ features)
   /sprint resume <id>        Resume from paused state
   /sprint fork <id> --new <newId>      Carry incomplete features → new sprint
   /sprint feature <id> --action list|add|remove --feature <name>
+  /sprint trust <id> --to <L0-L4> [--reason "..."] [--force]
+                             Mutate sprint trust level (persistent, audit-logged) — v2.1.18 (Issue #101)
   /sprint help               Sprint Management help
   Korean guide: docs/06-guide/sprint-management.guide.md
   Migration:    docs/06-guide/sprint-migration.guide.md (PDCA↔Sprint, orthogonal coexistence)
@@ -112,7 +114,7 @@ Output Styles (v1.5.3)
 | Function | Description |
 |----------|-------------|
 | `/pdca` | PDCA cycle management (pm, plan, design, do, analyze, iterate, report, archive, cleanup, team, status, next) |
-| `/sprint` | **Sprint Management (v2.1.13)** — meta-container grouping 1+ features (16 sub-actions: init/start/status/list/watch/phase/iterate/qa/report/archive/pause/resume/fork/feature/help/master-plan). Orthogonal coexistence with PDCA |
+| `/sprint` | **Sprint Management (v2.1.13)** — meta-container grouping 1+ features (**18 sub-actions** v2.1.18: init/start/status/list/watch/phase/iterate/qa/report/archive/pause/resume/fork/feature/help/master-plan/**measure** (v2.1.16 #94)/**trust** (v2.1.18 #101 — persistent trust mutation, audit-logged)). Orthogonal coexistence with PDCA |
 | `/starter` | Starter project (HTML/CSS/Next.js) |
 | `/dynamic` | Dynamic project (bkend.ai BaaS) |
 | `/enterprise` | Enterprise project (K8s/Terraform) |

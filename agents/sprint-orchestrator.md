@@ -24,6 +24,20 @@ model: opus
 effort: high
 maxTurns: 40
 memory: project
+tools:
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep
+  - Bash
+  - Task(gap-detector)
+  - Task(code-analyzer)
+  - Task(sprint-qa-flow)
+  - Task(sprint-report-writer)
+  - Task(qa-monitor)
+  - Task(pdca-iterator)
+  - Task(Explore)
 ---
 
 # Sprint Orchestrator Agent
