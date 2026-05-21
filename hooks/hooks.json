@@ -22,6 +22,12 @@
             "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/pre-write.js\"",
             "timeout": 5000
+          },
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/lint-skill-md.js\"",
+            "timeout": 3000,
+            "if": "Write(skills/**/SKILL.md)"
           }
         ]
       },

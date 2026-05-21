@@ -58,11 +58,19 @@ task-template: "[Sprint] {action} {name}"
 /sprint start my-launch
 ```
 
-The skill handler routes through `scripts/sprint-handler.js`, which composes
+The skill handler routes through `<bkit-root>/scripts/sprint-handler.js`
+(bkit convention — handlers live at the bkit repo root `scripts/` directory,
+NOT inside skills/<name>/scripts/). The handler composes
 Sprint 3 adapters (state-store + telemetry + doc-scanner + matrix-sync)
 into Sprint 2 use cases (start / advance / iterate / qa / report / archive).
 Sprint 1 entities (createSprint / SprintEvents / typedefs) are produced
 and consumed transparently along the way.
+
+> **Resolving `scripts/sprint-handler.js` in this document**: throughout
+> this SKILL.md, references to `scripts/sprint-handler.js` mean
+> `<bkit-root>/scripts/sprint-handler.js` (the canonical location).
+> LLM dispatchers MUST NOT compose `skills/sprint/scripts/sprint-handler.js`
+> — that path does not exist (Issue #107, fixed v2.1.19 S2 F2-1).
 
 ## Arguments
 

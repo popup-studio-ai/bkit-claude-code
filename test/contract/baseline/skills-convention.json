@@ -1,0 +1,406 @@
+{
+  "schemaVersion": "1.0",
+  "frozenAt": "2026-05-21T11:08:02.261Z",
+  "bkitVersion": "2.1.18",
+  "skillsCount": 44,
+  "skills": [
+    {
+      "name": "audit",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "audit",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "bkend-auth",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "bkend-auth",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "bkend-cookbook",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "bkend-cookbook",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "bkend-data",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "bkend-data",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "bkend-quickstart",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "bkend-quickstart",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "bkend-storage",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "bkend-storage",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "bkit",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "bkit",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "bkit-evals",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "bkit-evals",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "bkit-explore",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "bkit-explore",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "bkit-rules",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "bkit-rules",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "bkit-templates",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "bkit-templates",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "btw",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "btw",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "cc-version-analysis",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "cc-version-analysis",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "claude-code-learning",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "claude-code-learning",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "code-review",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "code-review",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "control",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "control",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "deploy",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "deploy",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "desktop-app",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "desktop-app",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "development-pipeline",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "development-pipeline",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "dynamic",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "dynamic",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "enterprise",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "enterprise",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "mobile-app",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "mobile-app",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "pdca",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "pdca",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "pdca-batch",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "pdca-batch",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "pdca-fast-track",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "pdca-fast-track",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "pdca-watch",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "pdca-watch",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "phase-1-schema",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "phase-1-schema",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "phase-2-convention",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "phase-2-convention",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "phase-3-mockup",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "phase-3-mockup",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "phase-4-api",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "phase-4-api",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "phase-5-design-system",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "phase-5-design-system",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "phase-6-ui-integration",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "phase-6-ui-integration",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "phase-7-seo-security",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "phase-7-seo-security",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "phase-8-review",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "phase-8-review",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "phase-9-deployment",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "phase-9-deployment",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "plan-plus",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "plan-plus",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "pm-discovery",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "pm-discovery",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "qa-phase",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "qa-phase",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "rollback",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "rollback",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "skill-create",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "skill-create",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "skill-status",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "skill-status",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "sprint",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "sprint",
+        "frontmatterModel": null,
+        "handlerReferences": [
+          "scripts/sprint-handler.js"
+        ]
+      }
+    },
+    {
+      "name": "starter",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "starter",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    },
+    {
+      "name": "zero-script-qa",
+      "expected": {
+        "hasSKILLmd": true,
+        "frontmatterName": "zero-script-qa",
+        "frontmatterModel": null,
+        "handlerReferences": []
+      }
+    }
+  ]
+}
