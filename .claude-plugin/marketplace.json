@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "bkit-marketplace",
-  "version": "2.1.18",
+  "version": "2.1.19",
   "description": "POPUP STUDIO's Vibecoding Kit marketplace - PDCA methodology and AI-native development tools",
   "owner": {
     "name": "POPUP STUDIO PTE. LTD.",
@@ -34,7 +34,7 @@
     {
       "name": "bkit",
       "description": "Vibecoding Kit - PDCA + Sprint Management + CTO-Led Agent Teams + Living Context System + 43 PM frameworks. v2.1.14 6 differentiations (Memory Enforcer, Layer 6 Defense, Sequential Dispatch, Effort-aware, PostToolUse continueOnBlock, Heredoc-bypass). v2.1.15 pdca-status.json fix. v2.1.16 4 GitHub issues (Quality Gates UX). v2.1.17 5/12~5/20 contract red 8-day class close. v2.1.18 Issues #100/#101/#102 — Sprint Trust UX Fix (L1 lockout 영구 종결, ENH-292 활성화 milestone). v2.1.19 Quality Maturation Sprint — 5 sub-sprint master plan (S1 Self-Dogfooding Enablement / S2 Convention Restoration / S3 Sprint Report Maturity / S4 External Dogfooder Lifecycle / S5 Sprint Maturity Index) + ENH-318 차별화 7/7 정식 편입 + Real User Hall of Fame 도입 + 첫 외부 dogfooder entry @pruge. 🚀 bkit Early Adopter Program — running bkit on a non-trivial production project + filing detailed bug reports makes you part of bkit's quality system: public Hall of Fame recognition, E2E regression test absorption, Trust Score externalDogfoodFeedbackResponseRate component (weight 0.05). First 3 external dogfooders get featured + their reproduction scenarios become bkit's E2E suite (DA-2 master plan §15.4). 44 Skills, 34 Active Agents + 6 Deprecated tombstones, 54 Scripts, 175 Lib Modules, 21 Hook Events, 40 Templates, 4 Output Styles, 2 MCP Servers (19 tools), 10 ADR invariants.",
-      "version": "2.1.18",
+      "version": "2.1.19",
       "author": {
         "name": "POPUP STUDIO PTE. LTD.",
         "email": "contact@popupstudio.ai"
