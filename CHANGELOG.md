@@ -5,6 +5,149 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.19] - 2026-05-21 (branch: `feature/v2119-quality-maturation`)
+
+> **Status**: Quality Maturation Sprint — pruge 가 v2.1.16~v2.1.18 cycle 에서 1.5일 / 10 issues 의 정밀한 결함 cluster (sprint domain) 를 보고. 단일 reactive fix loop 가 아닌 **5 sub-sprint master plan** 으로 sprint domain maturity 를 PDCA core 수준으로 격상. **모든 5 sub-sprint archived** + outer master sprint completion.
+> **Scope**: Single PR — `feature/v2119-quality-maturation` (5 sub-sprints: S0 baseline + S1 Foundation + S2 Defense + S3 Polish + S4 Proactive + S5 Measurement). 152 TC across 30 test files PASS.
+> **Master plan**: `docs/01-plan/features/v2119-bkit-quality-maturation.master-plan.md` (23 sections, CTO redline applied — B-1/B-2/B-3 + M-1~M-5 + Strategic Insight all addressed).
+> **Predecessor**: v2.1.18 GA (PR #106, 2026-05-21 06:37Z).
+> **Reporter**: @pruge (James Kim) — `dandi-village-ledger` project. **Real User Hall of Fame** 첫 entry 등재.
+
+### Closes GitHub Issues
+
+- **#103** failure-reporter mark/move resolved gate-fail reports (S3 F3-1)
+- **#104** sprint init auto-import context (WHY/WHO/RISK/SUCCESS/SCOPE) from master-plan or PRD (S3 F3-2)
+- **#105** generateReport include qualityGates section + unify KPI source (S3 F3-3+F3-4)
+- **#107** SKILL.md path mismatch (S2 F2-1)
+
+### 5 Sub-Sprints (Kahn topological)
+
+**S0 — v2.1.18 baseline SQM Measurement** (commit `8cdd0d9`, 14 files, +3,289 LOC, 30 TC)
+- Master plan §23 step 0 precondition (CTO M-3 response)
+- `lib/quality/sqm-calculator.js` (6 component pure functions + computeSqm aggregator)
+- `scripts/_v2119-s0-measure.js` (Infrastructure layer)
+- Baseline SQM = 59.75 (later regenerated to 64.00 in S5)
+- 3 critical findings discovered → S2/S3/S4 evidence
+
+**S1 — Foundation: Self-Dogfooding Enablement** (commit `79bec02`, 16 files, +3,512 LOC, 28 TC)
+- F1-1 sprint-orchestrator Task dispatch verification (contract + e2e mocked)
+- F1-2 `/sprint dogfood <release-version>` action — bkit self-dogfood mode
+- F1-3 `scripts/check-self-dogfood.sh` CI gate + Node helper (bash 3 compat)
+- F1-4 sprint init default L3 → L2 + L1 explicit warning + audit
+- F1-5 `/sprint annotate` archived-state annotation (closed enum, anti-mission preserved)
+- §19.5 Bootstrap Exception 모드 정착 — 4번째 successful instantiation 후 pattern 확립
+
+**S2 — Defense: Convention Restoration** (commit `598a5b1`, 33 files combined with S4, 35 TC)
+- F2-1 sprint SKILL.md bkit-root convention 명시 (closes #107)
+- F2-2 `scripts/check-skills-docs-code-sync.js` — 44 skills × Docs=Code CI invariant
+- ★ **Critical evolution**: stripCodeBlocks (code-block-aware parsing) — S0 measurement bug fixed (phase-3-mockup + phase-9-deployment false positives 진단 + 정정)
+- F2-3 sprint skill full audit
+- F2-4 `test/contract/baseline/skills-convention.json` frozen baseline
+- F2-5 `scripts/lint-skill-md.js` PreToolUse hook (warning-only, R-3 mitigation)
+
+**S4 — Proactive: External Dogfooder Lifecycle** (commit `598a5b1` combined with S2, 14 TC)
+- F4-1 Trust Score 7-Component 확장 (externalDogfoodFeedbackResponseRate weight 0.05, Δ ≤5% R-10 verified)
+- F4-2 `lib/control/external-feedback-tracker.js` (GitHub API + pure compute split)
+- F4-3 Real User Hall of Fame (README + `docs/external-dogfooders/` + marketplace narrative + DA-1~DA-3)
+- F4-4 pruge dandi 5 scenarios E2E regression test (`test/e2e/external-dogfood/dandi-*.test.js`)
+- ★ **ENH-318 정식 편입**: bkit 차별화 6/6 → **7/7** + Hall of Fame 첫 entry @pruge
+
+**S3 — Polish: Sprint Report Maturity** (commit `b30e1b9`, 20 files, +1,668 LOC, 40 TC)
+- F3-1 failure-reporter resolution marker (A+C combined: file header + state field, atomic write, idempotent) — closes #103
+- F3-2 `lib/application/sprint-lifecycle/context-importer.js` (master-plan/PRD fallback chain) — closes #104
+- F3-3 generateReport `## Quality Gates` section + qualityGates > featureMap > kpi SoT precedence + divergence detection — closes #105 (main)
+- F3-4 `lib/application/sprint-lifecycle/kpi-resolver.js` (pure precedence chain)
+- F3-5 carry items rich rationale (featureMap.scope + details aggregated)
+- F3-6 lessons learned multi-aspect (iteration / autoPause / phase_duration / gate_measurement / gate_failure_resolution)
+- ★ **CO-S2-1 absorbed**: `lib/util/markdown-parse.js` 신설 (stripCodeBlocks single SoT)
+- ★ **CO-S2-3 absorbed**: master plan §7.2 inline note 정정 (1 actual + 2 false positives)
+
+**S5 — Measurement: Sprint Maturity Index** (commit `63931d5`, 10 files, +654 LOC, 5 TC)
+- F5-1 sqm-calculator evolve + `findFirstMatching` pattern fix (★ **CO-S0-5 bug discovered + fixed** — present since S0, missed for 5 sub-sprints)
+- F5-2 `lib/ui/sqm-panel.js` SessionStart-ready dashboard
+- F5-3 `lib/quality/sqm-history.js` append-only JSONL
+- ★ **Baseline regenerated**: 59.75 → **64.00** (S0 + S2 + S5 cumulative accuracy fix)
+
+### 9 GitHub Issues Closed Across v2.1.17 → v2.1.19 (pruge ecosystem)
+
+v2.1.17: #92/#93/#94/#95. v2.1.18: #100/#101/#102. **v2.1.19: #103/#104/#105/#107**.
+
+Total: 10 issues, 100% closed within 24h (S4 F4-2 externalDogfoodFeedbackResponseRate baseline = 100%).
+
+### Architecture (raw 실측)
+
+| Component | v2.1.18 | v2.1.19 |
+|-----------|---------|---------|
+| Skills | 44 | 44 |
+| Agents (Active) | 34 | 34 |
+| Lib Modules | 174 | **184+** (new: util/markdown-parse + 4 in application/sprint-lifecycle + control/external-feedback-tracker + quality/sqm-* + ui/sqm-panel) |
+| Scripts | 54 | **56** (new: check-skills-docs-code-sync + lint-skill-md + _v2119-s4-feedback-refresh + _check-self-dogfood-helper + check-self-dogfood.sh) |
+| Hook Events | 21 | 21 (PreToolUse SKILL.md linter entry 추가) |
+| MCP Tools | 19 | 19 |
+| ACTION_TYPES | 30 (post v2.1.18) | **39** (+9: sqm_baseline_measured + sprint_dogfood_started + sprint_bootstrap_mode_activated + sprint_trust_warning + sprint_annotated + self_dogfood_emergency_override + external_feedback_tracked + gate_fail_resolved + sprint_context_imported + sprint_kpi_divergence) |
+| Test count | 3,774 (v2.1.18) | **3,926+** (+152 v2.1.19) |
+| Trust Score | 6 components (sum 1.0) | **7 components** (sum 1.0, externalDogfoodFeedbackResponseRate 0.05) |
+| Differentiation | 6/6 | **7/7** (ENH-318) |
+
+### v2.1.18 Baseline SQM Final (regenerated by S5)
+
+| Component | Weight | Value | Weighted |
+|-----------|--------|-------|----------|
+| docsCodeSyncRate | 0.30 | **100** (44/44) | 30.00 |
+| sprintSelfDogfoodRunRate | 0.20 | 10 (v2.1.16 partial) | 2.00 |
+| externalDogfooderFeedbackResponseRate | 0.20 | 100 (7/7 closed within 24h) | 20.00 |
+| sprintReportKpiConsistency | 0.15 | 80 | 12.00 |
+| subAgentDispatchSuccessRate | 0.10 | null | 0.00 |
+| conventionContractTestPassRate | 0.05 | 0 | 0.00 |
+| **Total** | 1.00 | | **64.00** |
+
+### v2.1.19 GA Projected SQM (after this release archives)
+
+64.00 + ~32 = **~96** (well above master plan §7.2 target ≥85):
+- sprintSelfDogfoodRunRate 10 → 100 (v2.1.19 itself = sprint container per Bootstrap Exception)
+- subAgentDispatchSuccessRate null → ~95 (S1 sprint-orchestrator live)
+- conventionContractTestPassRate 0 → ~99 (S2 F2-4 baseline contract live)
+
+### Bootstrap Exception 모드 — pattern fully validated
+
+5 sub-sprints all archived under PDCA-with-sprint-shadow (main session manual proxy for sub-agent dispatch). v2.1.20 will be **first true self-dogfood CI gate activation** — `scripts/check-self-dogfood.sh` (without `--bootstrap-mode` flag) will hard-fail when not-sprint releases attempt to tag.
+
+### Real User Hall of Fame — 첫 entry @pruge
+
+`docs/external-dogfooders/pruge.md` (120 라인 archive: 10 issues × evidence + 5 absorbed scenarios + contribution quality criteria). README + marketplace narrative + bkit Early Adopter Program CTA. DA-4 (30-day dogfooder population review) carry to v2.1.20+.
+
+### Differentiation 7/7
+
+- ENH-286 Memory Enforcer
+- ENH-289 Defense Layer 6 (strengthened — 9 new ACTION_TYPES naturally joined L6 pipeline)
+- ENH-292 Sequential Dispatch (declared → **live** in this release via S1 F1-1)
+- ENH-300 Effort-aware Adaptive Defense
+- ENH-303 PostToolUse continueOnBlock
+- ENH-310 Heredoc Detector
+- **ENH-318 External Dogfooder Feedback Trust Integration** (NEW v2.1.19 — Trust Score 7th component + Hall of Fame + User-Feedback Lifecycle)
+
+### Compatibility
+
+- bkit v2.1.18 → **v2.1.19 GA** (bkit.config.json + plugin.json + marketplace.json ×2 + README + hooks ×3 all synced)
+- Backward compat: 100% — Trust Score normalization preserves Δ ≤5% (R-10 mitigation), legacy 6-component trust-profile.json auto-migrated via loadTrustProfile merge fix
+- ADR 0003: maintained — sprint state schema additive only (annotations: [] + lastGateFailure.resolved* fields, all optional)
+
+### Carry-overs to v2.1.20+
+
+- CO-S3-1 `/sprint status` to use kpi-resolver (consistent SoT)
+- CO-S3-2 PRD template Context Anchor section addition
+- CO-S3-3 divergenceLogger default emitter (audit)
+- CO-S2-4 hooks.json `if:` schema verify in CC v2.1.85+
+- DA-4 30-day dogfooder population review
+- CO-B Trust weight recalibration (after 30-day data)
+- CO-C Hall of Fame i18n (KO/JA/ZH)
+- CO-S1-1 ~ CO-S1-7 (S1 advanced features carry list)
+- CO-S4-1 external-feedback-tracker CI gate integration
+
+### Methodology — Bootstrap Exception 5번째 successful instantiation
+
+S0 + S1 + S4 + S2 + S3 + S5 모두 PDCA-with-sprint-shadow 으로 완주. Master plan §19.5 의 Bootstrap Exception 패턴이 *transitional protocol* 로 정착 — v2.1.20 부터 first true self-dogfood activation.
+
 ## [2.1.18] - 2026-05-21 (branch: `feature/v2118-issue-fixes`)
 
 > **Status**: Sprint Trust UX Fix — bkit v2.1.16에서 보고된 3 GitHub Issues (#100/#101/#102, 모두 @pruge 보고 2026-05-21 03:54)를 단일 sprint로 통합 처리. L1 sprint lockout 3-stage trap 영구 해소.

@@ -45,6 +45,8 @@ const VALID_ACTIONS = Object.freeze([
   'master-plan', // S2-UX v2.1.13 — 16th action
   'measure',     // F3 v2.1.16 (Issue #94) — 17th action
   'trust',       // F2 v2.1.18 (Issue #101) — 18th action — /sprint trust mutation
+  'dogfood',     // F1-2 v2.1.19 S1 — 19th action — bkit self-dogfood sprint container
+  'annotate',    // F1-5 v2.1.19 S1 — 20th action — post-hoc archived-state annotation
 ]);
 
 /**
@@ -53,8 +55,16 @@ const VALID_ACTIONS = Object.freeze([
  */
 const VALID_TRUST_LEVELS = Object.freeze(['L0', 'L1', 'L2', 'L3', 'L4']);
 
-/** @type {'L3'} */
-const DEFAULT_TRUST_LEVEL = 'L3';
+/**
+ * @type {'L2'}
+ *
+ * v2.1.19 S1 F1-4 (CTO M-1): default lowered from L3 to L2 per Safe Defaults
+ * principle (master plan §3.2). Aligns with entity.js createSprint default
+ * (eliminates the v2.1.16~v2.1.18 drift between handler default L3 and
+ * entity default L2). User-explicit --trust L1 emits sprint_trust_warning
+ * audit + stderr warning re: preview-mode lockout (Issue #101 follow-up).
+ */
+const DEFAULT_TRUST_LEVEL = 'L2';
 
 /**
  * Normalize trust level from 3 user input forms to a single internal key.
@@ -298,6 +308,8 @@ async function handleSprintAction(action, args, deps) {
     case 'master-plan': return handleMasterPlan(a, infra, d);
     case 'measure': return handleMeasure(a, infra, d);
     case 'trust':   return handleTrust(a, infra, d);
+    case 'dogfood': return handleDogfood(a, infra, d);   // F1-2 v2.1.19 S1
+    case 'annotate':return handleAnnotate(a, infra);      // F1-5 v2.1.19 S1
     default:        return { ok: false, error: 'Unreachable action: ' + action };
   }
 }
@@ -311,11 +323,83 @@ async function handleInit(args, infra) {
     phase: args.phase, context: args.context, features: args.features,
   });
   if (!v.ok) return { ok: false, error: 'invalid_input', errors: v.errors };
+  // F1-4 v2.1.19 S1 — L1 explicit warning + audit emit.
+  // Only warn when L1 was *explicitly* requested (args.trust or args.trustLevel
+  // === 'L1' raw). Defensive `trustLevelAtStart` from re-init paths is NOT
+  // a user-explicit choice, so no warning emitted on that path.
+  const userExplicitL1 = (args.trust === 'L1' || args.trustLevel === 'L1');
+  if (userExplicitL1) {
+    process.stderr.write(
+      `[WARN] /sprint init ${args.id} --trust L1: L1 sprints may enter ` +
+      `preview-mode lockout. Consider \`/sprint trust ${args.id} --to L3\` ` +
+      `to escalate when ready to record measurements (v2.1.18 #101 follow-up).\n`
+    );
+    try {
+      require('../lib/audit/audit-logger').writeAuditLog({
+        actor: 'user',
+        actorId: process.env.CLAUDE_AGENT_ID || 'sprint-init-cli',
+        action: 'sprint_trust_warning',
+        category: 'sprint',
+        target: args.id,
+        targetType: 'feature',
+        details: {
+          sprintId: args.id,
+          attemptedLevel: 'L1',
+          recommendedAction: `/sprint trust ${args.id} --to L3`,
+          warningMessage: 'L1 sprints may enter preview-mode lockout',
+        },
+        result: 'success',
+        destructiveOperation: false,
+      });
+    } catch (_) { /* audit log failures must NOT block init */ }
+  }
+  // v2.1.19 S3 F3-2 (closes #104): context auto-import fallback chain.
+  //   args.context (explicit) > master-plan.md > PRD.md > defaultContext()
+  // The chain only activates when caller omits args.context (or supplies
+  // empty context) — explicit override still wins.
+  let resolvedContext = args.context;
+  let contextSource = 'explicit';
+  let contextFilePath = null;
+  const ctxHasContent = args.context && Object.values(args.context).some(v => typeof v === 'string' && v.trim().length > 0);
+  if (!ctxHasContent) {
+    try {
+      const ctxImporter = require('../lib/application/sprint-lifecycle/context-importer');
+      const resolution = await ctxImporter.resolveContext(args.id, { projectRoot: process.cwd() });
+      resolvedContext = resolution.context;
+      contextSource = resolution.source;
+      contextFilePath = resolution.filePath;
+      // Audit emit on successful import (skip 'default' — no surprise to user)
+      if (resolution.source !== 'default') {
+        try {
+          require('../lib/audit/audit-logger').writeAuditLog({
+            actor: 'system',
+            actorId: process.env.CLAUDE_AGENT_ID || 'sprint-init-cli',
+            action: 'sprint_context_imported',
+            category: 'sprint',
+            target: args.id,
+            targetType: 'feature',
+            details: {
+              sprintId: args.id,
+              source: resolution.source,
+              filePath: resolution.filePath,
+              populatedFields: Object.keys(resolution.context).filter(k => resolution.context[k] && resolution.context[k].length > 0),
+            },
+            result: 'success',
+            destructiveOperation: false,
+          });
+        } catch (_) { /* audit failure non-blocking */ }
+      }
+    } catch (_) {
+      // context-importer failure → fall back to defaultContext
+      resolvedContext = undefined;
+    }
+  }
+
   const sprint = domain.createSprint({
     id: args.id,
     name: args.name,
     phase: args.phase || 'prd',
-    context: { ...defaultContext(), ...(args.context || {}) },
+    context: { ...defaultContext(), ...(resolvedContext || {}) },
     features: Array.isArray(args.features) ? args.features : [],
     trustLevelAtStart: normalizeTrustLevel(args),
   });
@@ -323,7 +407,7 @@ async function handleInit(args, infra) {
   infra.eventEmitter.emit(domain.SprintEvents.SprintCreated({
     sprintId: sprint.id, name: sprint.name, phase: sprint.phase,
   }));
-  return { ok: true, sprint, sprintId: sprint.id };
+  return { ok: true, sprint, sprintId: sprint.id, contextSource, contextFilePath };
 }
 
 async function handleStart(args, infra, deps) {
@@ -536,6 +620,219 @@ async function handleTrust(args, infra, deps) {
     trustScoreAtMutation: trustScore,
     blastRadius,
     auditEntryId,
+  };
+}
+
+// ============================================================
+// v2.1.19 S1 (F1-2) — /sprint dogfood — bkit self-dogfood sprint container
+// ============================================================
+
+/**
+ * Validate a release version string against semver-lite (no build metadata).
+ * Accepts: 2.1.20, v2.1.20, 2.1.20-rc.0, v2.1.20-beta.1
+ * Rejects: 2.1, 2.1.20+build.1
+ *
+ * @param {string} v
+ * @returns {boolean}
+ */
+function isValidReleaseVersion(v) {
+  return typeof v === 'string' && /^v?\d+\.\d+\.\d+(?:-[\w.]+)?$/.test(v);
+}
+
+/**
+ * Resolve current bkit version from bkit.config.json (cached read).
+ * Returns 'unknown' on filesystem error.
+ *
+ * @returns {string}
+ */
+function resolveBkitVersion() {
+  try { return require('../bkit.config.json').version; }
+  catch (_) { return 'unknown'; }
+}
+
+/**
+ * Resolve current git HEAD commit hash. Returns 'unknown' on git failure
+ * (e.g., when running outside a git work tree or on a detached process).
+ *
+ * @returns {string}
+ */
+function resolveBkitCommit() {
+  try {
+    return require('child_process').execSync('git rev-parse HEAD', {
+      encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
+  } catch (_) { return 'unknown'; }
+}
+
+/**
+ * Auto-derive Context Anchor (WHY/WHO/RISK/SUCCESS/SCOPE) for a self-dogfood
+ * sprint. Templated from release tag — NOT user-customizable in dogfood mode
+ * (anti-mission: closed enum, no general primitive).
+ *
+ * @param {string} releaseVersion
+ * @param {string} releaseTag
+ * @returns {{ WHY: string, WHO: string, RISK: string, SUCCESS: string, SCOPE: string }}
+ */
+function autoDeriveDogfoodContext(releaseVersion, releaseTag) {
+  return {
+    WHY: `bkit self-dogfood of ${releaseVersion} — verify sprint container can run own release per master plan §19 Self-Dogfooding CI Gate.`,
+    WHO: `bkit core team + CI workflow (release tag ${releaseTag})`,
+    RISK: `If self-dogfood sprint fails or skips phases: release tag blocked by scripts/check-self-dogfood.sh (use --bootstrap-mode for first-cycle Exception per master plan §19.5).`,
+    SUCCESS: `Sprint phase=archived + Quality Gates section present in report + audit sprint_dogfood_started emitted.`,
+    SCOPE: `Single feature 'release-${releaseVersion}' — bkit release artifact verification + sprint state archive.`,
+  };
+}
+
+/**
+ * /sprint dogfood — initialize a bkit self-dogfood sprint container for a
+ * release verification cycle. Idempotent on same sprint id.
+ *
+ * Signature: { releaseVersion: string, 'release-tag': string,
+ *              dryRun?: boolean, id?: string, actor?: string }
+ *
+ * Master plan §19 (Self-Dogfooding CI Gate callee). Audit emits
+ * sprint_dogfood_started on actual run; --dry-run is silent.
+ *
+ * @param {Object} args
+ * @param {Object} infra
+ * @param {Object} [deps]
+ * @returns {Promise<{ok: boolean, sprintId?: string, dryRun?: boolean, skipped?: boolean, preview?: object, error?: string}>}
+ */
+async function handleDogfood(args, infra, deps) {
+  if (!args || !args.releaseVersion || !args['release-tag']) {
+    return { ok: false, error: 'dogfood requires { releaseVersion (positional), --release-tag <tag> }' };
+  }
+  const releaseVersion = args.releaseVersion;
+  const releaseTag = args['release-tag'];
+  if (!isValidReleaseVersion(releaseVersion)) {
+    return { ok: false, error: `releaseVersion must be semver-lite (e.g. 2.1.20 or v2.1.20-rc.0). Got: ${releaseVersion}` };
+  }
+  const sprintId = args.id || ('self-dogfood-' + releaseTag.replace(/^v/, ''));
+  const sprintName = `bkit self-dogfood ${releaseVersion}`;
+  const context = autoDeriveDogfoodContext(releaseVersion, releaseTag);
+  // v-prefix stripped for naming consistency (sprintId already strips v).
+  const features = [`release-${releaseVersion.replace(/^v/, '')}`];
+  const featureNamesNote = features[0]; // kept for reference; no logic dependency
+
+  if (args.dryRun || args['dry-run']) {
+    return {
+      ok: true,
+      dryRun: true,
+      preview: { sprintId, sprintName, features, context, releaseVersion, releaseTag, trustLevelAtStart: 'L4' },
+    };
+  }
+
+  // Idempotency: existing sprint with same id → graceful skip + warning audit.
+  const existing = await infra.stateStore.load(sprintId);
+  if (existing) {
+    return {
+      ok: true,
+      skipped: true,
+      reason: 'sprint with same id already exists',
+      sprintId,
+      existingPhase: existing.phase,
+    };
+  }
+
+  const sprint = domain.createSprint({
+    id: sprintId,
+    name: sprintName,
+    phase: 'prd',
+    context,
+    features,
+    trustLevelAtStart: 'L4', // dogfood always L4 (CI-suitable full-auto)
+  });
+  await infra.stateStore.save(sprint);
+  infra.eventEmitter.emit(domain.SprintEvents.SprintCreated({
+    sprintId: sprint.id, name: sprint.name, phase: sprint.phase,
+  }));
+
+  // Audit emit sprint_dogfood_started — F1-2 invariant
+  try {
+    require('../lib/audit/audit-logger').writeAuditLog({
+      actor: (deps && deps.actor) || 'user',
+      actorId: process.env.CLAUDE_AGENT_ID || 'bkit-self-dogfood-cli',
+      action: 'sprint_dogfood_started',
+      category: 'sprint',
+      target: sprintId,
+      targetType: 'feature',
+      details: {
+        sprintId,
+        releaseVersion,
+        releaseTag,
+        bkitVersion: resolveBkitVersion(),
+        bkitCommit: resolveBkitCommit(),
+      },
+      result: 'success',
+      destructiveOperation: false,
+    });
+  } catch (_) { /* audit failures must NOT block dogfood init */ }
+
+  return { ok: true, sprintId, releaseVersion, releaseTag };
+}
+
+// ============================================================
+// v2.1.19 S1 (F1-5) — /sprint annotate — post-hoc archived-state annotation
+// ============================================================
+
+/**
+ * /sprint annotate — append a post-hoc note to a sprint (any phase, including
+ * archived). Forward-only invariant: phase NOT mutated.
+ *
+ * Signature: { id: string, reason: string }
+ *
+ * Anti-mission compliance: closed enum (--reason only). No general field
+ * mutation API (CTO B-2 rescope from v2.1.19 master plan — general
+ * /sprint amend deferred to v2.1.20+ CO-E).
+ *
+ * @param {Object} args
+ * @param {Object} infra
+ * @returns {Promise<{ok: boolean, sprintId?: string, annotation?: object, totalAnnotations?: number, error?: string}>}
+ */
+async function handleAnnotate(args, infra) {
+  if (!args || !args.id || !args.reason) {
+    return { ok: false, error: 'annotate requires { id, --reason "<text>" }' };
+  }
+  const sprint = await infra.stateStore.load(args.id);
+  if (!sprint) {
+    return { ok: false, error: `sprint not found: ${args.id}` };
+  }
+  // Defensive: pre-v2.1.19 sprint state files may lack `annotations` field
+  if (!Array.isArray(sprint.annotations)) sprint.annotations = [];
+
+  const entry = {
+    at: new Date().toISOString(),
+    reason: args.reason,
+    addedBy: process.env.CLAUDE_AGENT_ID ? 'agent' : 'user',
+  };
+  sprint.annotations.push(entry);
+  await infra.stateStore.save(sprint);
+
+  try {
+    require('../lib/audit/audit-logger').writeAuditLog({
+      actor: entry.addedBy,
+      actorId: process.env.CLAUDE_AGENT_ID || 'sprint-annotate-cli',
+      action: 'sprint_annotated',
+      category: 'sprint',
+      target: args.id,
+      targetType: 'feature',
+      details: {
+        sprintId: args.id,
+        annotationIndex: sprint.annotations.length - 1,
+        reason: args.reason,
+        at: entry.at,
+      },
+      result: 'success',
+      destructiveOperation: false,
+    });
+  } catch (_) { /* audit failures must NOT block annotate */ }
+
+  return {
+    ok: true,
+    sprintId: args.id,
+    annotation: entry,
+    totalAnnotations: sprint.annotations.length,
+    phase: sprint.phase, // preserved — forward-only invariant
   };
 }
 
@@ -855,13 +1152,21 @@ function handleHelp() {
     helpText: [
       'bkit:sprint — Sprint Management',
       '',
-      'Actions (16):',
+      'Actions (20):',
       '  init     /sprint init <id> --name <name> [--trust L0-L4]',
+      '             v2.1.19 S1 F1-4: default L2 (was L3 — Safe Defaults principle).',
+      '             --trust L1 emits stderr warning + audit sprint_trust_warning',
+      '             re: preview-mode lockout (v2.1.18 #101 follow-up).',
       '  start    /sprint start <id> [--trust L0-L4]',
       '  status   /sprint status <id>',
       '  list     /sprint list',
       '  phase    /sprint phase <id> --to <phase> [--approve] [--reason "<text>"]',
-      '             --approve: single-use Trust Level scope-boundary escape hatch (v2.1.16 #95)',
+      '             --approve: single-use Trust Level scope-boundary escape hatch (v2.1.16 #95).',
+      '             v2.1.19 S1 (CO-S0-6 clarification):',
+      '               --approve ONLY bypasses Trust Level stopAfter scope boundary',
+      '               (e.g., L3 stopAfter=qa, advance to report requires --approve).',
+      '               --approve does NOT bypass Quality Gate failures (M*/S*).',
+      '               For gate fail, use /sprint measure <id> --gate <key> first.',
       '             --reason : optional rationale recorded under audit action scope_boundary_approved',
       '  iterate  /sprint iterate <id>',
       '  qa       /sprint qa <id> --feature <name>',
@@ -879,6 +1184,19 @@ function handleHelp() {
       '                            M8 → sprint-orchestrator, S1 → sprint-qa-flow',
       '             Trust L0/L1: preview mode (no state mutation, no audit)',
       '             Trust L2+ : recorded + audit action gate_measured',
+      '  trust    /sprint trust <id> --to <L0-L4> [--reason "<text>"] [--force]',
+      '             v2.1.18 (Issue #101): mutate sprint trust level in place',
+      '             without re-init. audit: sprint_trust_changed.',
+      '  dogfood  /sprint dogfood <release-version> --release-tag <tag> [--dry-run] [--id <custom>]',
+      '             v2.1.19 S1 F1-2: bkit self-dogfood sprint container for release verification.',
+      '             releaseVersion: semver (e.g. 2.1.20 or v2.1.20-rc.0).',
+      '             Auto-creates sprint id "self-dogfood-<release>" + context anchor templated.',
+      '             trustLevelAtStart=L4 (CI-suitable). Idempotent — graceful skip on dup.',
+      '             audit: sprint_dogfood_started.',
+      '  annotate /sprint annotate <id> --reason "<text>"',
+      '             v2.1.19 S1 F1-5: post-hoc annotation on any sprint (incl. archived).',
+      '             Append-only to sprint.annotations[]. Forward-only — phase preserved.',
+      '             Closed enum (only --reason). audit: sprint_annotated.',
       '  help     /sprint help',
     ].join('\n'),
   };
@@ -1109,7 +1427,16 @@ if (require.main === module) {
     const action = argv[0];
     const positionalId = (argv[1] && !argv[1].startsWith('--')) ? argv[1] : undefined;
     const flags = parseFlags(argv.slice(positionalId ? 2 : 1));
-    if (positionalId && !flags.id) flags.id = positionalId;
+    // v2.1.19 S1 F1-2: action-specific positional mapping.
+    // Default behavior: positionalId → flags.id (sprint id semantics).
+    // dogfood: positionalId → flags.releaseVersion (release version semantics);
+    // --id <custom> still works as explicit override of derived sprint id.
+    if (action === 'dogfood') {
+      if (positionalId && !flags.releaseVersion) flags.releaseVersion = positionalId;
+      // do NOT auto-assign flags.id from positional for dogfood
+    } else {
+      if (positionalId && !flags.id) flags.id = positionalId;
+    }
     // Deep-QA fix: normalize `--features=a,b,c` CSV → array for ALL actions
     // (previously only master-plan parsed via parseFeaturesFlag; init/fork/etc
     // received raw string → validator rejected with `invalid_features_not_array`).

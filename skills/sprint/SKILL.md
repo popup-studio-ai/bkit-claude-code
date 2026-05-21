@@ -58,11 +58,19 @@ task-template: "[Sprint] {action} {name}"
 /sprint start my-launch
 ```
 
-The skill handler routes through `scripts/sprint-handler.js`, which composes
+The skill handler routes through `<bkit-root>/scripts/sprint-handler.js`
+(bkit convention — handlers live at the bkit repo root `scripts/` directory,
+NOT inside skills/<name>/scripts/). The handler composes
 Sprint 3 adapters (state-store + telemetry + doc-scanner + matrix-sync)
 into Sprint 2 use cases (start / advance / iterate / qa / report / archive).
 Sprint 1 entities (createSprint / SprintEvents / typedefs) are produced
 and consumed transparently along the way.
+
+> **Resolving `scripts/sprint-handler.js` in this document**: throughout
+> this SKILL.md, references to `scripts/sprint-handler.js` mean
+> `<bkit-root>/scripts/sprint-handler.js` (the canonical location).
+> LLM dispatchers MUST NOT compose `skills/sprint/scripts/sprint-handler.js`
+> — that path does not exist (Issue #107, fixed v2.1.19 S2 F2-1).
 
 ## Arguments
 
@@ -270,6 +278,29 @@ Use this when you want to advance past the scope boundary for one specific
 transition (e.g., L2 design → do after design review) without permanently
 relaxing the trust level.
 
+#### 10.1.1.1 `--approve` does NOT bypass Quality Gate failures (v2.1.19 S1, CO-S0-6)
+
+**Critical semantic clarification** (added v2.1.19 S1 in response to S0
+discovery of ambiguity — master plan carry-over CO-S0-6):
+
+`--approve` is the **Trust Level scope-boundary** escape hatch ONLY.
+It is **NOT** a Quality Gate override mechanism.
+
+| Situation | `--approve` works? | Correct remediation |
+|-----------|--------------------|---------------------|
+| Trust scope blocks transition (`requires_user_approval`) | ✅ Yes — single-use cross | Re-issue with `--approve --reason "..."` |
+| Quality Gate fails (`gate_fail`, e.g., M8=not_measured) | ❌ No — gate still blocks | Run `/sprint measure <id> --gate <key>` first, then re-issue `phase` |
+| Both scope + gate fail | ❌ Gate wins | Measure gate, then `--approve` if scope still blocks |
+
+**Why this matters**: in v2.1.19 S0 (master plan §23 step 0) we attempted
+`/sprint phase s0-sqm-baseline --to plan --approve` and observed
+`{ ok: false, reason: 'gate_fail', ... }` despite `--approve`. This is
+expected behavior — `--approve` does not satisfy `M8 designCompleteness`.
+
+**Future work (deferred to v2.1.20+)**: `--allowGateOverride` flag may be
+introduced as a *gate* override (with stronger audit + alarm trail than
+`--approve`). Until then, gate failures must be resolved via `/sprint measure`.
+
 ### 10.1.3 Trust Level Mutation (Persistent) — v2.1.18 (Issue #101)
 
 `/sprint trust <sprintId> --to <Level> [--reason "<text>"] [--force]`
@@ -376,8 +407,20 @@ by `normalizeTrustLevel` in `scripts/sprint-handler.js`):
 - `args.trust` (CLI `--trust L3` natural mapping)
 - `args.trustLevelAtStart` (stored property leak; defensive only)
 
-Precedence: `trustLevel > trust > trustLevelAtStart`. Defaults to `L3` when
-none provided or value is invalid (case-insensitive match against L0-L4).
+Precedence: `trustLevel > trust > trustLevelAtStart`. Defaults to **`L2`**
+when none provided or value is invalid (case-insensitive match against L0-L4).
+
+**v2.1.19 S1 F1-4 default change**: default lowered from `L3` to `L2` per
+Safe Defaults principle (master plan §3.2 Controllable AI Principles). The
+handler now aligns with `lib/domain/sprint/entity.js createSprint` which
+already defaulted to `L2` — eliminates the v2.1.16~v2.1.18 drift between
+handler default (L3) and entity default (L2).
+
+**`--trust L1` explicit warning**: when the user explicitly requests L1 at
+`/sprint init`, the handler emits a `stderr` warning + audit
+`sprint_trust_warning` event re: preview-mode lockout risk
+(v2.1.18 #101 follow-up). The warning is education-only — L1 sprint init
+still succeeds.
 
 ### 10.3 Natural Language Mapping Rules
 

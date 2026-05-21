@@ -6,7 +6,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-v2.1.123+-purple.svg)](https://code.claude.com)
-[![Version](https://img.shields.io/badge/Version-2.1.18-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-2.1.19-green.svg)](CHANGELOG.md)
 [![Author](https://img.shields.io/badge/Author-POPUP%20STUDIO-orange.svg)](https://popupstudio.ai)
 
 ---
@@ -211,6 +211,54 @@ Full architecture deep-dive: [README-FULL.md §9](README-FULL.md#9-architecture)
 | [`bkit-system/philosophy/`](bkit-system/philosophy/) | Core mission, Context Engineering, PDCA methodology, AI-Native principles |
 | [`docs/06-guide/sprint-management.guide.md`](docs/06-guide/sprint-management.guide.md) | Sprint Management deep-dive (English) |
 | [`docs/06-guide/sprint-migration.guide.md`](docs/06-guide/sprint-migration.guide.md) | PDCA ↔ Sprint migration mapping (English) |
+
+## 🌟 Real User Hall of Fame
+
+bkit's quality is measured by how well it responds to real users running
+bkit in production on their own projects. This section recognizes
+**external dogfooders** whose precise bug reports + reproduction scripts
+have been absorbed directly into bkit's regression test suite
+(`test/e2e/external-dogfood/`).
+
+### v2.1.19 (2026-05-30 — first entry)
+
+- **[@pruge (James Kim)](https://github.com/pruge)** — `dandi-village-ledger`
+  project. 10 GitHub issues over 1.5 days (#92–#107) driving bkit v2.1.17,
+  v2.1.18 closes + the entire v2.1.19 Quality Maturation Sprint. 5 reproduction
+  scenarios absorbed as E2E tests at `test/e2e/external-dogfood/dandi-*.test.js`.
+  See [`docs/external-dogfooders/pruge.md`](docs/external-dogfooders/pruge.md)
+  for the full contribution archive. **Thank you for trusting bkit with
+  your production sprint.** 🙏
+
+## 🚀 bkit Early Adopter Program
+
+> Running bkit on a non-trivial production project and willing to file
+> detailed bug reports with reproductions makes you part of bkit's
+> quality system, not just a bug reporter.
+
+Established **v2.1.19** (master plan §15.4 DA-1~DA-4, ENH-318 차별화 7/7).
+
+**Benefits**:
+
+- 🏆 Public recognition in this README + dedicated archive
+- 🔒 Your reproduction scripts become permanent E2E regression tests
+- 📊 Your activity directly powers bkit's Trust Score
+  (`externalDogfoodFeedbackResponseRate` component, weight 0.05)
+- 📝 CHANGELOG attribution on every release where your scenarios
+  were absorbed
+- 🤝 Direct line to bkit maintainers — priority issue triage,
+  reproduction-script-first response
+
+**How to join**: file your first detailed issue at
+[bkit-claude-code/issues](https://github.com/popup-studio-ai/bkit-claude-code/issues)
+with bkit version, reproduction steps, expected vs actual behavior,
+and file:line references. See
+[`docs/external-dogfooders/_README.md`](docs/external-dogfooders/_README.md)
+for the full 5-stage User-Feedback Lifecycle and program structure.
+
+> **DA-4 acquisition goal**: by v2.1.20 (30 days post-v2.1.19 GA),
+> measure dogfooder population. If still N=1, v2.1.20+ allocates scope
+> to active outreach.
 
 ## License
 
