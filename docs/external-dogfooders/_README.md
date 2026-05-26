@@ -54,17 +54,28 @@ becomes a permanent regression test in bkit's E2E suite.
 4. When your scenario is absorbed, your `docs/external-dogfooders/<handle>.md`
    entry is created
 
-## Current dogfooders (v2.1.19)
+## Current dogfooders
+
+### v2.1.19
 
 - **[@pruge](pruge.md)** (James Kim) — `dandi-village-ledger` project.
   First entry. 10 issues / 1.5 days driving v2.1.17, v2.1.18, v2.1.19
   releases. 5 reproduction scenarios absorbed at `test/e2e/external-dogfood/dandi-*.test.js`.
 
+### v2.1.20
+
+- **[@bj](bj.md)** (정병진) — bkit v2.1.14 install incident
+  (2026-05-26, `Validation errors: : Unrecognized key: "displayName"`).
+  Second entry — drove the entire `v2120-marketplace-recovery` sprint
+  (14 features / 3 sub-sprints / ENH-321 + ENH-322 + ENH-323 / ADR 0011).
+  Reproduction absorbed at `test/e2e/external-dogfood/cc-min-version.test.js`.
+
 ## Acquisition Goal (DA-4)
 
 Master plan §15.4 DA-4: by v2.1.20 (30 days post-v2.1.19 GA), measure
-dogfooder population. If still N=1, allocate v2.1.20+ scope to active
-outreach (CC marketplace narrative, community engagement).
+dogfooder population. **DA-4 status**: N=2 confirmed (@pruge + @bj) — first
+follower effect validated. v2.1.21+ scope continues active outreach
+(CC marketplace narrative, community engagement) to grow N≥3.
 
 ---
 

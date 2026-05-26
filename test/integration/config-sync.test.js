@@ -377,10 +377,20 @@ assert('CS-014',
   `plugin.json loaded successfully (engines field is optional)`
 );
 
-// CS-015: plugin.json has required metadata fields
+// CS-015: plugin.json has required metadata fields + 21-key whitelist (v2.1.20 F12)
+// v2.1.20 (F12 + ENH-322): reinforced with EXPECTED_PLUGIN_JSON_KEYS SoT check.
+// Reference: docs/adr/0011-plugin-manifest-schema-compliance.md § Decision 2
+// Reference: docs/sprint/v2120-marketplace-recovery/design.md §3.7
+const { diffPluginJsonKeys } = require('../../lib/domain/rules/docs-code-invariants');
+const cs015Diff = diffPluginJsonKeys(pluginJson);
+const cs015Extra = cs015Diff.filter((d) => d.status === 'extra');
 assert('CS-015',
-  pluginJson?.name && pluginJson?.displayName && pluginJson?.description && pluginJson?.license,
-  'plugin.json has name, displayName, description, license'
+  pluginJson?.name &&
+  pluginJson?.displayName &&
+  pluginJson?.description &&
+  pluginJson?.license &&
+  cs015Extra.length === 0,
+  `plugin.json has name + displayName + description + license + 21-key whitelist (extra keys: ${JSON.stringify(cs015Extra.map((d) => d.key))})`
 );
 
 // ============================================================
