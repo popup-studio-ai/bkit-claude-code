@@ -5,9 +5,11 @@
 **Three commands. Anyone — even someone vibe-coding for the first time — can ship robust, production-quality software.** bkit turns Claude Code into a *Context Engineering system*: 44 skills, 34 specialist agents, 11 quality gates, and a memory that survives across sessions deliver the right context to the AI at the right moment, so you don't have to know prompts, commands, or PDCA to get high-quality results.
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Claude Code](https://img.shields.io/badge/Claude%20Code-v2.1.123+-purple.svg)](https://code.claude.com)
-[![Version](https://img.shields.io/badge/Version-2.1.19-green.svg)](CHANGELOG.md)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-v2.1.143+-purple.svg)](https://code.claude.com)
+[![Version](https://img.shields.io/badge/Version-2.1.20-green.svg)](CHANGELOG.md)
 [![Author](https://img.shields.io/badge/Author-POPUP%20STUDIO-orange.svg)](https://popupstudio.ai)
+
+> **Requirement**: bkit requires Claude Code **v2.1.143 or later** (the strict plugin-manifest path recognizes the official `displayName` field only from v2.1.143). On older Claude Code you will see `Validation errors: Unrecognized key: "displayName"` during `claude plugin install`. Run `npm install -g @anthropic-ai/claude-code@latest` to upgrade, or see [`docs/06-guide/cc-compatibility.guide.md`](docs/06-guide/cc-compatibility.guide.md).
 
 ---
 
@@ -230,6 +232,21 @@ have been absorbed directly into bkit's regression test suite
   for the full contribution archive. **Thank you for trusting bkit with
   your production sprint.** 🙏
 
+### v2.1.20 (2026-05-26 — second entry, first-follower effect validated)
+
+- **[@bj (정병진)](https://github.com/popup-studio-ai/bkit-claude-code/issues)** —
+  bkit v2.1.14 install incident (2026-05-26, `Validation errors: : Unrecognized
+  key: "displayName"`). Precise error message + cache path + Cursor IDE
+  environment metadata sharing drove the entire **v2.1.20 Marketplace
+  Recovery Sprint** (14 features / 3 sub-sprints / 3 new ENH 321/322/323 /
+  1 new ADR 0011 Plugin Manifest Schema Compliance Policy). Reproduction
+  absorbed at `test/e2e/external-dogfood/cc-min-version.test.js` (5 TC,
+  Lifecycle Stage 4 Regression Lock achieved). Triggered ADR 0006 §
+  Empirical Validation Gate recovery (~30-day wire delay closed). See
+  [`docs/external-dogfooders/bj.md`](docs/external-dogfooders/bj.md) for the
+  full contribution archive. **Thank you for sharing the precise error
+  message that scoped the entire sprint correctly.** 🙏
+
 ## 🚀 bkit Early Adopter Program
 
 > Running bkit on a non-trivial production project and willing to file
@@ -257,8 +274,10 @@ and file:line references. See
 for the full 5-stage User-Feedback Lifecycle and program structure.
 
 > **DA-4 acquisition goal**: by v2.1.20 (30 days post-v2.1.19 GA),
-> measure dogfooder population. If still N=1, v2.1.20+ allocates scope
-> to active outreach.
+> measure dogfooder population. **DA-4 status (v2.1.20)**: **N=2 confirmed**
+> (@pruge + @bj) — first-follower effect validated. v2.1.21+ continues
+> active outreach (CC marketplace narrative, community engagement) to
+> grow N≥3.
 
 ## License
 

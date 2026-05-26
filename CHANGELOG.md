@@ -5,6 +5,100 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.20] - 2026-05-26 (branch: `release/v2.1.20-marketplace-recovery`)
+
+> **Status**: Marketplace Recovery + Plugin Manifest Schema Compliance Sprint — 외부 dogfooder 정병진 (@bj) 2026-05-26 bkit v2.1.14 install 실패 (`Validation errors: : Unrecognized key: "displayName"`) incident 가 트리거. cc-version-researcher 88% 신뢰도 결론 (정병진 CC ≤ v2.1.142 추정 — `displayName` 은 v2.1.143+ 공식 schema 정식 키) → 3-layer 대응 (Recovery + Defense + Forward-proofing) + bkit Early Adopter Program 외부 dogfooder #2 entry.
+> **Scope**: 14 features (P0×4 / P1×5 / P2×5) · 3 sub-sprints · 3 신규 ENH (321/322/323) · 1 신규 ADR (0011 Plugin Manifest Schema Compliance Policy) · 1 외부 dogfooder #2 (@bj).
+> **Sprint planning**: `docs/sprint/v2120-marketplace-recovery/{master-plan,prd,plan,design}.md` (sprint-master-planner agent 2nd-cycle dogfooding output).
+> **Anti-Mission preserved**: `displayName` 제거 안 함 (v2.1.143+ UI picker 회귀 차단) · v2.1.142 이하 hard reject 안 함 (advisory only, UX 진입장벽 minimize) · Anthropic docs vs 구현 lenient/strict 모순 (Q1) 자체 해결 안 함 (외부 책임) · bkit-starter plugin 변경 안 함 (displayName 미포함, 영향 0).
+> **External dogfooder #2**: @bj (정병진) — joined 2026-05-26 (Lifecycle Stage 1 → Stage 5), entry at `docs/external-dogfooders/bj.md`.
+
+### External Dogfooder Contributions
+
+- **@bj** (정병진) — bkit v2.1.14 install incident (2026-05-26). Drove the entire v2.1.20 sprint via precise error message + cache path + environment metadata sharing. Reproduction scenario absorbed at `test/e2e/external-dogfood/cc-min-version.test.js` (5 TC, Lifecycle Stage 4 Regression Lock achieved). Trust Score `externalDogfoodFeedbackResponseRate` (weight 0.05) accumulated. See `docs/external-dogfooders/bj.md` (Hall of Fame #2).
+
+### 3 Sub-Sprints (Kahn topological)
+
+**Sub-sprint 1 — Recovery (P0×4)** (commit `fb3e1bf`)
+
+- **F1** README.md / README-FULL.md — minimum CC v2.1.143 advisory 1-line, Claude Code badge v2.1.123+ → v2.1.143+, Version badge 2.1.19 → 2.1.20.
+- **F2** `.claude-plugin/marketplace.json` — bkit + marketplace version 2.1.19 → 2.1.20, description prefix 'Requires Claude Code v2.1.143+...' (Q4 spec 미확정으로 safe description-text 방식 채택).
+- **F3** `docs/sprint/v2120-marketplace-recovery/f3-bj-reply-draft.md` (new) — 정병진 회신 draft (Korean + English fallback). CC `--version` request + workaround + Hall of Fame 등록 검토 + ADR 0011 + sprint progress 안내.
+- **F4** `docs/06-guide/cc-compatibility.guide.md` (new, 9 sections) — bkit minimum CC 정합 표 / displayName 출처 / 21-key whitelist / install 실패 사용자 대응 / ADR 0003+0006+0011 관계 / cc-regression R3-321 / SessionStart detection / Open Questions Q1-Q5.
+
+**Sub-sprint 2 — Defense (P1×5, Leaf-first → Orchestrator-last)** (commit `11ec408`)
+
+- **F9** `lib/domain/rules/docs-code-invariants.js` (Leaf SoT, @version 2.1.13 → 2.1.20) — added `EXPECTED_PLUGIN_JSON_KEYS` (21 keys, Object.freeze, Anthropic official schema whitelist) + `diffPluginJsonKeys(actual)` pure function. No FS access (domain purity preserved).
+- **F5** `scripts/validate-plugin.js` (ENH-322) — added `--strict` flag. New exit codes: 2 (extra key outside 21-key whitelist) / 3 (SoT import failure). Backward compat preserved. Smoke-tested: bkit plugin.json (9 keys) PASS, extra key fail with Exit 2.
+- **F6** `.github/workflows/contract-check.yml` — new step `Release Gate — plugin.json schema validation (21-key whitelist)` positioned after `docs-code-sync`. `continue-on-error: true` for v2.1.20 (1-week advisory), tightens to `false` in v2.1.21+.
+- **F7** `scripts/release-plugin-tag.sh` (ADR 0006 § Empirical Validation Gate 회복) — wired `claude plugin validate .` between CI-invariants and tag-conflict-detection (~30-day wire delay closed). `command -v claude` missing → WARN + fallback.
+- **F8** `lib/cc-regression/registry.js` (ENH-321) — added entry #22 R3-321 (severity HIGH, since 2.1.45 strict path adoption, expectedFix 2.1.143 official schema recognition, affectedFiles 4). `check-guards.js` PASS 22 guards.
+
+**Sub-sprint 3 — Forward-proofing (P2×5)** (commit `5260e89`)
+
+- **F10** `hooks/startup/session-context.js` (ENH-323, @version 2.1.19 → 2.1.20) — added `detectCCVersion()` (`child_process.execSync` timeout 200ms hard cap, `.bkit/runtime/cc-version.json` cache 1h TTL, 1회/session cap) + `buildCCVersionAdvisoryContext()`. Sets `BKIT_CC_VERSION_ADVISORY=1` + additionalContext warning when CC < v2.1.143. OTEL emit `gen_ai.cc_version_detection_ms`. Opt-out via `BKIT_DISABLE_CC_VERSION_DETECTION=1`.
+- **F11** `docs/adr/0011-plugin-manifest-schema-compliance.md` (new, Status: Accepted) — 6 sections: Context (incident + root cause + ADR 0003/0006 위반 회고 + Anti-Mission) / Decision (5-layer policy) / Consequences / Empirical Validation (SC1-SC8 매핑) / History (append-only) / Open Question (Q1 Anthropic). Cross-linked to ADR 0003 + 0006 + 0010 + sprint docs.
+- **F12** `test/integration/config-sync.test.js` — CS-015 21-key whitelist 보강. 기존 displayName + name + description + license 요구 유지 (R3 Anti-Mission 강화). 45/45 PASS.
+- **F13** `test/e2e/external-dogfood/cc-min-version.test.js` (new, Lifecycle Stage 4 Regression Lock) — 5 TC: v2.1.142 mock → advisory + env set / v2.1.143 mock → no advisory / command-not-found silent skip / timeout >200ms silent skip / `BKIT_DISABLE_CC_VERSION_DETECTION=1` source=skipped. 3x consecutive stable PASS.
+- **F14** `docs/external-dogfooders/bj.md` (new) + `_README.md` 명단 갱신 — @bj as external dogfooder #2 (after @pruge #1). DA-4 status updated: N=2 confirmed (first-follower effect validated).
+
+### ENH formal-candidates (v2.1.20 정식 편입 — 3건)
+
+- **ENH-321** R3-321 cc-regression guard (F8) — 차별화 #2 Defense Layer 6 reinforcement
+- **ENH-322** validate-plugin.js 21-key whitelist (F5 + F6 + F9) — Convention Restoration (v2.1.19 S2 spirit 계승)
+- **ENH-323** SessionStart CC version detection (F10) — runtime advisory forward-proofing
+
+### Added
+
+- `EXPECTED_PLUGIN_JSON_KEYS` SoT + `diffPluginJsonKeys` in `lib/domain/rules/docs-code-invariants.js`
+- `--strict` flag in `scripts/validate-plugin.js` (exit codes 2 / 3)
+- `Release Gate — plugin.json schema validation (21-key whitelist)` step in `.github/workflows/contract-check.yml`
+- `claude plugin validate .` wire in `scripts/release-plugin-tag.sh` (ADR 0006 § Empirical Validation Gate)
+- `R3-321` entry in `lib/cc-regression/registry.js` (cc-regression entry #22)
+- `detectCCVersion()` + `buildCCVersionAdvisoryContext()` in `hooks/startup/session-context.js`
+- `ccVersionAdvisory` section in `bkit.config.json:ui.contextInjection.sections` (default-on)
+- ADR 0011 Plugin Manifest Schema Compliance Policy (Status: Accepted)
+- `docs/06-guide/cc-compatibility.guide.md` — user-facing self-service guide
+- `docs/external-dogfooders/bj.md` — Hall of Fame entry #2
+
+### Changed
+
+- `README.md` / `README-FULL.md` — Claude Code badge v2.1.123+ → v2.1.143+, Version badge 2.1.19 → 2.1.20, minimum CC v2.1.143 advisory 1-line
+- `.claude-plugin/plugin.json` — version 2.1.19 → 2.1.20 (displayName unchanged per Anti-Mission)
+- `.claude-plugin/marketplace.json` — bkit + marketplace version 2.1.19 → 2.1.20, description prefix advisory
+- `bkit.config.json` — version 2.1.19 → 2.1.20, `ui.contextInjection.sections` adds `ccVersionAdvisory`
+- `test/integration/config-sync.test.js` CS-015 — diffPluginJsonKeys 21-key whitelist 추가
+- `docs/external-dogfooders/_README.md` — @bj entry added under "v2.1.20", DA-4 status N=2 confirmed
+
+### Verification
+
+- **Domain SoT (F9)**: 21 keys frozen, bkit 9 keys 모두 whitelist 내, `diffPluginJsonKeys` extra/null/empty 분기 정상.
+- **CLI strict mode (F5)**: bkit Exit 0 (PASS), extra key Exit 2 (FAIL detected: `fooExtra`, `barExtra`), SoT import fail Exit 3, backward compat (`--strict` 없을 시 기존 동작) Exit 0.
+- **CI gate (F6)**: YAML 정합 (python3 yaml.safe_load PASS), 새 step `docs-code-sync` 직후 위치 검증.
+- **Release gate (F7)**: bash syntax OK, dry-run 진입 (working tree clean 단계 이후 wire 진행 가능).
+- **Regression guard (F8)**: `node scripts/check-guards.js` → 22 guards, 0 warnings. semver gating: `getActive('2.1.142')` includes R3-321, `getActive('2.1.143')` excludes.
+- **SessionStart hook (F10)**: opt-out source=skipped, version detection isolated per scenario via PATH-shim.
+- **Integration test (F12)**: `node test/integration/config-sync.test.js` → 45/45 PASS (CS-015 reinforced).
+- **E2E (F13)**: `node test/e2e/external-dogfood/cc-min-version.test.js` → 5/5 PASS, 3x consecutive stable.
+- **ADR 0011**: Status Accepted, 6 sections complete, cross-links to ADR 0003 + 0006 + 0010 + sprint docs verified.
+- **Hall of Fame (F14)**: `docs/external-dogfooders/bj.md` 5-stage Lifecycle progress documented, _README.md DA-4 status N=2 confirmed.
+
+### Open Questions (5건 — sprint 종결 시점 + 2026-05-26 CO-4 patch amend)
+
+- **Q1** Anthropic docs vs 구현 lenient/strict 모순 — 외부 책임 (bkit 해결 불가)
+- **Q2** 정병진 CC 버전 미확정 — F3 회신 대기 (Out-of-scope)
+- **Q3** ✅ **partially resolved 2026-05-26 CO-4 patch**: Anthropic CHANGELOG dateless 영구 미공개 (raw GitHub fetch 검증) + Releasebot 2026-05-15 detection proxy. cc-compatibility.guide.md § 2.2/2.2.1 + ADR 0011 § History/Q3 + sprint planning docs 4종 amend.
+- **Q4** marketplace.json `requirements.claudeCode` spec — description-text 안전 대체 (현 sprint 진행)
+- **Q5** v2.1.142 이하 사용자 비율 — post-release 모니터 (v2.1.21+ 분석)
+
+### Roll-forward markers (v2.1.21+) — 2026-05-26 CO-5 patch amend
+
+- F6 contract-check.yml `continue-on-error` → `false` (1주 advisory only 종료)
+- F8 R3-321 telemetry 3-month 분석 → 격하/유지 결정
+- F10 ENH-323 SessionStart detection telemetry 3-month 분석 → 격하/유지 결정
+- F14 Hall of Fame @bj Stage 3 (Fix Released): **branch ✅ 2026-05-26 CO-5 patch**, GA tag 시점 "main + tag" upgrade ⏳
+- F14 Hall of Fame @bj Stage 5 (Public Acknowledge): **5-channel documented ✅ 2026-05-26 CO-5 patch** (bj.md / _README.md / README.md Hall of Fame v2.1.20 section / CHANGELOG attribution / ADR 0011 SC8), GA publish 시 외부 가시성 ↑
+
 ## [2.1.19-hotfix.1] - 2026-05-21 (branch: `feature/v2119-hotfix-1-deadcode`)
 
 > **Status**: CI hotfix — `Invocation Contract Check` workflow turned red immediately after v2.1.19 GA merge. The dead-code detector flagged 5 new v2.1.19 modules.

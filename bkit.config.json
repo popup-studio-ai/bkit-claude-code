@@ -1,5 +1,5 @@
 {
-  "version": "2.1.19",
+  "version": "2.1.20",
   "ui": {
     "sessionTitle": {
       "enabled": true,
@@ -14,6 +14,7 @@
       "enabled": true,
       "ambiguityThreshold": 0.7,
       "sections": [
+        "ccVersionAdvisory",
         "onboarding",
         "agentTeams",
         "outputStyles",

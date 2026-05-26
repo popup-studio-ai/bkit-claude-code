@@ -1,13 +1,20 @@
 /**
- * bkit Vibecoding Kit - SessionStart: Session Context Builder Module (v2.1.19)
+ * bkit Vibecoding Kit - SessionStart: Session Context Builder Module (v2.1.20)
  *
  * Builds the additionalContext string for the SessionStart hook response.
  * Includes PDCA status injection, Feature Usage rules, Executive Summary rules,
  * Agent Teams info, Output Styles info, bkend MCP info.
+ *
+ * v2.1.20 (F10 + ENH-323): adds detectCCVersion() + buildCCVersionAdvisoryContext()
+ * to surface a Claude Code v2.1.143+ minimum-version advisory at SessionStart
+ * (1회/session cap, .bkit/runtime/cc-version.json cache 1h TTL, opt-out via
+ * BKIT_DISABLE_CC_VERSION_DETECTION=1, OTEL emit via gen_ai.cc_version_detection_ms).
+ * Trigger: 외부 dogfooder 정병진 (@bj) 2026-05-26 install incident. See ADR 0011.
  */
 
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process'); // v2.1.20 F10: CC version detection
 const { detectLevel } = require('../../lib/pdca/level');
 const { debugLog } = require('../../lib/core/debug');
 const { getPdcaStatusFull } = require('../../lib/pdca/status');
@@ -17,6 +24,203 @@ const { applyBudget } = require('../../lib/core/context-budget');
 const { BKIT_VERSION } = require('../../lib/core/version');
 // v2.1.11 (FR-α2-c): One-Liner SSoT — surfaces bkit identity in SessionStart intro
 const { ONE_LINER_EN } = require('../../lib/infra/branding');
+
+// ─────────────────────────────────────────────────────────────────────────────
+// v2.1.20 (F10 + ENH-323): Claude Code version detection at SessionStart
+// ─────────────────────────────────────────────────────────────────────────────
+// Trigger: 외부 dogfooder 정병진 (@bj) 2026-05-26 install incident — the
+// strict plugin-manifest path in CC ≤ v2.1.142 rejects bkit's displayName
+// field. SessionStart-time detection forward-proofs users who upgrade bkit
+// before upgrading CC.
+//
+// Performance budget:
+//   - child_process.execSync timeout 200ms hard cap
+//   - .bkit/runtime/cc-version.json cache 1h TTL
+//   - 1회/session cap (identical session reuses cache mtime)
+//   - opt-out via BKIT_DISABLE_CC_VERSION_DETECTION=1
+//   - OTEL emit: gen_ai.cc_version_detection_ms (3-month telemetry → v2.1.21+
+//     decision to keep/demote)
+//
+// Reference: docs/sprint/v2120-marketplace-recovery/design.md §3.4
+// Reference: docs/adr/0011-plugin-manifest-schema-compliance.md § Decision
+
+const CC_MIN_VERSION = '2.1.143';
+const CC_VERSION_CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
+const CC_VERSION_DETECT_TIMEOUT_MS = 200;
+
+/**
+ * Compare two semver-ish strings (returns true if a < b).
+ * Local helper to avoid extra deps; matches lib/cc-regression/registry.js
+ * semverLt pattern.
+ *
+ * @param {string} a
+ * @param {string} b
+ * @returns {boolean}
+ */
+function ccVersionLt(a, b) {
+  const pa = String(a).split('.').map((n) => parseInt(n, 10) || 0);
+  const pb = String(b).split('.').map((n) => parseInt(n, 10) || 0);
+  for (let i = 0; i < 3; i++) {
+    if (pa[i] < pb[i]) return true;
+    if (pa[i] > pb[i]) return false;
+  }
+  return false;
+}
+
+/**
+ * Detect installed Claude Code version + emit advisory if < v2.1.143.
+ *
+ * 1회/session cap + cache 1h TTL (.bkit/runtime/cc-version.json).
+ * Opt-out: BKIT_DISABLE_CC_VERSION_DETECTION=1.
+ * Performance: timeout 200ms hard cap on `claude --version`.
+ *
+ * @returns {{
+ *   version: string | null,
+ *   isOldVersion: boolean,
+ *   advisory: string | null,
+ *   source: 'cache' | 'fresh' | 'skipped'
+ * }}
+ */
+function detectCCVersion() {
+  // 1. Opt-out env check
+  if (process.env.BKIT_DISABLE_CC_VERSION_DETECTION === '1') {
+    debugLog('SessionStart', 'CC version detection skipped (BKIT_DISABLE_CC_VERSION_DETECTION=1)', {});
+    return { version: null, isOldVersion: false, advisory: null, source: 'skipped' };
+  }
+
+  const cwd = process.cwd();
+  const cacheDir = path.join(cwd, '.bkit', 'runtime');
+  const cachePath = path.join(cacheDir, 'cc-version.json');
+
+  // 2. Cache check (mtime within TTL)
+  try {
+    if (fs.existsSync(cachePath)) {
+      const stat = fs.statSync(cachePath);
+      const ageMs = Date.now() - stat.mtimeMs;
+      if (ageMs < CC_VERSION_CACHE_TTL_MS) {
+        const cached = JSON.parse(fs.readFileSync(cachePath, 'utf8'));
+        if (cached && typeof cached === 'object' && typeof cached.version !== 'undefined') {
+          return {
+            version: cached.version,
+            isOldVersion: !!cached.isOldVersion,
+            advisory: cached.isOldVersion ? buildCCAdvisoryText(cached.version) : null,
+            source: 'cache',
+          };
+        }
+      }
+    }
+  } catch (_e) {
+    // fail-open: continue to fresh detection
+  }
+
+  // 3. Fresh detection
+  const startTime = Date.now();
+  let version = null;
+  let detectError = null;
+  try {
+    const result = execSync('claude --version', {
+      timeout: CC_VERSION_DETECT_TIMEOUT_MS,
+      stdio: ['ignore', 'pipe', 'pipe'],
+    }).toString().trim();
+    const match = result.match(/(\d+)\.(\d+)\.(\d+)/);
+    if (match) version = match[0];
+  } catch (e) {
+    detectError = e.message || String(e);
+    debugLog('SessionStart', 'CC version detection failed', { error: detectError });
+  }
+  const durationMs = Date.now() - startTime;
+
+  // 4. Semver compare
+  const isOldVersion = version !== null && ccVersionLt(version, CC_MIN_VERSION);
+
+  // 5. OTEL emit (best-effort; silent on failure)
+  try {
+    const telemetry = require('../../lib/infra/telemetry');
+    if (telemetry && typeof telemetry.emit === 'function') {
+      telemetry.emit({
+        name: 'gen_ai.cc_version_detection_ms',
+        value: durationMs,
+        attributes: { version, isOldVersion, source: 'fresh', hasError: detectError !== null },
+      });
+    }
+  } catch (_e) {
+    // fail-open
+  }
+
+  // 6. Env set for downstream consumers
+  if (isOldVersion) {
+    process.env.BKIT_CC_VERSION_ADVISORY = '1';
+  }
+
+  // 7. Cache update (best-effort)
+  try {
+    if (!fs.existsSync(cacheDir)) {
+      fs.mkdirSync(cacheDir, { recursive: true });
+    }
+    fs.writeFileSync(cachePath, JSON.stringify({
+      version,
+      isOldVersion,
+      detectedAt: new Date().toISOString(),
+      ttlSeconds: CC_VERSION_CACHE_TTL_MS / 1000,
+      detectError,
+    }, null, 2));
+  } catch (_e) {
+    // fail-open
+  }
+
+  return {
+    version,
+    isOldVersion,
+    advisory: isOldVersion ? buildCCAdvisoryText(version) : null,
+    source: 'fresh',
+  };
+}
+
+/**
+ * Build the human-readable advisory text shown in additionalContext when
+ * the installed CC < v2.1.143.
+ *
+ * @param {string|null} version
+ * @returns {string}
+ */
+function buildCCAdvisoryText(version) {
+  const v = version || 'unknown';
+  return [
+    `## ⚠️ bkit Compatibility Notice — Claude Code v${v} detected (< v${CC_MIN_VERSION})`,
+    '',
+    `bkit v${BKIT_VERSION} requires **Claude Code v${CC_MIN_VERSION} or later** because the`,
+    'strict plugin-manifest path in Claude Code ≤ v2.1.142 rejects the official',
+    '`displayName` field (incident: external dogfooder 정병진 @bj 2026-05-26).',
+    '',
+    'Recommended fix:',
+    '',
+    '    npm install -g @anthropic-ai/claude-code@latest',
+    '',
+    'See [`docs/06-guide/cc-compatibility.guide.md`](docs/06-guide/cc-compatibility.guide.md)',
+    'for the full workaround + ADR 0011 policy.',
+    '',
+    'To suppress this advisory, set `BKIT_DISABLE_CC_VERSION_DETECTION=1`.',
+    '',
+  ].join('\n');
+}
+
+/**
+ * Build the SessionStart CC version advisory context section.
+ * Returns an empty string if CC ≥ v2.1.143 or detection was skipped/failed.
+ *
+ * @returns {string}
+ */
+function buildCCVersionAdvisoryContext() {
+  try {
+    const result = detectCCVersion();
+    if (result.isOldVersion && result.advisory) {
+      return result.advisory + '\n';
+    }
+  } catch (_e) {
+    // fail-open: never block SessionStart on advisory failure
+  }
+  return '';
+}
 
 /**
  * Build onboarding context section.
@@ -369,8 +573,10 @@ function build(_input, context) {
   const detectedLevel = detectLevel();
 
   // ENH-238: contextInjection opt-out + per-section opt-in gate
+  // v2.1.20 F10 (ENH-323): added 'ccVersionAdvisory' default section.
   let _ciEnabled = true;
   let _ciSections = [
+    'ccVersionAdvisory',
     'onboarding', 'agentTeams', 'outputStyles', 'bkendMcp',
     'enterpriseBatch', 'pdcaCoreRules', 'automation', 'versionEnhancements',
   ];
@@ -404,6 +610,9 @@ function build(_input, context) {
 
   let additionalContext = header;
 
+  // v2.1.20 F10 (ENH-323): CC version advisory — surfaces first if CC < v2.1.143.
+  // Placed before other sections so the warning is not budget-trimmed.
+  if (_ciSections.includes('ccVersionAdvisory'))   additionalContext += buildCCVersionAdvisoryContext();
   if (_ciSections.includes('onboarding'))          additionalContext += buildOnboardingContext(onboardingData);
   if (_ciSections.includes('agentTeams'))          additionalContext += buildAgentTeamsContext(detectedLevel);
   if (_ciSections.includes('outputStyles'))        additionalContext += buildOutputStylesAndMemoryContext(detectedLevel);
@@ -426,4 +635,13 @@ function build(_input, context) {
   return additionalContext;
 }
 
-module.exports = { build };
+module.exports = {
+  build,
+  // v2.1.20 F10 (ENH-323): exported for E2E test (test/e2e/cc-min-version.test.js).
+  detectCCVersion,
+  buildCCVersionAdvisoryContext,
+  // Constants exported for test assertions only.
+  CC_MIN_VERSION,
+  CC_VERSION_CACHE_TTL_MS,
+  CC_VERSION_DETECT_TIMEOUT_MS,
+};

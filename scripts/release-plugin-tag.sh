@@ -81,6 +81,34 @@ echo "[release]  OK  — working tree clean"
 # ── 4. Run CI invariants (must pass) ─────────────────────────────────────
 node scripts/check-trust-score-reconcile.js
 node scripts/check-quality-gates-m1-m10.js
+
+# ── 4.1 v2.1.20 (F7): ADR 0006 § Empirical Validation Gate ───────────────
+# Wires `claude plugin validate .` into the release pipeline per ADR 0006
+# (2026-04-28 Accepted), recovering the ~30-day wire delay surfaced by the
+# 외부 dogfooder 정병진 (@bj) 2026-05-26 install incident.
+# References:
+#   - docs/adr/0006-cc-upgrade-policy.md § "Empirical Validation Gate"
+#   - docs/adr/0011-plugin-manifest-schema-compliance.md § Decision
+#   - docs/sprint/v2120-marketplace-recovery/master-plan.md § 8.2
+# Behavior:
+#   - command -v claude OK → enforce Exit 0 (non-zero → release blocked).
+#   - command -v claude missing → WARN + fallback (do not block release;
+#     allows CI environments without Claude Code CLI to still ship).
+if command -v claude >/dev/null 2>&1; then
+  echo "[release] invoking: claude plugin validate . (ADR 0006 § Empirical Validation Gate)"
+  if ! claude plugin validate .; then
+    echo "[release] FAIL — claude plugin validate returned non-zero (ADR 0006 violation)" >&2
+    echo "[release]        Reference: docs/adr/0006-cc-upgrade-policy.md § Empirical Validation Gate" >&2
+    echo "[release]        Reference: docs/adr/0011-plugin-manifest-schema-compliance.md § Decision" >&2
+    exit 1
+  fi
+  echo "[release]  OK  — claude plugin validate passed (ADR 0006 § Empirical Validation Gate)"
+else
+  echo "[release] WARN — 'claude' CLI not on PATH; skipping ADR 0006 § Empirical Validation Gate"
+  echo "[release] WARN — recommended: install Claude Code v2.1.143+ before release"
+  echo "[release] WARN — see docs/06-guide/cc-compatibility.guide.md"
+fi
+
 echo "[release]  OK  — CI invariants pass"
 
 # ── 5. Detect tag conflicts ─────────────────────────────────────────────

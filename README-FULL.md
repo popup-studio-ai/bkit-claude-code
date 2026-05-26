@@ -5,9 +5,11 @@
 > **The 5-minute version is in [README.md](README.md). This file is the deep one.** It exists for people who want to know exactly what `/sprint`, `/pdca`, and `/control` do, which agent runs in which phase, how the 11 quality gates measure things, and how the architecture stops AI from drifting. **Release history is in [CHANGELOG.md](CHANGELOG.md) and is not duplicated here.**
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Claude Code](https://img.shields.io/badge/Claude%20Code-v2.1.123+-purple.svg)](https://code.claude.com)
-[![Version](https://img.shields.io/badge/Version-2.1.13-green.svg)](CHANGELOG.md)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-v2.1.143+-purple.svg)](https://code.claude.com)
+[![Version](https://img.shields.io/badge/Version-2.1.20-green.svg)](CHANGELOG.md)
 [![Author](https://img.shields.io/badge/Author-POPUP%20STUDIO-orange.svg)](https://popupstudio.ai)
+
+> **Requirement**: bkit requires Claude Code **v2.1.143 or later** (the strict plugin-manifest path recognizes the official `displayName` field only from v2.1.143). On older Claude Code you will see `Validation errors: Unrecognized key: "displayName"` during `claude plugin install`. Run `npm install -g @anthropic-ai/claude-code@latest` to upgrade, or see [`docs/06-guide/cc-compatibility.guide.md`](docs/06-guide/cc-compatibility.guide.md).
 
 ---
 

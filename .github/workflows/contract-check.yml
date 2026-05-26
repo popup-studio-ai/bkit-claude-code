@@ -86,6 +86,18 @@ jobs:
       - name: Release Gate — docs-code-sync (counts SoT drift detector)
         run: node test/contract/docs-code-sync.test.js
 
+      # v2.1.20 (F6 + ENH-322): plugin manifest 21-key whitelist validation.
+      # Trigger: 외부 dogfooder 정병진 (@bj) 2026-05-26 install failure
+      # (`Validation errors: : Unrecognized key: "displayName"` — CC ≤ v2.1.142
+      # strict reject of the v2.1.143+ official displayName key).
+      # Enforces lib/domain/rules/docs-code-invariants.js EXPECTED_PLUGIN_JSON_KEYS
+      # SoT. Exit 2 on extra key, Exit 3 on SoT import failure. See ADR 0011.
+      # v2.1.20: advisory only (continue-on-error: true) for 1 week.
+      # v2.1.21+: strict (continue-on-error: false) — see CHANGELOG [2.1.21].
+      - name: Release Gate — plugin.json schema validation (21-key whitelist)
+        run: node scripts/validate-plugin.js --strict
+        continue-on-error: true # v2.1.20 advisory only; v2.1.21+: false (strict)
+
   contract-l5-e2e:
     name: Contract Test L5 (Invocation Inventory)
     runs-on: ubuntu-latest
