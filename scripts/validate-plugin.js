@@ -3,7 +3,19 @@
  * validate-plugin.js - Validate plugin structure and Claude Code compatibility
  *
  * Purpose: Validate plugin structure, YAML frontmatter, and Claude Code compatibility (v2.1.x)
- * Usage: node validate-plugin.js [--verbose]
+ * Usage: node validate-plugin.js [--verbose] [--strict]
+ *
+ * v2.1.20 (F5 + ENH-322): --strict mode enforces the Anthropic official plugin
+ * manifest 21-key whitelist (EXPECTED_PLUGIN_JSON_KEYS from
+ * lib/domain/rules/docs-code-invariants.js). Triggered by 외부 dogfooder
+ * 정병진 (@bj) 2026-05-26 install failure (CC ≤ v2.1.142 strict reject of
+ * the v2.1.143+ official `displayName` key). See ADR 0011.
+ *
+ * Exit codes:
+ *   0 — PASS (all checks passed)
+ *   1 — required files/dirs missing OR plugin.json invalid (existing)
+ *   2 — extra key found, not in 21-key whitelist (--strict only)
+ *   3 — domain SoT (EXPECTED_PLUGIN_JSON_KEYS) import failure (--strict only)
  *
  * Converted from: scripts/validate-plugin.sh
  */
@@ -29,6 +41,8 @@ const REQUIRED_DIRS = [
 ];
 
 const VERBOSE = process.argv.includes('--verbose');
+// v2.1.20 (F5 + ENH-322): strict mode enforces 21-key whitelist (ADR 0011).
+const STRICT = process.argv.includes('--strict');
 
 // ============================================================
 // Statistics
@@ -251,15 +265,23 @@ function validateHooksInContent(content, sourceFile) {
 
 /**
  * Validate plugin.json
- * @returns {boolean} True if valid
+ *
+ * v2.1.20 (F5 + ENH-322): when --strict is set, additionally enforces the
+ * Anthropic official plugin manifest 21-key whitelist (EXPECTED_PLUGIN_JSON_KEYS
+ * from lib/domain/rules/docs-code-invariants.js). Extra keys → process.exit(2).
+ * SoT import failure → process.exit(3). See ADR 0011.
+ *
+ * @returns {boolean} True if valid (basic checks). On --strict failure this
+ *                    function does NOT return — it calls process.exit() directly.
  */
 function validatePluginJson() {
   // v2.1.8 fix B18: correct path is .claude-plugin/plugin.json per CC plugin spec
   const pluginPath = path.join(PLUGIN_ROOT, '.claude-plugin', 'plugin.json');
 
+  let plugin;
   try {
     const content = fs.readFileSync(pluginPath, 'utf8');
-    const plugin = JSON.parse(content);
+    plugin = JSON.parse(content);
 
     if (!plugin.name) {
       error('plugin.json missing "name" field');
@@ -272,11 +294,53 @@ function validatePluginJson() {
     }
 
     log(`Plugin: ${plugin.name} v${plugin.version}`);
-    return true;
   } catch (e) {
     error(`Invalid plugin.json: ${e.message}`);
     return false;
   }
+
+  // v2.1.20 (F5 + ENH-322): --strict 21-key whitelist enforcement.
+  // Reference: docs/adr/0011-plugin-manifest-schema-compliance.md
+  if (STRICT) {
+    let EXPECTED_PLUGIN_JSON_KEYS;
+    let diffPluginJsonKeys;
+    try {
+      const sot = require('../lib/domain/rules/docs-code-invariants');
+      EXPECTED_PLUGIN_JSON_KEYS = sot.EXPECTED_PLUGIN_JSON_KEYS;
+      diffPluginJsonKeys = sot.diffPluginJsonKeys;
+      if (!Array.isArray(EXPECTED_PLUGIN_JSON_KEYS) || typeof diffPluginJsonKeys !== 'function') {
+        throw new Error('SoT exports incomplete (EXPECTED_PLUGIN_JSON_KEYS or diffPluginJsonKeys missing)');
+      }
+    } catch (sotErr) {
+      error(`--strict mode: domain SoT import failure — ${sotErr.message}`);
+      console.error(`[validate-plugin] FATAL: cannot load lib/domain/rules/docs-code-invariants (--strict mode requires F9 SoT). See ADR 0011.`);
+      process.exit(3);
+    }
+
+    if (VERBOSE) {
+      log(`Strict mode: checking against Anthropic official plugin manifest schema (${EXPECTED_PLUGIN_JSON_KEYS.length} keys):`);
+      for (const k of EXPECTED_PLUGIN_JSON_KEYS) {
+        const status = plugin[k] !== undefined ? 'present' : 'absent';
+        log(`  - ${k}: ${status}`);
+      }
+    }
+
+    const diff = diffPluginJsonKeys(plugin);
+    const extraKeys = diff.filter((d) => d.status === 'extra');
+    if (extraKeys.length > 0) {
+      for (const e of extraKeys) {
+        error(`plugin.json extra key (not in 21-key whitelist): "${e.key}"`);
+      }
+      console.error(`[validate-plugin] FAIL: --strict mode detected ${extraKeys.length} extra key(s) outside the 21-key whitelist.`);
+      console.error(`[validate-plugin]       Reference: lib/domain/rules/docs-code-invariants.js EXPECTED_PLUGIN_JSON_KEYS (F9).`);
+      console.error(`[validate-plugin]       Policy: docs/adr/0011-plugin-manifest-schema-compliance.md (ADR 0011, Decision).`);
+      process.exit(2);
+    }
+
+    log(`Strict mode: 21-key whitelist PASS (${Object.keys(plugin).length} keys in plugin.json, all within whitelist).`);
+  }
+
+  return true;
 }
 
 /**
