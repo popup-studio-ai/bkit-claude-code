@@ -552,8 +552,9 @@ try {
 }
 
 // ENH-227 (Issue #77 Phase A): single-source generator
+// Issue #111 Phase B (v2.1.21): thread session_id for per-session title isolation
 const { generateSessionTitle } = require('../lib/pdca/session-title');
-const sessionTitle = generateSessionTitle({ action: 'CHECK', feature });
+const sessionTitle = generateSessionTitle({ action: 'CHECK', feature, sessionId: input && input.session_id });
 
 // Claude Code: JSON output conforming to CC hook output schema
 const response = {

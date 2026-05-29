@@ -95,6 +95,7 @@ function getDecisionTracer() {
 const SKILL_HANDLERS = {
   'pdca': './pdca-skill-stop.js',
   'pm-discovery': './pdca-skill-stop.js',  // v1.6.0: PM uses same PDCA stop handler
+  'sprint': './sprint-skill-stop.js',  // v2.1.21 (Issue #113): Sprint Exec Summary + AskUserQuestion + sessionTitle
   'plan-plus': './plan-plus-stop.js',  // v1.5.9: Executive Summary + AskUserQuestion
   'code-review': './code-review-stop.js',
   'phase-8-review': './phase8-review-stop.js',
@@ -153,6 +154,20 @@ function detectActiveSkill(hookContext) {
   if (sessionSkill) {
     return sessionSkill;
   }
+
+  // 3.5 v2.1.21 (Issue #113): cross-process active-skill marker.
+  // skill-post (#3 path) is in-memory only + dropped by CC #57317, and CC omits
+  // skill_name (#1) / tool_input (#2) from the Stop payload — so none of the
+  // above resolve a /sprint skill in production. The sprint handler writes a
+  // file marker that survives across processes; peek it here (no consume — the
+  // dispatched handler consumes it after emitting, so re-fire is prevented).
+  try {
+    const { readActiveSkill } = require('../lib/core/active-skill-marker');
+    const marker = readActiveSkill();
+    if (marker && marker.skill) {
+      return marker.skill;
+    }
+  } catch (_e) { /* non-critical */ }
 
   // 4. From PDCA status (legacy fallback)
   const pdcaStatus = getPdcaStatusFull();

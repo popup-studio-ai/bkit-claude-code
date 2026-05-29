@@ -349,8 +349,9 @@ if (feature && (action === 'plan' || action === 'design' || action === 'report')
   const formatted = formatAskUserQuestion(questionPayload);
 
   // ENH-227 (Issue #77 Phase A): single-source generator
+  // Issue #111 Phase B (v2.1.21): thread session_id for per-session title isolation
   const { generateSessionTitle } = require('../lib/pdca/session-title');
-  const execSessionTitle = generateSessionTitle({ action: action ? action.toUpperCase() : null, feature });
+  const execSessionTitle = generateSessionTitle({ action: action ? action.toUpperCase() : null, feature, sessionId: input && input.session_id });
 
   const execResponse = {
     decision: 'allow',
@@ -381,8 +382,9 @@ if (feature && (action === 'plan' || action === 'design' || action === 'report')
 }
 
 // ENH-227 (Issue #77 Phase A): single-source generator
+// Issue #111 Phase B (v2.1.21): thread session_id for per-session title isolation
 const { generateSessionTitle: _genSessionTitleDefault } = require('../lib/pdca/session-title');
-const defaultSessionTitle = _genSessionTitleDefault({ action: action ? action.toUpperCase() : null, feature });
+const defaultSessionTitle = _genSessionTitleDefault({ action: action ? action.toUpperCase() : null, feature, sessionId: input && input.session_id });
 
 // Claude Code: JSON output conforming to CC hook output schema
 const response = {

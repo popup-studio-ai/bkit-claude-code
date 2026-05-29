@@ -287,6 +287,19 @@ async function handleSprintAction(action, args, deps) {
     return { ok: false, error: 'Unknown action: ' + action, validActions: [...VALID_ACTIONS] };
   }
   const a = args || {};
+  // v2.1.21 (Issue #113): write a cross-process active-skill marker so the
+  // end-of-turn Stop hook (unified-stop) can dispatch sprint-skill-stop even
+  // when CC omits skill_name from the Stop payload and skill_post is dropped
+  // (#57317). The sprint skill ALWAYS routes through this handler, so this is a
+  // reliable write point. Best-effort — never blocks the action.
+  try {
+    require('../lib/core/active-skill-marker').writeActiveSkill({
+      skill: 'sprint',
+      action,
+      id: a.id || a.newId || null,
+      phase: a.to || null,
+    });
+  } catch (_e) { /* non-critical */ }
   const d = wireAgentAdapters(deps || {});
   const infra = d.infra || getInfra(a);
   switch (action) {
@@ -457,7 +470,14 @@ async function handleStatus(args, infra) {
   if (!args || !args.id) return { ok: false, error: 'status requires { id }' };
   const sprint = await infra.stateStore.load(args.id);
   if (!sprint) return { ok: false, error: 'Sprint not found: ' + args.id };
-  return { ok: true, sprint };
+  // v2.1.21 (Issue #113, F8): attach human-readable screen so the status is
+  // self-explanatory instead of 100%-LLM-narrated raw JSON.
+  let display = null;
+  try {
+    const { formatStatusScreen } = require('../lib/sprint/executive-summary');
+    display = formatStatusScreen(sprint);
+  } catch (_e) { display = null; }
+  return { ok: true, sprint, display };
 }
 
 async function handleList(_args, infra) {
@@ -848,11 +868,21 @@ async function handlePhase(args, infra, deps) {
   // a markdown report under docs/03-analysis/ when gate_fail occurs. The reporter
   // owns the FS write via the handler-provided fileWriter (advance-phase stays pure).
   const failureReporter = buildFailureReporterForHandler();
+  // v2.1.21 (Issue #113, F7): inject transitionSummaryBuilder so advancePhase
+  // attaches a human-readable Sprint Executive Summary to the success payload.
+  // Builder is pure (lib/sprint/executive-summary — no I/O); handler owns the
+  // wiring, advancePhase stays free of the lib/sprint import (layer discipline).
+  let transitionSummaryBuilder = null;
+  try {
+    const { generateSprintExecutiveSummary } = require('../lib/sprint/executive-summary');
+    transitionSummaryBuilder = (s, opts) => generateSprintExecutiveSummary(s, opts || {});
+  } catch (_e) { transitionSummaryBuilder = null; }
   const advanceDeps = Object.assign({
     eventEmitter: infra.eventEmitter.emit,
     approve: args.approve === true || args.approve === 'true',
     reason: typeof args.reason === 'string' ? args.reason : null,
     failureReporter: failureReporter,
+    transitionSummaryBuilder: transitionSummaryBuilder,
   }, deps.lifecycleDeps || {});
   const result = await lifecycle.advancePhase(sprint, args.to, advanceDeps);
   // v2.1.16 (Issue #95, F2): record scope_boundary_approved when the
@@ -1136,12 +1166,20 @@ async function handleWatch(args, infra) {
     }
   } catch (_e) { /* matrices optional */ }
 
+  // v2.1.21 (Issue #113, F8): human-readable watch screen (includes fired triggers).
+  let display = null;
+  try {
+    const { formatStatusScreen } = require('../lib/sprint/executive-summary');
+    display = formatStatusScreen(sprint, { triggers });
+  } catch (_e) { display = null; }
+
   return {
     ok: true,
     snapshot: sprint,
     triggers: triggers,
     matrices: matrices,
     phase: sprint.phase,
+    display,
     timestamp: new Date().toISOString(),
   };
 }

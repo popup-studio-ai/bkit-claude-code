@@ -5,6 +5,50 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.21] - 2026-05-29 (branch: `release/v2.1.21-issue-response`)
+
+> **Status**: Issue Response Sprint — 2건의 외부 dogfooder open issue를 단일 통합 sprint(`v2121-issue-response`, Trust L4)으로 해소. **#111** (sessionTitle 충돌, reporter @wonuseo 외부 dogfooder #3) + **#113** (Sprint 화면 출력 강제 미흡, reporter @rohwonseok-ops). 코드베이스 file:line 실측 검증 기반(외부 dogfooder 주장 무검증 수용 금지 원칙).
+> **Scope**: 8 features (P0×3 #111 / P1×4 + P2×1 #113) · 신규 모듈 2 (`lib/sprint/executive-summary.js`, `scripts/sprint-skill-stop.js`) · 리팩터 8 (session-title-cache / session-title / 4 Stop emitter / unified-stop / advance-phase.usecase / sprint-handler) · 신규/확장 TC 5 파일 (79 신규 TC) · 1 신규 ADR (0012 Sprint Stop Hook Output Enforcement).
+> **Sprint planning**: `docs/01-plan/features/v2121-issue-response.master-plan.md` + `docs/00-pm/v2121-issue-response.prd.md` (sprint-master-planner agent 3rd-cycle dogfooding output).
+> **Anti-Mission preserved**: session-title 포맷 전면 재설계 안 함 (`[bkit] {action} {feature}` 골격 유지 + tag 부착만) · PDCA executive-summary 와 코드 공유 안 함 (Sprint 별도 shape) · `getActiveSkill()` 근본 수정(skill_post drop #57317) 안 함 (skill_name 우선 의존 우회만) · sprint phase enum/state-machine 불변.
+
+### Issue #111 — Session Title Isolation (Phase B, P0) — extends #77
+
+같은 PROJECT_DIR 의 병렬 세션이 동일 feature/phase 일 때 **동일한 창 제목**(`[bkit] PLAN f1`)을 갖던 v2.1.6~v2.1.20 전 버전 버그를 해소 (잘못된 창에 위험 명령 입력 리스크). #77 v2.1.6 Phase A 는 per-message 덮어쓰기·opt-out·stale TTL 만 해결했고 session 격리는 미완이었음.
+
+- **F1** `lib/core/session-title-cache.js` — PROJECT_DIR 당 단일 flat record → `{ $schemaVersion: 2, sessions: { [sessionId]: {...} } }` map 구조 전환. `session-ctx-fp.js` 검증 패턴 미러 (atomic write + inline GC: stale 7d TTL + LRU cap 200). 레거시 flat record 는 `readCache()` 에서 1회 자동 마이그레이션 (backward-compat). `isSameAsCached` per-session lookup 으로 전환 → 세션 B 가 세션 A record 를 clobber 하던 부작용(ENH-228 phase-change-only dedup 파괴) 제거.
+- **F2** `lib/pdca/session-title.js` — sessionId 기반 stable short tag(`·a1b2`, sha256 절단) 를 title 끝에 부착(`[bkit] PLAN f1 ·a1b2`). `{tag}` format 토큰 지원 + 미포함 format 은 자동 append. sessionId 부재 시 tag 생략(backward-compat). `sessionTag()` export.
+- **F3** session_id threading — `scripts/{iterator-stop,plan-plus-stop,pdca-skill-stop,gap-detector-stop}.js` 4개 Stop emitter(5개 호출)가 `generateSessionTitle({ ..., sessionId: input.session_id })` 로 세션 식별자 전달 (이전엔 미전달 → tag 미부착).
+
+### Issue #113 — Sprint Output Enforcement (P1/P2) — extends #93
+
+Sprint 의 success/intermediate/status/watch 경로가 raw JSON 만 반환하여 100% LLM narration 에 의존하던 가시성 갭을 해소. PDCA 와 동등한 Stop hook 출력 강제를 Sprint 에 도입.
+
+- **F4** `lib/sprint/executive-summary.js` (신규) — Sprint shape Executive Summary(Mission/Result/matchRate/Cross-Sprint Integration/Invariant/plugin validate). PDCA shape(problem/solution/...)와 **별도** (#113 §D). 순수 모듈(디스크 I/O 없음). `formatStatusScreen()`/`formatFeatureTable()` 로 F8 과 per-feature 표 단일 소스 공유.
+- **F5** `scripts/sprint-skill-stop.js` (신규) — Sprint Stop hook. Exec Summary + AskUserQuestion + sessionTitle 출력. **run-export 패턴**(`module.exports = { run }`, cto-stop/team-stop 와 동일) 채택 — bare-require-`{}` 패턴(pdca-skill-stop)은 unified-stop `executeHandler` 의 `require()` 경유 시 no-op 이므로, 실제 dispatch 보장을 위해 run-export 필수. skill_name 우선 의존(#57317 회피).
+- **F6** `scripts/unified-stop.js` + **신규 `lib/core/active-skill-marker.js`** — `SKILL_HANDLERS` 에 `'sprint'` 등록 + **cross-process active-skill 마커** dispatch 경로. **실 `claude -p` 검증으로 발견한 결함**: CC 는 Stop payload 에 `skill_name` 미포함(`hasSkillName:false` 실측), `getActiveSkill()` 는 in-memory 라 cross-process 무용 + skill_post #57317 drop → `detectActiveSkill()` 4경로 전멸 → 기존 설계로는 **어떤 skill Stop handler 도 production 에서 미발동**(PDCA 포함). 해결: sprint-handler 가 `.bkit/runtime/active-skill.json` 기록 → unified-stop peek(detectActiveSkill 3.5) → sprint-skill-stop consume(TTL 10분 + consume-once). 실 런타임 `Detection result: activeSkill="sprint"` → `handled:true` 확인.
+- **F7** `lib/application/sprint-lifecycle/advance-phase.usecase.js` — SUCCESS path 에 `phaseTransitionSummary` 출력 추가. caller-injected `deps.transitionSummaryBuilder` (#93 failureReporter DI 규율 미러) — usecase 순수성 유지(fs write·lib/sprint import 없음), `scripts/sprint-handler.js handlePhase` 가 wiring.
+- **F8** `scripts/sprint-handler.js` — `handleStatus`/`handleWatch` 가 `display` 필드(human-readable per-feature 표 + gates 한 줄 요약)를 결과에 첨부 (#113 §C). raw JSON 은 프로그램 사용을 위해 보존.
+
+### Architecture Decision Records
+
+- **ADR 0012** (신규) — Sprint Stop Hook Output Enforcement: (D1) run-export 패턴(bare-require no-op 회피, 필요조건), (D2) PDCA 와 별도 sprint shape, (D3) usecase 순수성 DI, (D5) **cross-process active-skill 마커**(detectActiveSkill 4경로 전멸 우회 — 충분조건). #93/v2.1.16 + ADR 0011 선례 계승.
+
+### Tests
+
+- `test/unit/session-title.test.js` (확장 +8 TC) — 2-session DISTINCT title / clobber 후 dedup 복원 / legacy migration / sessionId 부재 tag 생략 / sessionTag 결정성.
+- `test/unit/sprint-executive-summary.test.js` (신규 28 TC) — sprint shape / PDCA shape 분리 / context override / next actions / feature 표 / formatStatusScreen.
+- `test/unit/sprint-skill-stop.test.js` (신규 20 TC) — Exec Summary 출력 / sessionTitle tag / userPrompt / read-only 미출력 / run-export / unified-stop e2e dispatch(TC-U1) / **marker 경로 production dispatch(TC-U2) / 오발동 방지(TC-U3)**.
+- `test/unit/active-skill-marker.test.js` (신규 10 TC) — write/read/consume roundtrip / TTL 만료 / 손상 JSON 방어 / consume-once.
+- `test/contract/sprint-skill-handler-registration.test.js` (신규 5 TC) — SKILL_HANDLERS sprint 엔트리 + run-export 구조 invariant.
+- `test/unit/sprint-lifecycle/advance-phase-transition-summary.test.js` (신규 11 TC) — phaseTransitionSummary DI 계약 + usecase 순수성(fs/lib-sprint import 부재) contract.
+- **총 92 신규/확장 TC** (전체 PASS). 실 `claude -p --plugin-dir .` 런타임 dispatch 검증 포함 (static check + 합성 payload 만으로는 dispatch 결함을 놓침 — [[feedback_thorough_qa]]).
+
+### Cross-references
+
+- #111 ⊃ #77 (v2.1.6 Phase A session isolation 미완) · #113 ⊃ #93 (v2.1.16 gate_fail human-readable, success path 미해결).
+- **Latent finding (CARRY-#113-1)**: PDCA 계열 skill Stop handler(pdca-skill-stop / gap-detector-stop / iterator-stop / plan-plus-stop)는 (a) bare-require-`{}` no-op + (b) `detectActiveSkill()` 4경로 전멸로 **production 에서 동일하게 미발동**한다(실 `claude -p` 검증). sprint 는 run-export(D1) + active-skill 마커(D5)로 완전 해소했다. PDCA 계열도 동일 패턴(run-export + handler 마커)으로 전환 가능하나, 별도 회귀 검증이 필요하여 v2.1.22+ 로 carry.
+
 ## [2.1.20] - 2026-05-26 (branch: `release/v2.1.20-marketplace-recovery`)
 
 > **Status**: Marketplace Recovery + Plugin Manifest Schema Compliance Sprint — 외부 dogfooder 정병진 (@bj) 2026-05-26 bkit v2.1.14 install 실패 (`Validation errors: : Unrecognized key: "displayName"`) incident 가 트리거. cc-version-researcher 88% 신뢰도 결론 (정병진 CC ≤ v2.1.142 추정 — `displayName` 은 v2.1.143+ 공식 schema 정식 키) → 3-layer 대응 (Recovery + Defense + Forward-proofing) + bkit Early Adopter Program 외부 dogfooder #2 entry.

@@ -59,7 +59,8 @@ mockUIConfig(defaultUI);
 mockPdcaStatus({ primaryFeature: 'f1', currentPhase: 'plan', features: { f1: { timestamps: { lastUpdated: new Date().toISOString() } } } });
 const tcA4first = ST.generateSessionTitle({ sessionId: 's1' });
 const tcA4second = ST.generateSessionTitle({ sessionId: 's1' });
-assert('TC-A4a', tcA4first === '[bkit] PLAN f1', `1차 호출 정상 발행 (got: ${tcA4first})`);
+// v2.1.21 (#111 Phase B): title 에 sessionId 기반 tag 부착
+assert('TC-A4a', tcA4first === `[bkit] PLAN f1 ·${ST.sessionTag('s1')}`, `1차 호출 정상 발행 (got: ${tcA4first})`);
 assert('TC-A4b', tcA4second === undefined, '2차 동일 호출 시 cache hit → undefined');
 
 // =============== TC-A5: phase change → emit ===============
@@ -69,7 +70,7 @@ mockPdcaStatus({ primaryFeature: 'f1', currentPhase: 'plan', features: { f1: { t
 ST.generateSessionTitle({ sessionId: 's1' });
 mockPdcaStatus({ primaryFeature: 'f1', currentPhase: 'design', features: { f1: { timestamps: { lastUpdated: new Date().toISOString() } } } });
 const tcA5 = ST.generateSessionTitle({ sessionId: 's1' });
-assert('TC-A5', tcA5 === '[bkit] DESIGN f1', `phase 변경 시 새 emit (got: ${tcA5})`);
+assert('TC-A5', tcA5 === `[bkit] DESIGN f1 ·${ST.sessionTag('s1')}`, `phase 변경 시 새 emit (got: ${tcA5})`);
 
 // =============== TC-A6: stale feature TTL ===============
 resetCache();
@@ -84,7 +85,7 @@ resetCache();
 mockUIConfig({ sessionTitle: { enabled: true, staleTTLHours: 0, format: '[bkit] {action} {feature}' } });
 mockPdcaStatus({ primaryFeature: 'f1', currentPhase: 'plan', features: { f1: { timestamps: { lastUpdated: stale } } } });
 const tcA6b = ST.generateSessionTitle({ sessionId: 's1' });
-assert('TC-A6b', tcA6b === '[bkit] PLAN f1', 'staleTTLHours=0 시 stale 검사 비활성 → 정상 발행');
+assert('TC-A6b', tcA6b === `[bkit] PLAN f1 ·${ST.sessionTag('s1')}`, 'staleTTLHours=0 시 stale 검사 비활성 → 정상 발행');
 
 // =============== TC-A7: PDCA absent → undefined ===============
 resetCache();
@@ -98,7 +99,7 @@ resetCache();
 mockUIConfig(defaultUI);
 mockPdcaStatus({ primaryFeature: 'f1', currentPhase: 'plan', features: { f1: { timestamps: { lastUpdated: new Date().toISOString() } } } });
 const tcA8 = ST.generateSessionTitle({ sessionId: 's1', action: 'PLAN', feature: 'overridden' });
-assert('TC-A8', tcA8 === '[bkit] PLAN overridden', `explicit feature/action override 작동 (got: ${tcA8})`);
+assert('TC-A8', tcA8 === `[bkit] PLAN overridden ·${ST.sessionTag('s1')}`, `explicit feature/action override 작동 (got: ${tcA8})`);
 
 // =============== TC-A9: applyFormat util ===============
 const tcA9 = ST.applyFormat('[bkit] {action} {feature}', { feature: 'f1', phase: 'plan', action: null });
@@ -110,7 +111,59 @@ mockUIConfig(defaultUI);
 mockPdcaStatus({ primaryFeature: 'f1', currentPhase: 'plan', features: { f1: { timestamps: { lastUpdated: new Date().toISOString() } } } });
 ST.generateSessionTitle({ sessionId: 's1' });
 const cached = Cache.readCache();
-assert('TC-A10', cached && cached.feature === 'f1' && cached.phase === 'plan', 'cache 파일이 정상 기록됨');
+// v2.1.21 (#111 Phase B): cache 는 sessions[sessionId] map
+const recA10 = cached && cached.sessions && cached.sessions['s1'];
+assert('TC-A10', !!recA10 && recA10.feature === 'f1' && recA10.phase === 'plan', 'cache 파일이 sessions map 으로 정상 기록됨');
+
+// =====================================================================
+// Issue #111 Phase B (v2.1.21) — 병렬 세션 격리 + dedup 복원 + 마이그레이션
+// =====================================================================
+
+// =============== TC-B1: 두 병렬 세션 → DISTINCT title ===============
+resetCache();
+mockUIConfig(defaultUI);
+mockPdcaStatus({ primaryFeature: 'f1', currentPhase: 'plan', features: { f1: { timestamps: { lastUpdated: new Date().toISOString() } } } });
+const tcB1a = ST.generateSessionTitle({ sessionId: 'sessionA' });
+const tcB1b = ST.generateSessionTitle({ sessionId: 'sessionB' });
+assert('TC-B1a', typeof tcB1a === 'string' && typeof tcB1b === 'string', `두 세션 모두 title 발행 (A: ${tcB1a}, B: ${tcB1b})`);
+assert('TC-B1b', tcB1a !== tcB1b, `동일 feature/phase 라도 sessionId 다르면 DISTINCT title (A: ${tcB1a} ≠ B: ${tcB1b})`);
+
+// =============== TC-B2: clobber 후 dedup 복원 (핵심 회귀 방지) ===============
+// 시나리오: A 발행 → B 발행(레거시라면 A record clobber) → A 재발행(phase 변화 없음)
+// 기대: A 재발행은 undefined (자기 세션 cache hit) — ENH-228 dedup 복원
+resetCache();
+mockUIConfig(defaultUI);
+mockPdcaStatus({ primaryFeature: 'f1', currentPhase: 'plan', features: { f1: { timestamps: { lastUpdated: new Date().toISOString() } } } });
+ST.generateSessionTitle({ sessionId: 'sessionA' });   // A 1차
+ST.generateSessionTitle({ sessionId: 'sessionB' });   // B 1차 (레거시: A clobber)
+const tcB2 = ST.generateSessionTitle({ sessionId: 'sessionA' }); // A 재발행 (변화 없음)
+assert('TC-B2', tcB2 === undefined, 'clobber 시도 후에도 A 재발행은 undefined (per-session dedup 복원, ENH-228)');
+
+// =============== TC-B3: legacy flat-record 마이그레이션 ===============
+resetCache();
+const legacyPath = Cache.getCachePath();
+fs.mkdirSync(path.dirname(legacyPath), { recursive: true });
+fs.writeFileSync(legacyPath, JSON.stringify({
+  sessionId: 'legacySession', feature: 'oldf', phase: 'design', action: null,
+  timestamp: new Date().toISOString(),
+}, null, 2));
+const migrated = Cache.readCache();
+const recB3 = migrated && migrated.sessions && migrated.sessions['legacySession'];
+assert('TC-B3a', !!migrated && !!migrated.sessions, 'legacy flat record → sessions map 으로 정규화');
+assert('TC-B3b', !!recB3 && recB3.feature === 'oldf' && recB3.phase === 'design', 'legacy record 내용이 sessionId 키로 보존됨');
+
+// =============== TC-B4: sessionId 부재 시 tag 생략 (backward-compat) ===============
+resetCache();
+mockUIConfig(defaultUI);
+mockPdcaStatus({ primaryFeature: 'f1', currentPhase: 'plan', features: { f1: { timestamps: { lastUpdated: new Date().toISOString() } } } });
+const tcB4 = ST.generateSessionTitle({});  // sessionId 없음
+assert('TC-B4', tcB4 === '[bkit] PLAN f1', `sessionId 부재 시 tag 생략 → 기존 포맷 유지 (got: ${tcB4})`);
+
+// =============== TC-B5: sessionTag 결정성(stable) ===============
+const tagX1 = ST.sessionTag('abc');
+const tagX2 = ST.sessionTag('abc');
+assert('TC-B5a', tagX1 === tagX2 && tagX1.length === 4, `sessionTag 결정적 + 4 hex (got: ${tagX1})`);
+assert('TC-B5b', ST.sessionTag('') === '' && ST.sessionTag(null) === '', 'sessionId 부재 → 빈 tag');
 
 // --- Cleanup ---
 resetCache();
