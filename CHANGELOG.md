@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.22] - Unreleased (branch: `release/v2.1.22-hardening`)
+
+> **Status**: Hardening Release (진행 중) — 6-sprint master plan (`docs/01-plan/features/v2.1.22-hardening.master-plan.md`). 신규 사용자 대면 기능 없음, 품질 경화/정합성 전용. Kahn order S1→S2→S4→S3a→S3b→S5.
+
+### S1 — CC v2.1.159 Response (ENH-324~328)
+
+> 입력 근거: `docs/04-report/features/cc-v2146-v2159-impact-analysis.report.md` (CC v2.1.146→v2.1.159, 13-version batch, ADR 0003 16th cycle).
+
+- **ENH-324 — ENH-317 CANCELLED (MOOT)**: 직전 cycle(v2.1.21 분석)이 CC v2.1.147의 `/simplify` → `/code-review` rename을 Breaking-equivalent로 보고 ENH-317(deferred rename)을 생성했으나, CC가 **v2.1.152**(`/simplify` = `/code-review --fix` alias 재도입)·**v2.1.154**(`/simplify` = cleanup-only review로 독립 복원)에서 **되돌림**. NET: `/simplify`(cleanup) + `/code-review`(bug-hunt + effort) 둘 다 valid. bkit의 `/simplify` 10개 코드 surface(`lib/intent/language.js:147` 등)는 cleanup 의미로 CC v2.1.154와 **정확히 일치** → 변경 불필요. **bkit의 deferred(강행 안 함) 결정이 정당화됨** (v147 시점 rename 강행 시 v154에서 revert 필요했을 것).
+- **ENH-325 — 권장 CC 버전 bump 결정**: 균형 권장 v2.1.146 → **v2.1.159** (Opus 4.8 default high-effort = bkit 17 opus agents + ENH-300 effort-aware 정합, v2.1.156 thinking-block API error fix). 보수적 권장 v2.1.123 → **v2.1.150 stable** (drift +36 extreme 완화). *문서 문구 반영은 S5 docs-sync에서 일괄 (drift 재발 방지).*
+- **ENH-326 — sessionTitle resume (CC v2.1.152 공식화) 검증 PASS**: CC v2.1.152가 SessionStart `hookSpecificOutput.sessionTitle`을 startup+resume에서 공식 지원. bkit `hooks/session-start.js:301`이 sessionTitle을 무조건 생성(startup-only 가드 없음)·emit → resume 경로 커버 확인. bkit ENH-226의 미문서 의존이 공식 계약으로 격상.
+- **ENH-327 — multi-Agent frontmatter (CC v2.1.147 fix) 무영향 확인**: CC v147이 "tools: frontmatter의 inline `Agent(a), Agent(b)` 형식에서 마지막 외 drop" 버그 수정. bkit은 **YAML block-list**(한 줄당 Task() 1개) 형식 사용 → 무영향(inline comma 유일 hit은 `pm-lead.md:45` 본문 산문). cto-lead 38 Task() 등 12 agents 전부 안전. fix는 미래 안전성.
+- **ENH-328 — 신규 monitor 2건 등록 + 차별화 streak 갱신**: `lib/cc-regression/registry.js`에 **MON-CC-NEW-CHOICE-LOOP** (P1, #64447 infinite loop awaiting user choice, v154 MCQ behavior 인접) + **MON-CC-NEW-BG-OTEL-DROP** (P2, #64436 background OTEL log drop) 등록 (CC_REGRESSIONS 22→24). 차별화 streak: **#56293→17** (ENH-292) / **#57317→11** (ENH-303) / **#58904→7** (ENH-310) — v147~v159 미해결, v154 `/workflows` parallel spawn이 #56293 caching 10x AMPLIFY → ENH-292 sequential-dispatch moat 강화. **연속 호환 101→112 milestone**.
+
 ## [2.1.21] - 2026-05-29 (branch: `release/v2.1.21-issue-response`)
 
 > **Status**: Issue Response Sprint — 2건의 외부 dogfooder open issue를 단일 통합 sprint(`v2121-issue-response`, Trust L4)으로 해소. **#111** (sessionTitle 충돌, reporter @wonuseo 외부 dogfooder #3) + **#113** (Sprint 화면 출력 강제 미흡, reporter @rohwonseok-ops). 코드베이스 file:line 실측 검증 기반(외부 dogfooder 주장 무검증 수용 금지 원칙).

@@ -15,11 +15,18 @@ metadata:
 - **Trust**: 대부분 L3, S3a/S3b는 L2(최고위험)
 - **ENH 예약**: ENH-324 ~ ENH-360
 
+## 🚨 사용자 품질 지침 (전 sprint·전 세션 불변 원칙 — 2026-06-01)
+**절대 토큰/시간 비용 절약을 이유로 빠르게/허투루 작업하지 말 것.** 모든 sprint는 완전한 /pdca 사이클로:
+1. **문서 작성 → 문서 내용 반복 검증** (design-validator 등) → 완벽할 때만 구현 진입
+2. **구현 완료 → 문서대로 구현됐는지 반복 검증·개선** (gap-detector matchRate 100 목표, < 90 시 pdca-iterator)
+3. **구현 100% → /pdca qa 로 실제 동작 검증**: 본 세션은 `--plugin-dir .` 로 실행됨 → 이 세션 또는 `-p` 옵션으로 실제 런타임 동작을 꼼꼼히 검증 (정적 분석만으로 끝내지 말 것)
+- 자동화 레벨: **전역 L4 Full-Auto** (단 S3a/S3b는 플랜대로 L2 수동 게이트 유지 — 고위험)
+
 ## 세션 재개 프로토콜 (NEXT SESSION 필독)
-1. 본 파일 읽기 → 아래 "진행 현황" 표 확인
+1. 본 파일 읽기 → 위 품질 지침 + 아래 "진행 현황" 표 확인
 2. `.bkit/state/master-plans/v2.1.22-hardening.json` 읽기
 3. `/sprint list` + Task Management(`TaskList`)로 다음 unblocked sprint 확인
-4. 해당 sprint 작업 (`/sprint start <id>` 또는 phase 진행)
+4. 해당 sprint 작업 (`/sprint start <id>` 또는 phase 진행) — **위 품질 지침 준수**
 5. **종료 시 반드시**: sprint state 갱신 + 본 파일 "진행 현황" 표 갱신 + master-plan JSON sprints[].status 갱신
 
 ## Sprint 의존성 (Kahn order)
@@ -34,14 +41,14 @@ Task 매핑: S1=#6 / S2=#7 / S4=#8 / S3a=#9 / S3b=#10 / S5=#11
 ## 진행 현황 (세션마다 갱신)
 | Sprint | Task | 의존 | Trust | 상태 | 비고 |
 |--------|------|------|-------|------|------|
-| S1 CC v2.1.159 Response | #6 | — | L3 | ⬜ planned | ENH-317 cancel, monitor 2건, 버전 bump |
-| S2 Cross-Platform | #7 | — | L3 | ⬜ planned | process.platform 2→확대, shell-exec 30사이트 |
+| S1 CC v2.1.159 Response | #6 | — | L4 | ✅ archived (2026-06-01) | ENH-324~328 완료, QA 3/3 PASS, registry 22→24, report 작성 |
+| S2 Cross-Platform | #7 | — | L3 | 🟢 NEXT (unblocked) | process.platform 2→확대, shell-exec 30사이트, raw '/' concat 14 |
 | S4 Tech-Debt/Dead-Code | #8 | — | L3 | ⬜ planned | pdca-eval stub 6, skip테스트 19파일 |
 | S3a God-File Split | #9 | S4 | L2 | 🔒 blocked | 7 god-files ~5899 LOC 분할 |
 | S3b Layer Consolidation | #10 | S3a | L2 | 🔒 blocked | 22 subdirs/8-layer 통합 |
 | S5 Final QA+i18n+Docs-Sync | #11 | S1,S2,S3b,S4 | L3 | 🔒 blocked | 전체 QA + 8-lang + code=docs |
 
-**현재 위치**: 마스터 플랜 수립 완료, 사용자 승인 대기. 미착수 sprint 0건 시작.
+**현재 위치**: S1 ✅ archived (2026-06-01). **다음: S2 cross-platform-mac-windows** (unblocked). S2 시작 시 `/sprint init cross-platform-mac-windows --trust L4` 또는 본 sprint 진행. ⚠️ S2 한계: 현 환경 Darwin → Windows 런타임 검증은 정적 분석+path/shell 정합성 수정까지, 실제 Windows 발화는 CI matrix/Windows 머신 필요(후속).
 
 ## 핵심 분석 발견 (작업 근거)
 - **docs-code-sync CI 맹점 근본원인**: `lib/domain/rules/docs-code-invariants.js`의 `EXPECTED_COUNTS`가 `agents:34` 하드코딩 + lib modules/scripts/subdirs/consecutive 미추적 → 문서 drift 미검출 (S5에서 확장)
