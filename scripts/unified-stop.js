@@ -16,69 +16,11 @@ const { debugLog } = require('../lib/core/debug');
 const { getPdcaStatusFull } = require('../lib/pdca/status');
 const { getActiveSkill, getActiveAgent, clearActiveContext } = require('../lib/task/context');
 
-// ============================================================
-// v2.0.0 Lazy Module Loaders
-// ============================================================
-
-let _stateMachine = null;
-function getStateMachine() {
-  if (!_stateMachine) try { _stateMachine = require('../lib/pdca/state-machine'); } catch (_) {}
-  return _stateMachine;
-}
-
-let _checkpointManager = null;
-function getCheckpointManager() {
-  if (!_checkpointManager) try { _checkpointManager = require('../lib/control/checkpoint-manager'); } catch (_) {}
-  return _checkpointManager;
-}
-
-let _auditLogger = null;
-function getAuditLogger() {
-  if (!_auditLogger) try { _auditLogger = require('../lib/audit/audit-logger'); } catch (_) {}
-  return _auditLogger;
-}
-
-let _gateManager = null;
-function getGateManager() {
-  if (!_gateManager) try { _gateManager = require('../lib/quality/gate-manager'); } catch (_) {}
-  return _gateManager;
-}
-
-let _metricsCollector = null;
-function getMetricsCollector() {
-  if (!_metricsCollector) try { _metricsCollector = require('../lib/quality/metrics-collector'); } catch (_) {}
-  return _metricsCollector;
-}
-
-let _workflowEngine = null;
-function getWorkflowEngine() {
-  if (!_workflowEngine) try { _workflowEngine = require('../lib/pdca/workflow-engine'); } catch (_) {}
-  return _workflowEngine;
-}
-
-let _circuitBreaker = null;
-function getCircuitBreaker() {
-  if (!_circuitBreaker) try { _circuitBreaker = require('../lib/pdca/circuit-breaker'); } catch (_) {}
-  return _circuitBreaker;
-}
-
-let _trustEngine = null;
-function getTrustEngine() {
-  if (!_trustEngine) try { _trustEngine = require('../lib/control/trust-engine'); } catch (_) {}
-  return _trustEngine;
-}
-
-let _explanationGenerator = null;
-function getExplanationGenerator() {
-  if (!_explanationGenerator) try { _explanationGenerator = require('../lib/audit/explanation-generator'); } catch (_) {}
-  return _explanationGenerator;
-}
-
-let _decisionTracer = null;
-function getDecisionTracer() {
-  if (!_decisionTracer) try { _decisionTracer = require('../lib/audit/decision-tracer'); } catch (_) {}
-  return _decisionTracer;
-}
+// v2.0.0 Lazy Module Loaders — S3a ENH-346: extracted to scripts/lib/unified-stop-deps.js
+const {
+  getStateMachine, getCheckpointManager, getAuditLogger, getGateManager, getMetricsCollector,
+  getWorkflowEngine, getCircuitBreaker, getTrustEngine, getExplanationGenerator, getDecisionTracer,
+} = require('./lib/unified-stop-deps');
 
 // ============================================================
 // Handler Registry
