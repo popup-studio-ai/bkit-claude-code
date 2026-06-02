@@ -125,11 +125,14 @@ function scanProductionRequires() {
 }
 
 function isReferenced(libFile, allRefs) {
-  const withoutExt = libFile.replace(/\.js$/, '');
+  // Cross-platform (ENH-329): normalize Windows backslash separators to '/'
+  // before segment splitting so module-path comparison works on win32 where
+  // glob/fs results may contain '\'.
+  const withoutExt = libFile.replace(/\\/g, '/').replace(/\.js$/, '');
   const segments = withoutExt.split('/');
   const fileName = segments[segments.length - 1]; // e.g. 'status-core'
   for (const ref of allRefs) {
-    const refTail = ref.replace(/^\.{1,2}\//, '').replace(/\.js$/, '');
+    const refTail = ref.replace(/\\/g, '/').replace(/^\.{1,2}\//, '').replace(/\.js$/, '');
     const refSegments = refTail.split('/');
     const refFileName = refSegments[refSegments.length - 1];
 

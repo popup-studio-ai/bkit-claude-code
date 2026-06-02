@@ -17,7 +17,7 @@
 > - **One-Liner SSoT 5/5 (v2.1.11 α2)**: `lib/infra/branding.js` → `plugin.json` + `README.md` + `README-FULL.md` + `session-context.js` + `CHANGELOG.md`
 > - **Quality Gates M1-M10 (v2.1.11 δ2)** + **Sprint S1 (v2.1.13)**: catalog `docs/reference/quality-gates-m1-m10.md` + invariant `scripts/check-quality-gates-m1-m10.js`
 > - **i18n (v2.1.11 β3/β6)**: `lib/i18n/translator.js` + `detector.js` (KO/EN full + 6-lang fallback)
-> - **Docs=Code CI**: `scripts/docs-code-sync.js` — counts (44 Skills · 34 Agents · 21:24 Hooks · 19 MCP Tools · 163 Lib · 51 Scripts) + 5-location version + One-Liner invariant, 0 drift enforced
+> - **Docs=Code CI**: `scripts/docs-code-sync.js` — counts (44 Skills · 34 Agents · 21:24 Hooks · 19 MCP Tools · 190 Lib · 61 Scripts) + 5-location version + One-Liner invariant, 0 drift enforced
 > - **ACTION_TYPES 20** (v2.1.13: +sprint_paused/sprint_resumed/master_plan_created/task_created) + **CATEGORIES 11** (+sprint)
 
 ## Purpose of This Document
@@ -45,7 +45,7 @@ bkit is a practical implementation of **Context Engineering**. Context Engineeri
 │                                                                 │
 │  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────┐  │
 │  │ Domain Knowledge │  │ Behavioral Rules │  │ State Mgmt   │  │
-│  │    (43 Skills)   │  │   (36 Agents)    │  │(16 subdirs)  │  │
+│  │    (44 Skills)   │  │   (34 Agents)    │  │(22 subdirs)  │  │
 │  │                  │  │                  │  │              │  │
 │  │ • 9-Phase Guide  │  │ • Role Def.      │  │ • PDCA v2.0  │  │
 │  │ • 3 Levels       │  │ • Constraints    │  │ • Multi-Feat │  │
@@ -215,7 +215,7 @@ lib/
 | Commands | DEPRECATED | Migrated to Skills (v1.4.4) | - |
 | Hooks | 21 events (24 blocks) | Event-based triggers (unified) | [[components/hooks/_hooks-overview]] |
 | Scripts | 49 | Actual logic execution | [[components/scripts/_scripts-overview]] |
-| Lib | 16 subdirectories, 142 modules | Clean Architecture 4-Layer with 7 Port↔Adapter pairs (Domain / Application / Infrastructure / Presentation) | See [CHANGELOG](../CHANGELOG.md#architecture-snapshot) |
+| Lib | 22 subdirectories, 190 modules | Clean Architecture 4-Layer with 7 Port↔Adapter pairs (Domain / Application / Infrastructure / Presentation) | See [CHANGELOG](../CHANGELOG.md#architecture-snapshot) |
 | Evals | 28 | Skill evaluation definitions | Skill Creator + A/B Testing |
 | Config | 1 | Centralized settings | `bkit.config.json` (BKIT_VERSION SSoT) |
 | Templates | 18 | Document templates | PDCA + Pipeline + Shared |
@@ -237,7 +237,7 @@ lib/
 | Guard Registry 21 | `lib/cc-regression/registry.js` | Daily cron `cc-regression-reconcile.yml` |
 | Output Styles | 4 style files in `output-styles/` | Auto-suggested at SessionStart based on level |
 | Agent Teams | `lib/team/` module (9 files) | Announced at SessionStart, suggested for major features |
-| Agent Memory | `memory:` frontmatter in all 36 agents | Auto-active, mentioned at SessionStart |
+| Agent Memory | `memory:` frontmatter in all 34 agents | Auto-active, mentioned at SessionStart |
 
 ## Trigger Layers
 
@@ -254,8 +254,8 @@ Layer 2: Unified Scripts     → unified-stop.js, unified-bash-pre.js, unified-w
                                 session-end-handler.js, subagent-stop-handler.js, etc.
 Layer 3: Agent Frontmatter   → Constraints and role definitions (frontmatter hooks deprecated v1.4.4)
 Layer 4: Description Triggers → "Triggers:" keyword matching (8 languages)
-Layer 5: Scripts             → Actual Node.js logic execution (49 modules)
-Layer 6: Lib Modules         → 16 subdirectories, 142 modules (Clean Architecture 4-Layer with 7 Port↔Adapter pairs)
+Layer 5: Scripts             → Actual Node.js logic execution (61 modules)
+Layer 6: Lib Modules         → 22 subdirectories, 190 modules (Clean Architecture 4-Layer with 7 Port↔Adapter pairs)
 ```
 
 > **Note (v1.4.4)**: All hooks centralized in hooks.json. SKILL.md frontmatter hooks deprecated (backward compatible).
@@ -344,7 +344,7 @@ The `bkit-system/.obsidian/` folder includes shared settings:
 | `workspace.json` | Personal workspace state | No |
 | `app.json` | Personal app settings | No |
 
-> **Tip**: The graph settings are pre-configured for optimal visualization of bkit's 43 skills, 36 agents, 49 scripts, 142 lib modules (16 subdirs), and their relationships.
+> **Tip**: The graph settings are pre-configured for optimal visualization of bkit's 44 skills, 34 agents, 61 scripts, 190 lib modules (22 subdirs), and their relationships.
 
 ---
 
@@ -373,7 +373,7 @@ bkit v1.6.0 integrates CC 2.1.0 Skills 2.0 features:
 |-----------|-------|
 | Skills | 43 (v2.1.11 added bkit-evals, bkit-explore, pdca-watch, pdca-fast-track) |
 | Agents | 36 (13 opus / 21 sonnet / 2 haiku) |
-| Lib Modules | 142 across 16 subdirectories |
+| Lib Modules | 190 across 22 subdirectories |
 | Scripts | 49 |
 | Hook Events | 21 (24 blocks) |
 | Templates | 18 |

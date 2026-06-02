@@ -38,7 +38,6 @@ const path = require('path');
 const { readStdinSync } = require('../lib/core/io');
 const { debugLog } = require('../lib/core/debug');
 const { generateSprintExecutiveSummary, formatSprintExecutiveSummary } = require('../lib/sprint/executive-summary');
-const { formatAskUserQuestion } = require('../lib/pdca/automation');
 const { generateSessionTitle } = require('../lib/pdca/session-title');
 const { getSprintStateDir, getSprintStateFile } = require('../lib/infra/sprint/sprint-paths');
 
@@ -156,15 +155,10 @@ function buildResponse(hookContext) {
     : undefined;
 
   if (!shouldSurface) {
-    return {
-      decision: 'allow',
-      hookSpecificOutput: {
-        hookEventName: 'Skill:sprint:Stop',
-        additionalContext: undefined,
-        sessionTitle,
-      },
-      skillResult: { skill: 'sprint', action: action || null, sprintId: sprintId || null },
-    };
+    // CC-compliant clean stop (S6 ENH-362): no decision:'allow', no
+    // hookSpecificOutput, no skillResult root field. Diagnostics → debugLog.
+    debugLog('Skill:sprint:Stop', 'no-surface allow', { action: action || null, sprintId: sprintId || null, sessionTitle });
+    return {};
   }
 
   // previousPhase from phaseHistory (best-effort)
@@ -178,38 +172,27 @@ function buildResponse(hookContext) {
   const summaryText = formatSprintExecutiveSummary(summary, 'full');
 
   const nextActions = summary.nextActions || [];
-  const questionPayload = {
-    question: `Sprint "${sprintId}" — phase ${sprint.phase}. Select next step.`,
-    header: 'Sprint',
-    options: nextActions.map((a) => ({ label: a.label, description: a.command })),
-    multiSelect: false,
-  };
-  const formattedQuestion = formatAskUserQuestion(questionPayload);
+  // S6 ENH-363: serialize next-step options into the reason text (no userPrompt
+  // field — not in CC Stop schema). Claude reads these and presents an
+  // AskUserQuestion for the next step.
+  const optionLines = nextActions.length
+    ? ['Select next step:', ...nextActions.map((a) => `- ${a.label}: ${a.command}`)]
+    : ['Select next step.'];
+  const reason = [
+    `✅ Sprint "${sprintId}" — ${previousPhase ? `${previousPhase} → ` : ''}${sprint.phase}`,
+    '',
+    summaryText,
+    '',
+    '---',
+    '',
+    ...optionLines,
+  ].join('\n');
 
-  return {
-    decision: 'allow',
-    hookSpecificOutput: {
-      hookEventName: 'Skill:sprint:Stop',
-      additionalContext: [
-        `✅ Sprint "${sprintId}" — ${previousPhase ? `${previousPhase} → ` : ''}${sprint.phase}`,
-        '',
-        summaryText,
-        '',
-        '---',
-        '',
-        'Please select next step.',
-      ].join('\n'),
-      sessionTitle,
-      userPrompt: JSON.stringify(formattedQuestion),
-    },
-    skillResult: {
-      skill: 'sprint',
-      action,
-      sprintId,
-      phase: sprint.phase,
-      matchRate: summary.summary.matchRate,
-    },
-  };
+  debugLog('Skill:sprint:Stop', 'surface', { action, sprintId, phase: sprint.phase, matchRate: summary.summary.matchRate, sessionTitle });
+
+  // CC-compliant Stop surface (S6 ENH-362/364): decision:'block' feeds `reason`
+  // back to the model so it renders the summary + next-step question.
+  return { decision: 'block', reason };
 }
 
 /**
@@ -222,8 +205,8 @@ function run(hookContext) {
     console.log(JSON.stringify(response));
   } catch (e) {
     debugLog('Skill:sprint:Stop', 'run failed', { error: e.message });
-    // Never block the Stop flow — emit a minimal allow.
-    try { console.log(JSON.stringify({ decision: 'allow', hookSpecificOutput: { hookEventName: 'Skill:sprint:Stop' } })); }
+    // Never block the Stop flow — emit a CC-compliant clean stop (S6).
+    try { console.log(JSON.stringify({})); }
     catch (_e2) { /* give up silently */ }
   } finally {
     // v2.1.21 (Issue #113): consume-once — clear the active-skill marker so the

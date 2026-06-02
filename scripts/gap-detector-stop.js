@@ -22,7 +22,7 @@
 // so top-level return is valid.
 if (require.main !== module) { module.exports = {}; return; }
 
-const { readStdinSync } = require('../lib/core/io');
+const { readStdinSync, outputStopSurface } = require('../lib/core/io');
 const { debugLog } = require('../lib/core/debug');
 const { getBkitConfig } = require('../lib/core/config');
 const {
@@ -556,33 +556,17 @@ try {
 const { generateSessionTitle } = require('../lib/pdca/session-title');
 const sessionTitle = generateSessionTitle({ action: 'CHECK', feature, sessionId: input && input.session_id });
 
-// Claude Code: JSON output conforming to CC hook output schema
-const response = {
-  decision: 'allow',
-  hookSpecificOutput: {
-    hookEventName: 'Agent:gap-detector:Stop',
-    additionalContext: [
-      `Gap Analysis complete. Match rate: ${matchRate}%`,
-      '',
-      guidance,
-      '',
-      taskGuidance || '',
-    ].filter(Boolean).join('\n'),
-    sessionTitle,
-    userPrompt: userPrompt,
-  },
-  analysisResult: {
-    matchRate,
-    feature: feature || 'unknown',
-    iterationCount: iterCount,
-    maxIterations,
-    threshold,
-    nextStep,
-    phaseAdvance: phaseAdvance,
-    autoCreatedTasks: autoCreatedTasks.map(t => t.taskId)
-  },
-  autoTrigger: autoTrigger,
-};
+// S6 ENH-362: CC-compliant Stop surface. decision:'block'+reason; drop
+// hookSpecificOutput/sessionTitle/userPrompt/analysisResult/autoTrigger. Diagnostics → debugLog.
+void sessionTitle; void userPrompt;
+const reason = [
+  `Gap Analysis complete. Match rate: ${matchRate}%`,
+  '',
+  guidance,
+  '',
+  taskGuidance || '',
+].filter(Boolean).join('\n');
+debugLog('Agent:gap-detector:Stop', 'surface', { matchRate, feature: feature || 'unknown', iterationCount: iterCount, maxIterations, threshold, nextStep, phaseAdvance, autoCreatedTasks: autoCreatedTasks.map(t => t.taskId), autoTrigger });
 
 // v2.0.0: State machine integration
 try {
@@ -614,5 +598,5 @@ try {
   });
 } catch (_) {}
 
-console.log(JSON.stringify(response));
+outputStopSurface(reason);
 process.exit(0);

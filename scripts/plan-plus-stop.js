@@ -18,7 +18,7 @@
 // so top-level return is valid.
 if (require.main !== module) { module.exports = {}; return; }
 
-const { readStdinSync, outputAllow } = require('../lib/core/io');
+const { readStdinSync, outputStopSurface, outputStopAllow } = require('../lib/core/io');
 const { debugLog } = require('../lib/core/debug');
 const { getPdcaStatusFull, updatePdcaStatus, extractFeatureFromContext } = require('../lib/pdca/status');
 const { buildNextActionQuestion, formatAskUserQuestion } = require('../lib/pdca/automation');
@@ -40,7 +40,8 @@ const currentStatus = getPdcaStatusFull();
 const feature = extractFeatureFromContext({ agentOutput: inputText, currentStatus });
 
 if (!feature) {
-  outputAllow('Plan Plus completed.', 'Skill:plan-plus:Stop');
+  // S6 ENH-362: no feature → clean CC-compliant stop (was plain-text outputAllow).
+  outputStopAllow();
   process.exit(0);
 }
 
@@ -78,25 +79,21 @@ const formatted = formatAskUserQuestion(questionPayload);
 const { generateSessionTitle } = require('../lib/pdca/session-title');
 const sessionTitle = generateSessionTitle({ action: 'PLAN', feature, sessionId: input && input.session_id });
 
-// Claude Code: JSON output conforming to CC hook output schema
-const response = {
-  decision: 'allow',
-  hookSpecificOutput: {
-    hookEventName: 'Skill:plan-plus:Stop',
-    additionalContext: [
-      `## Plan Plus Completed: ${feature}`,
-      '',
-      summaryText,
-      '',
-      `---`,
-      '',
-      `Plan document has been generated.`,
-      `Please select next step.`
-    ].join('\n'),
-    sessionTitle,
-    userPrompt: JSON.stringify(formatted),
-  },
-};
+// S6 ENH-362/363: CC-compliant Stop surface (decision:'block'+reason). Drop
+// hookSpecificOutput/sessionTitle/userPrompt. Options described in text so
+// Claude renders the next-step AskUserQuestion. `formatted`/`sessionTitle`
+// retained above for diagnostics only.
+void formatted; void sessionTitle;
+const reason = [
+  `## Plan Plus Completed: ${feature}`,
+  '',
+  summaryText,
+  '',
+  `---`,
+  '',
+  `Plan document has been generated.`,
+  `Please select next step.`,
+].join('\n');
 
-console.log(JSON.stringify(response));
+outputStopSurface(reason);
 process.exit(0);

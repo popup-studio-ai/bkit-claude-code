@@ -39,11 +39,17 @@ function readScript(relativePath) {
 // Section 1: unified-stop.js contains state-machine require (HW-001~005)
 // ============================================================
 
-const unifiedStop = readScript('scripts/unified-stop.js');
+const unifiedStopMain = readScript('scripts/unified-stop.js');
+// v2.1.22 S3a: unified-stop.js lazy-require getters (getStateMachine/
+// getCheckpointManager/...) were extracted to scripts/lib/unified-stop-deps.js
+// (god-file split). The stop-flow wiring is the UNION of both files — unified-stop.js
+// requires unified-stop-deps.js which requires the subsystems. Check combined content.
+const unifiedStopDeps = readScript('scripts/lib/unified-stop-deps.js');
+const unifiedStop = [unifiedStopMain, unifiedStopDeps].filter(Boolean).join('\n');
 
 // HW-001: unified-stop.js exists
 assert('HW-001',
-  unifiedStop !== null,
+  unifiedStopMain !== null,
   'scripts/unified-stop.js exists and is readable'
 );
 

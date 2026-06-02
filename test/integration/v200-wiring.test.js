@@ -81,7 +81,10 @@ assert('VW-006',
 // Section 2: unified-stop.js v2.0.0 requires (VW-007~012)
 // ============================================================
 
-const unifiedStop = readScript('scripts/unified-stop.js');
+// v2.1.22 S3a: unified-stop.js lazy-require getters were extracted to
+// scripts/lib/unified-stop-deps.js (god-file split). The v2.0.0 subsystem
+// wiring is the UNION of both files; check combined content.
+const unifiedStop = [readScript('scripts/unified-stop.js'), readScript('scripts/lib/unified-stop-deps.js')].filter(Boolean).join('\n');
 
 // VW-007: unified-stop.js requires state-machine
 assert('VW-007',

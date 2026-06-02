@@ -47,7 +47,9 @@ function normalize(args) {
     // the same chain. Use 'init' to verify normalizeTrustLevel propagation.
     // For unit-level assertion, parse the source file directly:
     const fs = require('fs');
-    const src = fs.readFileSync('${path.join(PROJECT_ROOT, 'scripts/sprint-handler.js').replace(/\\/g, '\\\\')}', 'utf8');
+    // v2.1.22 S3a: normalizeTrustLevel was extracted from sprint-handler.js to
+    // scripts/lib/sprint-handler-shared.js (god-file split). Read from the new home.
+    const src = fs.readFileSync('${path.join(PROJECT_ROOT, 'scripts/lib/sprint-handler-shared.js').replace(/\\/g, '\\\\')}', 'utf8');
     // Extract & eval normalizeTrustLevel (closure-safe within this child process)
     const fnMatch = src.match(/function normalizeTrustLevel\\(args\\)[\\s\\S]*?\\n\\}/);
     if (!fnMatch) { console.log('ERROR_FN_NOT_FOUND'); process.exit(2); }

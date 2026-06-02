@@ -143,7 +143,7 @@ function run(_input) {
         const skillMdPath = path.join(skillsDir, skill, 'SKILL.md');
         if (fs.existsSync(skillMdPath)) {
           const content = fs.readFileSync(skillMdPath, 'utf8');
-          const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
+          const frontmatterMatch = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
           if (frontmatterMatch) {
             const frontmatter = frontmatterMatch[1];
             if (frontmatter.includes('context: fork') || frontmatter.includes('context:fork')) {

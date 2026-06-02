@@ -14,8 +14,8 @@ flowchart TB
         subgraph ROW1[" "]
             direction LR
             SPEC["**1. SPEC**<br/>Plan Doc<br/>Design Doc"]
-            CONTEXT["**2. CONTEXT**<br/>CLAUDE.md<br/>43 Skills"]
-            AGENT["**3. AI AGENT**<br/>36 Agents<br/>Controllable Implementation"]
+            CONTEXT["**2. CONTEXT**<br/>CLAUDE.md<br/>44 Skills"]
+            AGENT["**3. AI AGENT**<br/>34 Agents<br/>Controllable Implementation"]
         end
 
         OVERSIGHT["**4. HUMAN OVERSIGHT**<br/>Gap Analysis<br/>Verification & Approval"]
@@ -142,10 +142,10 @@ Context Engineering is the **systematic design of information flow to LLMs**—g
 
 **bkit v2.1.13 Implementation**:
 ```
-Domain Knowledge (43 Skills) ────────┐
-Behavioral Rules (36 Agents) ────────┤
-State Management (142 modules / 16 subdirs, Clean Arch 4-Layer + Application pilot) ─┤
-3-Layer Orchestration ────┼─→ 21-Event Hook System (24 blocks, 49 scripts)
+Domain Knowledge (44 Skills) ────────┐
+Behavioral Rules (34 Agents) ────────┤
+State Management (190 modules / 22 subdirs, Clean Arch 4-Layer + Application pilot) ─┤
+3-Layer Orchestration ────┼─→ 21-Event Hook System (24 blocks, 61 scripts)
   ├─ intent-router (feature>skill>agent)                         │    ─→ Dynamic Context Injection
   ├─ next-action-engine (Stop-family)                           │
   ├─ team-protocol (PM/CTO/QA Lead)                             │
@@ -193,9 +193,9 @@ bkit implements **Context Engineering**—the systematic curation of context tok
 | **3 Project Levels** | Starter, Dynamic, Enterprise contexts |
 | **Convention Skill (Phase 2)** | Defines naming, structure, patterns |
 | **CLAUDE.md Files** | Project-specific AI instructions |
-| **Skill System (43 skills)** | Domain-specific knowledge (v2.1.11 added bkit-evals, bkit-explore, pdca-watch, pdca-fast-track) |
-| **21-Event Hook System** | Centralized context injection via hooks.json (21 events / 24 blocks, 49 scripts); 3 attribution sites (Stop/SessionEnd/SubagentStop) |
-| **lib/ (142 modules)** | 16 subdirectories Clean Architecture 4-Layer with 7 Port↔Adapter pairs: audit, **application** (v2.1.11 γ2 pilot), cc-regression, context, control, core, **dashboard** (v2.1.11 β4), **discovery** (v2.1.11 β1), **domain**, **evals** (v2.1.11 β2), **i18n** (v2.1.11 β3/β6), **infra**, intent, **orchestrator**, pdca, qa, quality, task, team, ui |
+| **Skill System (44 skills)** | Domain-specific knowledge (v2.1.11 added bkit-evals, bkit-explore, pdca-watch, pdca-fast-track) |
+| **21-Event Hook System** | Centralized context injection via hooks.json (21 events / 24 blocks, 61 scripts); 3 attribution sites (Stop/SessionEnd/SubagentStop) |
+| **lib/ (190 modules)** | 22 subdirectories Clean Architecture 4-Layer with 7 Port↔Adapter pairs: application (v2.1.11 γ2 pilot), audit, cc-regression, control, core, **dashboard** (v2.1.11 β4), **defense**, **discovery** (v2.1.11 β1), **domain**, **evals** (v2.1.11 β2), **i18n** (v2.1.11 β3/β6), **infra**, intent, **orchestrator**, pdca, qa, quality, **sprint** (v2.1.13), task, team, ui, **util** |
 
 **Context Engineering Architecture (v2.1.13)**:
 ```

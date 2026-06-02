@@ -96,7 +96,7 @@ The software industry refined how *humans* write code over decades — version c
 |---|---|---|
 | **Process** | Output | One feature through proper planning + design + implementation + verification beats ten hacked-together features. The PDCA cycle *is* the product. |
 | **Verification** | Trust | AI generates plausible code. Plausible is not correct. Every implementation goes through gap analysis. Below 90 % match, the system iterates. We do not ship hope. |
-| **Context** | Prompts | A clever prompt helps once. A systematic context system helps every time. 44 skills + 34 agents + 163 lib modules exist so the AI receives the right context at the right moment. |
+| **Context** | Prompts | A clever prompt helps once. A systematic context system helps every time. 44 skills + 34 agents + 190 lib modules exist so the AI receives the right context at the right moment. |
 | **Constraints** | Features | Three project levels, not infinite configuration. Fixed 9-phase PDCA and 8-phase Sprint, not a customizable workflow builder. Opinionated defaults eliminate decision fatigue. |
 
 > *"We do not offer a hundred features. We engineer each one through proper design and verification. That is the difference between a tool and a discipline."*
@@ -666,7 +666,7 @@ flowchart TB
         team["lib/team/"]
     end
     subgraph Domain
-        domain["lib/domain/ (12 modules · 0 forbidden imports · CI-enforced)"]
+        domain["lib/domain/ (18 modules · 0 forbidden imports · CI-enforced)"]
     end
     Presentation --> Infrastructure
     Infrastructure --> Application
@@ -681,7 +681,7 @@ flowchart TB
 | Agents | 34 | +4 sprint agents added v2.1.13 (sprint-master-planner · sprint-orchestrator · sprint-qa-flow · sprint-report-writer) |
 | Hook events / blocks | 21 / 24 | Invariant maintained |
 | MCP servers / tools | 2 / 19 | +3 sprint tools (bkit_sprint_list · bkit_sprint_status · bkit_master_plan_read) |
-| Lib modules / subdirs | 163 / 19 | +`lib/application/sprint-lifecycle/` (13 modules) + `lib/infra/sprint/` (9 modules) |
+| Lib modules / subdirs | 190 / 22 | +`lib/application/sprint-lifecycle/` (13 modules) + `lib/infra/sprint/` (9 modules) |
 | Scripts | 51 | +`sprint-handler.js` (660 LOC) + `sprint-memory-writer.js` (138 LOC) |
 | Templates | 39 | +7 sprint templates |
 | Test files / cases | 118+ / 4,000+ | +`tests/contract/v2113-sprint-contracts.test.js` (10 SC contracts) |
@@ -813,7 +813,7 @@ Full guide with platform paths + license attribution: [CUSTOMIZATION-GUIDE.md](C
 
 | Requirement | Minimum | Recommended | Notes |
 |---|---|---|---|
-| **Claude Code** | v2.1.78 | **v2.1.123+** (conservative) · **v2.1.139** (balanced) | 94 consecutive compatible releases since v2.1.34 |
+| **Claude Code** | v2.1.78 | **v2.1.150** (conservative) · **v2.1.159** (balanced) | 112 consecutive compatible releases since v2.1.34 |
 | **Node.js** | v18+ | — | Hook script execution |
 | **Agent Teams (optional)** | `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` | — | Required for `/pdca team` |
 

@@ -18,10 +18,10 @@ const PROJECT_DIR = process.env.CLAUDE_PROJECT_DIR || process.cwd();
 const STYLES_DIR = path.join(PROJECT_DIR, 'output-styles');
 
 function parseFrontmatter(content) {
-  const match = content.match(/^---\n([\s\S]*?)\n---/);
+  const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
   if (!match) return null;
   const fm = {};
-  for (const line of match[1].split('\n')) {
+  for (const line of match[1].split(/\r?\n/)) {
     const m = line.match(/^([a-zA-Z_]+):\s*(.+)$/);
     if (m) fm[m[1]] = m[2].replace(/^["']|["']$/g, '').trim();
   }
@@ -42,7 +42,7 @@ function audit(file) {
 
   // Self-contained: 본문에 'Output Style' 또는 'Response Rules' / 'Formatting' 등
   // 핵심 식별자 존재 (frontmatter 주입 실패해도 동작 가능한지)
-  const body = content.replace(/^---[\s\S]*?---\n/, '');
+  const body = content.replace(/^---[\s\S]*?---\r?\n/, '');
   const hasIdentifier = /Output Style|Response Rules|Formatting|Style:|## /i.test(body);
   if (!hasIdentifier) {
     errors.push(`본문 self-contained 식별자 없음 (CC #47482 회귀 방어 필요)`);

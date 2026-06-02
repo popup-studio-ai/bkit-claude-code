@@ -22,7 +22,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Direct module imports
-const { readStdinSync } = require('../lib/core/io');
+const { readStdinSync, outputStopSurface, outputStopAllow } = require('../lib/core/io');
 const { debugLog } = require('../lib/core/debug');
 const { getPdcaStatusFull, updatePdcaStatus, extractFeatureFromContext } = require('../lib/pdca/status');
 const {
@@ -353,31 +353,19 @@ if (feature && (action === 'plan' || action === 'design' || action === 'report')
   const { generateSessionTitle } = require('../lib/pdca/session-title');
   const execSessionTitle = generateSessionTitle({ action: action ? action.toUpperCase() : null, feature, sessionId: input && input.session_id });
 
-  const execResponse = {
-    decision: 'allow',
-    hookSpecificOutput: {
-      hookEventName: 'Skill:pdca:Stop',
-      additionalContext: [
-        guidance,
-        '',
-        summaryText,
-        '',
-        `---`,
-        '',
-        `Please select next step.`
-      ].join('\n'),
-      sessionTitle: execSessionTitle,
-      userPrompt: JSON.stringify(formatted),
-    },
-    skillResult: {
-      action,
-      feature: feature || 'unknown',
-      nextAction: nextStep?.nextAction || null,
-      automationLevel: automationLevel
-    },
-  };
-
-  console.log(JSON.stringify(execResponse));
+  // S6 ENH-362/363: CC-compliant Stop surface. decision:'block'+reason; drop
+  // hookSpecificOutput/sessionTitle/userPrompt/skillResult. Diagnostics → debugLog.
+  const execReason = [
+    guidance,
+    '',
+    summaryText,
+    '',
+    `---`,
+    '',
+    `Please select next step.`,
+  ].filter((l) => l !== undefined && l !== null).join('\n');
+  debugLog('Skill:pdca:Stop', 'surface(exec)', { action, feature: feature || 'unknown', nextAction: nextStep?.nextAction || null, automationLevel, sessionTitle: execSessionTitle });
+  outputStopSurface(execReason);
   process.exit(0);
 }
 
@@ -386,23 +374,9 @@ if (feature && (action === 'plan' || action === 'design' || action === 'report')
 const { generateSessionTitle: _genSessionTitleDefault } = require('../lib/pdca/session-title');
 const defaultSessionTitle = _genSessionTitleDefault({ action: action ? action.toUpperCase() : null, feature, sessionId: input && input.session_id });
 
-// Claude Code: JSON output conforming to CC hook output schema
-const response = {
-  decision: 'allow',
-  hookSpecificOutput: {
-    hookEventName: 'Skill:pdca:Stop',
-    additionalContext: guidance || undefined,
-    sessionTitle: defaultSessionTitle,
-    userPrompt: userPrompt,
-  },
-  skillResult: {
-    action,
-    feature: feature || 'unknown',
-    nextAction: nextStep?.nextAction || null,
-    automationLevel: automationLevel
-  },
-  autoTrigger: autoTrigger,
-};
+// S6 ENH-362: CC-compliant Stop output. Surface guidance via decision:'block';
+// no guidance → clean allow-stop. Diagnostics → debugLog.
+debugLog('Skill:pdca:Stop', 'default response', { action, feature: feature || 'unknown', nextAction: nextStep?.nextAction || null, automationLevel, autoTrigger, sessionTitle: defaultSessionTitle, hasUserPrompt: !!userPrompt });
 
 // v2.0.5: Collect M8 (Design Completeness) and M10 (PDCA Cycle Time)
 try {
@@ -436,5 +410,9 @@ try {
   }
 } catch (_) {}
 
-console.log(JSON.stringify(response));
+if (guidance) {
+  outputStopSurface(guidance);
+} else {
+  outputStopAllow();
+}
 process.exit(0);

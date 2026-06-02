@@ -22,7 +22,7 @@
 // so top-level return is valid.
 if (require.main !== module) { module.exports = {}; return; }
 
-const { readStdinSync } = require('../lib/core/io');
+const { readStdinSync, outputStopSurface } = require('../lib/core/io');
 const { debugLog } = require('../lib/core/debug');
 const { getBkitConfig } = require('../lib/core/config');
 const {
@@ -334,34 +334,17 @@ debugLog('Agent:pdca-iterator:Stop', 'Hook completed', {
 const { generateSessionTitle } = require('../lib/pdca/session-title');
 const sessionTitle = generateSessionTitle({ action: 'ACT', feature, sessionId: input && input.session_id });
 
-// Claude Code: JSON output conforming to CC hook output schema
-const response = {
-  decision: 'allow',
-  hookSpecificOutput: {
-    hookEventName: 'Agent:pdca-iterator:Stop',
-    additionalContext: [
-      `Iterator complete. Iterations: ${currentIteration}/${maxIterations}, Match rate: ${matchRate}%`,
-      '',
-      guidance,
-      '',
-      taskGuidance || '',
-    ].filter(Boolean).join('\n'),
-    sessionTitle,
-    userPrompt: userPrompt,
-  },
-  iterationResult: {
-    feature: feature || 'unknown',
-    iteration: currentIteration,
-    maxIterations,
-    matchRate,
-    threshold,
-    status,
-    changedFiles,
-    phaseAdvance: phaseAdvance,
-    autoCreatedTasks: autoCreatedTasks.map(t => t.taskId),
-    autoTrigger
-  },
-};
+// S6 ENH-362: CC-compliant Stop surface. decision:'block'+reason; drop
+// hookSpecificOutput/sessionTitle/userPrompt/iterationResult. Diagnostics → debugLog.
+void sessionTitle; void userPrompt;
+const reason = [
+  `Iterator complete. Iterations: ${currentIteration}/${maxIterations}, Match rate: ${matchRate}%`,
+  '',
+  guidance,
+  '',
+  taskGuidance || '',
+].filter(Boolean).join('\n');
+debugLog('Agent:pdca-iterator:Stop', 'surface', { feature: feature || 'unknown', iteration: currentIteration, maxIterations, matchRate, threshold, status, changedFiles, phaseAdvance, autoCreatedTasks: autoCreatedTasks.map(t => t.taskId), autoTrigger });
 
 // v2.0.0: State machine integration
 try {
@@ -382,5 +365,5 @@ try {
   }, feature || 'unknown');
 } catch (_) {}
 
-console.log(JSON.stringify(response));
+outputStopSurface(reason);
 process.exit(0);

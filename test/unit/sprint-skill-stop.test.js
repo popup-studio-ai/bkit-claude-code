@@ -62,42 +62,35 @@ function runHook(payload) {
   }
 }
 
-// =============== TC-S1: phase success → Executive Summary ===============
+// =============== TC-S1: phase success → Executive Summary (S6 CC-compliant) ===============
+// v2.1.22 S6: Stop output is now { decision:'block', reason } (was the
+// CC-rejected decision:'allow' + hookSpecificOutput.additionalContext shape).
 const r1 = runHook({ session_id: 'sessA', skill_name: 'sprint', prompt: '/sprint phase demo-sprint --to do' });
-const ctx1 = r1.hookSpecificOutput && r1.hookSpecificOutput.additionalContext;
-assert('TC-S1a', r1.decision === 'allow', 'decision allow');
-assert('TC-S1b', typeof ctx1 === 'string' && /SPRINT EXECUTIVE SUMMARY/.test(ctx1), 'additionalContext 에 Sprint Exec Summary 포함');
-assert('TC-S1c', /\[MISSION\]/.test(ctx1) && /Demo Sprint Mission/.test(ctx1), 'Mission 표기');
-assert('TC-S1d', /design → do/.test(ctx1), 'phaseHistory 기반 previousPhase → phase 전이 표기');
-assert('TC-S1e', /\[auth\]/.test(ctx1) && /matchRate 100%/.test(ctx1), 'per-feature 표 포함');
+const reason1 = r1.reason;
+assert('TC-S1a', r1.decision === 'block', 'surface → decision block (CC Stop-compliant, S6)');
+assert('TC-S1b', typeof reason1 === 'string' && /SPRINT EXECUTIVE SUMMARY/.test(reason1), 'reason 에 Sprint Exec Summary 포함');
+assert('TC-S1c', /\[MISSION\]/.test(reason1) && /Demo Sprint Mission/.test(reason1), 'Mission 표기');
+assert('TC-S1d', /design → do/.test(reason1), 'phaseHistory 기반 previousPhase → phase 전이 표기');
+assert('TC-S1e', /\[auth\]/.test(reason1) && /matchRate 100%/.test(reason1), 'per-feature 표 포함');
 
-// =============== TC-S2: sessionTitle + userPrompt emitted ===============
-const so1 = r1.hookSpecificOutput || {};
-assert('TC-S2a', typeof so1.sessionTitle === 'string' && /SPRINT-DO/.test(so1.sessionTitle) && /demo-sprint/.test(so1.sessionTitle),
-  `sessionTitle = SPRINT-<phase>: <id> (got: ${so1.sessionTitle})`);
-assert('TC-S2b', typeof so1.sessionTitle === 'string' && /·[0-9a-f]{4}$/.test(so1.sessionTitle),
-  '#111 session tag 부착 (병렬 세션 격리)');
-let up1 = null; try { up1 = JSON.parse(so1.userPrompt); } catch (_e) {}
-assert('TC-S2c', up1 && Array.isArray(up1.questions) && up1.questions[0].options.length >= 1,
-  'userPrompt = AskUserQuestion payload (next actions)');
-assert('TC-S2d', up1 && /\/sprint iterate demo-sprint/.test(JSON.stringify(up1)),
-  'do phase → /sprint iterate 권장 옵션');
+// =============== TC-S2: CC-compliant shape — no hookSpecificOutput/skillResult, options in reason ===============
+assert('TC-S2a', !('hookSpecificOutput' in r1), 'S6: no Stop hookSpecificOutput (CC schema reject)');
+assert('TC-S2b', !('skillResult' in r1), 'S6: no skillResult root field');
+assert('TC-S2c', /Select next step/.test(reason1), 'reason 에 next-step 안내 텍스트 직렬화');
+assert('TC-S2d', /\/sprint iterate demo-sprint/.test(reason1),
+  'do phase → /sprint iterate 권장 옵션 텍스트 (ENH-363 — Claude 가 reason 읽고 AskUserQuestion 제시)');
 
-// =============== TC-S3: read-only (status) → no forced summary ===============
-// fresh session_id (sessC) so the title is not deduped against TC-S1's sessA emit
+// =============== TC-S3: read-only (status) → clean stop ({}) ===============
 const r3 = runHook({ session_id: 'sessC', skill_name: 'sprint', prompt: '/sprint status demo-sprint' });
-const so3 = r3.hookSpecificOutput || {};
-assert('TC-S3a', r3.decision === 'allow', 'status decision allow');
-assert('TC-S3b', so3.additionalContext === undefined || so3.additionalContext === null,
-  'status(read-only) → forced Exec Summary 미출력 (F8 handler 담당)');
-assert('TC-S3c', typeof so3.sessionTitle === 'string' && /SPRINT-/.test(so3.sessionTitle),
-  'status 에도 sprint-tagged sessionTitle 부여(창 격리)');
+assert('TC-S3a', r3.decision === undefined, 'status(read-only) → no decision (clean stop)');
+assert('TC-S3b', !r3.reason, 'status(read-only) → forced Exec Summary 미출력');
+assert('TC-S3c', Object.keys(r3).length === 0,
+  'read-only → CC-compliant 빈 객체 {} (no hookSpecificOutput/sessionTitle/skillResult)');
 
-// =============== TC-S4: distinct session → distinct title tag ===============
+// =============== TC-S4: phase surface 일관 (sessionTitle 격리는 SessionStart 로 이관 — S6 carry) ===============
 const r4 = runHook({ session_id: 'sessB', skill_name: 'sprint', prompt: '/sprint phase demo-sprint --to do' });
-const so4 = r4.hookSpecificOutput || {};
-assert('TC-S4', so1.sessionTitle !== so4.sessionTitle,
-  `다른 session_id → 다른 sessionTitle (A: ${so1.sessionTitle} ≠ B: ${so4.sessionTitle})`);
+assert('TC-S4', r4.decision === 'block' && /SPRINT EXECUTIVE SUMMARY/.test(r4.reason || ''),
+  'phase surface 일관 (decision block + reason). #111 session-title 격리는 SessionStart 경로로 이관(S6 carry)');
 
 // =============== TC-S5: run-export pattern (unified-stop 호환) ===============
 const mod = require(SCRIPT);  // required as module (require.main !== module)
@@ -126,8 +119,8 @@ assert('TC-U1a', /SPRINT EXECUTIVE SUMMARY/.test(uOut),
 assert('TC-U1b', /\[auth\]/.test(uOut) && /matchRate 100%/.test(uOut),
   'unified-stop 경유 per-feature 표 surfacing');
 let uJson = null; try { uJson = JSON.parse(uOut.trim()); } catch (_e) {}
-assert('TC-U1c', uJson && uJson.hookSpecificOutput && /SPRINT-DO/.test(uJson.hookSpecificOutput.sessionTitle || ''),
-  'unified-stop 경유 sessionTitle 정상 (단일 JSON stdout)');
+assert('TC-U1c', uJson && uJson.decision === 'block' && /SPRINT EXECUTIVE SUMMARY/.test(uJson.reason || ''),
+  'unified-stop 경유 단일 CC-compliant JSON (decision block + reason, S6)');
 
 // =============== TC-U2: PRODUCTION dispatch path — marker, NO skill_name ===============
 // 실제 CC Stop payload 는 skill_name / tool_input 을 포함하지 않음 (hasSkillName:false,
