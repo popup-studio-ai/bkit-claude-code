@@ -12,8 +12,17 @@
 const path = require('path');
 const { readStdinSync } = require('../lib/core/io');
 const { debugLog } = require('../lib/core/debug');
-const { setActiveSkill } = require('../lib/task/context');
+// C2 fix (audit): write the active-skill marker to a file (atomic, TTL-bounded)
+// instead of an in-memory var. Each Claude Code hook is a separate node process,
+// so the in-memory setActiveSkill never crossed process boundaries — every
+// unified-* reader's getActiveSkill() returned null and every per-skill PostToolUse
+// branch was dead code. The file marker survives across processes.
+const { writeActiveSkill } = require('../lib/core/active-skill-marker');
 const { getPdcaStatusFull, updatePdcaStatus } = require('../lib/pdca/status');
+// C7/C8 (audit): atomic+locked reachability ping via the shared state-store, and
+// a single BKIT_VERSION source so all three reachability writers stamp the same value.
+const { lockedUpdate } = require('../lib/core/state-store');
+const { BKIT_VERSION } = require('../lib/core/version');
 
 // Lazy load modules
 let orchestrator = null;
@@ -53,35 +62,8 @@ function parseSkillInvocation(toolInput) {
   }
 }
 
-/**
- * Format next step message for output
- * @param {Object} suggestions - Suggestions from orchestrator
- * @param {string} skillName - Current skill name
- * @returns {string} Formatted message
- */
-function formatNextStepMessage(suggestions, skillName) {
-  const lines = [];
-
-  lines.push(`\n--- Skill Post-execution: ${skillName} ---\n`);
-
-  if (suggestions.nextSkill) {
-    lines.push(`\nSuggested next step:`);
-    lines.push(`   /${suggestions.nextSkill.name}`);
-    lines.push(`   ${suggestions.nextSkill.message}`);
-  }
-
-  if (suggestions.suggestedAgent) {
-    lines.push(`\nRecommended Agent:`);
-    lines.push(`   ${suggestions.suggestedAgent}`);
-    lines.push(`   ${suggestions.suggestedMessage}`);
-  }
-
-  if (!suggestions.nextSkill && !suggestions.suggestedAgent) {
-    lines.push(`\nSkill execution complete. Proceed to the next task.`);
-  }
-
-  return lines.join('\n');
-}
+// formatNextStepMessage removed: dead function (defined but never called anywhere
+// in the repo — verified via repo-wide grep before removal).
 
 /**
  * v1.5.6: Determine if a skill generates code.
@@ -163,19 +145,16 @@ async function main() {
     // hook — defeating the monitor. skillName is '' on a skip, which lets the
     // monitor distinguish "alive but idle" from "real skill ran".
     try {
-      const fs = require('fs');
-      const path = require('path');
+      // C7: lockedUpdate serializes concurrent fires so no hook's stamp is lost;
+      // C8: BKIT_VERSION replaces the stale hardcoded '2.1.14'.
       const root = process.env.CLAUDE_PROJECT_DIR || process.cwd();
-      const dir = path.join(root, '.bkit', 'runtime');
-      const file = path.join(dir, 'hook-reachability.json');
-      fs.mkdirSync(dir, { recursive: true });
-      let state = {};
-      try { state = JSON.parse(fs.readFileSync(file, 'utf8')); } catch (_) { state = {}; }
-      state.skill_post = { ts: new Date().toISOString(), version: '2.1.14', skillName };
-      const tmp = file + '.tmp';
-      fs.writeFileSync(tmp, JSON.stringify(state, null, 2), 'utf8');
-      fs.renameSync(tmp, file);
-    } catch (_) { /* graceful */ }
+      const file = path.join(root, '.bkit', 'runtime', 'hook-reachability.json');
+      lockedUpdate(file, (state) => {
+        const next = state && typeof state === 'object' ? state : {};
+        next.skill_post = { ts: new Date().toISOString(), version: BKIT_VERSION, skillName };
+        return next;
+      });
+    } catch (_) { /* graceful — reachability ping is best-effort */ }
 
     if (!skillName) {
       debugLog('SkillPost', 'No skill name found in context');
@@ -186,8 +165,9 @@ async function main() {
     debugLog('SkillPost', 'Processing skill post-execution', { skillName, args });
 
     // v1.4.4: Set active skill for unified hooks (GitHub #9354 workaround)
-    setActiveSkill(skillName);
-    debugLog('SkillPost', 'Active skill set for unified hooks', { skillName });
+    // C2 fix: write to the file marker so cross-process unified-* readers see it.
+    writeActiveSkill({ skill: skillName });
+    debugLog('SkillPost', 'Active skill marker written for unified hooks', { skillName });
 
     // Get orchestration result
     const result = await orch.orchestrateSkillPost(skillName, {}, { args });

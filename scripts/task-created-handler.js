@@ -84,34 +84,53 @@ if (isPdcaTask && pdcaPhase && pdcaFeature) {
 
   try {
     if (fs.existsSync(pdcaStatusPath)) {
-      const status = JSON.parse(fs.readFileSync(pdcaStatusPath, 'utf8'));
+      // H7 fix (audit): locked RMW on the PDCA source-of-truth. The old read→push
+      // →writeFileSync could clobber concurrent status updates (and a SIGKILL
+      // truncated pdca-status.json — the very file gating phase transitions).
+      // lockedUpdate serializes the RMW and writes atomically (tmp+rename).
+      const { lockedUpdate } = require('../lib/core/state-store');
+      let historySize = 0;
+      lockedUpdate(pdcaStatusPath, (raw) => {
+        const status = raw && typeof raw === 'object' ? raw : {};
 
-      // Update task tracking in PDCA status
-      if (!status.taskHistory) {
-        status.taskHistory = [];
-      }
-      status.taskHistory.push({
-        taskId,
-        phase: pdcaPhase,
-        feature: pdcaFeature,
-        createdAt: new Date().toISOString(),
+        // Update task tracking in PDCA status
+        if (!status.taskHistory) {
+          status.taskHistory = [];
+        }
+        status.taskHistory.push({
+          taskId,
+          phase: pdcaPhase,
+          feature: pdcaFeature,
+          createdAt: new Date().toISOString(),
+        });
+
+        // Keep only the last 50 task entries to avoid unbounded growth
+        if (status.taskHistory.length > 50) {
+          status.taskHistory = status.taskHistory.slice(-50);
+        }
+
+        historySize = status.taskHistory.length;
+        return status;
       });
-
-      // Keep only the last 50 task entries to avoid unbounded growth
-      if (status.taskHistory.length > 50) {
-        status.taskHistory = status.taskHistory.slice(-50);
-      }
-
-      fs.writeFileSync(pdcaStatusPath, JSON.stringify(status, null, 2), 'utf8');
       debugLog('TaskCreated', 'PDCA task history updated', {
         phase: pdcaPhase,
         feature: pdcaFeature,
-        historySize: status.taskHistory.length,
+        historySize,
       });
     }
   } catch (e) {
-    // Non-critical: do not fail the hook if state update fails
+    // M9 fix (audit): non-fatal (never fail task creation), but no longer silent.
+    // debugLog is BKIT_DEBUG-gated and thus invisible to most users; write a
+    // concise warning to stderr so CC surfaces it, while keeping process.exit(0)
+    // so the hook never blocks task creation. Critical PDCA tracking state that
+    // fails to persist should be visible, not buried in a debug stream.
     debugLog('TaskCreated', 'PDCA state update failed', { error: e.message });
+    try {
+      process.stderr.write(
+        `[bkit] Warning: could not update PDCA task history for phase "${pdcaPhase}" `
+        + `(feature "${pdcaFeature}"): ${e.message}. PDCA phase tracking may be stale.\n`
+      );
+    } catch (_) { /* stderr itself unavailable — nothing more we can do */ }
   }
 }
 
