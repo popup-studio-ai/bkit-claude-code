@@ -54,14 +54,22 @@
         "docs/design/{feature}.md"
       ],
       "analysis": [
-        "docs/03-analysis/{feature}.analysis.md",
         "docs/03-analysis/features/{feature}.analysis.md",
+        "docs/03-analysis/{feature}.analysis.md",
         "docs/03-analysis/{feature}.gap-analysis.md"
       ],
       "report": [
         "docs/04-report/features/{feature}.report.md",
         "docs/04-report/{feature}.report.md",
         "docs/04-report/{feature}.completion-report.md"
+      ],
+      "qa": [
+        "docs/05-qa/features/{feature}.qa-report.md",
+        "docs/05-qa/{feature}.qa-report.md"
+      ],
+      "pm": [
+        "docs/00-pm/features/{feature}.prd.md",
+        "docs/00-pm/{feature}.prd.md"
       ],
       "archive": "docs/archive/{date}/{feature}"
     },
