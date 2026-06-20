@@ -12,6 +12,11 @@ const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
 const { BKIT_VERSION } = require('../../lib/core/version');
+// C3 fix (audit): validate path-interpolated ids before path.join. A malicious
+// id like "../../docs/.pdca-status" previously read arbitrary JSON files outside
+// .bkit/checkpoints because path.join normalizes "..". validateName rejects
+// anything outside [A-Za-z0-9_-], so traversal sequences never reach path.join.
+const { validateName } = require('../../lib/core/name-validator');
 
 // ---------------------------------------------------------------------------
 // Utilities
@@ -19,7 +24,7 @@ const { BKIT_VERSION } = require('../../lib/core/version');
 
 const ROOT = process.env.BKIT_ROOT || process.cwd();
 const BKIT_DIR = path.join(ROOT, '.bkit');
-const DOCS_DIR = path.join(ROOT, 'docs');
+// DOCS_DIR removed: unused constant (no references in this module).
 
 function statePath(filename) {
   return path.join(BKIT_DIR, 'state', filename);
@@ -162,7 +167,7 @@ const TOOLS = [
     inputSchema: {
       type: 'object',
       properties: {
-        id: { type: 'string', description: 'Checkpoint ID (cp-{timestamp}).' },
+        id: { type: 'string', description: 'Checkpoint ID (cp-{timestamp}).', pattern: '^[A-Za-z0-9_-]+$' },
       },
       required: ['id'],
       additionalProperties: false,
@@ -327,6 +332,14 @@ function handleCheckpointList(args) {
 function handleCheckpointDetail(args) {
   const { id } = args || {};
   if (!id) return errResponse('INVALID_ARGS', 'id is required');
+  // C3 fix: defense-in-depth — the schema pattern already rejects traversal at
+  // the MCP boundary, but validate again here so this is safe even if a future
+  // caller bypasses the schema. Failing closed keeps ".."/"/" out of path.join.
+  try {
+    validateName(id, 'checkpoint id');
+  } catch (validationErr) {
+    return errResponse('INVALID_ARGS', validationErr.message);
+  }
 
   const cpPath = path.join(checkpointsDir(), `${id}.json`);
   if (!fs.existsSync(cpPath)) {
