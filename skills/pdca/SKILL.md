@@ -84,7 +84,7 @@ Run PM Agent Team for product discovery and strategy analysis before Plan phase.
    - 8-section PRD generation
 5. Output PRD to `docs/00-pm/{feature}.prd.md`
 6. Create Task: `[PM] {feature}`
-7. Update .bkit-memory.json: phase = "pm"
+7. Update `.bkit/state/pdca-status.json`: phase = "pm"
 8. Guide user to next step: `/pdca plan {feature}`
 
 **Output Path**: `docs/00-pm/{feature}.prd.md`
@@ -106,7 +106,7 @@ Run PM Agent Team for product discovery and strategy analysis before Plan phase.
 6. **Checkpoint 2 — Clarifying Questions**: Identify underspecified elements (edge cases, error handling, integration points, compatibility). Present organized question list. Wait for answers before generating the document.
 7. Generate Plan document with user-confirmed requirements
 8. Create Task: `[Plan] {feature}`
-9. Update .bkit-memory.json: phase = "plan"
+9. Update `.bkit/state/pdca-status.json`: phase = "plan"
 10. Write `## Executive Summary` at document top with 4-perspective table (Problem/Solution/Function UX Effect/Core Value), each 1-2 sentences
 11. **Context Anchor Generation**: After generating Plan document, extract Context Anchor (WHY/WHO/RISK/SUCCESS/SCOPE) from Executive Summary, Requirements, and Risk sections. Write as `## Context Anchor` table between Executive Summary and Section 1. This anchor propagates to Design/Do documents for cross-session context continuity.
 12. **MANDATORY**: After completing the document, also output the Executive Summary table in your response so the user sees it immediately without opening the file
@@ -138,7 +138,7 @@ Run PM Agent Team for product discovery and strategy analysis before Plan phase.
     - If Design Anchor already exists (`docs/02-design/styles/{feature}.design-anchor.md`), embed it in the Design document as `## Design Anchor` section
     - This ensures design tokens (colors, typography, spacing) are locked before implementation
 12. Create Task: `[Design] {feature}` (blockedBy: Plan task)
-13. Update .bkit-memory.json: phase = "design"
+13. Update `.bkit/state/pdca-status.json`: phase = "design"
 
 **Output Path**: `docs/02-design/features/{feature}.design.md`
 
@@ -175,7 +175,7 @@ Run PM Agent Team for product discovery and strategy analysis before Plan phase.
     - At critical logic: `// Plan SC: {success criteria being addressed}`
     - These comments create traceable links from code back to design decisions
 14. Create Task: `[Do] {feature}` (blockedBy: Design task)
-15. Update .bkit-memory.json: phase = "do"
+15. Update `.bkit/state/pdca-status.json`: phase = "do"
 
 **--scope Parameter**:
 ```
@@ -262,7 +262,7 @@ Run PM Agent Team for product discovery and strategy analysis before Plan phase.
     - "그대로 진행" — accept current state
     Wait for user decision before proceeding.
 12. Create Task: `[Check] {feature}` (blockedBy: Do task)
-13. Update .bkit-memory.json: phase = "check", matchRate
+13. Update `.bkit/state/pdca-status.json`: phase = "check", matchRate
 
 **Output Path**: `docs/03-analysis/{feature}.analysis.md`
 
@@ -323,7 +323,7 @@ Run PM Agent Team for product discovery and strategy analysis before Plan phase.
 7. Include `## Executive Summary` with `### 1.3 Value Delivered` reflecting actual results (4 perspectives with metrics)
 8. **MANDATORY**: After completing the report, also output the Executive Summary table in your response
 9. Create Task: `[Report] {feature}`
-10. Update .bkit-memory.json: phase = "completed"
+10. Update `.bkit/state/pdca-status.json`: phase = "completed"
 
 **Output Path**: `docs/04-report/{feature}.report.md`
 
@@ -390,7 +390,7 @@ Feature: user-auth
 3. Create `docs/archive/YYYY-MM/{feature}/` folder
 4. Move documents (delete from original location)
 5. Update Archive Index (`docs/archive/YYYY-MM/_INDEX.md`)
-6. Update .pdca-status.json: phase = "archived", record archivedTo path
+6. Update .bkit/state/pdca-status.json: phase = "archived", record archivedTo path
 7. Remove feature from status (or preserve summary with `--summary` option)
 
 **Arguments**:
@@ -409,7 +409,7 @@ Feature: user-auth
 
 **FR-04: Summary Preservation Option** (v1.4.8):
 
-When using `--summary` (or `--preserve-summary`, `-s`), the feature data in `.pdca-status.json`
+When using `--summary` (or `--preserve-summary`, `-s`), the feature data in `.bkit/state/pdca-status.json`
 is converted to a lightweight summary instead of being deleted:
 
 ```json
@@ -440,9 +440,9 @@ Use `--summary` when you need:
 
 ### cleanup (Cleanup Phase) - v1.4.8
 
-Clean up archived features from `.pdca-status.json` to reduce file size.
+Clean up archived features from `.bkit/state/pdca-status.json` to reduce file size.
 
-1. Read archived features from `.pdca-status.json`
+1. Read archived features from `.bkit/state/pdca-status.json`
 2. Display list with timestamps and archive paths
 3. Ask user for confirmation via AskUserQuestion (FR-06)
 4. Delete selected features from status using `cleanupArchivedFeatures()`
@@ -484,7 +484,9 @@ Select features to cleanup:
 
 ### status (Status Check)
 
-1. Read `.bkit-memory.json`
+1. Read `.bkit/state/pdca-status.json` (the live state-of-truth; via the
+   `lib/pdca/status-core.js` API). Note: `.bkit-memory.json` is a deprecated
+   v1.6.0 legacy path that no lib module reads or writes.
 2. Display current feature, PDCA phase, Task status
 3. Visualize progress
 
