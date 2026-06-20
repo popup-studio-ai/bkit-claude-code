@@ -140,6 +140,30 @@ const activeAgent = getActiveAgent();
 
 debugLog('UnifiedWritePost', 'Context', { activeSkill, activeAgent, filePath });
 
+// v2.1.14 Sub-Sprint 2: Reachability ping (MON-CC-NEW-PLUGIN-HOOK-DROP).
+// SessionStart compares the ts of each PostToolUse stamp to detect silent
+// CC plugin-hook drops (#57317 5-streak surface). MUST fire on EVERY
+// invocation — including the template-validation failure path below that
+// calls process.exit(0). When this ping lived at the END of the hook, that
+// exit path skipped it: a written PDCA doc failing template validation
+// recorded no write_post stamp, so write_post could go stale and trip a
+// false missing=[write_post] warning. Ping first, work second. (Symmetric
+// with scripts/skill-post.js, which carried the same gating bug on its
+// skip path; scripts/unified-bash-post.js has no early exit so its
+// end-of-hook ping is already unconditional.)
+try {
+  const root = process.env.CLAUDE_PROJECT_DIR || process.cwd();
+  const dir = path.join(root, '.bkit', 'runtime');
+  const file = path.join(dir, 'hook-reachability.json');
+  fs.mkdirSync(dir, { recursive: true });
+  let state = {};
+  try { state = JSON.parse(fs.readFileSync(file, 'utf8')); } catch (_) { state = {}; }
+  state.write_post = { ts: new Date().toISOString(), version: '2.1.14' };
+  const tmp = file + '.tmp';
+  fs.writeFileSync(tmp, JSON.stringify(state, null, 2), 'utf8');
+  fs.renameSync(tmp, file);
+} catch (_) { /* graceful */ }
+
 // Always run PDCA post-write (core bkit-rules functionality)
 handlePdcaPostWrite(input);
 
@@ -243,22 +267,6 @@ try {
       phase: input.phase || (input.context && input.context.phase),
     }).catch(() => { /* graceful */ });
   }
-} catch (_) { /* graceful */ }
-
-// Reachability ping — atomic rename
-try {
-  const fs = require('fs');
-  const path = require('path');
-  const root = process.env.CLAUDE_PROJECT_DIR || process.cwd();
-  const dir = path.join(root, '.bkit', 'runtime');
-  const file = path.join(dir, 'hook-reachability.json');
-  fs.mkdirSync(dir, { recursive: true });
-  let state = {};
-  try { state = JSON.parse(fs.readFileSync(file, 'utf8')); } catch (_) { state = {}; }
-  state.write_post = { ts: new Date().toISOString(), version: '2.1.14' };
-  const tmp = file + '.tmp';
-  fs.writeFileSync(tmp, JSON.stringify(state, null, 2), 'utf8');
-  fs.renameSync(tmp, file);
 } catch (_) { /* graceful */ }
 
 // Output allow (PostToolUse doesn't block)
