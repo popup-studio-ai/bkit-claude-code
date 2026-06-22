@@ -12,6 +12,9 @@ node_modules/
 .env.local
 .env*.local
 
+# Python virtual environment (local, machine-specific — never tracked)
+.venv/
+
 # IDE
 .idea/
 .vscode/
@@ -56,6 +59,9 @@ bkit-system/.obsidian/plugins/
 
 # Session history (local Claude Code history hooks; machine-local, not for repo)
 .remember/
+
+# Working directory — session notes, scratch, and local archives (machine-local)
+work/
 
 # Local Claude Code settings (plugin elements are at root level)
 .claude/
