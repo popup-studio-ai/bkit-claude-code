@@ -3,7 +3,7 @@
 ## Language Rules
 
 ### Conversation
-- Always respond in **Korean** (한국어) when communicating with the user.
+- Always respond in the **same language the user's prompt is written in**. Match the user's language for all conversational replies (e.g., English prompt → English reply, 한국어 프롬프트 → 한국어 답변).
 
 ### Code & Documentation Language
 - **English by default** for ALL generated content:
@@ -13,17 +13,22 @@
   - Templates (`templates/*.md`)
   - Config files, error messages, log messages
 
-- **Korean exceptions** (한국어 작성):
-  - `docs/` directory and all subdirectories (`docs/01-plan/`, `docs/02-design/`, `docs/03-analysis/`, `docs/04-report/`)
+- **Bilingual docs (`docs/` only)** — every NEW file under `docs/` and its subdirectories (`docs/01-plan/`, `docs/02-design/`, `docs/03-analysis/`, `docs/04-report/`, etc.) MUST be created as a matched pair of sibling files:
+  - `<base>.en.md` — English version
+  - `<base>.ko.md` — Korean (한국어) version
+  - Suffix convention: dot separator with ISO language codes (`en`, `ko`). Use `ko`, not `kr`.
+  - Both versions must stay in sync in content; only the language differs.
+  - Applies to NEW files only — do NOT retroactively rename or translate existing docs.
+- **Korean-only exceptions** (한국어 작성, single file):
   - 8-language auto-trigger keywords (EN, KO, JA, ZH, ES, FR, DE, IT) in agent/skill trigger lists
   - bkit memory state descriptions in `.bkit/state/memory.json`
 
 ### Key Principle
-bkit is a **global service**. Keep all public-facing and code-level content in English. Korean is only for internal planning docs (`docs/`) and developer communication.
+bkit is a **global service**. Keep all public-facing and code-level content in English. Conversation language follows the user's prompt language. New `docs/` files are bilingual (`.en.md` + `.ko.md` siblings); everything else stays English-only.
 
 ### Do NOT
-- Do NOT translate existing English files to Korean (waste of tokens)
-- Do NOT write docs/ files in English unless explicitly requested
+- Do NOT create a new `docs/` file in only one language — always produce both `.en.md` and `.ko.md` siblings
+- Do NOT retroactively rename or translate existing docs (waste of tokens; new-files-only rule)
 - Do NOT mix languages within a single file (except trigger keyword lists)
 
 ## Sprint Management (v2.1.13)

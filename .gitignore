@@ -54,6 +54,9 @@ bkit-system/.obsidian/plugins/
 # bkit runtime state (agent-state.json)
 .bkit/
 
+# Session history (local Claude Code history hooks; machine-local, not for repo)
+.remember/
+
 # Local Claude Code settings (plugin elements are at root level)
 .claude/
 # v2.1.11: project-level CLAUDE.md is part of the plugin contract
