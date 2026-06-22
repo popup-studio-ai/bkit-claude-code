@@ -77,3 +77,9 @@ docs/bkit-Best-Practice.pdf
 # Internal skills/commands (company-only, not for public repo)
 skills/github-integration/
 commands/github-stats.md
+
+# Jest config — references a non-existent test-scripts/ dir; the project's tests
+# run via `node` (see .github/workflows/contract-check.yml), not Jest. Kept
+# locally for ad-hoc node-style tests; excluded from the repo. Untracked via
+# `git rm --cached jest.config.js` (file retained on disk).
+jest.config.js
