@@ -143,6 +143,100 @@ await tc('handleQA persists computed s1Score to qualityGates.S1_dataFlowIntegrit
   fs.rmSync(tmpRoot, { recursive: true, force: true });
 });
 
+// === S4_archiveReadiness: computed gate (Slice 2, Task 2.6 — no gate in limbo) ===
+//
+// S4 is the last active gate with no measurement route. It is a computed gate:
+// ready iff every report-phase active gate has passed === true AND a report
+// doc exists (sprint.docs.report truthy). No sub-agent. The slot is populated
+// inside archiveSprint BEFORE the gate check (evaluateGate reads slot values,
+// not compute fns) and exposed via measure-router so `/sprint measure S4` works.
+
+// Helper: mark every report-phase active gate (except computed S2/S4) as passed.
+function markAllReportGatesPassed(sprint) {
+  const gates = sprint.qualityGates;
+  // Numeric gates: set a current that satisfies the op + threshold.
+  gates.M1_matchRate            = { current: 95,  threshold: 90,  passed: true };
+  gates.M2_codeQualityScore     = { current: 90,  threshold: 80,  passed: true };
+  gates.M3_criticalIssueCount   = { current: 0,   threshold: 0,   passed: true };
+  gates.M4_apiComplianceRate    = { current: 98,  threshold: 95,  passed: true };
+  gates.M5_runtimeErrorRate     = { current: 0,   threshold: 1,   passed: true };
+  gates.M7_conventionCompliance = { current: 95,  threshold: 90,  passed: true };
+  gates.M8_designCompleteness   = { current: 90,  threshold: 85,  passed: true };
+  gates.M10_pdcaCycleTimeHours  = { current: 10,  threshold: 40,  passed: true };
+  gates.S1_dataFlowIntegrity    = { current: 100, threshold: 100, passed: true };
+  // S2 (featureCompletion) is itself a computed gate not yet routed (Slice 3);
+  // S4 readiness only requires gates that have a measurement route today, so
+  // we skip S2/S4 when constructing the "all passing" fixture. (S4 readiness
+  // is defined over the report-phase gates that are actually measurable.)
+}
+
+await tc('S4_archiveReadiness is computed from report-complete + all-gates-passed', async () => {
+  const sprint = domain.createSprint({ id: 's2-s4', name: 'S2 S4', features: ['auth'] });
+  sprint.phase = 'report';
+  markAllReportGatesPassed(sprint);
+  sprint.docs = { ...sprint.docs, report: '/tmp/report.md' };
+  const res = await mr.measureGate('S4', sprint, {});
+  assert.notStrictEqual(res.reason, 'unsupported_gate',
+    'S4 must no longer be unsupported; got ' + JSON.stringify(res));
+  assert.strictEqual(res.ok, true, 'S4 measure must be ok; got ' + JSON.stringify(res));
+  assert.strictEqual(res.value, true,
+    'all-passed + report present must yield S4=true; got ' + JSON.stringify(res));
+});
+
+await tc('S4 fails when report is missing even if all gates pass', async () => {
+  const sprint = domain.createSprint({ id: 's2-s4b', name: 'S2 S4b', features: ['auth'] });
+  sprint.phase = 'report';
+  markAllReportGatesPassed(sprint);
+  sprint.docs = { ...sprint.docs, report: null }; // no report generated
+  const res = await mr.measureGate('S4', sprint, {});
+  assert.strictEqual(res.ok, true, 'S4 measure must be ok (computed); got ' + JSON.stringify(res));
+  assert.strictEqual(res.value, false,
+    'missing report must yield S4=false; got ' + JSON.stringify(res));
+});
+
+await tc('S4 fails when any report-phase gate has not passed', async () => {
+  const sprint = domain.createSprint({ id: 's2-s4c', name: 'S2 S4c', features: ['auth'] });
+  sprint.phase = 'report';
+  markAllReportGatesPassed(sprint);
+  sprint.docs = { ...sprint.docs, report: '/tmp/report.md' };
+  // Break one gate (M2 below its threshold).
+  sprint.qualityGates.M2_codeQualityScore = { current: 50, threshold: 80, passed: false };
+  const res = await mr.measureGate('S4', sprint, {});
+  assert.strictEqual(res.value, false,
+    'a failing report-phase gate must yield S4=false; got ' + JSON.stringify(res));
+});
+
+await tc('archiveSprint populates S4 slot from readiness before the gate check', async () => {
+  const lifecycle = require(path.join(PLUGIN_ROOT, 'lib/application/sprint-lifecycle'));
+  const sprint = domain.createSprint({ id: 's2-s4d', name: 'S2 S4d', features: ['auth'] });
+  sprint.phase = 'report';
+  markAllReportGatesPassed(sprint);
+  sprint.docs = { ...sprint.docs, report: '/tmp/r.md' };
+  const res = await lifecycle.archiveSprint(sprint, {});
+  assert.strictEqual(res.ok, true,
+    'archive must succeed when ready; got ' + JSON.stringify(res));
+  assert.ok(res.sprint, 'archive must return the updated sprint');
+  assert.ok(res.sprint.qualityGates.S4_archiveReadiness,
+    'archived sprint must carry the populated S4 slot');
+  assert.strictEqual(res.sprint.qualityGates.S4_archiveReadiness.passed, true,
+    'S4 slot must reflect readiness=true; got ' + JSON.stringify(res.sprint.qualityGates.S4_archiveReadiness));
+  assert.strictEqual(res.sprint.qualityGates.S4_archiveReadiness.current, true,
+    'S4.current must be true when ready');
+});
+
+await tc('archiveSprint blocks archive when report is missing (S4 not ready)', async () => {
+  const lifecycle = require(path.join(PLUGIN_ROOT, 'lib/application/sprint-lifecycle'));
+  const sprint = domain.createSprint({ id: 's2-s4e', name: 'S2 S4e', features: ['auth'] });
+  sprint.phase = 'report';
+  markAllReportGatesPassed(sprint);
+  sprint.docs = { ...sprint.docs, report: null }; // no report
+  const res = await lifecycle.archiveSprint(sprint, {});
+  assert.strictEqual(res.ok, false,
+    'archive must be blocked when S4 not ready; got ' + JSON.stringify(res));
+  assert.strictEqual(res.reason, 'archive_readiness_fail',
+    'block reason must be archive_readiness_fail; got ' + res.reason);
+});
+
 if (fail) {
   console.error(`FAIL: ${fail} / PASS: ${pass}`);
   failures.forEach(f => console.error('  - ' + f.name + ': ' + f.msg));
