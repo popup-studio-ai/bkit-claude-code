@@ -243,9 +243,34 @@ Gates outside this table (M5, M10, S2, S4) return
 sequentially (no Promise.all) to avoid #56293 sub-agent caching 10x.
 
 **Dispatcher requirement**: the LLM dispatcher (main session) must inject
-`deps.agentTaskRunner: ({ subagent_type, prompt }) => Promise<{ output }>`
-wrapping Claude Code's Task tool. Without it the use case returns
-`reason: 'no_agent_runner'` per gate (deterministic, not silent fail).
+`deps.agentTaskRunner` wrapping Claude Code's Task tool. Without it the use
+case returns `reason: 'no_agent_runner'` per gate (deterministic, not silent
+fail). The handler layer exposes `createTaskToolRunner({ invokeTaskTool })`
+(in `scripts/lib/sprint-handler-shared.js`, re-exported from
+`scripts/sprint-handler.js`) to build this wrapper:
+
+```javascript
+const { createTaskToolRunner } = require('<bkit-root>/scripts/lib/sprint-handler-shared');
+const runner = createTaskToolRunner({
+  invokeTaskTool: async ({ subagent_type, prompt }) => {
+    // delegate to Claude Code's Task tool in the main session
+    return { text: await callTaskTool({ subagent_type, prompt }) };
+  },
+});
+await handleSprintAction('measure', { id, gate }, { agentTaskRunner: runner });
+```
+
+**Two invocation paths:**
+
+1. **In-process (primary, main session):** the LLM dispatcher calls
+   `handleSprintAction(...)` directly with `deps.agentTaskRunner` injected.
+   Gate measurement works end-to-end.
+2. **Subprocess CLI (`node scripts/sprint-handler.js ...`):** runs in a
+   separate Node process that cannot see the Task tool, so it passes `{}`
+   and gate measurement returns `no_agent_runner`. Use this path only for
+   non-measurement actions (status, list, help) or when the in-process path
+   is unavailable; for any action that measures gates, use the in-process
+   dispatcher call with an injected runner.
 
 ### 10.1.1 `phase --approve` semantics (v2.1.16, Issue #95)
 
