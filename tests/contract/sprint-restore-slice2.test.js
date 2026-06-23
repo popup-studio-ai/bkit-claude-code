@@ -49,6 +49,31 @@ await tc('M8 measureGate at plan-exit reaches the runner (no no_agent_runner, no
   assert.strictEqual(res.value, 88);
 });
 
+await tc('M5 returns not_applicable when no log source is available (libraries/static sites)', async () => {
+  const sprint = domain.createSprint({ id: 's2-m5', name: 'S2 M5', features: ['auth'] });
+  sprint.phase = 'do';
+  const res = await mr.measureGate('M5', sprint, {
+    agentTaskRunner: async () => ({ output: '{"value": 0}' }),
+    logSourceAvailable: false,
+  });
+  assert.strictEqual(res.reason, 'not_applicable',
+    'M5 with no logs must exempt, not fail; got ' + JSON.stringify(res));
+  assert.strictEqual(res.passed, true, 'not_applicable must count as passed (exempted)');
+});
+
+await tc('M5 measures via qa-monitor probe when logs ARE available', async () => {
+  const sprint = domain.createSprint({ id: 's2-m5b', name: 'S2 M5b', features: ['auth'] });
+  sprint.phase = 'do';
+  const res = await mr.measureGate('M5', sprint, {
+    agentTaskRunner: async () => ({ output: '{"value": 0}' }),
+    logSourceAvailable: true,
+  });
+  assert.notStrictEqual(res.reason, 'unsupported_gate', 'M5 must no longer be unsupported');
+  assert.notStrictEqual(res.reason, 'not_applicable', 'M5 with logs must run the probe');
+  assert.strictEqual(res.ok, true, 'M5 with logs must measure; got ' + JSON.stringify(res));
+  assert.strictEqual(res.value, 0);
+});
+
 if (fail) {
   console.error(`FAIL: ${fail} / PASS: ${pass}`);
   failures.forEach(f => console.error('  - ' + f.name + ': ' + f.msg));
