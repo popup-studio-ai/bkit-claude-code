@@ -24,6 +24,104 @@ await tc('createSprint dataFlow/annotations independent of feature count', async
   assert.deepStrictEqual(sprint.annotations, []);
 });
 
+// ---- Task 4.2: handleQA records per-hop results to sprint.dataFlow ----
+
+await tc('handleQA populates sprint.dataFlow[feature] from hopResults (all-pass)', async () => {
+  const { handleSprintAction } = require(path.join(PLUGIN_ROOT, 'scripts/sprint-handler'));
+  const os = require('node:os'); const fs = require('node:fs');
+  const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 's4-qa-all-'));
+  const id = 'slice4-qa-all';
+  try {
+    await handleSprintAction('init', { id, name: 'S4A', features: ['auth'], projectRoot: tmpRoot }, {});
+    // Fake validator: all 7 hops pass with per-hop evidence.
+    const fakeValidator = async (_f, hopId) => ({ passed: true, evidence: 'ev-' + hopId });
+    const res = await handleSprintAction('qa', { id, featureName: 'auth', projectRoot: tmpRoot }, {
+      qaDeps: { dataFlowValidator: fakeValidator },
+    });
+    assert.ok(res.ok, 'qa must succeed; got ' + JSON.stringify(res));
+    const state = JSON.parse(fs.readFileSync(
+      path.join(tmpRoot, '.bkit/state/sprints', id + '.json'), 'utf8'));
+    assert.ok(state.dataFlow && state.dataFlow['auth'], 'persisted dataFlow[auth] must exist');
+    const hopKeys = Object.keys(state.dataFlow['auth']);
+    assert.strictEqual(hopKeys.length, 7, 'expected exactly 7 hop keys H1..H7; got ' + hopKeys.join(','));
+    for (const hopId of ['H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'H7']) {
+      const entry = state.dataFlow['auth'][hopId];
+      assert.ok(entry, 'entry ' + hopId + ' must exist');
+      assert.strictEqual(entry.status, 'pass', hopId + ' status must be pass');
+      assert.strictEqual(entry.evidence, 'ev-' + hopId, hopId + ' evidence mismatch');
+    }
+    assert.strictEqual(state.dataFlow['auth'].H1.status, 'pass');
+  } finally {
+    fs.rmSync(tmpRoot, { recursive: true, force: true });
+  }
+});
+
+await tc('handleQA maps mixed pass/fail hops to correct status (H3,H5 fail)', async () => {
+  const { handleSprintAction } = require(path.join(PLUGIN_ROOT, 'scripts/sprint-handler'));
+  const os = require('node:os'); const fs = require('node:fs');
+  const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 's4-qa-mix-'));
+  const id = 'slice4-qa-mix';
+  try {
+    await handleSprintAction('init', { id, name: 'S4M', features: ['auth'], projectRoot: tmpRoot }, {});
+    const failing = new Set(['H3', 'H5']);
+    const fakeValidator = async (_f, hopId) => failing.has(hopId)
+      ? { passed: false, reason: 'boom-' + hopId }
+      : { passed: true, evidence: 'ok-' + hopId };
+    const res = await handleSprintAction('qa', { id, featureName: 'auth', projectRoot: tmpRoot }, {
+      qaDeps: { dataFlowValidator: fakeValidator },
+    });
+    assert.ok(res.ok, 'qa must succeed even with partial failures; got ' + JSON.stringify(res));
+    const state = JSON.parse(fs.readFileSync(
+      path.join(tmpRoot, '.bkit/state/sprints', id + '.json'), 'utf8'));
+    assert.strictEqual(state.dataFlow['auth'].H3.status, 'fail', 'H3 status must be fail');
+    assert.strictEqual(state.dataFlow['auth'].H3.reason, 'boom-H3', 'H3 reason must be recorded');
+    assert.strictEqual(state.dataFlow['auth'].H5.status, 'fail', 'H5 status must be fail');
+    assert.strictEqual(state.dataFlow['auth'].H1.status, 'pass', 'H1 status must be pass');
+    assert.strictEqual(state.dataFlow['auth'].H1.evidence, 'ok-H1', 'H1 evidence mismatch');
+    // Bonus: s1Score = 5/7 *100 ≈ 71.43 persisted to S1 slot.
+    assert.ok(state.qualityGates.S1_dataFlowIntegrity, 'S1 slot must be persisted');
+    const s1 = state.qualityGates.S1_dataFlowIntegrity.current;
+    assert.ok(Math.abs(s1 - (5 / 7 * 100)) < 0.01, 's1Score ≈ 71.43; got ' + s1);
+  } finally {
+    fs.rmSync(tmpRoot, { recursive: true, force: true });
+  }
+});
+
+await tc('Tier-2 round-trip: recorded matrix validates via staticMatrix validator (and empty sprint = 0)', async () => {
+  const { handleSprintAction } = require(path.join(PLUGIN_ROOT, 'scripts/sprint-handler'));
+  const { createDataFlowValidator } = require(path.join(PLUGIN_ROOT, 'lib/infra/sprint/data-flow-validator.adapter'));
+  const lifecycle = require(path.join(PLUGIN_ROOT, 'lib/application/sprint-lifecycle'));
+  const os = require('node:os'); const fs = require('node:fs');
+  const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 's4-rt-'));
+  const id = 'slice4-roundtrip';
+  try {
+    // Step 1: live probe records the all-pass matrix.
+    await handleSprintAction('init', { id, name: 'S4RT', features: ['auth'], projectRoot: tmpRoot }, {});
+    const liveValidator = async (_f, hopId) => ({ passed: true, evidence: 'live-' + hopId });
+    const qaRes = await handleSprintAction('qa', { id, featureName: 'auth', projectRoot: tmpRoot }, {
+      qaDeps: { dataFlowValidator: liveValidator },
+    });
+    assert.ok(qaRes.ok, 'live qa must succeed');
+    // Step 2: reload persisted state (the recorded matrix is on disk now).
+    const state = JSON.parse(fs.readFileSync(
+      path.join(tmpRoot, '.bkit/state/sprints', id + '.json'), 'utf8'));
+    assert.ok(state.dataFlow && state.dataFlow['auth'], 'matrix must be recorded on disk');
+    // Step 3: re-validate using the STATIC validator (reads sprint.dataFlow only).
+    const staticValidator = createDataFlowValidator({ staticMatrix: true });
+    const replay = await lifecycle.verifyDataFlow(state, 'auth', { dataFlowValidator: staticValidator });
+    assert.ok(replay.ok, 'static replay must succeed');
+    assert.strictEqual(replay.s1Score, 100,
+      'staticMatrix replay from all-pass recording must yield s1Score 100; got ' + replay.s1Score);
+    // Step 4: negative — fresh sprint with no recorded dataFlow yields s1Score 0.
+    const fresh = domain.createSprint({ id: 'slice4-nomatrix', name: 'F', features: ['auth'] });
+    const negReplay = await lifecycle.verifyDataFlow(fresh, 'auth', { dataFlowValidator: staticValidator });
+    assert.strictEqual(negReplay.s1Score, 0,
+      'staticMatrix on sprint without recorded dataFlow must yield s1Score 0; got ' + negReplay.s1Score);
+  } finally {
+    fs.rmSync(tmpRoot, { recursive: true, force: true });
+  }
+});
+
 if (fail) { console.error(`FAIL: ${fail} / PASS: ${pass}`); failures.forEach(f => console.error('  - ' + f.name + ': ' + f.msg)); process.exit(1); }
 console.log(`PASS: ${pass} / FAIL: ${fail}`);
 

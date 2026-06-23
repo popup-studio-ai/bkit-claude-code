@@ -348,6 +348,28 @@ async function handleQA(args, infra, deps) {
         completion: 100,
       };
     }
+    // Slice 4 (Task 4.2): record per-hop results to sprint.dataFlow[feature].
+    // Tier-2 static validator (data-flow-validator.adapter validatorStatic)
+    // reads sprint.dataFlow[feature][hopId].status === 'pass' with .evidence,
+    // so this recording is what makes a subsequent staticMatrix QA replayable
+    // (re-validate from the recorded matrix instead of re-probing) and works
+    // for archived sprints where live probing is impossible. Defensive on
+    // missing dataFlow (copy-construct, supports legacy sprints) and missing
+    // hopResults (skip gracefully — everything else still persists).
+    if (Array.isArray(result.hopResults)) {
+      sprint.dataFlow = { ...(sprint.dataFlow || {}) };
+      const dataFlowFeature = {};
+      for (const hop of result.hopResults) {
+        dataFlowFeature[hop.hopId] = {
+          status: hop.passed ? 'pass' : 'fail',
+          evidence: hop.evidence || null,
+          reason: hop.reason || null,
+          from: hop.from,
+          to: hop.to,
+        };
+      }
+      sprint.dataFlow[args.featureName] = dataFlowFeature;
+    }
     await infra.stateStore.save(sprint);
     result.s1Persisted = true;
   }
