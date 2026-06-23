@@ -5,6 +5,70 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.23] - 2026-06-23 (branch: `fixes/Sprint-System-Issues-6222026`)
+
+> **Status**: Sprint System Restore-As-Designed. Restores the Sprint quality-gate system to its original designed behavior by fixing the 5 NIM2CC-reported issues plus ~10 second-order defects found via big-picture mapping (no whack-a-mole). Artifacts: design `docs/superpowers/specs/2026-06-22-sprint-restore-as-designed-design.en.md` (+ `.ko.md`) · plan `docs/superpowers/plans/2026-06-22-sprint-restore-as-designed.md`. Delivered across 5 slices + master E2E, executed via subagent-driven-development (fresh subagent per task + two-stage spec/quality review). **Success criterion met**: a real sprint runs the full 8-phase lifecycle (`init→start→plan→design→do→iterate→qa→report→archived`) through the dispatcher with zero manual JSON editing — proven by `tests/contract/sprint-restore-e2e.test.js`.
+
+### Cluster A — Dispatcher Wiring (the root cause of the original 5 issues)
+
+- **FIX — composition root never wired adapters**: `wireAgentAdapters` (`scripts/sprint-handler.js`) received `{}` so no `agentTaskRunner` ever reached the gates/iterators. The handler layer accepted injected adapters but the composition root constructed none.
+  - Added `createTaskToolRunner(host)` host-adapter factory (`scripts/lib/sprint-handler-shared.js`) bridging the host's `invokeTaskTool` to the `({subagent_type, prompt}) => {output}` contract the domain expects.
+  - `wireAgentAdapters` now builds/threads: `gapDetector` + `autoFixer` (from `agentTaskRunner`), `dataFlowValidator` (from `mcpClient`/`staticMatrix`), `agentTaskRunner` onto `measureDeps` + `phaseDeps`, and `taskCreator` (see Cluster F-remaining). Caller-supplied deps always win.
+  - Documented the injection contract in `skills/sprint/SKILL.md`.
+
+### Cluster B — M8 Chicken-and-Egg (Issue #5)
+
+- **FIX — M8 unmeasurable at plan-exit**: at plan-exit the design doc does not yet exist, so M8 had no source artifact to measure → plan→design advance always gate-failed. `measure-router.buildPrompt` now resolves a phase-specific source: at `plan` it cites the plan doc's design section; at `design`+ it cites the Design doc §14 self-assessment checklist (via new `sourceArtifactPlanPhase` route field).
+
+### Cluster C — Feature Tracking (featureMap never populated)
+
+- **FIX — `featureMap` was always `{}`**: `createSprint` never populated it; the S2 featureCompletion gate therefore had nothing to read.
+  - Added `completion` (0-100) to the `SprintFeatureMapEntry` typedef + populated `featureMap` in `createSprint`.
+  - `handleFeature add/remove` now keeps `features[]` ↔ `featureMap` in lockstep (twin sources of truth).
+  - Phase advance bumps each entry's `pdcaPhase` + `completion` (monotonic `max`, never decreases); `handleQA` grants `completion=100` + `qa='pass'` on a data-flow pass (the only path to 100).
+
+### Cluster D — Auto-Pause Scope + S1 Persistence (Issues #3, #4)
+
+- **FIX — auto-pause only checked M3/S1**: `checkAutoPauseTriggers` (via new `failingActiveGates` helper, `lib/application/sprint-lifecycle/auto-pause.js`) now inspects **every** active gate in `ACTIVE_GATES_BY_PHASE[phase]`, so `QUALITY_GATE_FAIL` fires on any failing gate (was silently missed for M1/M2/M4/M5/M7/M8/M10/S2).
+- **FIX — `handleQA` didn't persist s1Score**: the computed S1 score was discarded → the S1 slot stayed null → advancePhase reported `not_measured` even after a successful QA. Now persisted to `qualityGates.S1_dataFlowIntegrity`.
+
+### Cluster E — Docs
+
+- **FEAT — `gate_fail` return carries an actionable hint**: names the failing gate key(s) + the exact `/sprint measure` + `/sprint phase` commands to run (advance-phase.usecase.js). Closes the Issue #93 "no user-facing signal on gate failure" gap.
+- **DOCS — reconciled to code**: corrected the `SPRINT_AUTORUN_SCOPE` Trust-Level table in `commands/bkit.md` (was L1=design/L2=do/L3=qa; code is L0/L1=prd, L2=design, L3=report, L4=archived) + folded in the "--approve does NOT bypass Quality Gate failures" warning; fixed the stale "feature sub-action deferred" claim in `skills/sprint/examples/multi-feature-sprint.md` (featureMap sync is now live).
+
+### Cluster F-gates — Gate Measurability ("no gate in limbo")
+
+> Headline outcome: `UNSUPPORTED_GATES` is now **empty** — every gate in `ACTIVE_GATES_BY_PHASE` has a route (sub-agent, computed, or `not_applicable` exemption). Verified at runtime: SUPPORTED 11 / UNSUPPORTED [] / limbo [].
+
+- **FEAT — M5 runtime error rate** (`measure-router.js`): routed to qa-monitor live-log probe; **exemptible** — when the project has no runtime logs (library/static site), the caller passes `logSourceAvailable=false` and the router returns `not_applicable` (counted as passed) instead of failing.
+- **FEAT — M10 PDCA cycle time**: computed gate = sum of `phaseHistory` durations. **Follow-up fix**: the compute originally read a never-produced `durationHours` field; corrected to read `durationMs` (what `advance-phase.appendExitToHistory` actually writes) and convert to hours.
+- **FEAT — S2 featureCompletion**: computed gate = ratio of `featureMap` entries with `completion >= threshold`. Empty featureMap → honest 0 (not vacuous 100).
+- **FEAT — S4 archiveReadiness**: computed gate = every measurable report-phase gate passed AND `sprint.docs.report` present. Shares `computeArchiveReadiness` with `archiveSprint` (the archive path populates the S4 slot before its gate check, since `evaluateGate` reads slots not compute fns).
+- **FIX — M5 exemption unreachable from the CLI**: `handleMeasure` + `runPhaseGates` never forwarded `logSourceAvailable` into the use case, so the `not_applicable` route was reachable only programmatically. Threaded `args`/`deps.logSourceAvailable` through both `ucDeps` objects (surfaces as `--no-logs`). Surfaced by the master E2E.
+- **FIX — `measure-gate.usecase` honors the exemption**: when the router asserts `passed` explicitly (M5 not_applicable), the use case honors it directly instead of re-evaluating via `evaluateGate` (which flipped exempted gates to not_measured failures).
+
+### Cluster F-state — Designed-But-Unimplemented Completion
+
+- **FEAT — `dataFlow` + `annotations` on the Sprint typedef**: declared in v2113-Sprint-5 SC-01 / v2.1.19 s1-foundation FR-5 but never added. `dataFlow` (per-feature hop-result map) now initialized in `createSprint`; `annotations` (already set at runtime) now in the typedef.
+- **FEAT — `handleQA` records per-hop results to `sprint.dataFlow[feature]`** (`{H1:{status,evidence,reason,from,to}, …}`), closing the data-flow validation loop: the Tier-2 static validator (`data-flow-validator.adapter`) already read this field but nothing populated it → a `staticMatrix` QA re-run found no matrix and failed every hop. Now probe → record → re-validate-from-record works (QA is replayable; works for archived sprints where live probing is impossible).
+- **FEAT — skip-iterate `do→qa`**: `computeNextPhase` overloaded to accept a sprint object; at `do`, inspects `M1_matchRate` and returns `qa` when target met, else `iterate`. `transitions.js` already declared the `do→qa` edge legal — it was unreachable because `computeNextPhase` was phase-only. *(Autorun-loop activation deferred — see Deferred.)*
+- **FIX — `handleWatch` ghost matrix types + require-path crash**: read `['data-flow','cumulative-state','feature-phase']` but only `data-flow` is real (the ghosts have no producer, no file, no design-doc backing). Now reads real `MATRIX_TYPES` from `sprint-paths` (the single SoT). Also removed a local `require(path.join(__dirname,'..','lib/application/...'))` that resolved to a nonexistent path and threw `MODULE_NOT_FOUND` on every call.
+- **FIX — `handleFork` same require-path crash class**: the third and final instance of the broken relative-require pattern (handleFeature fixed earlier, handleWatch above). Removed; uses the module-level `domain` import. Repo-wide grep confirms no remaining instances.
+- **FEAT — `handleMasterPlan` taskCreator wiring + emitter flush**: `generateMasterPlan` only created tracker tasks when `deps.taskCreator` was a function, but `wireAgentAdapters` never built one → master plans silently skipped tracker creation. Added `createTaskCreatorForRunner` factory (resilient — synthesizes a deterministic id on runner failure, never throws). Separately, `handleSprintAction` now best-effort flushes `infra.eventEmitter` after each action (the CLI exited without flushing, dropping buffered telemetry; flushed inside the action because `getInfra` returns a fresh non-singleton bundle per call, so a CLI-block flush would hit the wrong emitter).
+- **FIX — `handleReport` never wrote the report**: `generateReport` accepted `deps.fileWriter` but `handleReport` never constructed one → reports built in-memory and never written, and `sprint.docs.report` stayed null (which blocked the S4 archive gate). Added `buildReportFileWriterForHandler`; handleReport writes the report + persists `sprint.docs.report`. Persistence guard checks the merged `reportDeps.fileWriter` (caller override of `null` correctly skips).
+
+### Verification
+
+- **70 new contract assertions** across 10 tracked test files (`sprint-restore-slice1..5`, `slice2-followups`, `slice3-{completion,report,acceptance}`, `sprint-restore-e2e`), all PASS.
+- **Master E2E** (`sprint-restore-e2e.test.js`): full lifecycle via the in-process dispatcher, value-aware runner (0 for `<=` count gates, 100 for `>=` percent gates), zero manual JSON editing. Reaches `status:'archived'` with S2=100, S4 ready, `docs.report` set, featureMap completions advanced.
+- **Lint**: 0 errors on changed production code (pre-existing warnings only); **0 linting bypasses** added (`noqa`/`eslint-disable`/`@ts-ignore`/`type: ignore` — none).
+- **Final reviewer verdict**: READY TO MERGE.
+
+### Deferred (tracked, not silently dropped)
+
+- **Skip-iterate autorun-loop activation**: Slice 4 made `computeNextPhase` CAPABLE of `do→qa` skip-iterate, but the autorun loop still passes `sprint.phase` (string) → takes the back-compat path → routes `do→iterate` unconditionally (CAPABLE-BUT-INERT). Wiring the loop (`computeNextPhase(sprint)`) is a one-line change `transitions.js` already permits, but it activates skip-iterate inside the E2E autorun loop — intersecting pause-trigger arming, budget accounting, and phase-timeout behavior → deserves its own PDCA-tracked unit with E2E autorun coverage. Recorded in `work/sprint-investigation/out-of-scope.md` §5 + a `// NOTE` TODO at the call site (`start-sprint.usecase.js`).
+
 ## [2.1.22] - 2026-06-02 (branch: `release/v2.1.22-hardening`)
 
 > **Status**: Hardening Release (in progress) — 6-sprint master plan (`docs/01-plan/features/v2.1.22-hardening.master-plan.md`). No new user-facing features; quality hardening / consistency only. Kahn order S1→S2→S4→S3a→S3b→S5.
