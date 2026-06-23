@@ -328,6 +328,34 @@ function parseFeaturesFlag(raw) {
   return [];
 }
 
+/**
+ * createTaskToolRunner — host adapter that wraps an injected Task-tool
+ * invoker into the deps.agentTaskRunner contract the Sprint domain expects:
+ *   ({ subagent_type, prompt }) => Promise<{ output: string }>
+ *
+ * This is the ONLY host-aware code in the handler layer. The domain
+ * (measure-router, use cases, entity) never imports host specifics —
+ * they receive the runner via deps. The composition root (the LLM
+ * dispatcher in the main session) calls this factory and passes the
+ * result into handleSprintAction({ agentTaskRunner }).
+ *
+ * The subprocess CLI path (require.main === module) runs in a separate
+ * Node process and cannot see Claude Code's Task tool, so it passes {}
+ * and the router correctly returns no_agent_runner for that path.
+ *
+ * @param {{ invokeTaskTool: ({ subagent_type: string, prompt: string }) => Promise<{ text: string }> }} host
+ * @returns {({ subagent_type: string, prompt: string }) => Promise<{ output: string }>}
+ */
+function createTaskToolRunner(host) {
+  if (!host || typeof host.invokeTaskTool !== 'function') {
+    throw new TypeError('createTaskToolRunner requires { invokeTaskTool }');
+  }
+  return async ({ subagent_type, prompt }) => {
+    const result = await host.invokeTaskTool({ subagent_type, prompt });
+    return { output: (result && result.text) || '' };
+  };
+}
+
 // =====================================================================
 // CLI mode (P1 §4.3) — invoked when run as `node scripts/sprint-handler.js`
 //   Examples:
@@ -355,6 +383,7 @@ module.exports = {
   runPhaseGates,
   persistAndAudit,
   parseFeaturesFlag,
+  createTaskToolRunner,
   VALID_TRUST_LEVELS,
   DEFAULT_TRUST_LEVEL,
   LEVEL_RANK,
