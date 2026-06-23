@@ -89,6 +89,39 @@ await tc('M10 is computed from phaseHistory (no sub-agent needed)', async () => 
   assert.strictEqual(res.value, 6, 'M10 = sum of phaseHistory durations = 4+2=6; got ' + res.value);
 });
 
+await tc('QUALITY_GATE_FAIL fires when ANY active gate fails, not just M3/S1', async () => {
+  const ap = require(path.join(PLUGIN_ROOT, 'lib/application/sprint-lifecycle/auto-pause'));
+  const sprint = domain.createSprint({ id: 's2-ap', name: 'S2 AP', features: ['auth'] });
+  sprint.phase = 'qa';
+  sprint.autoPause = { armed: ['QUALITY_GATE_FAIL'] };
+  // M2 fails; M3 and S1 pass — old code would NOT fire.
+  sprint.qualityGates.M2_codeQualityScore = { current: 50, threshold: 80, passed: false };
+  sprint.qualityGates.M3_criticalIssueCount = { current: 0, threshold: 0, passed: true };
+  sprint.qualityGates.S1_dataFlowIntegrity = { current: 100, threshold: 100, passed: true };
+  const hits = ap.checkAutoPauseTriggers(sprint);
+  const qgf = hits.find(h => h.triggerId === 'QUALITY_GATE_FAIL');
+  assert.ok(qgf, 'auto-pause must fire QUALITY_GATE_FAIL on M2 failure; got ' + JSON.stringify(hits.map(h => h.triggerId)));
+  assert.ok(/M2/.test(qgf.message), 'message must name the failing gate M2; got ' + qgf.message);
+});
+
+await tc('QUALITY_GATE_FAIL does NOT fire when all active gates pass', async () => {
+  const ap = require(path.join(PLUGIN_ROOT, 'lib/application/sprint-lifecycle/auto-pause'));
+  const sprint = domain.createSprint({ id: 's2-ap2', name: 'S2 AP2', features: ['auth'] });
+  sprint.phase = 'qa';
+  sprint.autoPause = { armed: ['QUALITY_GATE_FAIL'] };
+  // All measured gates pass.
+  for (const k of Object.keys(sprint.qualityGates)) {
+    const slot = sprint.qualityGates[k];
+    if (slot && typeof slot === 'object') sprint.qualityGates[k] = { ...slot, passed: true, current: slot.current };
+  }
+  sprint.qualityGates.M2_codeQualityScore = { current: 90, threshold: 80, passed: true };
+  sprint.qualityGates.M3_criticalIssueCount = { current: 0, threshold: 0, passed: true };
+  sprint.qualityGates.S1_dataFlowIntegrity = { current: 100, threshold: 100, passed: true };
+  const hits = ap.checkAutoPauseTriggers(sprint);
+  assert.ok(!hits.find(h => h.triggerId === 'QUALITY_GATE_FAIL'),
+    'must NOT fire when all gates pass; got ' + JSON.stringify(hits.map(h => h.triggerId)));
+});
+
 if (fail) {
   console.error(`FAIL: ${fail} / PASS: ${pass}`);
   failures.forEach(f => console.error('  - ' + f.name + ': ' + f.msg));
