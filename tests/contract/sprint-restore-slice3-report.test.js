@@ -146,6 +146,39 @@ await tc('generateReport works without a fileWriter — in-memory only, nothing 
   }
 });
 
+await tc('handleReport does NOT persist docs.report when caller overrides fileWriter:null', async () => {
+  // Regression: the persistence guard previously checked the local built-in
+  // fileWriter const (always truthy) instead of the merged reportDeps.fileWriter
+  // that generateReport actually used. With fileWriter:null, generateReport
+  // writes nothing, but the buggy guard still set docs.report = reportPath,
+  // producing a phantom path that S4 archiveReadiness would treat as "ready".
+  const tmpRoot = makeTmpRoot();
+  const id = 'slice3-report-null-writer';
+  try {
+    await handleSprintAction('init',
+      { id, name: 'S3 NL', features: ['auth'], projectRoot: tmpRoot }, {});
+    const resolverPath = path.join(tmpRoot, 'phantom-' + id + '.md');
+    const res = await handleSprintAction('report',
+      { id, projectRoot: tmpRoot },
+      { reportDeps: { fileWriter: null, docPathResolver: () => resolverPath } });
+    assert.ok(res.ok,
+      'report must still succeed in-memory without a writer; got ' +
+      JSON.stringify(res));
+    assert.ok(!res.docsReportPersisted,
+      'docsReportPersisted must be falsy when fileWriter:null — the bug ' +
+      'previously set this to true; got ' + res.docsReportPersisted);
+    const state = readPersistedState(tmpRoot, id);
+    assert.ok(!state.docs || state.docs.report !== res.reportPath,
+      'persisted docs.report must NOT be set to the resolver path when no ' +
+      'file was written; got ' + JSON.stringify(state.docs && state.docs.report));
+    assert.strictEqual(fs.existsSync(resolverPath), false,
+      'no file must exist on disk at the resolver path — generateReport ' +
+      'received fileWriter:null and must not have written anything');
+  } finally {
+    fs.rmSync(tmpRoot, { recursive: true, force: true });
+  }
+});
+
 if (fail) {
   console.error(`FAIL: ${fail} / PASS: ${pass}`);
   failures.forEach(f => console.error('  - ' + f.name + ': ' + f.msg));

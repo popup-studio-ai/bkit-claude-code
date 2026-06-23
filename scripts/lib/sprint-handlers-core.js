@@ -369,7 +369,12 @@ async function handleReport(args, infra, deps) {
   // gate (computeArchiveReadiness requires sprint.docs.report truthy) can
   // fire. Reload fresh state and copy-construct the nested docs object to
   // avoid mutating the in-memory sprint passed to generateReport.
-  if (result.ok && fileWriter && result.reportPath) {
+  // IMPORTANT: check the MERGED reportDeps.fileWriter (the value
+  // generateReport actually used), NOT the local built-in fileWriter const.
+  // A caller override of fileWriter:null means generateReport wrote nothing,
+  // so we must not persist a phantom docs.report path (S4 archiveReadiness
+  // only checks truthiness, not file existence on disk).
+  if (result.ok && reportDeps.fileWriter && result.reportPath) {
     const fresh = await infra.stateStore.load(args.id);
     if (fresh) {
       fresh.docs = { ...(fresh.docs || {}), report: result.reportPath };
