@@ -579,12 +579,13 @@ async function sc13() {
   const domain = require(path.join(projectRoot, 'lib/domain/sprint'));
 
   // 1) Router routing table — Slice 2 promoted M5 (exemptible), M10 (computed),
-  // and S4 (computed archiveReadiness, Task 2.6) to routed gates:
-  // 10 supported, 1 unsupported (only S2 remains, carried to Slice 3).
+  // and S4 (computed archiveReadiness, Task 2.6) to routed gates; Slice 3
+  // Task 3.3 then promoted S2 (computed featureCompletion). All 11 gates are
+  // now routed; UNSUPPORTED_GATES is empty ("no gate in limbo" guarantee).
   assert.deepStrictEqual(mr.SUPPORTED_GATES.slice().sort(),
-    ['M1', 'M2', 'M3', 'M4', 'M5', 'M7', 'M8', 'M10', 'S1', 'S4'].sort());
+    ['M1', 'M2', 'M3', 'M4', 'M5', 'M7', 'M8', 'M10', 'S1', 'S2', 'S4'].sort());
   assert.deepStrictEqual(mr.UNSUPPORTED_GATES.slice().sort(),
-    ['S2'].sort());
+    [].sort());
   const routes = mr.GATE_MEASUREMENT_ROUTES;
   assert.strictEqual(routes.M1.agent, 'gap-detector');
   assert.strictEqual(routes.M3.agent, 'gap-detector');

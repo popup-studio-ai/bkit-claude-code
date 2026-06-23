@@ -55,6 +55,44 @@ await tc('handleFeature add writes featureMap entry; remove deletes it (twin sou
   fs.rmSync(tmpRoot, { recursive: true, force: true });
 });
 
+await tc('S2 computed = ratio of features with completion>=threshold (100)', async () => {
+  const mr = require(path.join(PLUGIN_ROOT, 'lib/application/quality-gates/measure-router'));
+  const sprint = domain.createSprint({ id: 's3-s2', name: 'S3 S2', features: ['a','b','c'] });
+  sprint.phase = 'qa';
+  sprint.featureMap['a'].completion = 100;
+  sprint.featureMap['b'].completion = 100;
+  sprint.featureMap['c'].completion = 40;
+  const res = await mr.measureGate('S2', sprint, {});
+  assert.notStrictEqual(res.reason, 'unsupported_gate', 'S2 must no longer be unsupported');
+  assert.strictEqual(res.ok, true);
+  assert.ok(Math.abs(res.value - (2/3*100)) < 0.01, 'S2 = 2/3 done ~66.67; got ' + res.value);
+});
+
+await tc('S2 is 0 when no features (nothing to complete)', async () => {
+  const mr = require(path.join(PLUGIN_ROOT, 'lib/application/quality-gates/measure-router'));
+  const sprint = domain.createSprint({ id: 's3-s2b', name: 'S3 S2b', features: [] });
+  const res = await mr.measureGate('S2', sprint, {});
+  assert.strictEqual(res.value, 0);
+});
+
+await tc('measure-gate.usecase honors not_applicable exemption (M5 no logs stays passed)', async () => {
+  const lifecycle = require(path.join(PLUGIN_ROOT, 'lib/application/sprint-lifecycle'));
+  const sprint = domain.createSprint({ id: 's3-m5', name: 'S3 M5', features: ['auth'], trustLevelAtStart: 'L3' });
+  sprint.phase = 'do';
+  // M5 with no logs -> router returns not_applicable, passed:true. Use case must NOT flip to fail.
+  const res = await lifecycle.measureGate(sprint, 'M5', {
+    agentTaskRunner: async () => ({ output: '{"value": 0}' }),
+    logSourceAvailable: false,
+  });
+  assert.strictEqual(res.ok, true, 'measureGate must succeed for exempted M5; got ' + JSON.stringify(res));
+  assert.strictEqual(res.measurement.passed, true, 'exempted M5 must stay passed through the use case');
+});
+
+await tc('UNSUPPORTED_GATES is now empty (no gate in limbo)', async () => {
+  const mr = require(path.join(PLUGIN_ROOT, 'lib/application/quality-gates/measure-router'));
+  assert.deepStrictEqual(mr.UNSUPPORTED_GATES, []);
+});
+
 if (fail) { console.error(`FAIL: ${fail} / PASS: ${pass}`); failures.forEach(f => console.error('  - ' + f.name + ': ' + f.msg)); process.exit(1); }
 console.log(`PASS: ${pass} / FAIL: ${fail}`);
 

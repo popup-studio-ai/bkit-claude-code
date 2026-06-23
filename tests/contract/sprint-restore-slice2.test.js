@@ -240,7 +240,8 @@ await tc('archiveSprint blocks archive when report is missing (S4 not ready)', a
 // === Slice 2 acceptance: no gate in limbo ===
 // Every gate that appears in ACTIVE_GATES_BY_PHASE must be either routed
 // (SUPPORTED_GATES) or explicitly carried with a Slice-3 plan (UNSUPPORTED).
-// As of end-of-Slice-2, only S2 remains unsupported (computed in Slice 3).
+// As of Slice 3 Task 3.3, S2 has been promoted to a computed gate, so all
+// gates are routed and UNSUPPORTED_GATES is empty.
 
 await tc('SLICE 2 ACCEPTANCE: every active gate is routed or explicitly carried', async () => {
   const qg = require(path.join(PLUGIN_ROOT, 'lib/application/sprint-lifecycle/quality-gates'));
@@ -254,9 +255,10 @@ await tc('SLICE 2 ACCEPTANCE: every active gate is routed or explicitly carried'
   }
   assert.deepStrictEqual(inLimbo, [],
     'gates with no route AND no explicit carry = limbo: ' + JSON.stringify(inLimbo));
-  // Slice 2 carry contract: only S2 remains unsupported, to be computed in Slice 3.
-  assert.deepStrictEqual(unsupported, ['S2'],
-    'after Slice 2 only S2 should be unsupported; got ' + JSON.stringify(unsupported));
+  // Slice 3 Task 3.3 promotion: S2 is now a computed gate, so UNSUPPORTED is
+  // empty — the "no gate in limbo" guarantee is complete.
+  assert.deepStrictEqual(unsupported, [],
+    'after Slice 3 all gates are routed; got ' + JSON.stringify(unsupported));
 });
 
 if (fail) {
