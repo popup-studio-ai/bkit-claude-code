@@ -31,6 +31,15 @@ bkit is a **global service**. Keep all public-facing and code-level content in E
 - Do NOT retroactively rename or translate existing docs (waste of tokens; new-files-only rule)
 - Do NOT mix languages within a single file (except trigger keyword lists)
 
+## Versioning
+
+**Do NOT advance or modify the project version.** Version bumps (the `version` field in `.claude-plugin/plugin.json`, package.json if any, and version headers) are the repo maintainer's responsibility — not the agent's. This applies to:
+
+- Do NOT bump `.claude-plugin/plugin.json` `version` (leave it as-is even when adding a CHANGELOG entry).
+- Do NOT change version numbers in code, manifests, or headers as part of a fix/feature.
+- A CHANGELOG entry MAY be added documenting the changes (e.g. a new `## [x.y.z]` section), but the version *number* chosen for that heading is provisional labeling only — it does not constitute a release, and the maintainer will assign the real version at release time. If unsure what version heading to use, ask rather than guessing, or label the entry clearly as unreleased.
+- Rationale: version advancement is a release decision that depends on the overall release cadence and what else is merging; an agent making isolated changes cannot determine the correct next version.
+
 ## Sprint Management (v2.1.13)
 
 Sprint Management is a meta-container that groups one or more features under a

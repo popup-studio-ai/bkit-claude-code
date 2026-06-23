@@ -83,3 +83,11 @@ commands/github-stats.md
 # locally for ad-hoc node-style tests; excluded from the repo. Untracked via
 # `git rm --cached jest.config.js` (file retained on disk).
 jest.config.js
+
+# Superpowers workflow artifacts (plans/specs authored by the superpowers
+# brainstorming/writing-plans skills during a fix). Local working docs — the
+# durable record of the work lives in CHANGELOG.md + the memory dir, not here.
+docs/superpowers/
+
+# Bug reports (local working notes — not for the repo)
+bug_reports/
