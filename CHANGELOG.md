@@ -58,9 +58,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **FEAT — `handleMasterPlan` taskCreator wiring + emitter flush**: `generateMasterPlan` only created tracker tasks when `deps.taskCreator` was a function, but `wireAgentAdapters` never built one → master plans silently skipped tracker creation. Added `createTaskCreatorForRunner` factory (resilient — synthesizes a deterministic id on runner failure, never throws). Separately, `handleSprintAction` now best-effort flushes `infra.eventEmitter` after each action (the CLI exited without flushing, dropping buffered telemetry; flushed inside the action because `getInfra` returns a fresh non-singleton bundle per call, so a CLI-block flush would hit the wrong emitter).
 - **FIX — `handleReport` never wrote the report**: `generateReport` accepted `deps.fileWriter` but `handleReport` never constructed one → reports built in-memory and never written, and `sprint.docs.report` stayed null (which blocked the S4 archive gate). Added `buildReportFileWriterForHandler`; handleReport writes the report + persists `sprint.docs.report`. Persistence guard checks the merged `reportDeps.fileWriter` (caller override of `null` correctly skips).
 
+### Bundled fix — Cursor IDE PreToolUse JSON output (Issue #118)
+
+> **Status**: Independent of the Sprint restore work; bundled into this branch per request. Root cause + fix identified in the issue; delivered via a 2-agent (behavioral + structural) investigation, then TDD.
+
+- **FIX — `lib/core/io.js` emitted Claude-Code-format output under Cursor**: When bkit runs under Cursor IDE's Claude plugin bridge (detected via `process.env.CURSOR_VERSION`), the PreToolUse hook runner expects a different JSON schema than Claude Code. `outputAllow`/`outputBlock`/`outputBlockWithContext` previously emitted plain text (allow) and `{"decision":"block",...}` (deny) → Cursor failed with `JSON Parse Error: Unexpected token ...` and blocked Write/StrReplace/Shell until the plugin was disabled.
+  - Added `isCursorRuntime()` (`!!process.env.CURSOR_VERSION`, empty-string treated as unset) and branched the 3 PreToolUse-reachable output functions:
+    - **allow** → `{"permission":"allow","agent_message":...}` (message omitted when empty)
+    - **deny** → `{"permission":"deny","user_message":...,"agent_message":...}` (both fields populated; graceful `exit(0)`)
+    - **deny-with-context** → same deny schema, with the safer-alternatives list folded into `agent_message` (Cursor has no `hookSpecificOutput`, so the CC additional-context channel is remapped to the agent message).
+  - Stop-hook functions (`outputStopSurface`/`outputStopAllow`) and `outputEmpty` intentionally unchanged — Cursor only bridges PreToolUse, so they're unreachable under Cursor; CC behavior is byte-identical when `CURSOR_VERSION` is unset.
+  - **No hook-script changes needed**: the branch lives at the single `io.js` chokepoint that all 20+ hook callers (pre-write, unified-bash-pre, phase9-deploy-pre, plus PostToolUse/Notification/Subagent paths) already share — all callers inherit Cursor support. Verified E2E via `scripts/pre-write.js` under `CURSOR_VERSION=3.6.31`.
+- **8 new contract assertions** (`tests/contract/cursor-pretooluse-json-118.test.js`): Cursor allow/deny/deny-with-context schema + CC-format regression guard (plain-text allow, `{success,message}`, `{decision:"block"}`) + `isCursorRuntime` export.
+
 ### Verification
 
-- **70 new contract assertions** across 10 tracked test files (`sprint-restore-slice1..5`, `slice2-followups`, `slice3-{completion,report,acceptance}`, `sprint-restore-e2e`), all PASS.
+- **78 new contract assertions** across 11 tracked test files (`sprint-restore-slice1..5`, `slice2-followups`, `slice3-{completion,report,acceptance}`, `sprint-restore-e2e`, `cursor-pretooluse-json-118`), all PASS.
 - **Master E2E** (`sprint-restore-e2e.test.js`): full lifecycle via the in-process dispatcher, value-aware runner (0 for `<=` count gates, 100 for `>=` percent gates), zero manual JSON editing. Reaches `status:'archived'` with S2=100, S4 ready, `docs.report` set, featureMap completions advanced.
 - **Lint**: 0 errors on changed production code (pre-existing warnings only); **0 linting bypasses** added (`noqa`/`eslint-disable`/`@ts-ignore`/`type: ignore` — none).
 - **Final reviewer verdict**: READY TO MERGE.
