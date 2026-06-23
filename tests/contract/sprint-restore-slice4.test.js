@@ -246,6 +246,34 @@ await tc('handleWatch does not crash on require path (regression for MODULE_NOT_
   }
 });
 
+// Task 4.4 sibling fix: handleFork had the SAME require-path crash class as
+// handleWatch (a local require resolving to nonexistent scripts/lib/domain/sprint).
+// This test exercises fork end-to-end; if the buggy local require were present,
+// fork would throw MODULE_NOT_FOUND instead of returning ok.
+await tc('handleFork works (no require-path crash; uses module-level domain import)', async () => {
+  const { handleSprintAction } = require(path.join(PLUGIN_ROOT, 'scripts/sprint-handler'));
+  const os = require('node:os'); const fs = require('node:fs');
+  const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 's4fork-'));
+  try {
+    // Source sprint with one incomplete feature (so carryItems is non-empty).
+    await handleSprintAction('init',
+      { id: 'fork-src', name: 'ForkSrc', features: ['auth'], projectRoot: tmpRoot }, {});
+    // Mark the feature as in-progress in featureMap so identifyCarryItems picks it up.
+    const storePath = path.join(tmpRoot, '.bkit/state/sprints', 'fork-src.json');
+    const state = JSON.parse(fs.readFileSync(storePath, 'utf8'));
+    if (state.featureMap && state.featureMap['auth']) state.featureMap['auth'].phase = 'do';
+    fs.writeFileSync(storePath, JSON.stringify(state));
+    const res = await handleSprintAction('fork',
+      { id: 'fork-src', newId: 'fork-dst', projectRoot: tmpRoot }, {});
+    assert.ok(res.ok, 'fork must succeed; got ' + JSON.stringify(res));
+    assert.ok(res.newSprint, 'fork must return the new sprint');
+    assert.strictEqual(res.newSprint.id, 'fork-dst');
+    assert.ok(Array.isArray(res.carryItems), 'fork must return carryItems');
+  } finally {
+    fs.rmSync(tmpRoot, { recursive: true, force: true });
+  }
+});
+
 if (fail) { console.error(`FAIL: ${fail} / PASS: ${pass}`); failures.forEach(f => console.error('  - ' + f.name + ': ' + f.msg)); process.exit(1); }
 console.log(`PASS: ${pass} / FAIL: ${fail}`);
 

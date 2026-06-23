@@ -472,7 +472,11 @@ async function handleFork(args, infra) {
   const source = await infra.stateStore.load(args.id);
   if (!source) return { ok: false, error: 'Sprint not found: ' + args.id };
   const carryItems = identifyCarryItems(source);
-  const domain = require(require('path').join(__dirname, '..', 'lib/domain/sprint'));
+  // Module-level `domain` import (../../lib/domain/sprint) is used below.
+  // NOTE: a prior LOCAL require(path.join(__dirname,'..','lib/domain/sprint'))
+  // here resolved to the nonexistent scripts/lib/domain/sprint and would throw
+  // MODULE_NOT_FOUND on every fork — same bug class as handleWatch (Task 4.4)
+  // and handleFeature (Task 3.2). Removed; relies on the module-level import.
   const trustLevel = source.autoRun && source.autoRun.trustLevelAtStart ? source.autoRun.trustLevelAtStart : 'L0';
   const newSprint = domain.createSprint({
     id: args.newId,
