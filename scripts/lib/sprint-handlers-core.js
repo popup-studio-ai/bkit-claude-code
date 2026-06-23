@@ -324,6 +324,17 @@ async function handleQA(args, infra, deps) {
   const result = await lifecycle.verifyDataFlow(sprint, args.featureName, deps.qaDeps || {});
   if (result.ok) {
     await infra.matrixSync.syncDataFlow(args.id, args.featureName, result.hopResults);
+    // Slice 2 (Cluster F): persist the computed s1Score to the S1 gate slot so
+    // advancePhase sees a measured value instead of null/not_measured. Without
+    // this, the S1 slot stayed null forever and advancePhase always reported
+    // not_measured even after a successful qa.
+    sprint.qualityGates.S1_dataFlowIntegrity = {
+      current: result.s1Score,
+      threshold: 100,
+      passed: result.s1Score >= 100,
+    };
+    await infra.stateStore.save(sprint);
+    result.s1Persisted = true;
   }
   return result;
 }

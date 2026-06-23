@@ -122,6 +122,27 @@ await tc('QUALITY_GATE_FAIL does NOT fire when all active gates pass', async () 
     'must NOT fire when all gates pass; got ' + JSON.stringify(hits.map(h => h.triggerId)));
 });
 
+await tc('handleQA persists computed s1Score to qualityGates.S1_dataFlowIntegrity', async () => {
+  const { handleSprintAction } = require(path.join(PLUGIN_ROOT, 'scripts/sprint-handler'));
+  const os = require('node:os'); const fs = require('node:fs');
+  const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 's2qa-'));
+  const id = 'slice2-qa';
+  await handleSprintAction('init', { id, name: 'S2 QA', features: ['auth'], projectRoot: tmpRoot }, {});
+  // verifyDataFlow calls dataFlowValidator(feature, hopId, sprint) once per hop
+  // (7 hops). All-pass → s1Score = (7/7)*100 = 100.
+  const fakeValidator = async (_feature, _hopId, _sprint) => ({ passed: true, evidence: 'fake' });
+  const res = await handleSprintAction('qa', { id, featureName: 'auth', projectRoot: tmpRoot }, { qaDeps: { dataFlowValidator: fakeValidator } });
+  assert.ok(res.ok, 'qa must succeed; got ' + JSON.stringify(res));
+  assert.strictEqual(res.s1Score, 100, 'qa result must carry s1Score=100; got ' + res.s1Score);
+  // Load persisted state from the state store path (<root>/.bkit/state/sprints/<id>.json).
+  const state = JSON.parse(fs.readFileSync(path.join(tmpRoot, '.bkit/state/sprints', id + '.json'), 'utf8'));
+  assert.ok(state.qualityGates && state.qualityGates.S1_dataFlowIntegrity, 'S1 slot must exist after qa');
+  assert.strictEqual(state.qualityGates.S1_dataFlowIntegrity.current, 100, 's1Score must be persisted to S1.current');
+  assert.strictEqual(state.qualityGates.S1_dataFlowIntegrity.threshold, 100, 'S1 threshold must be 100');
+  assert.strictEqual(state.qualityGates.S1_dataFlowIntegrity.passed, true, 'S1.passed must be true at score 100');
+  fs.rmSync(tmpRoot, { recursive: true, force: true });
+});
+
 if (fail) {
   console.error(`FAIL: ${fail} / PASS: ${pass}`);
   failures.forEach(f => console.error('  - ' + f.name + ': ' + f.msg));
