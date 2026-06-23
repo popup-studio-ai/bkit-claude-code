@@ -188,6 +188,64 @@ await tc('computeNextPhase(string) back-compat path unchanged', async () => {
   assert.strictEqual(lifecycle.computeNextPhase('nonsense'), null);
 });
 
+// ---- Task 4.4: handleWatch reads only real MATRIX_TYPES + no buggy require ----
+
+await tc('MATRIX_TYPES contains only the 3 real types (no ghosts)', async () => {
+  const { MATRIX_TYPES } = require(path.join(PLUGIN_ROOT, 'lib/infra/sprint/sprint-paths'));
+  assert.ok(MATRIX_TYPES.includes('data-flow'), 'data-flow must be in MATRIX_TYPES');
+  assert.ok(MATRIX_TYPES.includes('api-contract'), 'api-contract must be in MATRIX_TYPES');
+  assert.ok(MATRIX_TYPES.includes('test-coverage'), 'test-coverage must be in MATRIX_TYPES');
+  assert.ok(!MATRIX_TYPES.includes('cumulative-state'),
+    'ghost type cumulative-state must not be in MATRIX_TYPES');
+  assert.ok(!MATRIX_TYPES.includes('feature-phase'),
+    'ghost type feature-phase must not be in MATRIX_TYPES');
+});
+
+await tc('handleWatch reads exactly real matrix types (no ghosts) via handleSprintAction', async () => {
+  const { handleSprintAction } = require(path.join(PLUGIN_ROOT, 'scripts/sprint-handler'));
+  const os = require('node:os'); const fs = require('node:fs');
+  const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 's4-watch-'));
+  const id = 'slice4-watch';
+  try {
+    await handleSprintAction('init', { id, name: 'S4W', features: ['auth'], projectRoot: tmpRoot }, {});
+    const res = await handleSprintAction('watch', { id, projectRoot: tmpRoot }, {});
+    assert.ok(res.ok, 'watch must succeed; got ' + JSON.stringify(res));
+    assert.ok(res.matrices && typeof res.matrices === 'object', 'matrices must be an object');
+    // Exactly the 3 real types, alphabetically.
+    assert.deepStrictEqual(
+      Object.keys(res.matrices).sort(),
+      ['api-contract', 'data-flow', 'test-coverage'],
+      'matrices keys must be exactly the 3 real MATRIX_TYPES',
+    );
+    // Ghost types must be absent.
+    assert.strictEqual(res.matrices['cumulative-state'], undefined,
+      'ghost type cumulative-state must NOT appear in matrices');
+    assert.strictEqual(res.matrices['feature-phase'], undefined,
+      'ghost type feature-phase must NOT appear in matrices');
+  } finally {
+    fs.rmSync(tmpRoot, { recursive: true, force: true });
+  }
+});
+
+await tc('handleWatch does not crash on require path (regression for MODULE_NOT_FOUND)', async () => {
+  const { handleSprintAction } = require(path.join(PLUGIN_ROOT, 'scripts/sprint-handler'));
+  const os = require('node:os'); const fs = require('node:fs');
+  const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 's4-req-'));
+  const id = 'slice4-watch-req';
+  try {
+    await handleSprintAction('init', { id, name: 'S4R', features: ['auth'], projectRoot: tmpRoot }, {});
+    // If handleWatch still had the buggy local require, this would throw
+    // MODULE_NOT_FOUND (resolving to scripts/lib/application/sprint-lifecycle).
+    const res = await handleSprintAction('watch', { id, projectRoot: tmpRoot }, {});
+    assert.ok(res.ok, 'watch must succeed without require crash; got ' + JSON.stringify(res));
+    // triggers array proves lifecycle.checkAutoPauseTriggers ran via the correct
+    // module-level import (no shadowed/buggy local require).
+    assert.ok(Array.isArray(res.triggers), 'triggers must be an array');
+  } finally {
+    fs.rmSync(tmpRoot, { recursive: true, force: true });
+  }
+});
+
 if (fail) { console.error(`FAIL: ${fail} / PASS: ${pass}`); failures.forEach(f => console.error('  - ' + f.name + ': ' + f.msg)); process.exit(1); }
 console.log(`PASS: ${pass} / FAIL: ${fail}`);
 

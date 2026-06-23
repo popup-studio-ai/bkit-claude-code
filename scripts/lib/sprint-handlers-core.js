@@ -15,6 +15,7 @@ const {
 } = require('../../lib/infra/sprint');
 const lifecycle = require('../../lib/application/sprint-lifecycle');
 const domain = require('../../lib/domain/sprint');
+const { MATRIX_TYPES } = require('../../lib/infra/sprint/sprint-paths');
 
 const {
   normalizeTrustLevel,
@@ -537,7 +538,6 @@ async function handleWatch(args, infra) {
   if (!args || !args.id) return { ok: false, error: 'watch requires { id }' };
   const sprint = await infra.stateStore.load(args.id);
   if (!sprint) return { ok: false, error: 'Sprint not found: ' + args.id };
-  const lifecycle = require(require('path').join(__dirname, '..', 'lib/application/sprint-lifecycle'));
 
   // Auto-pause triggers snapshot (best-effort)
   let triggers = [];
@@ -551,7 +551,10 @@ async function handleWatch(args, infra) {
   const matrices = {};
   try {
     if (infra.matrixSync && typeof infra.matrixSync.read === 'function') {
-      const mods = ['data-flow', 'cumulative-state', 'feature-phase'];
+      // Read only real matrix types (data-flow/api-contract/test-coverage). The
+      // prior 'cumulative-state'/'feature-phase' were ghost types with no
+      // producer, no persisted matrix file, and no design-doc backing.
+      const mods = MATRIX_TYPES.slice();
       for (let i = 0; i < mods.length; i++) {
         try {
           matrices[mods[i]] = await infra.matrixSync.read(args.id, mods[i]);
