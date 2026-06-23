@@ -122,6 +122,72 @@ await tc('Tier-2 round-trip: recorded matrix validates via staticMatrix validato
   }
 });
 
+// ---- Task 4.3: computeNextPhase skip-iterate do→qa when M1 meets target ----
+
+const lifecycle = require(path.join(PLUGIN_ROOT, 'lib/application/sprint-lifecycle'));
+
+await tc('computeNextPhase(sprint) returns qa from do when M1 meets target', async () => {
+  const sprint = domain.createSprint({ id: 's4c1', name: 'S4C1', features: ['auth'] });
+  sprint.phase = 'do';
+  sprint.qualityGates.M1_matchRate = { current: 100, threshold: 90, passed: true };
+  const next = lifecycle.computeNextPhase(sprint);
+  assert.strictEqual(next, 'qa',
+    'do→qa when M1 meets target; got ' + next);
+});
+
+await tc('computeNextPhase(sprint) returns qa from do when current>=threshold even if passed unset', async () => {
+  const sprint = domain.createSprint({ id: 's4c2', name: 'S4C2', features: ['auth'] });
+  sprint.phase = 'do';
+  // passed not explicitly true, but numeric current meets threshold.
+  sprint.qualityGates.M1_matchRate = { current: 95, threshold: 90, passed: null };
+  const next = lifecycle.computeNextPhase(sprint);
+  assert.strictEqual(next, 'qa', 'current>=threshold should satisfy target; got ' + next);
+});
+
+await tc('computeNextPhase(sprint) returns iterate from do when M1 below target', async () => {
+  const sprint = domain.createSprint({ id: 's4c3', name: 'S4C3', features: ['auth'] });
+  sprint.phase = 'do';
+  sprint.qualityGates.M1_matchRate = { current: 80, threshold: 90, passed: false };
+  const next = lifecycle.computeNextPhase(sprint);
+  assert.strictEqual(next, 'iterate', 'do→iterate when M1 below target; got ' + next);
+});
+
+await tc('computeNextPhase(sprint) returns iterate from do when M1 unmeasured (safe default)', async () => {
+  const sprint = domain.createSprint({ id: 's4c4', name: 'S4C4', features: ['auth'] });
+  sprint.phase = 'do';
+  // Unmeasured: current null, passed null — must NOT skip iterate.
+  sprint.qualityGates.M1_matchRate = { current: null, threshold: 90, passed: null };
+  let next = lifecycle.computeNextPhase(sprint);
+  assert.strictEqual(next, 'iterate', 'unmeasured M1 must default to iterate; got ' + next);
+  // Also: M1 slot entirely absent.
+  delete sprint.qualityGates.M1_matchRate;
+  next = lifecycle.computeNextPhase(sprint);
+  assert.strictEqual(next, 'iterate', 'absent M1 must default to iterate; got ' + next);
+});
+
+await tc('computeNextPhase(sprint) falls through to phase path for non-do phases', async () => {
+  const sprint = domain.createSprint({ id: 's4c5', name: 'S4C5', features: ['auth'] });
+  sprint.phase = 'prd';
+  assert.strictEqual(lifecycle.computeNextPhase(sprint), 'plan');
+  sprint.phase = 'qa';
+  assert.strictEqual(lifecycle.computeNextPhase(sprint), 'report');
+  sprint.phase = 'archived';
+  assert.strictEqual(lifecycle.computeNextPhase(sprint), null);
+});
+
+await tc('computeNextPhase(string) back-compat path unchanged', async () => {
+  // Legacy phase-only invocation (used by the autorun loop call site) must be intact.
+  assert.strictEqual(lifecycle.computeNextPhase('do'), 'iterate');
+  assert.strictEqual(lifecycle.computeNextPhase('prd'), 'plan');
+  assert.strictEqual(lifecycle.computeNextPhase('plan'), 'design');
+  assert.strictEqual(lifecycle.computeNextPhase('design'), 'do');
+  assert.strictEqual(lifecycle.computeNextPhase('iterate'), 'qa');
+  assert.strictEqual(lifecycle.computeNextPhase('qa'), 'report');
+  assert.strictEqual(lifecycle.computeNextPhase('report'), 'archived');
+  assert.strictEqual(lifecycle.computeNextPhase('archived'), null);
+  assert.strictEqual(lifecycle.computeNextPhase('nonsense'), null);
+});
+
 if (fail) { console.error(`FAIL: ${fail} / PASS: ${pass}`); failures.forEach(f => console.error('  - ' + f.name + ': ' + f.msg)); process.exit(1); }
 console.log(`PASS: ${pass} / FAIL: ${fail}`);
 
