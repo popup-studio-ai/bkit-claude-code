@@ -235,7 +235,7 @@ export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
 | Feature | Activation | Description |
 |---------|-----------|-------------|
 | Sprint Management | `/sprint <action>` | Meta-container grouping 1+ features under shared scope/budget/timeline. 8-phase lifecycle (prd→plan→design→do→iterate→qa→report→archived). 16 sub-actions. Orthogonal to PDCA 9-phase (both may coexist) |
-| Trust Level Scope L0-L4 | `--trust L0-L4` flag | `SPRINT_AUTORUN_SCOPE` controls auto-run boundary (L0 stop-after-plan / L1 design / L2 do / L3 qa / L4 archived = full-auto) |
+| Trust Level Scope L0-L4 | `--trust L0-L4` flag | `SPRINT_AUTORUN_SCOPE` controls auto-run boundary (L0/L1 stop-after-prd manual / L2 stop-after-design / L3 stop-after-report / L4 stop-after-archived = full-auto). `--approve` is the Trust-Level scope escape hatch ONLY — it does NOT bypass Quality Gate failures (run `/sprint measure` first). |
 | 4 Auto-Pause Triggers | Automatic during auto-run | QUALITY_GATE_FAIL / ITERATION_EXHAUSTED / BUDGET_EXCEEDED / PHASE_TIMEOUT — instant pause on detection |
 | 7-Layer S1 dataFlow QA | `/sprint qa <id>` | H1-H7 hops (UI→Client→API→Validation→DB→Response→Client→UI) integrity check |
 | L3 Contract Test (tracked CI gate) | `tests/contract/v2113-sprint-contracts.test.js` | 8 cross-sprint contracts (SC-01~08): entity shape / deps interface / infra adapters / handler signature / 4-layer chain / ACTION_TYPES 18 / SPRINT_AUTORUN_SCOPE mirror / hooks 21:24 |

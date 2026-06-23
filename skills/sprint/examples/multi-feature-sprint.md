@@ -17,8 +17,11 @@ Then list the features to include — these become entries in
 /sprint feature q2-launch --add onboarding
 ```
 
-(The `feature` sub-action is fully wired in Sprint 5; in Sprint 4 it returns
-`{ ok: true, deferred: true }` as a placeholder.)
+(The `feature` sub-action is fully wired: `add`/`remove` keep `sprint.features[]`
+and `sprint.featureMap` in lockstep — each added feature gets a `featureMap`
+entry `{ pdcaPhase, matchRate, qa, completion }`, and `remove` drops both.
+This twin-source-of-truth sync is what makes the S2 featureCompletion gate
+computable.)
 
 ## Run with multi-feature QA
 
