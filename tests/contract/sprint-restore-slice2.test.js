@@ -77,16 +77,19 @@ await tc('M5 measures via qa-monitor probe when logs ARE available', async () =>
 await tc('M10 is computed from phaseHistory (no sub-agent needed)', async () => {
   const sprint = domain.createSprint({ id: 's2-m10', name: 'S2 M10', features: ['auth'] });
   sprint.phase = 'report';
+  // phaseHistory entries carry durationMs (ms) — the field advance-phase's
+  // appendExitToHistory actually writes. M10 converts to hours (Slice 2
+  // follow-up: the compute previously read a never-produced `durationHours`).
   sprint.phaseHistory = [
-    { phase: 'do', durationHours: 4 },
-    { phase: 'iterate', durationHours: 2 },
+    { phase: 'do', durationMs: 4 * 3600 * 1000 },
+    { phase: 'iterate', durationMs: 2 * 3600 * 1000 },
   ];
   // No agentTaskRunner provided — M10 must not require one.
   const res = await mr.measureGate('M10', sprint, {});
   assert.notStrictEqual(res.reason, 'unsupported_gate', 'M10 must no longer be unsupported');
   assert.notStrictEqual(res.reason, 'no_agent_runner', 'M10 is computed; needs no runner');
   assert.strictEqual(res.ok, true, 'M10 must compute; got ' + JSON.stringify(res));
-  assert.strictEqual(res.value, 6, 'M10 = sum of phaseHistory durations = 4+2=6; got ' + res.value);
+  assert.strictEqual(res.value, 6, 'M10 = sum of phaseHistory durationMs in hours = 4+2=6; got ' + res.value);
 });
 
 await tc('QUALITY_GATE_FAIL fires when ANY active gate fails, not just M3/S1', async () => {

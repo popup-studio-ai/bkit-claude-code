@@ -464,10 +464,18 @@ async function handleMeasure(args, infra, deps) {
   const source = (args.source === 'auto' || args.source === 'manual') ? args.source : 'manual';
 
   // Sequential dispatch (ENH-292) via the UC's aggregator.
+  // Slice 2 (Cluster F-gates) follow-up: forward the M5 exemption signal so
+  // the qa-monitor route returns not_applicable (passed) for library/static-site
+  // sprints with no runtime logs. `args.logSourceAvailable` is the CLI flag
+  // (--no-logs); `deps.logSourceAvailable` is the programmatic injection path.
+  const logSourceAvailable = (typeof args.logSourceAvailable === 'boolean')
+    ? args.logSourceAvailable
+    : deps.logSourceAvailable;
   const ucDeps = {
     agentTaskRunner: deps.agentTaskRunner,
     trustLevel,
     source,
+    logSourceAvailable,
   };
   const agg = await lifecycle.measureGates(sprint, gateKeys, ucDeps);
 

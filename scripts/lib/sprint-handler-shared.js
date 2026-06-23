@@ -290,10 +290,20 @@ async function runPhaseGates(sprint, args, infra, deps) {
     trustLevel = (sprint.autoRun && sprint.autoRun.trustLevelAtStart) || trustLevel;
   }
   const source = (args.source === 'auto' || args.source === 'manual') ? args.source : 'manual';
+  // Slice 2 (Cluster F-gates) follow-up: forward the M5 exemption signal so
+  // the qa-monitor route returns not_applicable (passed) for library/static-site
+  // sprints with no runtime logs. `args.logSourceAvailable` is the CLI flag
+  // (--no-logs); `deps.logSourceAvailable` is the programmatic injection path.
+  // Undefined leaves M5 to run its live probe (default). measure-gate.usecase
+  // forwards this into measure-router.measureGate, which short-circuits on ===false.
+  const logSourceAvailable = (typeof args.logSourceAvailable === 'boolean')
+    ? args.logSourceAvailable
+    : deps.logSourceAvailable;
   const ucDeps = {
     agentTaskRunner: deps.agentTaskRunner,
     trustLevel,
     source,
+    logSourceAvailable,
   };
   const agg = await lifecycle.measurePhaseGates(sprint, args.phase, ucDeps);
   await persistAndAudit(agg, infra, args.id);
