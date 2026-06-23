@@ -333,6 +333,20 @@ async function handleQA(args, infra, deps) {
       threshold: 100,
       passed: result.s1Score >= 100,
     };
+    // Slice 3 (Task 3.4): mark the feature as qa-passed and fully complete so
+    // the S2 computed gate (count of featureMap entries with completion >= 100)
+    // has populated data. qa-pass is the ONLY path that grants completion=100.
+    // Defensive: only update if the feature exists in featureMap (older sprints
+    // created before featureMap population, or features added via legacy paths,
+    // may be absent — skip silently rather than crash, but still persist S1 and
+    // succeed). Copy-construct the entry rather than mutate-then-rely-on-aliasing.
+    if (sprint.featureMap && sprint.featureMap[args.featureName]) {
+      sprint.featureMap[args.featureName] = {
+        ...sprint.featureMap[args.featureName],
+        qa: 'pass',
+        completion: 100,
+      };
+    }
     await infra.stateStore.save(sprint);
     result.s1Persisted = true;
   }
