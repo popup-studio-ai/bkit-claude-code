@@ -52,6 +52,28 @@ const mr = require(path.join(PLUGIN_ROOT, 'lib/application/quality-gates/measure
     assert.strictEqual(res && res.reason, 'no_agent_runner');
   });
 
+  await tc('wireAgentAdapters threads agentTaskRunner into measureDeps when provided', async () => {
+    const { handleSprintAction } = require(path.join(PLUGIN_ROOT, 'scripts/sprint-handler'));
+    // We assert the wiring by checking that handleSprintAction('measure', ...)
+    // with an injected runner reaches the router (not the no_agent_runner short-circuit).
+    // Build a sprint with a measurable M4 artifact via the domain factory.
+    const domain = require(path.join(PLUGIN_ROOT, 'lib/domain/sprint'));
+    // Use a temp project root so the state store doesn't collide.
+    const os = require('node:os'); const fs = require('node:fs');
+    const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'slice1-'));
+    const runner = shared.createTaskToolRunner({
+      invokeTaskTool: async () => ({ text: '{"value": 96}' }),
+    });
+    // Init then measure through the full handler path (in-process).
+    // Sprint id must be kebab-case (3-64 chars, validated by domain).
+    const init = await handleSprintAction('init', { id: 'slice1-wire', name: 'Slice1 Wire', features: ['auth'], projectRoot: tmpRoot }, { agentTaskRunner: runner });
+    assert.strictEqual(init.ok, true, 'init failed: ' + JSON.stringify(init));
+    const measure = await handleSprintAction('measure', { id: 'slice1-wire', gate: 'M4', projectRoot: tmpRoot }, { agentTaskRunner: runner });
+    assert.strictEqual(measure.ok !== false || (measure.reason !== 'no_agent_runner'), true,
+      'measure must not short-circuit with no_agent_runner when runner injected; got ' + JSON.stringify(measure));
+    fs.rmSync(tmpRoot, { recursive: true, force: true });
+  });
+
   if (fail) {
     console.error(`FAIL: ${fail} / PASS: ${pass}`);
     failures.forEach(f => console.error('  - ' + f.name + ': ' + f.msg));

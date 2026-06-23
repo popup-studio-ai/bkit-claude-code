@@ -52,7 +52,10 @@ const VALID_ACTIONS = Object.freeze([
 
 // S3a ENH-343: god-file split — helpers → lib/sprint-handler-shared,
 // handlers → lib/sprint-handlers-core / lib/sprint-handlers-admin.
-const { parseFlags, parseFeaturesFlag } = require('./lib/sprint-handler-shared');
+// Slice 1 (#1): re-export createTaskToolRunner so callers can build a runner
+// from the dispatcher surface (scripts/sprint-handler) without reaching into
+// the shared internals.
+const { parseFlags, parseFeaturesFlag, createTaskToolRunner } = require('./lib/sprint-handler-shared');
 const {
   handleInit,
   handleStart,
@@ -155,6 +158,19 @@ function wireAgentAdapters(deps) {
       staticMatrix: deps.staticMatrix === true,
     });
     wired.qaDeps = Object.assign({ dataFlowValidator }, deps.qaDeps || {});
+  }
+
+  // Slice 1 (Cluster A): thread agentTaskRunner onto the measure + phase deps
+  // slices so the contract is explicit per path. handleMeasure currently reads
+  // the top-level `deps.agentTaskRunner` (preserved by the `{ ...deps }`
+  // spread above), and handlePhase does not consume the runner (its gate
+  // checks use persisted sprint.qualityGates values). Threading the runner
+  // onto these named slices makes the deps self-describing for any future
+  // refactor that moves a handler to read its own slice, and keeps the
+  // runner reachable if a caller passes only `measureDeps`/`phaseDeps`.
+  if (deps.agentTaskRunner) {
+    wired.measureDeps = Object.assign({ agentTaskRunner: deps.agentTaskRunner }, deps.measureDeps || {});
+    wired.phaseDeps = Object.assign({ agentTaskRunner: deps.agentTaskRunner }, deps.phaseDeps || {});
   }
 
   return wired;
@@ -268,4 +284,7 @@ module.exports = {
   handleSprintAction,
   VALID_ACTIONS,
   getInfra,
+  // Slice 1 (#1): re-export the host-adapter factory so callers can build a
+  // runner from the dispatcher surface without requiring the shared module.
+  createTaskToolRunner,
 };
