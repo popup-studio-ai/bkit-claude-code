@@ -30,7 +30,9 @@ assert(p1 && p1.tool_name === 'Write', 'parseHookInput valid object works');
 assert(cc.getSessionId(null) === null || typeof cc.getSessionId(null) === 'string', 'getSessionId(null) returns null or env fallback');
 assert(cc.getSessionId({ session_id: 'abc' }) === 'abc', 'getSessionId session_id');
 assert(cc.getSessionId({ sessionId: 'camel' }) === 'camel', 'getSessionId sessionId camelCase fallback');
-assert(cc.getSessionId({}) === (process.env.CLAUDE_SESSION_ID || null), 'getSessionId env fallback');
+// GitHub #119: env fallback must prefer CLAUDE_CODE_SESSION_ID (what Claude Code
+// actually sets) over the legacy CLAUDE_SESSION_ID.
+assert(cc.getSessionId({}) === (process.env.CLAUDE_CODE_SESSION_ID || process.env.CLAUDE_SESSION_ID || null), 'getSessionId env fallback (CLAUDE_CODE_SESSION_ID > CLAUDE_SESSION_ID)');
 
 // 3. isBypassMode
 const original = process.env.BKIT_CC_REGRESSION_BYPASS;

@@ -41,13 +41,15 @@ function makeConfig(sessionTitle, dashboard, contextInjection) {
 
 function runHook(configObj) {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'bkit-matrix-'));
+  // GitHub #119: CC sets CLAUDE_CODE_SESSION_ID (primary); legacy mirrored.
+  const sessionId = `matrix-${Date.now()}-${Math.random()}`;
   try {
     fs.writeFileSync(path.join(tmp, 'bkit.config.json'), JSON.stringify(configObj));
     const r = spawnSync('node', [HOOK_PATH], {
       cwd: tmp,
       stdio: ['pipe', 'pipe', 'pipe'],
       input: JSON.stringify({ hook_event_name: 'SessionStart' }),
-      env: { ...process.env, CLAUDE_PLUGIN_ROOT: PROJECT_ROOT, CLAUDE_SESSION_ID: `matrix-${Date.now()}-${Math.random()}` },
+      env: { ...process.env, CLAUDE_PLUGIN_ROOT: PROJECT_ROOT, CLAUDE_CODE_SESSION_ID: sessionId, CLAUDE_SESSION_ID: sessionId },
       timeout: 5000,
     });
     return { stdout: r.stdout.toString(), stderr: r.stderr.toString(), code: r.status };
