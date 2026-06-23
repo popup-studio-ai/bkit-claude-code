@@ -429,7 +429,6 @@ async function handleFeature(args, infra) {
   }
   const sprint = await infra.stateStore.load(args.id);
   if (!sprint) return { ok: false, error: 'Sprint not found: ' + args.id };
-  const domain = require(require('path').join(__dirname, '..', 'lib/domain/sprint'));
 
   switch (args.action) {
     case 'list':
@@ -442,14 +441,28 @@ async function handleFeature(args, infra) {
       if (!args.featureName) return { ok: false, error: 'add requires featureName' };
       const features = (sprint.features || []).slice();
       if (features.indexOf(args.featureName) === -1) features.push(args.featureName);
-      const updated = domain.cloneSprint(sprint, { features: features });
+      // Keep featureMap in lockstep with features[] (twin sources of truth).
+      // Re-add is idempotent: do NOT overwrite an existing entry's progress.
+      const featureMap = Object.assign({}, sprint.featureMap || {});
+      if (!featureMap[args.featureName]) {
+        featureMap[args.featureName] = {
+          pdcaPhase: 'pm',
+          matchRate: null,
+          qa: 'pending',
+          completion: 0,
+        };
+      }
+      const updated = domain.cloneSprint(sprint, { features: features, featureMap: featureMap });
       await infra.stateStore.save(updated);
       return { ok: true, sprint: updated };
     }
     case 'remove': {
       if (!args.featureName) return { ok: false, error: 'remove requires featureName' };
       const features = (sprint.features || []).filter(function (f) { return f !== args.featureName; });
-      const updated = domain.cloneSprint(sprint, { features: features });
+      // Keep featureMap in lockstep with features[] (twin sources of truth).
+      const featureMap = Object.assign({}, sprint.featureMap || {});
+      delete featureMap[args.featureName];
+      const updated = domain.cloneSprint(sprint, { features: features, featureMap: featureMap });
       await infra.stateStore.save(updated);
       return { ok: true, sprint: updated };
     }

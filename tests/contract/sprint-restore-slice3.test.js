@@ -31,6 +31,30 @@ await tc('DEFAULT_QUALITY_GATES includes M5_runtimeErrorRate slot (carry from Sl
   assert.strictEqual(sprint.qualityGates.M5_runtimeErrorRate.current, null);
 });
 
+await tc('handleFeature add writes featureMap entry; remove deletes it (twin sources of truth)', async () => {
+  const { handleSprintAction } = require(path.join(PLUGIN_ROOT, 'scripts/sprint-handler'));
+  const os = require('node:os'); const fs = require('node:fs');
+  const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 's3feat-'));
+  const id = 'slice3-feat';
+  await handleSprintAction('init', { id, name: 'S3 Feat', features: ['auth'], projectRoot: tmpRoot }, {});
+  // add billing
+  const addRes = await handleSprintAction('feature', { id, action: 'add', featureName: 'billing', projectRoot: tmpRoot }, {});
+  assert.strictEqual(addRes.ok, true, 'add failed: ' + JSON.stringify(addRes));
+  assert.ok(addRes.sprint.featureMap['billing'], 'featureMap[billing] must exist after add');
+  assert.strictEqual(addRes.sprint.featureMap['billing'].completion, 0);
+  // re-add billing must NOT overwrite (idempotent) — set a fake progress value first
+  addRes.sprint.featureMap['billing'].completion = 50;
+  await require(path.join(PLUGIN_ROOT, 'lib/infra/sprint')).createSprintInfra({ projectRoot: tmpRoot }).stateStore.save(addRes.sprint);
+  const reAdd = await handleSprintAction('feature', { id, action: 'add', featureName: 'billing', projectRoot: tmpRoot }, {});
+  assert.strictEqual(reAdd.sprint.featureMap['billing'].completion, 50, 're-add must not clobber existing progress');
+  // remove billing
+  const remRes = await handleSprintAction('feature', { id, action: 'remove', featureName: 'billing', projectRoot: tmpRoot }, {});
+  assert.strictEqual(remRes.ok, true);
+  assert.ok(!remRes.sprint.featureMap['billing'], 'featureMap[billing] must be gone after remove');
+  assert.ok(remRes.sprint.featureMap['auth'], 'featureMap[auth] must survive removing billing');
+  fs.rmSync(tmpRoot, { recursive: true, force: true });
+});
+
 if (fail) { console.error(`FAIL: ${fail} / PASS: ${pass}`); failures.forEach(f => console.error('  - ' + f.name + ': ' + f.msg)); process.exit(1); }
 console.log(`PASS: ${pass} / FAIL: ${fail}`);
 
