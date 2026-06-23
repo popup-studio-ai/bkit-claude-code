@@ -578,12 +578,12 @@ async function sc13() {
   const lifecycle = require(path.join(projectRoot, 'lib/application/sprint-lifecycle'));
   const domain = require(path.join(projectRoot, 'lib/domain/sprint'));
 
-  // 1) Router routing table — Slice 2 promoted M5 to a routed (exemptible) gate,
-  // so 8 supported, 3 unsupported (Master Plan §11.3 AC4 + Slice 2).
+  // 1) Router routing table — Slice 2 promoted M5 (exemptible) and M10 (computed)
+  // to routed gates: 9 supported, 2 unsupported (Master Plan §11.3 AC4 + Slice 2).
   assert.deepStrictEqual(mr.SUPPORTED_GATES.slice().sort(),
-    ['M1', 'M2', 'M3', 'M4', 'M5', 'M7', 'M8', 'S1'].sort());
+    ['M1', 'M2', 'M3', 'M4', 'M5', 'M7', 'M8', 'M10', 'S1'].sort());
   assert.deepStrictEqual(mr.UNSUPPORTED_GATES.slice().sort(),
-    ['M10', 'S2', 'S4'].sort());
+    ['S2', 'S4'].sort());
   const routes = mr.GATE_MEASUREMENT_ROUTES;
   assert.strictEqual(routes.M1.agent, 'gap-detector');
   assert.strictEqual(routes.M3.agent, 'gap-detector');
