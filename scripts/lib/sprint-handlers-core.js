@@ -29,6 +29,7 @@ const {
   resolveBkitCommit,
   autoDeriveDogfoodContext,
   buildFailureReporterForHandler,
+  buildReportFileWriterForHandler,
   identifyCarryItems,
   runPhaseGates,
   persistAndAudit,
@@ -357,7 +358,26 @@ async function handleReport(args, infra, deps) {
   if (!args || !args.id) return { ok: false, error: 'report requires { id }' };
   const sprint = await infra.stateStore.load(args.id);
   if (!sprint) return { ok: false, error: 'Sprint not found: ' + args.id };
-  return lifecycle.generateReport(sprint, deps.reportDeps || {});
+  // Slice 3 (Task 3.5): construct the default fileWriter so the report is
+  // actually written to disk. Caller-supplied deps.reportDeps.fileWriter
+  // still wins (test-injection path) because Object.assign merges the
+  // built-in writer FIRST and caller overrides SECOND.
+  const fileWriter = buildReportFileWriterForHandler();
+  const reportDeps = Object.assign({ fileWriter }, deps.reportDeps || {});
+  const result = await lifecycle.generateReport(sprint, reportDeps);
+  // Persist sprint.docs.report on a real write so the S4 archiveReadiness
+  // gate (computeArchiveReadiness requires sprint.docs.report truthy) can
+  // fire. Reload fresh state and copy-construct the nested docs object to
+  // avoid mutating the in-memory sprint passed to generateReport.
+  if (result.ok && fileWriter && result.reportPath) {
+    const fresh = await infra.stateStore.load(args.id);
+    if (fresh) {
+      fresh.docs = { ...(fresh.docs || {}), report: result.reportPath };
+      await infra.stateStore.save(fresh);
+      result.docsReportPersisted = true;
+    }
+  }
+  return result;
 }
 
 async function handleArchive(args, infra) {

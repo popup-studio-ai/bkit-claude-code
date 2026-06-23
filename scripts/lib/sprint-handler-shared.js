@@ -238,6 +238,34 @@ function buildFailureReporterForHandler() {
   } catch (_e) { return null; }
 }
 
+/**
+ * Build the fileWriter passed to generateReport deps. Owns the FS write
+ * (mkdirSync + writeFileSync) so the report use case stays Application-layer
+ * pure. Mirrors buildFailureReporterForHandler's resilience pattern (returns
+ * null on any FS failure so report generation never crashes the handler).
+ *
+ * Slice 3 (Task 3.5): closes the report-write gap — handleReport previously
+ * called lifecycle.generateReport(sprint, {}) with no fileWriter, so reports
+ * were built in-memory and never written, leaving sprint.docs.report null
+ * (which blocked the S4 archiveReadiness gate).
+ *
+ * Signature: (absPath: string, content: string) => void  (sync; generateReport
+ * wraps the call in `await`, which tolerates a sync void return).
+ *
+ * @returns {function|null}
+ */
+function buildReportFileWriterForHandler() {
+  try {
+    const fsLocal = require('fs');
+    const pathLocal = require('path');
+    return function fileWriter(absPath, content) {
+      const dir = pathLocal.dirname(absPath);
+      if (!fsLocal.existsSync(dir)) fsLocal.mkdirSync(dir, { recursive: true });
+      fsLocal.writeFileSync(absPath, content, 'utf8');
+    };
+  } catch (_e) { return null; }
+}
+
 function identifyCarryItems(sprint) {
   const items = [];
   const fm = sprint && sprint.featureMap;
@@ -379,6 +407,7 @@ module.exports = {
   resolveBkitCommit,
   autoDeriveDogfoodContext,
   buildFailureReporterForHandler,
+  buildReportFileWriterForHandler,
   identifyCarryItems,
   runPhaseGates,
   persistAndAudit,
