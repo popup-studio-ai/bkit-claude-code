@@ -274,6 +274,84 @@ await tc('handleFork works (no require-path crash; uses module-level domain impo
   }
 });
 
+// ---- Task 4.5: wireAgentAdapters injects taskCreator; handleSprintAction flushes emitter ----
+
+await tc('wireAgentAdapters wires taskCreator when agentTaskRunner present; caller override wins; no runner => no taskCreator', async () => {
+  const { wireAgentAdapters } = require(path.join(PLUGIN_ROOT, 'scripts/sprint-handler'));
+  // 1) runner present => taskCreator is a function (the factory-built adapter).
+  const fakeRunner = async () => ({ output: '' });
+  const d1 = wireAgentAdapters({ agentTaskRunner: fakeRunner });
+  assert.strictEqual(typeof d1.taskCreator, 'function',
+    'taskCreator must be wired when agentTaskRunner present');
+  // 2) caller-supplied taskCreator overrides the default.
+  const customFn = async () => ({ taskId: 'custom-1' });
+  const d2 = wireAgentAdapters({ agentTaskRunner: fakeRunner, taskCreator: customFn });
+  assert.strictEqual(d2.taskCreator, customFn,
+    'caller-supplied taskCreator must win over the auto-wired default');
+  // 3) no runner => no taskCreator (and wireAgentAdapters short-circuits to the input).
+  const d3 = wireAgentAdapters({});
+  assert.strictEqual(d3.taskCreator, undefined,
+    'taskCreator must NOT be wired when agentTaskRunner absent');
+});
+
+await tc('createTaskCreatorForRunner adapter is resilient: synthesizes id on runner failure and never throws', async () => {
+  const { createTaskCreatorForRunner } = require(path.join(PLUGIN_ROOT, 'scripts/lib/sprint-handler-shared'));
+  // 1) runner throws => adapter must not throw; returns synthesized stable id.
+  const throwingRunner = async () => { throw new Error('runner-down'); };
+  const creator1 = createTaskCreatorForRunner(throwingRunner);
+  const r1 = await creator1({ subject: 'Auth Login', description: 'x' });
+  assert.ok(r1 && typeof r1.taskId === 'string' && r1.taskId.length > 0,
+    'adapter must return a non-empty taskId even on runner failure; got ' + JSON.stringify(r1));
+  assert.strictEqual(r1.taskId, 'task-auth-login',
+    'synthesized id must be the slugified subject; got ' + r1.taskId);
+  // 2) runner returns JSON with taskId => adapter parses it.
+  const happyRunner = async () => ({ output: 'Created.\n{"taskId":"tsk-12345"}\nDone.' });
+  const creator2 = createTaskCreatorForRunner(happyRunner);
+  const r2 = await creator2({ subject: 'Whatever', description: 'd' });
+  assert.strictEqual(r2.taskId, 'tsk-12345',
+    'adapter must parse taskId from JSON in runner output; got ' + r2.taskId);
+  // 3) runner returns empty/garbage => adapter synthesizes fallback id.
+  const garbageRunner = async () => ({ output: '   ' });
+  const creator3 = createTaskCreatorForRunner(garbageRunner);
+  const r3 = await creator3({ subject: 'Pay Refund', description: '' });
+  assert.ok(r3.taskId && r3.taskId.length > 0,
+    'adapter must synthesize a fallback id on unparseable output');
+  assert.strictEqual(r3.taskId, 'task-pay-refund',
+    'fallback id must be slugified subject; got ' + r3.taskId);
+  // 4) adapter is a safe function — calling it must never throw, even on bad input.
+  const d4 = await creator1({}).catch((e) => ({ __error: e }));
+  assert.ok(!d4.__error, 'adapter must not throw even on empty input');
+});
+
+await tc('handleSprintAction flushes the real infra.eventEmitter after the action (best-effort)', async () => {
+  const { handleSprintAction } = require(path.join(PLUGIN_ROOT, 'scripts/sprint-handler'));
+  const os = require('node:os'); const fs = require('node:fs');
+  const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 's4-flush-'));
+  const id = 'slice4-flush';
+  try {
+    // Build a fake infra that overrides ONLY eventEmitter with a counting
+    // flush; everything else comes from a real getInfra bundle. deps.infra is
+    // honored at `const infra = d.infra || getInfra(a)` (line ~208).
+    const { getInfra } = require(path.join(PLUGIN_ROOT, 'scripts/sprint-handler'));
+    const realInfra = getInfra({ projectRoot: tmpRoot });
+    let flushCount = 0;
+    const fakeEmitter = {
+      emit: realInfra.eventEmitter && typeof realInfra.eventEmitter.emit === 'function'
+        ? realInfra.eventEmitter.emit.bind(realInfra.eventEmitter)
+        : () => {},
+      flush: async () => { flushCount++; },
+    };
+    const fakeInfra = Object.assign({}, realInfra, { eventEmitter: fakeEmitter });
+    await handleSprintAction('init',
+      { id, name: 'S4F', features: ['auth'], projectRoot: tmpRoot },
+      { infra: fakeInfra });
+    assert.strictEqual(flushCount, 1,
+      'handleSprintAction must call eventEmitter.flush exactly once after the action; got ' + flushCount);
+  } finally {
+    fs.rmSync(tmpRoot, { recursive: true, force: true });
+  }
+});
+
 if (fail) { console.error(`FAIL: ${fail} / PASS: ${pass}`); failures.forEach(f => console.error('  - ' + f.name + ': ' + f.msg)); process.exit(1); }
 console.log(`PASS: ${pass} / FAIL: ${fail}`);
 

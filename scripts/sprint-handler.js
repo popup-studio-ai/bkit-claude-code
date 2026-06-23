@@ -55,7 +55,7 @@ const VALID_ACTIONS = Object.freeze([
 // Slice 1 (#1): re-export createTaskToolRunner so callers can build a runner
 // from the dispatcher surface (scripts/sprint-handler) without reaching into
 // the shared internals.
-const { parseFlags, parseFeaturesFlag, createTaskToolRunner } = require('./lib/sprint-handler-shared');
+const { parseFlags, parseFeaturesFlag, createTaskToolRunner, createTaskCreatorForRunner } = require('./lib/sprint-handler-shared');
 const {
   handleInit,
   handleStart,
@@ -173,6 +173,16 @@ function wireAgentAdapters(deps) {
     wired.phaseDeps = Object.assign({ agentTaskRunner: deps.agentTaskRunner }, deps.phaseDeps || {});
   }
 
+  // Slice 4 (Task 4.5): wire a default taskCreator when an agentTaskRunner is
+  // present. generateMasterPlan only creates tracker tasks when
+  // deps.taskCreator is a function; without this wiring, master plans silently
+  // skipped tracker-task creation. Caller-supplied taskCreator always wins (||).
+  // The adapter is resilient: it synthesizes a stable id on runner failure and
+  // never throws, so tracker-task creation stays best-effort.
+  if (deps.agentTaskRunner) {
+    wired.taskCreator = deps.taskCreator || createTaskCreatorForRunner(deps.agentTaskRunner);
+  }
+
   return wired;
 }
 
@@ -206,29 +216,49 @@ async function handleSprintAction(action, args, deps) {
   } catch (_e) { /* non-critical */ }
   const d = wireAgentAdapters(deps || {});
   const infra = d.infra || getInfra(a);
-  switch (action) {
-    case 'init':    return handleInit(a, infra);
-    case 'start':   return handleStart(a, infra, d);
-    case 'status':  return handleStatus(a, infra);
-    case 'list':    return handleList(a, infra);
-    case 'phase':   return handlePhase(a, infra, d);
-    case 'iterate': return handleIterate(a, infra, d);
-    case 'qa':      return handleQA(a, infra, d);
-    case 'report':  return handleReport(a, infra, d);
-    case 'archive': return handleArchive(a, infra);
-    case 'pause':   return handlePause(a, infra);
-    case 'resume':  return handleResume(a, infra);
-    case 'fork':    return handleFork(a, infra);
-    case 'feature': return handleFeature(a, infra);
-    case 'watch':   return handleWatch(a, infra);
-    case 'help':    return handleHelp();
-    case 'master-plan': return handleMasterPlan(a, infra, d);
-    case 'measure': return handleMeasure(a, infra, d);
-    case 'trust':   return handleTrust(a, infra, d);
-    case 'dogfood': return handleDogfood(a, infra, d);   // F1-2 v2.1.19 S1
-    case 'annotate':return handleAnnotate(a, infra);      // F1-5 v2.1.19 S1
-    default:        return { ok: false, error: 'Unreachable action: ' + action };
+  let result;
+  try {
+    switch (action) {
+      case 'init':    result = await handleInit(a, infra); break;
+      case 'start':   result = await handleStart(a, infra, d); break;
+      case 'status':  result = await handleStatus(a, infra); break;
+      case 'list':    result = await handleList(a, infra); break;
+      case 'phase':   result = await handlePhase(a, infra, d); break;
+      case 'iterate': result = await handleIterate(a, infra, d); break;
+      case 'qa':      result = await handleQA(a, infra, d); break;
+      case 'report':  result = await handleReport(a, infra, d); break;
+      case 'archive': result = await handleArchive(a, infra); break;
+      case 'pause':   result = await handlePause(a, infra); break;
+      case 'resume':  result = await handleResume(a, infra); break;
+      case 'fork':    result = await handleFork(a, infra); break;
+      case 'feature': result = await handleFeature(a, infra); break;
+      case 'watch':   result = await handleWatch(a, infra); break;
+      case 'help':    result = await handleHelp(); break;
+      case 'master-plan': result = await handleMasterPlan(a, infra, d); break;
+      case 'measure': result = await handleMeasure(a, infra, d); break;
+      case 'trust':   result = await handleTrust(a, infra, d); break;
+      case 'dogfood': result = await handleDogfood(a, infra, d); break;   // F1-2 v2.1.19 S1
+      case 'annotate':result = await handleAnnotate(a, infra); break;     // F1-5 v2.1.19 S1
+      default:        result = { ok: false, error: 'Unreachable action: ' + action }; break;
+    }
+  } finally {
+    // Slice 4 (Task 4.5 Defect 2): best-effort flush of the REAL infra emitter
+    // (the one used during the action) before returning to the caller. This
+    // guarantees buffered telemetry (audit/OTEL) is drained regardless of how
+    // the caller exits — notably the CLI's `require.main` block calls
+    // `process.exit()` directly, which would otherwise drop in-flight events.
+    // Flushing here uses the correct emitter instance (NOT a fresh no-op one):
+    // getInfra() returns a fresh bundle per call, so flushing in the CLI block
+    // would be a no-op for the in-flight events. Best-effort + non-blocking —
+    // a flush failure must never change the action's result. help returns a
+    // bare object with no infra, so guard for that.
+    try {
+      if (infra && infra.eventEmitter && typeof infra.eventEmitter.flush === 'function') {
+        await infra.eventEmitter.flush();
+      }
+    } catch (_flushErr) { /* best-effort: never surface flush failures */ }
   }
+  return result;
 }
 
 
@@ -284,6 +314,7 @@ module.exports = {
   handleSprintAction,
   VALID_ACTIONS,
   getInfra,
+  wireAgentAdapters,
   // Slice 1 (#1): re-export the host-adapter factory so callers can build a
   // runner from the dispatcher surface without requiring the shared module.
   createTaskToolRunner,
