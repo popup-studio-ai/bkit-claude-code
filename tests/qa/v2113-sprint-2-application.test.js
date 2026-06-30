@@ -660,6 +660,7 @@ function baseSprint(over) {
     const s = cloneSprint(baseSprint(), {
       phase: 'report',
       qualityGates: gatesPass(),
+      docs: { ...baseSprint().docs, report: '/tmp/report.md' },
     });
     const r = await archiveSprint(s);
     assert.equal(r.ok, true);
@@ -686,7 +687,11 @@ function baseSprint(over) {
 
   await testAsync('AR-04: SprintArchived event with kpiSnapshot', async () => {
     const events = [];
-    const s = cloneSprint(baseSprint(), { phase: 'report', qualityGates: gatesPass() });
+    const s = cloneSprint(baseSprint(), {
+      phase: 'report',
+      qualityGates: gatesPass(),
+      docs: { ...baseSprint().docs, report: '/tmp/report.md' },
+    });
     await archiveSprint(s, { eventEmitter: (e) => events.push(e) });
     assert.equal(events.length, 1);
     assert.equal(events[0].type, 'SprintArchived');
@@ -899,8 +904,8 @@ function baseSprint(over) {
     assert.equal(r.ok, true);
     s = r.sprint;
 
-    // report → archived
-    s = cloneSprint(s, { qualityGates: gatesPass() });
+    // report → archived (S4 readiness needs docs.report present + all gates passing)
+    s = cloneSprint(s, { qualityGates: gatesPass(), docs: { ...s.docs, report: '/tmp/report.md' } });
     const arch = await archiveSprint(s);
     assert.equal(arch.ok, true);
     assert.equal(arch.sprint.phase, 'archived');

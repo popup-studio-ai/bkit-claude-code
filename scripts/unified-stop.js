@@ -651,8 +651,8 @@ try {
   const usage = (hookContext && hookContext.message && hookContext.message.usage) || {};
   const ccVersionResolved = ccRegression.detectCCVersion() || process.env.CLAUDE_CODE_VERSION || 'unknown';
   ccRegression.recordTurn({
-    // From stdin payload — fallback to env for parity with future CC versions
-    sessionId: hookContext.session_id || process.env.CLAUDE_SESSION_ID || '',
+    // From stdin payload — env fallback prefers CLAUDE_CODE_SESSION_ID (#119)
+    sessionId: hookContext.session_id || process.env.CLAUDE_CODE_SESSION_ID || process.env.CLAUDE_SESSION_ID || '',
     agent: activeAgent || 'main',
     model: (hookContext.message && hookContext.message.model)
       || process.env.CLAUDE_MODEL
@@ -677,7 +677,7 @@ try {
     ccRegression.recordEvent({
       hookEvent: 'Stop',
       ccVersion: ccVersionResolved,
-      sessionId: hookContext.session_id || process.env.CLAUDE_SESSION_ID || null,
+      sessionId: hookContext.session_id || process.env.CLAUDE_CODE_SESSION_ID || process.env.CLAUDE_SESSION_ID || null,
       timestamp: new Date().toISOString(),
       context: { agent: activeAgent || 'main', skill: activeSkill || null },
     });

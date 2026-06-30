@@ -157,7 +157,7 @@ CC_REG_FILES.forEach((f) => {
 });
 
 // ==================== Config Files ====================
-test('.eslintrc.json exists', () => assert.ok(fs.existsSync(path.join(ROOT, '.eslintrc.json'))));
+test('eslint.config.js exists', () => assert.ok(fs.existsSync(path.join(ROOT, 'eslint.config.js'))));
 test('.prettierrc exists', () => assert.ok(fs.existsSync(path.join(ROOT, '.prettierrc'))));
 
 // ==================== Frontmatter cross-check: v2.1.10 ENH-202 — context:fork expanded ====================

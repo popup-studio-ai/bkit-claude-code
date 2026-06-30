@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * bkit Vibecoding Kit - SessionStart Hook (v2.1.22, uses BKIT_VERSION from lib/core/version)
+ * bkit Vibecoding Kit - SessionStart Hook (v2.1.23, uses BKIT_VERSION from lib/core/version)
  *
  * Thin orchestrator that delegates to startup modules:
  *   1. migration   - Legacy path migration (docs/ -> .bkit/)
@@ -297,7 +297,11 @@ try {
 const { generateSessionTitle } = require('../lib/pdca/session-title');
 const primaryFeature = onboardingContext.onboardingData.primaryFeature || pdcaStatus?.primaryFeature || null;
 const currentPhase = onboardingContext.onboardingData.phase || pdcaStatus?.currentPhase || null;
-const sessionIdForFp = process.env.CLAUDE_SESSION_ID || 'default';
+// GitHub #119: Claude Code exposes CLAUDE_CODE_SESSION_ID (not CLAUDE_SESSION_ID).
+// Reading the legacy name made sessionId null on SessionStart → the per-session
+// `·a1b2` title tag from #111 never applied → concurrent same-repo sessions
+// rendered identical titles. Prefer the CC var, keep legacy as back-compat fallback.
+const sessionIdForFp = process.env.CLAUDE_CODE_SESSION_ID || process.env.CLAUDE_SESSION_ID || 'default';
 const sessionTitle = generateSessionTitle({
   feature: primaryFeature,
   phase: currentPhase,

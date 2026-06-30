@@ -16,6 +16,17 @@ const { readStdinSync, parseHookInput, outputAllow } = require('../lib/core/io')
 const { debugLog } = require('../lib/core/debug');
 const { getActiveSkill, getActiveAgent } = require('../lib/task/context');
 const { validateDocument, formatValidationWarning } = require('../lib/pdca/template-validator.js');
+// C7/C8 (audit): atomic+locked reachability ping + single BKIT_VERSION source.
+const { lockedUpdate } = require('../lib/core/state-store');
+const { BKIT_VERSION } = require('../lib/core/version');
+
+// M10 fix (audit): the layer-6 auditPostHoc call below is intentionally
+// fire-and-forget (PostToolUse must not block tool flow), so it is not awaited.
+// A rejection that resolves AFTER the synchronous hook body completes would
+// surface as a process-level unhandled-rejection. This guard swallows those —
+// the .catch() on the call handles the in-flight case; this handles the
+// post-tick case — keeping observability-only failures from polluting stderr.
+process.on('unhandledRejection', (_reason) => { /* observability-only — see M10 */ });
 
 // ============================================================
 // Handler: pdca-post-write (always runs - core bkit-rules)
@@ -140,6 +151,29 @@ const activeAgent = getActiveAgent();
 
 debugLog('UnifiedWritePost', 'Context', { activeSkill, activeAgent, filePath });
 
+// v2.1.14 Sub-Sprint 2: Reachability ping (MON-CC-NEW-PLUGIN-HOOK-DROP).
+// SessionStart compares the ts of each PostToolUse stamp to detect silent
+// CC plugin-hook drops (#57317 5-streak surface). MUST fire on EVERY
+// invocation — including the template-validation failure path below that
+// calls process.exit(0). When this ping lived at the END of the hook, that
+// exit path skipped it: a written PDCA doc failing template validation
+// recorded no write_post stamp, so write_post could go stale and trip a
+// false missing=[write_post] warning. Ping first, work second. (Symmetric
+// with scripts/skill-post.js, which carried the same gating bug on its
+// skip path; scripts/unified-bash-post.js has no early exit so its
+// end-of-hook ping is already unconditional.)
+try {
+  // C7: lockedUpdate serializes concurrent fires so no hook's stamp is lost;
+  // C8: BKIT_VERSION replaces the stale hardcoded '2.1.14'.
+  const root = process.env.CLAUDE_PROJECT_DIR || process.cwd();
+  const file = path.join(root, '.bkit', 'runtime', 'hook-reachability.json');
+  lockedUpdate(file, (state) => {
+    const next = state && typeof state === 'object' ? state : {};
+    next.write_post = { ts: new Date().toISOString(), version: BKIT_VERSION };
+    return next;
+  });
+} catch (_) { /* graceful — reachability ping is best-effort */ }
+
 // Always run PDCA post-write (core bkit-rules functionality)
 handlePdcaPostWrite(input);
 
@@ -243,22 +277,6 @@ try {
       phase: input.phase || (input.context && input.context.phase),
     }).catch(() => { /* graceful */ });
   }
-} catch (_) { /* graceful */ }
-
-// Reachability ping — atomic rename
-try {
-  const fs = require('fs');
-  const path = require('path');
-  const root = process.env.CLAUDE_PROJECT_DIR || process.cwd();
-  const dir = path.join(root, '.bkit', 'runtime');
-  const file = path.join(dir, 'hook-reachability.json');
-  fs.mkdirSync(dir, { recursive: true });
-  let state = {};
-  try { state = JSON.parse(fs.readFileSync(file, 'utf8')); } catch (_) { state = {}; }
-  state.write_post = { ts: new Date().toISOString(), version: '2.1.14' };
-  const tmp = file + '.tmp';
-  fs.writeFileSync(tmp, JSON.stringify(state, null, 2), 'utf8');
-  fs.renameSync(tmp, file);
 } catch (_) { /* graceful */ }
 
 // Output allow (PostToolUse doesn't block)

@@ -13,6 +13,11 @@ const path = require('path');
 const readline = require('readline');
 // v2.1.8 fix B12b: BKIT_VERSION dynamic lookup (ENH-167)
 const { BKIT_VERSION } = require('../../lib/core/version');
+// C4 fix (audit): validate `feature` before it is substituted into path templates.
+// A feature like "../../../../etc/passwd" previously read arbitrary files because
+// docsPath() does path.join(ROOT, template.replace('{feature}', feature)) with no
+// traversal filtering. validateName rejects anything outside [A-Za-z0-9_-].
+const { validateName } = require('../../lib/core/name-validator');
 
 // ---------------------------------------------------------------------------
 // Utilities
@@ -25,14 +30,19 @@ const CONFIG_PATH = path.join(ROOT, 'bkit.config.json');
 // v2.1.3 (#67): Fallback doc path templates used only when bkit.config.json is
 // missing or has no `pdca.docPaths.{phase}` entry. Mirrors the defaults from
 // lib/core/paths.js so single-source-of-truth is still possible later.
+// M2/M3/M4 fix (audit): analysis is canonicalized to the features/ subfolder
+// first (matching plan/design/report and bkit.config.json), and qa + pm/prd
+// fallbacks are added so config-less resolution can discover those phases too.
 const FALLBACK_DOC_PATHS = {
   plan:     ['docs/01-plan/features/{feature}.plan.md'],
   design:   ['docs/02-design/features/{feature}.design.md'],
   analysis: [
-    'docs/03-analysis/{feature}.analysis.md',
     'docs/03-analysis/features/{feature}.analysis.md',
+    'docs/03-analysis/{feature}.analysis.md',
   ],
   report:   ['docs/04-report/features/{feature}.report.md'],
+  qa:       ['docs/05-qa/features/{feature}.qa-report.md', 'docs/05-qa/{feature}.qa-report.md'],
+  pm:       ['docs/00-pm/features/{feature}.prd.md', 'docs/00-pm/{feature}.prd.md'],
 };
 
 let _cachedConfig = null;
@@ -73,6 +83,10 @@ function auditPath(filename) {
 function docsPath(phase, feature) {
   const templates = getPhaseTemplates(phase);
   if (!templates) return null;
+  // C4 fix: reject traversal before substitution. feature is user-derived and is
+  // spliced into a path template, so a "../" or "/" sequence escapes ROOT.
+  // validateName fails closed (throws) for anything outside [A-Za-z0-9_-].
+  validateName(feature, 'feature');
   const resolved = templates.map(t =>
     path.join(ROOT, t.replace(/\{feature\}/g, feature))
   );
@@ -170,7 +184,7 @@ const TOOLS = [
     inputSchema: {
       type: 'object',
       properties: {
-        feature: { type: 'string', description: 'Feature name.' },
+        feature: { type: 'string', description: 'Feature name.', pattern: '^[A-Za-z0-9_-]+$' },
       },
       required: ['feature'],
       additionalProperties: false,
@@ -181,7 +195,7 @@ const TOOLS = [
     description: 'Read the Plan document (docs/01-plan/features/{feature}.plan.md).',
     inputSchema: {
       type: 'object',
-      properties: { feature: { type: 'string' } },
+      properties: { feature: { type: 'string', pattern: '^[A-Za-z0-9_-]+$' } },
       required: ['feature'],
       additionalProperties: false,
     },
@@ -191,7 +205,7 @@ const TOOLS = [
     description: 'Read the Design document (docs/02-design/features/{feature}.design.md).',
     inputSchema: {
       type: 'object',
-      properties: { feature: { type: 'string' } },
+      properties: { feature: { type: 'string', pattern: '^[A-Za-z0-9_-]+$' } },
       required: ['feature'],
       additionalProperties: false,
     },
@@ -201,7 +215,7 @@ const TOOLS = [
     description: 'Read the Analysis document (docs/03-analysis/{feature}.analysis.md).',
     inputSchema: {
       type: 'object',
-      properties: { feature: { type: 'string' } },
+      properties: { feature: { type: 'string', pattern: '^[A-Za-z0-9_-]+$' } },
       required: ['feature'],
       additionalProperties: false,
     },
@@ -211,7 +225,7 @@ const TOOLS = [
     description: 'Read the Report document (docs/04-report/features/{feature}.report.md).',
     inputSchema: {
       type: 'object',
-      properties: { feature: { type: 'string' } },
+      properties: { feature: { type: 'string', pattern: '^[A-Za-z0-9_-]+$' } },
       required: ['feature'],
       additionalProperties: false,
     },
@@ -425,7 +439,15 @@ function handleDocRead(phase, args) {
   const { feature } = args || {};
   if (!feature) return errResponse('INVALID_ARGS', 'feature is required');
 
-  const filePath = docsPath(phase, feature);
+  let filePath;
+  try {
+    // C4 fix: docsPath validates `feature` via validateName; surface a bad feature
+    // as INVALID_ARGS (matching the existing pre-validation guard) rather than the
+    // dispatcher's generic IO_ERROR.
+    filePath = docsPath(phase, feature);
+  } catch (validationErr) {
+    return errResponse('INVALID_ARGS', validationErr.message);
+  }
   if (!filePath) return errResponse('INVALID_ARGS', `Unknown phase: ${phase}`);
 
   const content = readTextOrNull(filePath);

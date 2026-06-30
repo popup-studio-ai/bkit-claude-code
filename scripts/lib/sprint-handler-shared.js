@@ -238,6 +238,34 @@ function buildFailureReporterForHandler() {
   } catch (_e) { return null; }
 }
 
+/**
+ * Build the fileWriter passed to generateReport deps. Owns the FS write
+ * (mkdirSync + writeFileSync) so the report use case stays Application-layer
+ * pure. Mirrors buildFailureReporterForHandler's resilience pattern (returns
+ * null on any FS failure so report generation never crashes the handler).
+ *
+ * Slice 3 (Task 3.5): closes the report-write gap — handleReport previously
+ * called lifecycle.generateReport(sprint, {}) with no fileWriter, so reports
+ * were built in-memory and never written, leaving sprint.docs.report null
+ * (which blocked the S4 archiveReadiness gate).
+ *
+ * Signature: (absPath: string, content: string) => void  (sync; generateReport
+ * wraps the call in `await`, which tolerates a sync void return).
+ *
+ * @returns {function|null}
+ */
+function buildReportFileWriterForHandler() {
+  try {
+    const fsLocal = require('fs');
+    const pathLocal = require('path');
+    return function fileWriter(absPath, content) {
+      const dir = pathLocal.dirname(absPath);
+      if (!fsLocal.existsSync(dir)) fsLocal.mkdirSync(dir, { recursive: true });
+      fsLocal.writeFileSync(absPath, content, 'utf8');
+    };
+  } catch (_e) { return null; }
+}
+
 function identifyCarryItems(sprint) {
   const items = [];
   const fm = sprint && sprint.featureMap;
@@ -262,10 +290,20 @@ async function runPhaseGates(sprint, args, infra, deps) {
     trustLevel = (sprint.autoRun && sprint.autoRun.trustLevelAtStart) || trustLevel;
   }
   const source = (args.source === 'auto' || args.source === 'manual') ? args.source : 'manual';
+  // Slice 2 (Cluster F-gates) follow-up: forward the M5 exemption signal so
+  // the qa-monitor route returns not_applicable (passed) for library/static-site
+  // sprints with no runtime logs. `args.logSourceAvailable` is the CLI flag
+  // (--no-logs); `deps.logSourceAvailable` is the programmatic injection path.
+  // Undefined leaves M5 to run its live probe (default). measure-gate.usecase
+  // forwards this into measure-router.measureGate, which short-circuits on ===false.
+  const logSourceAvailable = (typeof args.logSourceAvailable === 'boolean')
+    ? args.logSourceAvailable
+    : deps.logSourceAvailable;
   const ucDeps = {
     agentTaskRunner: deps.agentTaskRunner,
     trustLevel,
     source,
+    logSourceAvailable,
   };
   const agg = await lifecycle.measurePhaseGates(sprint, args.phase, ucDeps);
   await persistAndAudit(agg, infra, args.id);
@@ -328,6 +366,136 @@ function parseFeaturesFlag(raw) {
   return [];
 }
 
+/**
+ * createTaskToolRunner — host adapter that wraps an injected Task-tool
+ * invoker into the deps.agentTaskRunner contract the Sprint domain expects:
+ *   ({ subagent_type, prompt }) => Promise<{ output: string }>
+ *
+ * This is the ONLY host-aware code in the handler layer. The domain
+ * (measure-router, use cases, entity) never imports host specifics —
+ * they receive the runner via deps. The composition root (the LLM
+ * dispatcher in the main session) calls this factory and passes the
+ * result into handleSprintAction({ agentTaskRunner }).
+ *
+ * The subprocess CLI path (require.main === module) runs in a separate
+ * Node process and cannot see Claude Code's Task tool, so it passes {}
+ * and the router correctly returns no_agent_runner for that path.
+ *
+ * @param {{ invokeTaskTool: ({ subagent_type: string, prompt: string }) => Promise<{ text: string }> }} host
+ * @returns {({ subagent_type: string, prompt: string }) => Promise<{ output: string }>}
+ */
+function createTaskToolRunner(host) {
+  if (!host || typeof host.invokeTaskTool !== 'function') {
+    throw new TypeError('createTaskToolRunner requires { invokeTaskTool }');
+  }
+  return async ({ subagent_type, prompt }) => {
+    const result = await host.invokeTaskTool({ subagent_type, prompt });
+    return { output: (result && result.text) || '' };
+  };
+}
+
+/**
+ * Slugify a task subject into a deterministic, stable task id.
+ *
+ * Used as the resilient fallback when the runner returns no parseable id
+ * (so tracker-task creation is best-effort and never throws to crash the
+ * master plan). Kept here (not inlined) so the contract is unit-testable.
+ *
+ * @param {string} subject
+ * @returns {string}
+ */
+function slugifyTaskId(subject) {
+  return 'task-' + String(subject || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 40);
+}
+
+/**
+ * Attempt to extract a taskId from a sub-agent's textual output.
+ *
+ * Looks for, in order: a JSON object with a `taskId` field, or a quoted
+ * token matching `tsk-...` / `task-...`. Returns null when nothing
+ * parseable is found (caller then synthesizes via slugifyTaskId).
+ *
+ * @param {string} output
+ * @returns {string|null}
+ */
+function parseTaskIdFromOutput(output) {
+  if (typeof output !== 'string' || output.length === 0) return null;
+  // 1) JSON object containing taskId.
+  const jsonMatch = output.match(/\{[\s\S]*?"taskId"[\s\S]*?\}/);
+  if (jsonMatch) {
+    try {
+      const parsed = JSON.parse(jsonMatch[0]);
+      if (parsed && typeof parsed.taskId === 'string' && parsed.taskId.length > 0) {
+        return parsed.taskId;
+      }
+    } catch (_) { /* fall through */ }
+  }
+  // 2) Bare token like tsk-XYZ or task-XYZ.
+  const tokenMatch = output.match(/\b(?:tsk|task)-[A-Za-z0-9_-]+\b/);
+  if (tokenMatch) return tokenMatch[0];
+  return null;
+}
+
+/**
+ * createTaskCreatorForRunner — host adapter that wraps the injected
+ * `agentTaskRunner` (the same runner the Sprint domain expects for
+ * measure/iterate) into the deps.taskCreator contract the master-plan
+ * use case expects:
+ *   ({ subject, description, addBlockedBy? }) => Promise<{ taskId }>
+ *
+ * Resilience contract (CRITICAL): tracker-task creation is BEST-EFFORT and
+ * must never throw to crash master-plan generation. If the runner throws,
+ * returns no output, or returns no parseable id, this adapter synthesizes a
+ * deterministic taskId via `slugifyTaskId(subject)` and returns it. The
+ * synthesized id is stable across re-runs (same subject → same id), which
+ * keeps the prevTaskId → addBlockedBy chain meaningful even in degraded mode.
+ *
+ * Sibling of createTaskToolRunner; mirrors its lazy-prompt-build + output
+ * parsing style.
+ *
+ * @param {({ subagent_type: string, prompt: string }) => Promise<{ output: string }>} agentTaskRunner
+ * @returns {({ subject: string, description?: string, addBlockedBy?: string[] }) => Promise<{ taskId: string }>}
+ */
+function createTaskCreatorForRunner(agentTaskRunner) {
+  if (typeof agentTaskRunner !== 'function') {
+    throw new TypeError('createTaskCreatorForRunner requires a function');
+  }
+  return async (req) => {
+    const r = req || {};
+    const subject = typeof r.subject === 'string' ? r.subject : '';
+    const description = typeof r.description === 'string' ? r.description : '';
+    // Synthesize a stable fallback id BEFORE the call so we always have one
+    // even if the runner rejects outright.
+    const fallbackId = slugifyTaskId(subject) || 'task-unnamed';
+    try {
+      const prompt = [
+        'Create a tracker task with the following specification.',
+        'Subject: ' + subject,
+        description ? ('Description: ' + description) : '',
+        Array.isArray(r.addBlockedBy) && r.addBlockedBy.length > 0
+          ? ('BlockedBy (task ids): ' + r.addBlockedBy.join(', '))
+          : '',
+        'Respond with a JSON object like {"taskId": "<id>"} containing the new task id.',
+      ].filter(Boolean).join('\n');
+      const result = await agentTaskRunner({
+        subagent_type: 'general-purpose',
+        prompt: prompt,
+      });
+      const output = (result && typeof result.output === 'string') ? result.output : '';
+      const parsed = parseTaskIdFromOutput(output);
+      if (parsed) return { taskId: parsed };
+      return { taskId: fallbackId };
+    } catch (_e) {
+      // Runner failure must never crash master-plan generation.
+      return { taskId: fallbackId };
+    }
+  };
+}
+
 // =====================================================================
 // CLI mode (P1 §4.3) — invoked when run as `node scripts/sprint-handler.js`
 //   Examples:
@@ -351,10 +519,15 @@ module.exports = {
   resolveBkitCommit,
   autoDeriveDogfoodContext,
   buildFailureReporterForHandler,
+  buildReportFileWriterForHandler,
   identifyCarryItems,
   runPhaseGates,
   persistAndAudit,
   parseFeaturesFlag,
+  createTaskToolRunner,
+  createTaskCreatorForRunner,
+  slugifyTaskId,
+  parseTaskIdFromOutput,
   VALID_TRUST_LEVELS,
   DEFAULT_TRUST_LEVEL,
   LEVEL_RANK,

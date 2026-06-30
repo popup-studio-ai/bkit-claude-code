@@ -15,6 +15,7 @@ const {
 } = require('../../lib/infra/sprint');
 const lifecycle = require('../../lib/application/sprint-lifecycle');
 const domain = require('../../lib/domain/sprint');
+const { MATRIX_TYPES } = require('../../lib/infra/sprint/sprint-paths');
 
 const {
   normalizeTrustLevel,
@@ -29,6 +30,7 @@ const {
   resolveBkitCommit,
   autoDeriveDogfoodContext,
   buildFailureReporterForHandler,
+  buildReportFileWriterForHandler,
   identifyCarryItems,
   runPhaseGates,
   persistAndAudit,
@@ -324,6 +326,53 @@ async function handleQA(args, infra, deps) {
   const result = await lifecycle.verifyDataFlow(sprint, args.featureName, deps.qaDeps || {});
   if (result.ok) {
     await infra.matrixSync.syncDataFlow(args.id, args.featureName, result.hopResults);
+    // Slice 2 (Cluster F): persist the computed s1Score to the S1 gate slot so
+    // advancePhase sees a measured value instead of null/not_measured. Without
+    // this, the S1 slot stayed null forever and advancePhase always reported
+    // not_measured even after a successful qa.
+    sprint.qualityGates.S1_dataFlowIntegrity = {
+      current: result.s1Score,
+      threshold: 100,
+      passed: result.s1Score >= 100,
+    };
+    // Slice 3 (Task 3.4): mark the feature as qa-passed and fully complete so
+    // the S2 computed gate (count of featureMap entries with completion >= 100)
+    // has populated data. qa-pass is the ONLY path that grants completion=100.
+    // Defensive: only update if the feature exists in featureMap (older sprints
+    // created before featureMap population, or features added via legacy paths,
+    // may be absent — skip silently rather than crash, but still persist S1 and
+    // succeed). Copy-construct the entry rather than mutate-then-rely-on-aliasing.
+    if (sprint.featureMap && sprint.featureMap[args.featureName]) {
+      sprint.featureMap[args.featureName] = {
+        ...sprint.featureMap[args.featureName],
+        qa: 'pass',
+        completion: 100,
+      };
+    }
+    // Slice 4 (Task 4.2): record per-hop results to sprint.dataFlow[feature].
+    // Tier-2 static validator (data-flow-validator.adapter validatorStatic)
+    // reads sprint.dataFlow[feature][hopId].status === 'pass' with .evidence,
+    // so this recording is what makes a subsequent staticMatrix QA replayable
+    // (re-validate from the recorded matrix instead of re-probing) and works
+    // for archived sprints where live probing is impossible. Defensive on
+    // missing dataFlow (copy-construct, supports legacy sprints) and missing
+    // hopResults (skip gracefully — everything else still persists).
+    if (Array.isArray(result.hopResults)) {
+      sprint.dataFlow = { ...(sprint.dataFlow || {}) };
+      const dataFlowFeature = {};
+      for (const hop of result.hopResults) {
+        dataFlowFeature[hop.hopId] = {
+          status: hop.passed ? 'pass' : 'fail',
+          evidence: hop.evidence || null,
+          reason: hop.reason || null,
+          from: hop.from,
+          to: hop.to,
+        };
+      }
+      sprint.dataFlow[args.featureName] = dataFlowFeature;
+    }
+    await infra.stateStore.save(sprint);
+    result.s1Persisted = true;
   }
   return result;
 }
@@ -332,7 +381,31 @@ async function handleReport(args, infra, deps) {
   if (!args || !args.id) return { ok: false, error: 'report requires { id }' };
   const sprint = await infra.stateStore.load(args.id);
   if (!sprint) return { ok: false, error: 'Sprint not found: ' + args.id };
-  return lifecycle.generateReport(sprint, deps.reportDeps || {});
+  // Slice 3 (Task 3.5): construct the default fileWriter so the report is
+  // actually written to disk. Caller-supplied deps.reportDeps.fileWriter
+  // still wins (test-injection path) because Object.assign merges the
+  // built-in writer FIRST and caller overrides SECOND.
+  const fileWriter = buildReportFileWriterForHandler();
+  const reportDeps = Object.assign({ fileWriter }, deps.reportDeps || {});
+  const result = await lifecycle.generateReport(sprint, reportDeps);
+  // Persist sprint.docs.report on a real write so the S4 archiveReadiness
+  // gate (computeArchiveReadiness requires sprint.docs.report truthy) can
+  // fire. Reload fresh state and copy-construct the nested docs object to
+  // avoid mutating the in-memory sprint passed to generateReport.
+  // IMPORTANT: check the MERGED reportDeps.fileWriter (the value
+  // generateReport actually used), NOT the local built-in fileWriter const.
+  // A caller override of fileWriter:null means generateReport wrote nothing,
+  // so we must not persist a phantom docs.report path (S4 archiveReadiness
+  // only checks truthiness, not file existence on disk).
+  if (result.ok && reportDeps.fileWriter && result.reportPath) {
+    const fresh = await infra.stateStore.load(args.id);
+    if (fresh) {
+      fresh.docs = { ...(fresh.docs || {}), report: result.reportPath };
+      await infra.stateStore.save(fresh);
+      result.docsReportPersisted = true;
+    }
+  }
+  return result;
 }
 
 async function handleArchive(args, infra) {
@@ -399,7 +472,11 @@ async function handleFork(args, infra) {
   const source = await infra.stateStore.load(args.id);
   if (!source) return { ok: false, error: 'Sprint not found: ' + args.id };
   const carryItems = identifyCarryItems(source);
-  const domain = require(require('path').join(__dirname, '..', 'lib/domain/sprint'));
+  // Module-level `domain` import (../../lib/domain/sprint) is used below.
+  // NOTE: a prior LOCAL require(path.join(__dirname,'..','lib/domain/sprint'))
+  // here resolved to the nonexistent scripts/lib/domain/sprint and would throw
+  // MODULE_NOT_FOUND on every fork — same bug class as handleWatch (Task 4.4)
+  // and handleFeature (Task 3.2). Removed; relies on the module-level import.
   const trustLevel = source.autoRun && source.autoRun.trustLevelAtStart ? source.autoRun.trustLevelAtStart : 'L0';
   const newSprint = domain.createSprint({
     id: args.newId,
@@ -418,7 +495,6 @@ async function handleFeature(args, infra) {
   }
   const sprint = await infra.stateStore.load(args.id);
   if (!sprint) return { ok: false, error: 'Sprint not found: ' + args.id };
-  const domain = require(require('path').join(__dirname, '..', 'lib/domain/sprint'));
 
   switch (args.action) {
     case 'list':
@@ -431,14 +507,28 @@ async function handleFeature(args, infra) {
       if (!args.featureName) return { ok: false, error: 'add requires featureName' };
       const features = (sprint.features || []).slice();
       if (features.indexOf(args.featureName) === -1) features.push(args.featureName);
-      const updated = domain.cloneSprint(sprint, { features: features });
+      // Keep featureMap in lockstep with features[] (twin sources of truth).
+      // Re-add is idempotent: do NOT overwrite an existing entry's progress.
+      const featureMap = Object.assign({}, sprint.featureMap || {});
+      if (!featureMap[args.featureName]) {
+        featureMap[args.featureName] = {
+          pdcaPhase: 'pm',
+          matchRate: null,
+          qa: 'pending',
+          completion: 0,
+        };
+      }
+      const updated = domain.cloneSprint(sprint, { features: features, featureMap: featureMap });
       await infra.stateStore.save(updated);
       return { ok: true, sprint: updated };
     }
     case 'remove': {
       if (!args.featureName) return { ok: false, error: 'remove requires featureName' };
       const features = (sprint.features || []).filter(function (f) { return f !== args.featureName; });
-      const updated = domain.cloneSprint(sprint, { features: features });
+      // Keep featureMap in lockstep with features[] (twin sources of truth).
+      const featureMap = Object.assign({}, sprint.featureMap || {});
+      delete featureMap[args.featureName];
+      const updated = domain.cloneSprint(sprint, { features: features, featureMap: featureMap });
       await infra.stateStore.save(updated);
       return { ok: true, sprint: updated };
     }
@@ -452,7 +542,6 @@ async function handleWatch(args, infra) {
   if (!args || !args.id) return { ok: false, error: 'watch requires { id }' };
   const sprint = await infra.stateStore.load(args.id);
   if (!sprint) return { ok: false, error: 'Sprint not found: ' + args.id };
-  const lifecycle = require(require('path').join(__dirname, '..', 'lib/application/sprint-lifecycle'));
 
   // Auto-pause triggers snapshot (best-effort)
   let triggers = [];
@@ -466,7 +555,10 @@ async function handleWatch(args, infra) {
   const matrices = {};
   try {
     if (infra.matrixSync && typeof infra.matrixSync.read === 'function') {
-      const mods = ['data-flow', 'cumulative-state', 'feature-phase'];
+      // Read only real matrix types (data-flow/api-contract/test-coverage). The
+      // prior 'cumulative-state'/'feature-phase' were ghost types with no
+      // producer, no persisted matrix file, and no design-doc backing.
+      const mods = MATRIX_TYPES.slice();
       for (let i = 0; i < mods.length; i++) {
         try {
           matrices[mods[i]] = await infra.matrixSync.read(args.id, mods[i]);

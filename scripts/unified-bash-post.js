@@ -10,6 +10,18 @@
 const { readStdinSync, parseHookInput, outputAllow } = require('../lib/core/io');
 const { debugLog } = require('../lib/core/debug');
 const { getActiveSkill, getActiveAgent } = require('../lib/task/context');
+// C7/C8 (audit): atomic+locked reachability ping via the shared state-store, and
+// a single BKIT_VERSION source so all three reachability writers stamp the same value.
+const { lockedUpdate } = require('../lib/core/state-store');
+const { BKIT_VERSION } = require('../lib/core/version');
+
+// M10 fix (audit): the layer-6 auditPostHoc call below is intentionally
+// fire-and-forget (PostToolUse must not block tool flow), so it is not awaited.
+// A rejection that resolves AFTER the synchronous hook body completes would
+// surface as a process-level unhandled-rejection. This guard swallows those —
+// the .catch() on the call handles the in-flight case; this handles the
+// post-tick case — keeping observability-only failures from polluting stderr.
+process.on('unhandledRejection', (_reason) => { /* observability-only — see M10 */ });
 
 // ============================================================
 // Handler: qa-monitor-post (Bash)
@@ -140,21 +152,18 @@ try {
   }
 } catch (_) { /* layer-6 unavailable — fail-open */ }
 
-// Reachability ping — touch atomic-rename state so SessionStart can verify
+// Reachability ping — atomic+locked RMW so concurrent hook fires never lose a
+// stamp (C7), stamped with the single BKIT_VERSION source (C8).
 try {
-  const fs = require('fs');
   const path = require('path');
   const root = process.env.CLAUDE_PROJECT_DIR || process.cwd();
-  const dir = path.join(root, '.bkit', 'runtime');
-  const file = path.join(dir, 'hook-reachability.json');
-  fs.mkdirSync(dir, { recursive: true });
-  let state = {};
-  try { state = JSON.parse(fs.readFileSync(file, 'utf8')); } catch (_) { state = {}; }
-  state.bash_post = { ts: new Date().toISOString(), version: '2.1.15' };
-  const tmp = file + '.tmp';
-  fs.writeFileSync(tmp, JSON.stringify(state, null, 2), 'utf8');
-  fs.renameSync(tmp, file);
-} catch (_) { /* graceful */ }
+  const file = path.join(root, '.bkit', 'runtime', 'hook-reachability.json');
+  lockedUpdate(file, (state) => {
+    const next = state && typeof state === 'object' ? state : {};
+    next.bash_post = { ts: new Date().toISOString(), version: BKIT_VERSION };
+    return next;
+  });
+} catch (_) { /* graceful — reachability ping is best-effort */ }
 
 // Output allow (PostToolUse doesn't block normal flow)
 // v2.1.14 ENH-303: emit hookSpecificOutput with continueOnBlock=true and

@@ -578,11 +578,14 @@ async function sc13() {
   const lifecycle = require(path.join(projectRoot, 'lib/application/sprint-lifecycle'));
   const domain = require(path.join(projectRoot, 'lib/domain/sprint'));
 
-  // 1) Router routing table — 7 supported, 4 unsupported (Master Plan §11.3 AC4).
+  // 1) Router routing table — Slice 2 promoted M5 (exemptible), M10 (computed),
+  // and S4 (computed archiveReadiness, Task 2.6) to routed gates; Slice 3
+  // Task 3.3 then promoted S2 (computed featureCompletion). All 11 gates are
+  // now routed; UNSUPPORTED_GATES is empty ("no gate in limbo" guarantee).
   assert.deepStrictEqual(mr.SUPPORTED_GATES.slice().sort(),
-    ['M1', 'M2', 'M3', 'M4', 'M7', 'M8', 'S1'].sort());
+    ['M1', 'M2', 'M3', 'M4', 'M5', 'M7', 'M8', 'M10', 'S1', 'S2', 'S4'].sort());
   assert.deepStrictEqual(mr.UNSUPPORTED_GATES.slice().sort(),
-    ['M5', 'M10', 'S2', 'S4'].sort());
+    [].sort());
   const routes = mr.GATE_MEASUREMENT_ROUTES;
   assert.strictEqual(routes.M1.agent, 'gap-detector');
   assert.strictEqual(routes.M3.agent, 'gap-detector');
@@ -590,10 +593,15 @@ async function sc13() {
   assert.strictEqual(routes.M2.agent, 'code-analyzer');
   assert.strictEqual(routes.M7.agent, 'code-analyzer');
   assert.strictEqual(routes.M8.agent, 'sprint-orchestrator');
+  assert.strictEqual(routes.M5.agent, 'qa-monitor', 'M5 routed to qa-monitor (Slice 2)');
   assert.strictEqual(routes.S1.agent, 'sprint-qa-flow');
 
   // 2) Router error paths (no agentTaskRunner / unsupported gate / no JSON / non-numeric value).
-  assert.strictEqual((await mr.measureGate('M5', { id: 'x' }, {})).reason, 'unsupported_gate');
+  // Slice 2: M5 is now a routed (exemptible) gate — demonstrate unsupported_gate
+  // with a key that has no route at all.
+  assert.strictEqual((await mr.measureGate('XX', { id: 'x' }, {})).reason, 'unsupported_gate');
+  assert.strictEqual((await mr.measureGate('M5', { id: 'x' }, {})).reason, 'no_agent_runner',
+    'M5 is now routed (Slice 2); without a runner it yields no_agent_runner, not unsupported_gate');
   assert.strictEqual((await mr.measureGate('M4', { id: 'x' }, {})).reason, 'no_agent_runner');
   const runnerNoJson = { agentTaskRunner: async () => ({ output: 'no json' }) };
   assert.strictEqual((await mr.measureGate('M4', { id: 'x' }, runnerNoJson)).reason, 'no_json');

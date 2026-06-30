@@ -146,6 +146,10 @@ group('B. Hook scripts E2E smoke');
 
 function runHook(relPath, input = {}, extraEnv = {}) {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'bkit-qa-'));
+  // GitHub #119: Claude Code sets CLAUDE_CODE_SESSION_ID (primary); legacy
+  // CLAUDE_SESSION_ID mirrored with the same value for back-compat. Captured
+  // once so both names agree.
+  const sessionId = `qa-${Date.now()}`;
   try {
     const r = spawnSync('node', [path.join(PROJECT_ROOT, relPath)], {
       cwd: tmp,
@@ -155,7 +159,8 @@ function runHook(relPath, input = {}, extraEnv = {}) {
         ...process.env,
         CLAUDE_PLUGIN_ROOT: PROJECT_ROOT,
         CLAUDE_PROJECT_DIR: tmp,
-        CLAUDE_SESSION_ID: `qa-${Date.now()}`,
+        CLAUDE_CODE_SESSION_ID: sessionId,
+        CLAUDE_SESSION_ID: sessionId,
         ...extraEnv,
       },
       timeout: 10000,

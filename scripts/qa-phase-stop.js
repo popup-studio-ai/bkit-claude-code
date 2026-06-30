@@ -6,8 +6,17 @@
  * and triggers appropriate state machine event (QA_PASS/QA_FAIL/QA_SKIP).
  */
 
+const path = require('path');
 const { readStdinSync, outputAllow } = require('../lib/core/io');
 const { debugLog } = require('../lib/core/debug');
+// C7/C8/L2 (audit): atomic+locked reachability ping + single BKIT_VERSION source.
+// L2: this hook was the only Stop/Post handler without a reachability stamp.
+// It is not in today's SessionStart monitored set, so the impact is limited — but
+// stamping here keeps every Stop/Post hook symmetric and future-proofs against
+// qa_phase_stop being added to the monitored set (a silent drop would otherwise
+// look like a real CC plugin-hook drop, per MON-CC-NEW-PLUGIN-HOOK-DROP).
+const { lockedUpdate } = require('../lib/core/state-store');
+const { BKIT_VERSION } = require('../lib/core/version');
 
 try {
   const mc = require('../lib/quality/metrics-collector');
@@ -50,6 +59,19 @@ try {
 } catch (e) {
   debugLog('QA-Phase-Stop', 'Metric collection failed', { error: e.message });
 }
+
+// L2 fix (audit): reachability ping — unconditional + atomic, fired AFTER metric
+// collection so a collection failure can't skip it. Symmetric with the other
+// Stop/Post hooks (skill-post, unified-*-post, pre-write).
+try {
+  const root = process.env.CLAUDE_PROJECT_DIR || process.cwd();
+  const file = path.join(root, '.bkit', 'runtime', 'hook-reachability.json');
+  lockedUpdate(file, (state) => {
+    const next = state && typeof state === 'object' ? state : {};
+    next.qa_phase_stop = { ts: new Date().toISOString(), version: BKIT_VERSION };
+    return next;
+  });
+} catch (_) { /* graceful — reachability ping is best-effort */ }
 
 const message = `QA Phase completed.
 

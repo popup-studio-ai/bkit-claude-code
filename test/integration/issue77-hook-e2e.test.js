@@ -67,6 +67,10 @@ function writeConfig(uiOverride) {
 const baseEnv = {
   CLAUDE_PROJECT_DIR: tmpProject,
   CLAUDE_PLUGIN_ROOT: REPO,
+  // GitHub #119: Claude Code sets CLAUDE_CODE_SESSION_ID (not CLAUDE_SESSION_ID).
+  // CC var is the primary source; legacy kept as a harmless duplicate so any
+  // code reading either name sees the id.
+  CLAUDE_CODE_SESSION_ID: 'integ-session-1',
   CLAUDE_SESSION_ID: 'integ-session-1',
   // Disable bkit cache so config reload picks up our changes
   BKIT_DISABLE_CACHE: '1',
@@ -114,7 +118,9 @@ const it3a = runHook(path.join(REPO, 'scripts/user-prompt-handler.js'), {
   session_id: 'integ-session-2',
 }, baseEnv);
 const it3aTitle = it3a.parsed?.hookSpecificOutput?.sessionTitle;
-assert('TC-IT3a', it3aTitle === '[bkit] PLAN test-issue77', '1차 호출: 정상 emit', `got: ${JSON.stringify(it3aTitle)}`);
+// GitHub #119: now that session_id flows through, the per-session `·<tag>` from
+// #111 is appended (tag = sha256(session_id)[0:4]). integ-session-2 → a096.
+assert('TC-IT3a', it3aTitle === '[bkit] PLAN test-issue77 ·a096', '1차 호출: 정상 emit (session tag appended)', `got: ${JSON.stringify(it3aTitle)}`);
 
 // 2차: 동일 session+feature+phase → cache hit (undefined)
 const it3b = runHook(path.join(REPO, 'scripts/user-prompt-handler.js'), {

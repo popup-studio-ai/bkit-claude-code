@@ -5,6 +5,96 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.23] - 2026-06-23 (branch: `fixes/Sprint-System-Issues-6222026`)
+
+> **Status**: Sprint System Restore-As-Designed. Restores the Sprint quality-gate system to its original designed behavior by fixing the 5 NIM2CC-reported issues plus ~10 second-order defects found via big-picture mapping (no whack-a-mole). Artifacts: design `docs/superpowers/specs/2026-06-22-sprint-restore-as-designed-design.en.md` (+ `.ko.md`) · plan `docs/superpowers/plans/2026-06-22-sprint-restore-as-designed.md`. Delivered across 5 slices + master E2E, executed via subagent-driven-development (fresh subagent per task + two-stage spec/quality review). **Success criterion met**: a real sprint runs the full 8-phase lifecycle (`init→start→plan→design→do→iterate→qa→report→archived`) through the dispatcher with zero manual JSON editing — proven by `tests/contract/sprint-restore-e2e.test.js`.
+
+### Cluster A — Dispatcher Wiring (the root cause of the original 5 issues)
+
+- **FIX — composition root never wired adapters**: `wireAgentAdapters` (`scripts/sprint-handler.js`) received `{}` so no `agentTaskRunner` ever reached the gates/iterators. The handler layer accepted injected adapters but the composition root constructed none.
+  - Added `createTaskToolRunner(host)` host-adapter factory (`scripts/lib/sprint-handler-shared.js`) bridging the host's `invokeTaskTool` to the `({subagent_type, prompt}) => {output}` contract the domain expects.
+  - `wireAgentAdapters` now builds/threads: `gapDetector` + `autoFixer` (from `agentTaskRunner`), `dataFlowValidator` (from `mcpClient`/`staticMatrix`), `agentTaskRunner` onto `measureDeps` + `phaseDeps`, and `taskCreator` (see Cluster F-remaining). Caller-supplied deps always win.
+  - Documented the injection contract in `skills/sprint/SKILL.md`.
+
+### Cluster B — M8 Chicken-and-Egg (Issue #5)
+
+- **FIX — M8 unmeasurable at plan-exit**: at plan-exit the design doc does not yet exist, so M8 had no source artifact to measure → plan→design advance always gate-failed. `measure-router.buildPrompt` now resolves a phase-specific source: at `plan` it cites the plan doc's design section; at `design`+ it cites the Design doc §14 self-assessment checklist (via new `sourceArtifactPlanPhase` route field).
+
+### Cluster C — Feature Tracking (featureMap never populated)
+
+- **FIX — `featureMap` was always `{}`**: `createSprint` never populated it; the S2 featureCompletion gate therefore had nothing to read.
+  - Added `completion` (0-100) to the `SprintFeatureMapEntry` typedef + populated `featureMap` in `createSprint`.
+  - `handleFeature add/remove` now keeps `features[]` ↔ `featureMap` in lockstep (twin sources of truth).
+  - Phase advance bumps each entry's `pdcaPhase` + `completion` (monotonic `max`, never decreases); `handleQA` grants `completion=100` + `qa='pass'` on a data-flow pass (the only path to 100).
+
+### Cluster D — Auto-Pause Scope + S1 Persistence (Issues #3, #4)
+
+- **FIX — auto-pause only checked M3/S1**: `checkAutoPauseTriggers` (via new `failingActiveGates` helper, `lib/application/sprint-lifecycle/auto-pause.js`) now inspects **every** active gate in `ACTIVE_GATES_BY_PHASE[phase]`, so `QUALITY_GATE_FAIL` fires on any failing gate (was silently missed for M1/M2/M4/M5/M7/M8/M10/S2).
+- **FIX — `handleQA` didn't persist s1Score**: the computed S1 score was discarded → the S1 slot stayed null → advancePhase reported `not_measured` even after a successful QA. Now persisted to `qualityGates.S1_dataFlowIntegrity`.
+
+### Cluster E — Docs
+
+- **FEAT — `gate_fail` return carries an actionable hint**: names the failing gate key(s) + the exact `/sprint measure` + `/sprint phase` commands to run (advance-phase.usecase.js). Closes the Issue #93 "no user-facing signal on gate failure" gap.
+- **DOCS — reconciled to code**: corrected the `SPRINT_AUTORUN_SCOPE` Trust-Level table in `commands/bkit.md` (was L1=design/L2=do/L3=qa; code is L0/L1=prd, L2=design, L3=report, L4=archived) + folded in the "--approve does NOT bypass Quality Gate failures" warning; fixed the stale "feature sub-action deferred" claim in `skills/sprint/examples/multi-feature-sprint.md` (featureMap sync is now live).
+
+### Cluster F-gates — Gate Measurability ("no gate in limbo")
+
+> Headline outcome: `UNSUPPORTED_GATES` is now **empty** — every gate in `ACTIVE_GATES_BY_PHASE` has a route (sub-agent, computed, or `not_applicable` exemption). Verified at runtime: SUPPORTED 11 / UNSUPPORTED [] / limbo [].
+
+- **FEAT — M5 runtime error rate** (`measure-router.js`): routed to qa-monitor live-log probe; **exemptible** — when the project has no runtime logs (library/static site), the caller passes `logSourceAvailable=false` and the router returns `not_applicable` (counted as passed) instead of failing.
+- **FEAT — M10 PDCA cycle time**: computed gate = sum of `phaseHistory` durations. **Follow-up fix**: the compute originally read a never-produced `durationHours` field; corrected to read `durationMs` (what `advance-phase.appendExitToHistory` actually writes) and convert to hours.
+- **FEAT — S2 featureCompletion**: computed gate = ratio of `featureMap` entries with `completion >= threshold`. Empty featureMap → honest 0 (not vacuous 100).
+- **FEAT — S4 archiveReadiness**: computed gate = every measurable report-phase gate passed AND `sprint.docs.report` present. Shares `computeArchiveReadiness` with `archiveSprint` (the archive path populates the S4 slot before its gate check, since `evaluateGate` reads slots not compute fns).
+- **FIX — M5 exemption unreachable from the CLI**: `handleMeasure` + `runPhaseGates` never forwarded `logSourceAvailable` into the use case, so the `not_applicable` route was reachable only programmatically. Threaded `args`/`deps.logSourceAvailable` through both `ucDeps` objects (surfaces as `--no-logs`). Surfaced by the master E2E.
+- **FIX — `measure-gate.usecase` honors the exemption**: when the router asserts `passed` explicitly (M5 not_applicable), the use case honors it directly instead of re-evaluating via `evaluateGate` (which flipped exempted gates to not_measured failures).
+
+### Cluster F-state — Designed-But-Unimplemented Completion
+
+- **FEAT — `dataFlow` + `annotations` on the Sprint typedef**: declared in v2113-Sprint-5 SC-01 / v2.1.19 s1-foundation FR-5 but never added. `dataFlow` (per-feature hop-result map) now initialized in `createSprint`; `annotations` (already set at runtime) now in the typedef.
+- **FEAT — `handleQA` records per-hop results to `sprint.dataFlow[feature]`** (`{H1:{status,evidence,reason,from,to}, …}`), closing the data-flow validation loop: the Tier-2 static validator (`data-flow-validator.adapter`) already read this field but nothing populated it → a `staticMatrix` QA re-run found no matrix and failed every hop. Now probe → record → re-validate-from-record works (QA is replayable; works for archived sprints where live probing is impossible).
+- **FEAT — skip-iterate `do→qa`**: `computeNextPhase` overloaded to accept a sprint object; at `do`, inspects `M1_matchRate` and returns `qa` when target met, else `iterate`. `transitions.js` already declared the `do→qa` edge legal — it was unreachable because `computeNextPhase` was phase-only. *(Autorun-loop activation deferred — see Deferred.)*
+- **FIX — `handleWatch` ghost matrix types + require-path crash**: read `['data-flow','cumulative-state','feature-phase']` but only `data-flow` is real (the ghosts have no producer, no file, no design-doc backing). Now reads real `MATRIX_TYPES` from `sprint-paths` (the single SoT). Also removed a local `require(path.join(__dirname,'..','lib/application/...'))` that resolved to a nonexistent path and threw `MODULE_NOT_FOUND` on every call.
+- **FIX — `handleFork` same require-path crash class**: the third and final instance of the broken relative-require pattern (handleFeature fixed earlier, handleWatch above). Removed; uses the module-level `domain` import. Repo-wide grep confirms no remaining instances.
+- **FEAT — `handleMasterPlan` taskCreator wiring + emitter flush**: `generateMasterPlan` only created tracker tasks when `deps.taskCreator` was a function, but `wireAgentAdapters` never built one → master plans silently skipped tracker creation. Added `createTaskCreatorForRunner` factory (resilient — synthesizes a deterministic id on runner failure, never throws). Separately, `handleSprintAction` now best-effort flushes `infra.eventEmitter` after each action (the CLI exited without flushing, dropping buffered telemetry; flushed inside the action because `getInfra` returns a fresh non-singleton bundle per call, so a CLI-block flush would hit the wrong emitter).
+- **FIX — `handleReport` never wrote the report**: `generateReport` accepted `deps.fileWriter` but `handleReport` never constructed one → reports built in-memory and never written, and `sprint.docs.report` stayed null (which blocked the S4 archive gate). Added `buildReportFileWriterForHandler`; handleReport writes the report + persists `sprint.docs.report`. Persistence guard checks the merged `reportDeps.fileWriter` (caller override of `null` correctly skips).
+
+### Bundled fix — SessionStart session-id env var (Issue #119)
+
+> **Status**: Independent of the Sprint restore work; bundled into this branch per request. Root cause + fix identified in the issue; delivered via a 2-agent (behavioral + structural) investigation, then TDD.
+
+- **FIX — wrong session-id env var**: bkit read `process.env.CLAUDE_SESSION_ID`, but Claude Code exposes `CLAUDE_CODE_SESSION_ID`. `sessionId` was therefore always null on the SessionStart path → the per-session stable tag (`·a1b2`) introduced in #111 (F2) never appended → every concurrent Claude Code session in the same project directory rendered the identical title `[bkit] {primaryFeature}`, making two terminal windows indistinguishable. Present since at least 2.1.19.
+  - Centralized the resolution in `lib/infra/cc-bridge.getSessionId()` (the canonical accessor; only imports Node built-ins, no cycle) with the chain **payload `session_id` → `CLAUDE_CODE_SESSION_ID` → `CLAUDE_SESSION_ID` (legacy back-compat) → null** — matching the #111 Stop-path approach where the stdin payload is the most authoritative source.
+  - Applied the same chain at all 4 production sites: `hooks/session-start.js:300` (the cited root cause), `scripts/unified-stop.js:655,680`, `lib/orchestrator/team-protocol.js:92`. Every production code read now prefers `CLAUDE_CODE_SESSION_ID`; the only remaining `CLAUDE_SESSION_ID` references in prod are JSDoc fallback-chain docs.
+  - **Design decision (env vs payload for session-start)**: `session-start.js` does not parse stdin at the title block, and adding a second `readStdinSync()` deep in the hook risks a double-stdin-read. Since Claude Code sets `CLAUDE_CODE_SESSION_ID` in the process environment before the hook runs, the env var is the correct/authoritative source for SessionStart (the payload is the correct source for Stop — which is why #111 already threads `hookContext.session_id` there). Two different hooks, two right answers.
+  - **Incidental fix**: `test/integration/issue77-hook-e2e.test.js` TC-IT3a was a pre-existing broken test (asserted a tag-less title that only the *broken env path* would produce, while exercising the *working payload path*). Now passes for the first time with the corrected `·a096` expectation.
+- **Verification**: 9 new contract assertions (`tests/contract/session-id-env-119.test.js` — resolution chain + concurrent-session tag disambiguation); `cc-bridge.test.js` (24/24) updated to assert the new chain; 4 injection sites in integration/QA tests switched from `CLAUDE_SESSION_ID` to `CLAUDE_CODE_SESSION_ID`. Confirmed two different session ids produce distinct `·<tag>` suffixes (the #111/#119 payoff).
+- **E2E regression guard** (`test/regression/issue-119-session-id-env.test.js`): env-var resolution asserted through the real `cc-bridge` accessor + tag-disambiguation payoff via the real `scripts/user-prompt-handler.js` subprocess with a PDCA fixture (two distinct session ids → distinct titles) (6 assertions). Placed alongside `issue-53-path-quoting.test.js`.
+
+### Bundled fix — Cursor IDE PreToolUse JSON output (Issue #118)
+
+> **Status**: Independent of the Sprint restore work; bundled into this branch per request. Root cause + fix identified in the issue; delivered via a 2-agent (behavioral + structural) investigation, then TDD.
+
+- **FIX — `lib/core/io.js` emitted Claude-Code-format output under Cursor**: When bkit runs under Cursor IDE's Claude plugin bridge (detected via `process.env.CURSOR_VERSION`), the PreToolUse hook runner expects a different JSON schema than Claude Code. `outputAllow`/`outputBlock`/`outputBlockWithContext` previously emitted plain text (allow) and `{"decision":"block",...}` (deny) → Cursor failed with `JSON Parse Error: Unexpected token ...` and blocked Write/StrReplace/Shell until the plugin was disabled.
+  - Added `isCursorRuntime()` (`!!process.env.CURSOR_VERSION`, empty-string treated as unset) and branched the 3 PreToolUse-reachable output functions:
+    - **allow** → `{"permission":"allow","agent_message":...}` (message omitted when empty)
+    - **deny** → `{"permission":"deny","user_message":...,"agent_message":...}` (both fields populated; graceful `exit(0)`)
+    - **deny-with-context** → same deny schema, with the safer-alternatives list folded into `agent_message` (Cursor has no `hookSpecificOutput`, so the CC additional-context channel is remapped to the agent message).
+  - Stop-hook functions (`outputStopSurface`/`outputStopAllow`) and `outputEmpty` intentionally unchanged — Cursor only bridges PreToolUse, so they're unreachable under Cursor; CC behavior is byte-identical when `CURSOR_VERSION` is unset.
+  - **No hook-script changes needed**: the branch lives at the single `io.js` chokepoint that all 20+ hook callers (pre-write, unified-bash-pre, phase9-deploy-pre, plus PostToolUse/Notification/Subagent paths) already share — all callers inherit Cursor support. Verified E2E via `scripts/pre-write.js` under `CURSOR_VERSION=3.6.31`.
+- **8 new contract assertions** (`tests/contract/cursor-pretooluse-json-118.test.js`): Cursor allow/deny/deny-with-context schema + CC-format regression guard (plain-text allow, `{success,message}`, `{decision:"block"}`) + `isCursorRuntime` export.
+- **E2E regression guard** (`test/regression/issue-118-cursor-pretooluse.test.js`): spawns the real `scripts/pre-write.js` under `CURSOR_VERSION` and asserts stdout is valid Cursor JSON (`{"permission":"allow"|"deny",...}`, no CC-only `decision:block` leak) + CC plain-text behavior unchanged without the env var (3 assertions). Placed alongside the existing `issue-53-path-quoting.test.js` so the bug cannot recur silently.
+
+### Verification
+
+- **96 test assertions** across 14 tracked test files (`sprint-restore-slice1..5`, `slice2-followups`, `slice3-{completion,report,acceptance}`, `sprint-restore-e2e`, `cursor-pretooluse-json-118`, `session-id-env-119`, plus e2e regression guards `test/regression/issue-118-cursor-pretooluse` + `test/regression/issue-119-session-id-env`), all PASS. Plus 2 bundled-fix integration/QA updates (issue77-hook-e2e TC-IT3a corrected, 4 env-injection sites migrated to `CLAUDE_CODE_SESSION_ID`).
+- **Master E2E** (`sprint-restore-e2e.test.js`): full lifecycle via the in-process dispatcher, value-aware runner (0 for `<=` count gates, 100 for `>=` percent gates), zero manual JSON editing. Reaches `status:'archived'` with S2=100, S4 ready, `docs.report` set, featureMap completions advanced.
+- **Lint**: 0 errors on changed production code (pre-existing warnings only); **0 linting bypasses** added (`noqa`/`eslint-disable`/`@ts-ignore`/`type: ignore` — none).
+- **Final reviewer verdict**: READY TO MERGE.
+
+### Deferred (tracked, not silently dropped)
+
+- **Skip-iterate autorun-loop activation**: Slice 4 made `computeNextPhase` CAPABLE of `do→qa` skip-iterate, but the autorun loop still passes `sprint.phase` (string) → takes the back-compat path → routes `do→iterate` unconditionally (CAPABLE-BUT-INERT). Wiring the loop (`computeNextPhase(sprint)`) is a one-line change `transitions.js` already permits, but it activates skip-iterate inside the E2E autorun loop — intersecting pause-trigger arming, budget accounting, and phase-timeout behavior → deserves its own PDCA-tracked unit with E2E autorun coverage. Recorded in `work/sprint-investigation/out-of-scope.md` §5 + a `// NOTE` TODO at the call site (`start-sprint.usecase.js`).
+
 ## [2.1.22] - 2026-06-02 (branch: `release/v2.1.22-hardening`)
 
 > **Status**: Hardening Release (in progress) — 6-sprint master plan (`docs/01-plan/features/v2.1.22-hardening.master-plan.md`). No new user-facing features; quality hardening / consistency only. Kahn order S1→S2→S4→S3a→S3b→S5.

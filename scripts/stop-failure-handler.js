@@ -130,6 +130,12 @@ function classifyError(type, message) {
 
 const classification = classifyError(errorType, errorMessage);
 
+// M9 fix (audit): capture (don't swallow) a failure to persist the error log so
+// it can be surfaced in the user-visible guidance below. The catch stays non-fatal
+// (a Stop hook must never block the user's turn) — but the failure is no longer
+// invisible: it propagates into the guidance message the user already sees.
+let errorLogWriteError = null;
+
 // Step 2: Log error to runtime directory
 try {
   const { STATE_PATHS } = require('../lib/core/paths');
@@ -140,19 +146,10 @@ try {
   }
 
   const errorLogPath = path.join(runtimeDir, 'error-log.json');
-  let errorLog = [];
-
-  if (fs.existsSync(errorLogPath)) {
-    try {
-      errorLog = JSON.parse(fs.readFileSync(errorLogPath, 'utf8'));
-    } catch (_) {
-      errorLog = [];
-    }
-  }
 
   // v2.1.12 Sprint A-2 (#14): include parseStatus + parseWarnings + sessionId
   // for downstream postmortem (silent garbage-in surface).
-  errorLog.push({
+  const entry = {
     timestamp: new Date().toISOString(),
     errorType,
     category: classification.category,
@@ -163,14 +160,23 @@ try {
     message: errorMessage.substring(0, 500),
     parseStatus,
     parseWarnings,
+  };
+
+  // H6 fix (audit): locked RMW of the error log so a concurrent Stop-failure or a
+  // mid-write SIGKILL can't truncate/clobber it. read→push→slice→write is now
+  // atomic (lockedUpdate = lock across the modifier + tmp+rename write).
+  const { lockedUpdate } = require('../lib/core/state-store');
+  lockedUpdate(errorLogPath, (raw) => {
+    let errorLog = Array.isArray(raw) ? raw : [];
+    errorLog.push(entry);
+    if (errorLog.length > 50) {
+      errorLog = errorLog.slice(-50);
+    }
+    return errorLog;
   });
-
-  if (errorLog.length > 50) {
-    errorLog = errorLog.slice(-50);
-  }
-
-  fs.writeFileSync(errorLogPath, JSON.stringify(errorLog, null, 2));
 } catch (e) {
+  // M9 fix (audit): record for user-visible surfacing instead of debugLog-only.
+  errorLogWriteError = e.message;
   debugLog('StopFailure', 'Error logging failed', { error: e.message });
 }
 
@@ -194,6 +200,14 @@ if (agentId) {
 
 if (agentType === 'teammate' || agentId === 'cto-lead') {
   guidance += `CTO Team: Consider ctrl+f to stop affected agents, then check team status.`;
+}
+
+// M9 fix (audit): surface a critical state-persistence failure in the user-visible
+// guidance instead of leaving it debugLog-only. This Stop hook fires precisely
+// when something already went wrong; hiding an error-log write failure on top of
+// that would leave the user with no record and no signal that persistence broke.
+if (errorLogWriteError) {
+  guidance += `\n\n[Warning] bkit could not persist this error to its runtime log (${errorLogWriteError}). The in-memory diagnostic above is all that was captured.`;
 }
 
 outputAllow(guidance, 'StopFailure');

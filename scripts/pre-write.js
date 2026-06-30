@@ -299,7 +299,11 @@ function runCCRegressionCheck(ctx) {
 /**
  * Stage 9: Audit log (file_modified).
  */
-function runAuditLog(ctx) {
+function runAuditLog(ctx, opts = {}) {
+  // H8/H9 fix (audit): every exit path now records an audit entry. Previously the
+  // permission-deny path (process.exit(2)) ran before this function, so security-
+  // relevant denials vanished from the audit trail. opts lets the deny path log
+  // result='denied' + the deny reason instead of the default 'success'.
   try {
     const audit = require('../lib/audit/audit-logger');
     audit.writeAuditLog({
@@ -309,8 +313,9 @@ function runAuditLog(ctx) {
       category: 'file',
       target: ctx.filePath || '',
       targetType: 'file',
-      result: 'success',
-      destructiveOperation: false,
+      result: opts.result || 'success',
+      destructiveOperation: opts.destructiveOperation || false,
+      denyReason: opts.denyReason || undefined,
     });
   } catch (e) {
     debugLog('PreToolUse', 'audit log failed', { error: e.message });
@@ -339,6 +344,9 @@ function main() {
   const perm = runPermissionCheck(ctx);
   if (perm.deny) {
     debugLog('PreToolUse', 'Permission denied', { filePath });
+    // H8/H9 fix (audit): record the denial BEFORE exiting — otherwise security-
+    // relevant permission denials never reach the audit trail.
+    runAuditLog(ctx, { result: 'denied', denyReason: perm.denyReason });
     outputBlock(perm.denyReason);
     process.exit(2);
   }

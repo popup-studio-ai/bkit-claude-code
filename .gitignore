@@ -12,6 +12,9 @@ node_modules/
 .env.local
 .env*.local
 
+# Python virtual environment (local, machine-specific — never tracked)
+.venv/
+
 # IDE
 .idea/
 .vscode/
@@ -54,6 +57,12 @@ bkit-system/.obsidian/plugins/
 # bkit runtime state (agent-state.json)
 .bkit/
 
+# Session history (local Claude Code history hooks; machine-local, not for repo)
+.remember/
+
+# Working directory — session notes, scratch, and local archives (machine-local)
+work/
+
 # Local Claude Code settings (plugin elements are at root level)
 .claude/
 # v2.1.11: project-level CLAUDE.md is part of the plugin contract
@@ -68,3 +77,17 @@ docs/bkit-Best-Practice.pdf
 # Internal skills/commands (company-only, not for public repo)
 skills/github-integration/
 commands/github-stats.md
+
+# Jest config — references a non-existent test-scripts/ dir; the project's tests
+# run via `node` (see .github/workflows/contract-check.yml), not Jest. Kept
+# locally for ad-hoc node-style tests; excluded from the repo. Untracked via
+# `git rm --cached jest.config.js` (file retained on disk).
+jest.config.js
+
+# Superpowers workflow artifacts (plans/specs authored by the superpowers
+# brainstorming/writing-plans skills during a fix). Local working docs — the
+# durable record of the work lives in CHANGELOG.md + the memory dir, not here.
+docs/superpowers/
+
+# Bug reports (local working notes — not for the repo)
+bug_reports/
