@@ -1,0 +1,24 @@
+name: github-stats
+classification: workflow
+version: 1.0.0
+description: "github-stats process compliance evaluation — collect, accumulate, and render GitHub usage stats for bkit-claude-code"
+
+evals:
+  - name: trigger-and-accumulate
+    prompt: prompt-1.md
+    expected: expected-1.md
+    criteria:
+      - "Must trigger correctly on relevant stats keywords"
+      - "Must follow the defined collect/merge/render process steps"
+      - "Must produce the expected gap-aware cumulative output"
+      - "Must follow the fixed report template format/structure"
+    timeout: 60000
+
+parity_test:
+  enabled: false
+
+benchmark:
+  model_baseline: "claude-sonnet-4-6"
+  metrics:
+    - trigger_accuracy
+    - process_compliance
