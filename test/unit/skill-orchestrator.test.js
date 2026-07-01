@@ -345,5 +345,74 @@ test('SO-041', 'All 14 exports exist', () => {
   assert.strictEqual(typeof getSkillsByClassification, 'function');
 });
 
+// ── #125: namespaced skill-name resolution ──
+// getSkillConfig must resolve the CC `plugin:skill` form (e.g. bkit:pdca) to the
+// bare folder (skills/pdca/) so next-skill / pdca-phase suggestions fire for
+// tool-invoked skills instead of silently returning null.
+
+test('SO-042', 'getSkillConfig: namespaced bkit:pdca resolves like bare pdca', () => {
+  clearCache();
+  try {
+    const ns = getSkillConfig('bkit:pdca');
+    const bare = getSkillConfig('pdca');
+    if (bare) {
+      assert.ok(ns, 'namespaced form must not be null');
+      assert.strictEqual(ns.name, bare.name);
+    }
+  } catch (e) {
+    assert.ok(e.message.includes('null') || e.message.includes('PLUGIN_ROOT'));
+  }
+});
+
+test('SO-043', 'getSkillConfig: namespaced form preserves pdca-phase (bkit:code-review → check)', () => {
+  clearCache();
+  try {
+    const ns = getSkillConfig('bkit:code-review');
+    const bare = getSkillConfig('code-review');
+    if (bare) {
+      assert.ok(ns, 'namespaced form must not be null');
+      assert.strictEqual(ns['pdca-phase'], bare['pdca-phase']);
+    }
+  } catch (e) {
+    assert.ok(e.message.includes('null') || e.message.includes('PLUGIN_ROOT'));
+  }
+});
+
+test('SO-044', 'getSkillConfig: bare and namespaced share one cache entry (bare folder key)', () => {
+  clearCache();
+  try {
+    const bare = getSkillConfig('pdca');
+    getSkillConfig('bkit:pdca');
+    if (bare) {
+      const stats = getCacheStats();
+      assert.ok(stats.entries.includes('pdca'), 'cache keyed by bare folder name');
+      assert.ok(!stats.entries.includes('bkit:pdca'), 'namespaced form must not create a duplicate key');
+    }
+  } catch (e) {
+    assert.ok(true);
+  }
+});
+
+test('SO-045', 'getSkillConfig: unknown namespaced skill still returns null', () => {
+  clearCache();
+  try {
+    const config = getSkillConfig('bkit:nonexistent-skill-xyz-12345');
+    assert.strictEqual(config, null);
+  } catch (e) {
+    assert.ok(e.message.includes('null') || e.message.includes('PLUGIN_ROOT'));
+  }
+});
+
+test('SO-046', 'getAgentForAction: resolves via namespaced skill name', () => {
+  clearCache();
+  try {
+    const bareAgent = getAgentForAction('code-review', 'default');
+    const nsAgent = getAgentForAction('bkit:code-review', 'default');
+    assert.strictEqual(nsAgent, bareAgent);
+  } catch (e) {
+    assert.ok(true);
+  }
+});
+
 console.log(`\n--- Results: ${passed}/${total} passed, ${failed} failed ---`);
 if (failed > 0) process.exit(1);

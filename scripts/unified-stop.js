@@ -15,6 +15,7 @@ const { readStdinSync, outputAllow } = require('../lib/core/io');
 const { debugLog } = require('../lib/core/debug');
 const { getPdcaStatusFull } = require('../lib/pdca/status');
 const { getActiveSkill, getActiveAgent, clearActiveContext } = require('../lib/task/context');
+const { normalizeSkillName } = require('../lib/core/skill-name');
 
 // v2.0.0 Lazy Module Loaders — S3a ENH-346: extracted to scripts/lib/unified-stop-deps.js
 const {
@@ -218,9 +219,14 @@ debugLog('UnifiedStop', 'Context received', {
   agentType
 });
 
-// Detect active skill/agent
-const activeSkill = detectActiveSkill(hookContext);
-const activeAgent = detectActiveAgent(hookContext);
+// Detect active skill/agent.
+// #125: the detection sources (tool_input.skill, the active-skill marker) may
+// carry the `plugin:skill` form, but SKILL_HANDLERS / AGENT_HANDLERS and the
+// bare comparisons below (`activeSkill === 'control'`, …) are keyed by folder
+// name. Canonicalize once so Stop-handler dispatch survives the namespaced form.
+// normalizeSkillName is null-safe, so a null detection stays null.
+const activeSkill = normalizeSkillName(detectActiveSkill(hookContext));
+const activeAgent = normalizeSkillName(detectActiveAgent(hookContext));
 
 debugLog('UnifiedStop', 'Detection result', {
   activeSkill,

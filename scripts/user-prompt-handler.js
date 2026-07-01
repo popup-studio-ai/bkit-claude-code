@@ -12,6 +12,7 @@ const path = require('path');
 const { readStdinSync, outputAllow, outputEmpty, truncateContext } = require('../lib/core/io');
 const { debugLog } = require('../lib/core/debug');
 const { PLUGIN_ROOT } = require('../lib/core/platform');
+const { normalizeSkillName } = require('../lib/core/skill-name');
 const { detectNewFeatureIntent, matchImplicitAgentTrigger, matchImplicitSkillTrigger } = require('../lib/intent/trigger');
 const { calculateAmbiguityScore } = require('../lib/intent/ambiguity');
 const { getPdcaStatusFull } = require('../lib/pdca/status');
@@ -245,7 +246,12 @@ if (importResolver) {
   try {
     const skillTrigger = matchImplicitSkillTrigger(userPrompt);
     if (skillTrigger && skillTrigger.skill) {
-      const skillPath = path.join(PLUGIN_ROOT, 'skills', skillTrigger.skill, 'SKILL.md');
+      // #125: matchImplicitSkillTrigger returns the namespaced `bkit:<skill>`
+      // form (intent/trigger.js), but the folder is `skills/<skill>/` — resolve
+      // the bare name so implicit-trigger template injection stops silently
+      // ENOENT-ing for every implicitly matched skill.
+      const skillFolder = normalizeSkillName(skillTrigger.skill);
+      const skillPath = path.join(PLUGIN_ROOT, 'skills', skillFolder, 'SKILL.md');
       if (fs.existsSync(skillPath)) {
         const { content, errors } = importResolver.processMarkdownWithImports(skillPath);
 
