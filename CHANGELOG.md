@@ -5,6 +5,82 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.24] - 2026-07-01 (branch: `fix/skill-namespace-hook-reachability-125-126`)
+
+> **Status**: Skill-orchestration namespace hardening. Fixes two related
+> skill-hook defects reported by external dogfooder **[@hslee-cmyk](https://github.com/hslee-cmyk)**
+> (GitHub #125 + #126, filed together during one investigation) plus every
+> same-root-cause site found by mapping the fix's blast radius (no whack-a-mole).
+> Root cause for both: Claude Code invokes plugin skills via the fully-qualified
+> `plugin:skill` form (e.g. `bkit:pdca`), but bkit resolves skills by their bare
+> on-disk folder name (`skills/pdca/`). Both reproductions were confirmed
+> directly (namespaced `getSkillConfig` → `null`; live SessionStart false-positive
+> `missing=[skill_post]`) before any fix. Every fix is guarded by new unit tests
+> and the full Invocation Contract CI gate stays green.
+
+### #125 — namespaced skill names silently lose next-skill / pdca-phase guidance
+
+- **FIX — `getSkillConfig()` resolved `skills/bkit:pdca/SKILL.md` (ENOENT) → `null`**:
+  `lib/skill-orchestrator.js` built the lookup path from the raw skill identifier,
+  so any skill invoked through the CC `Skill` tool in `plugin:skill` form returned
+  a null config — `next-skill` and `pdca-phase`-driven "next step" suggestions
+  (e.g. "구현이 완료되면 Gap 분석을 실행하세요") never fired, silently and with no error.
+- **NEW — `lib/core/skill-name.js` `normalizeSkillName()`**: single source of truth
+  that canonicalizes any skill identifier (bare or namespaced) to its bare folder
+  name by stripping the `plugin:` prefix. Null-safe; a bare name is a no-op.
+  Sibling to `lib/core/name-validator.js` (which *rejects* unsafe names; this one
+  *canonicalizes*). Its output is always path-safe.
+- **FIX — same-root-cause sites hardened** (blast-radius sweep, not just the
+  reported line):
+  - `getSkillConfig` + `orchestrateSkillPre` (`lib/skill-orchestrator.js`) —
+    normalize before path/cache lookup; bare and namespaced share one cache entry.
+  - `scripts/skill-post.js` — canonicalize `tool_input.skill` once at the hook
+    boundary so config lookup, the `CODE_GENERATION_SKILLS` `/copy` list, the
+    active-skill marker, the audit target and PDCA-status update all see the bare name.
+  - `scripts/user-prompt-handler.js` — implicit-trigger template injection resolved
+    `skills/bkit:<skill>/SKILL.md` (always ENOENT, because `lib/intent/trigger.js`
+    returns the namespaced form); now normalized, so implicit template injection works.
+  - `scripts/unified-stop.js` — `SKILL_HANDLERS[activeSkill]` / `AGENT_HANDLERS`
+    dispatch and the bare `activeSkill === 'control' | 'audit' | 'development-pipeline'`
+    comparisons now canonicalize the detected name, so end-of-turn Stop handlers
+    dispatch even when the active-skill marker held the namespaced form.
+
+### #126 — hook-reachability check false-positive flags `skill_post` as dropped
+
+- **FIX — `missing=[skill_post]` "CC plugin-hook drop (#57317) suspected" fired in
+  normal usage**: the SessionStart MON-CC-NEW-PLUGIN-HOOK-DROP monitor treated a
+  missing `skill_post` stamp identically to a dropped hook. But `skill_post` only
+  fires on a `PostToolUse(Skill)` tool_use, and bkit's own documented workflow
+  invokes skills via slash commands (`/pdca plan`), which produce no Skill tool_use
+  — so `skill_post` legitimately never fires and the warning showed every session,
+  eroding trust in the check (and risking real drops being dismissed as "the usual
+  false alarm").
+- **NEW — `lib/core/hook-reachability.js` `evaluateReachability()`**: pure,
+  unit-testable classifier extracted from the inline SessionStart logic. Partitions
+  the stamps into **canaries** (`bash_post` / `write_post` — fire on nearly every
+  turn) and **event-driven** (`skill_post`). An event-driven hook is only reported
+  as a drop when a canary is *also* unhealthy — a genuine `#57317` loader drop takes
+  down all three together, so correlated failure is the reliable signal. When the
+  canaries are healthy, an absent/stale `skill_post` is suppressed as "idle". This
+  preserves the monitor's real purpose while eliminating the chronic false positive.
+- `hooks/session-start.js` now delegates to `evaluateReachability`; audit details
+  carry `canaryUnhealthy` + `skillPostIdle` for traceability.
+
+### Tests
+
+- **NEW** `test/unit/skill-name.test.js` (11 TC) — `normalizeSkillName` canonicalization + null-safety.
+- **NEW** `test/unit/hook-reachability.test.js` (11 TC) — drop-vs-idle classification across
+  the #126 repro, real-drop, partial-drop, and idle scenarios.
+- **NEW** `test/unit/skill-orchestrator.test.js` SO-042…046 — namespaced `getSkillConfig` /
+  `getAgentForAction` resolution parity + single-cache-key invariant.
+- Both new lib modules registered in `test/run-all.js` and tracked (CI `check-test-tracking`).
+
+### Credits
+
+- **[@hslee-cmyk](https://github.com/hslee-cmyk)** — precise reproductions + root-cause
+  file:line references + a suggested fix for #125, filed alongside #126 from the same
+  investigation. Reproductions absorbed as permanent regression tests.
+
 ## [2.1.23] - 2026-06-23 (branch: `fixes/Sprint-System-Issues-6222026`)
 
 > **Status**: Sprint System Restore-As-Designed. Restores the Sprint quality-gate system to its original designed behavior by fixing the 5 NIM2CC-reported issues plus ~10 second-order defects found via big-picture mapping (no whack-a-mole). Artifacts: design `docs/superpowers/specs/2026-06-22-sprint-restore-as-designed-design.en.md` (+ `.ko.md`) · plan `docs/superpowers/plans/2026-06-22-sprint-restore-as-designed.md`. Delivered across 5 slices + master E2E, executed via subagent-driven-development (fresh subagent per task + two-stage spec/quality review). **Success criterion met**: a real sprint runs the full 8-phase lifecycle (`init→start→plan→design→do→iterate→qa→report→archived`) through the dispatcher with zero manual JSON editing — proven by `tests/contract/sprint-restore-e2e.test.js`.

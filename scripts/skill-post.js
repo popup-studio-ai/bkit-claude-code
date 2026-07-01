@@ -23,6 +23,11 @@ const { getPdcaStatusFull, updatePdcaStatus } = require('../lib/pdca/status');
 // a single BKIT_VERSION source so all three reachability writers stamp the same value.
 const { lockedUpdate } = require('../lib/core/state-store');
 const { BKIT_VERSION } = require('../lib/core/version');
+// #125: CC passes the `plugin:skill` form (e.g. `bkit:pdca`) in tool_input.skill.
+// Canonicalize once at the hook boundary so every downstream consumer — config
+// lookup, the CODE_GENERATION_SKILLS list, the active-skill marker, audit target
+// and PDCA status — sees the bare folder name.
+const { normalizeSkillName } = require('../lib/core/skill-name');
 
 // Lazy load modules
 let orchestrator = null;
@@ -41,7 +46,8 @@ function getOrchestrator() {
  */
 function parseSkillInvocation(toolInput) {
   try {
-    const skillName = toolInput?.skill || '';
+    // #125: strip the `plugin:` namespace so `bkit:pdca` resolves as `pdca`.
+    const skillName = normalizeSkillName(toolInput?.skill || '');
     const argsStr = toolInput?.args || '';
 
     // Parse args string into structured format

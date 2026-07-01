@@ -94,6 +94,8 @@ const CATEGORIES = {
       'unit/scenario-runner.test.js',
       'unit/import-resolver.test.js',
       'unit/skill-orchestrator.test.js',
+      'unit/skill-name.test.js',
+      'unit/hook-reachability.test.js',
       'unit/permission-manager.test.js',
       'unit/strategy.test.js',
       'unit/cto-logic.test.js',
