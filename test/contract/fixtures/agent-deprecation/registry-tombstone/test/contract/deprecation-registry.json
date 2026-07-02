@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "agents": {
+    "old-agent": {
+      "deprecatedIn": "v1.0.0",
+      "replacedBy": "new-agent",
+      "reason": "fixture registry tombstone — stub file removed (ADR 0014)",
+      "deprecationCommit": "0000000",
+      "stubRemovedIn": "v1.1.0",
+      "issue": "#128"
+    }
+  },
+  "skills": {},
+  "mcpTools": {}
+}

@@ -38,13 +38,14 @@ console.log('\n=== agents-31.test.js (35 TC) ===\n');
 const VALID_MODELS = ['opus', 'sonnet', 'haiku', 'fable'];
 const VALID_MEMORY = ['user', 'project', 'local', 'none'];
 
-// --- All 31 agents ---
+// --- All agents ---
+// v2.1.25 (#128): 6 pdca-eval-* tombstone stubs deleted (ADR 0014 —
+// governance moved to test/contract/deprecation-registry.json).
 const ALL_AGENTS = [
   'bkend-expert', 'bkit-impact-analyst', 'cc-version-researcher',
   'code-analyzer', 'cto-lead', 'design-validator', 'enterprise-expert',
   'frontend-architect', 'gap-detector', 'infra-architect',
-  'pdca-eval-act', 'pdca-eval-check', 'pdca-eval-design', 'pdca-eval-do',
-  'pdca-eval-plan', 'pdca-eval-pm', 'pdca-iterator', 'pipeline-guide',
+  'pdca-iterator', 'pipeline-guide',
   'pm-discovery', 'pm-lead', 'pm-lead-skill-patch', 'pm-prd',
   'pm-research', 'pm-strategy', 'product-manager', 'qa-monitor',
   'qa-strategist', 'report-generator', 'security-architect',

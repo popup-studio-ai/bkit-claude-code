@@ -111,13 +111,8 @@ const ALL_AGENTS = [
   'report-generator',
   'security-architect',
   'starter-guide',
-  // v1.6.2 additions (8 agents)
-  'pdca-eval-plan',
-  'pdca-eval-design',
-  'pdca-eval-do',
-  'pdca-eval-check',
-  'pdca-eval-act',
-  'pdca-eval-pm',
+  // v1.6.2 additions (pdca-eval-* stubs removed in v2.1.25 — see
+  // test/contract/deprecation-registry.json + ADR 0014)
   'skill-needs-extractor',
   'pm-lead-skill-patch',
 ];
@@ -150,13 +145,7 @@ const EXPECTED_MODELS = {
   'starter-guide': 'sonnet',
   'qa-monitor': 'haiku',
   'report-generator': 'haiku',
-  // v1.6.2 additions (pdca-eval-* are deprecated tombstones — haiku since v2.1.25)
-  'pdca-eval-plan': 'haiku',
-  'pdca-eval-design': 'haiku',
-  'pdca-eval-do': 'haiku',
-  'pdca-eval-check': 'haiku',
-  'pdca-eval-act': 'haiku',
-  'pdca-eval-pm': 'haiku',
+  // v1.6.2 additions (pdca-eval-* tombstones deleted in v2.1.25 — ADR 0014)
   'skill-needs-extractor': 'sonnet',
   'pm-lead-skill-patch': 'sonnet',
 };
@@ -184,10 +173,7 @@ ALL_AGENTS.forEach((agent, index) => {
     `${agent}: frontmatter parseable with name="${frontmatter?.name || 'N/A'}"`);
 
   // TC2: Trigger keywords exist in description (internal-only agents exempt)
-  const INTERNAL_AGENTS = [
-    'pdca-eval-plan', 'pdca-eval-design', 'pdca-eval-do', 'pdca-eval-check',
-    'pdca-eval-act', 'pdca-eval-pm', 'skill-needs-extractor', 'pm-lead-skill-patch'
-  ];
+  const INTERNAL_AGENTS = ['skill-needs-extractor', 'pm-lead-skill-patch'];
   if (INTERNAL_AGENTS.includes(agent)) {
     skip(`AG-${num}-TRIG`, `${agent}: internal-only agent, trigger keywords not required`);
   } else {

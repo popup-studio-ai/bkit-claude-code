@@ -142,7 +142,7 @@ Output Styles (v1.5.3)
 | `/phase-8-review` | Code review and gap analysis |
 | `/phase-9-deployment` | Production deployment (CI/CD, K8s) |
 
-### Agents (40 total, auto-triggered by keywords — 9 fable / 7 opus / 16 sonnet / 8 haiku)
+### Agents (34 total, auto-triggered by keywords — 9 fable / 7 opus / 16 sonnet / 2 haiku)
 
 > Full agent list at [bkit-system/components/agents/_agents-overview.md](../bkit-system/components/agents/_agents-overview.md). Models and constraints enforced by v2.1.10 3-Tier Agent Security Model + Sprint 7 `cto-lead` body (5 Task spawn examples + `Task(pm-lead)`/`Task(qa-lead)`/`Task(pdca-iterator)` frontmatter).
 

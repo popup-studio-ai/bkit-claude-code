@@ -60,7 +60,9 @@ EXPECTED_SKILL_NAMES.forEach((name) => {
 // Net: 36 - 6 + 4 = 34.
 // v2.1.17: 6 pdca-eval-* deprecation tombstones re-added as stubs (frontmatter
 // `deprecatedIn` flag); excluded from the active count. Total files = 40.
-// See docs/06-guide/contract-baseline-rollforward.guide.md.
+// v2.1.25 (#128, ADR 0014): live stubs removed; deprecation governance moved
+// to test/contract/deprecation-registry.json. agents/ holds active agents only.
+// See docs/06-guide/contract-baseline-rollforward.guide.md §5.6.
 const allAgentFiles = fs.readdirSync(agentsDir).filter((f) => f.endsWith('.md'));
 
 // v2.1.18: hasDeprecatedInFrontmatterFile imported from lib/util/frontmatter (CO-5).
@@ -71,19 +73,31 @@ const deprecatedAgentFiles = allAgentFiles.filter(
   (f) => hasDeprecatedInFrontmatterFile(path.join(agentsDir, f))
 );
 
+// v2.1.25 (#128): machine-readable deprecation registry (ADR 0014).
+const deprecationRegistry = JSON.parse(
+  fs.readFileSync(path.join(ROOT, 'test', 'contract', 'deprecation-registry.json'), 'utf8')
+);
+const registryAgentNames = Object.keys(deprecationRegistry.agents || {}).sort();
+
 // v2.1.17 (CO-3.1): EXPECTED_*_AGENT_NAMES imported from docs-code-invariants SoT.
 test('Active Agents count exactly 34', () => assert.strictEqual(agentFiles.length, 34));
 test('Active Agents count matches SoT', () => assert.strictEqual(agentFiles.length, EXPECTED_ACTIVE_AGENT_NAMES.length));
-test('Deprecated Agent tombstones exactly 6', () => assert.strictEqual(deprecatedAgentFiles.length, 6));
-test('Deprecated Agent count matches SoT', () => assert.strictEqual(deprecatedAgentFiles.length, EXPECTED_DEPRECATED_AGENT_NAMES.length));
+test('No deprecated stub files remain in agents/ (v2.1.25 #128)', () => assert.strictEqual(deprecatedAgentFiles.length, 0));
+test('Deprecation registry agent tombstones exactly 6', () => assert.strictEqual(registryAgentNames.length, 6));
+test('Deprecated Agent count matches SoT', () => assert.strictEqual(registryAgentNames.length, EXPECTED_DEPRECATED_AGENT_NAMES.length));
+test('Registry agent tombstones deep-equal SoT', () => {
+  assert.deepStrictEqual(registryAgentNames, [...EXPECTED_DEPRECATED_AGENT_NAMES].sort());
+});
 
 EXPECTED_ACTIVE_AGENT_NAMES.forEach((name) => {
   test(`Agent '${name}.md' exists`, () => assert.ok(agentFiles.includes(`${name}.md`)));
 });
 
 EXPECTED_DEPRECATED_AGENT_NAMES.forEach((name) => {
-  test(`Deprecated Agent stub '${name}.md' exists with deprecatedIn`, () => {
-    assert.ok(deprecatedAgentFiles.includes(`${name}.md`));
+  test(`Deprecated Agent '${name}' has registry tombstone and no stub file`, () => {
+    const entry = (deprecationRegistry.agents || {})[name];
+    assert.ok(entry && entry.deprecatedIn, `registry entry missing deprecatedIn: ${name}`);
+    assert.ok(!fs.existsSync(path.join(agentsDir, `${name}.md`)), `stub file must be absent: ${name}.md`);
   });
 });
 

@@ -5,12 +5,9 @@ description: |
   Coordinates qa-test-planner, qa-test-generator, qa-debug-analyst, and qa-monitor
   to produce comprehensive QA verification before PDCA Report phase.
 
-  Triggers: qa team, QA lead, test execution, QA phase, QA 실행,
-  QA팀, QAリード, テスト実行, QA执行, QA ejecucion, QA execution,
-  QA-Ausfuhrung, esecuzione QA
-
-  Do NOT use for: static gap analysis (use gap-detector), code review (use code-analyzer),
-  or Starter level projects without Agent Teams.
+  Triggers: qa team, QA lead, test execution, QA phase, QA execution,
+  QA 실행, QA팀,
+  QAリード, QA执行, QA ejecucion, exécution QA, QA-Ausfuhrung, esecuzione QA
 model: fable
 effort: high
 maxTurns: 30
@@ -48,6 +45,12 @@ skills:
 # QA Team Lead Agent
 
 Orchestrates QA phase of the PDCA cycle. Runs L1-L5 tests with Chrome MCP integration and graceful fallback.
+
+## When NOT to use this agent
+
+- Static gap analysis (use gap-detector)
+- Code review (use code-analyzer)
+- Starter level projects without Agent Teams
 
 ## Orchestration Protocol
 

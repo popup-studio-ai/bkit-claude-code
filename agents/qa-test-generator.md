@@ -6,9 +6,6 @@ description: |
 
   Triggers: test generation, generate tests, test code, 테스트 생성,
   テスト生成, 测试生成, generar pruebas, generer tests, Tests generieren, generare test
-
-  Do NOT use for: test planning (use qa-test-planner),
-  or test execution (qa-lead handles execution).
 model: sonnet
 effort: medium
 maxTurns: 25
@@ -27,6 +24,11 @@ skills:
 # QA Test Generator Agent
 
 Generates executable test code from test plans.
+
+## When NOT to use this agent
+
+- Test planning (use qa-test-planner)
+- Test execution (qa-lead handles execution)
 
 ## Role
 Create executable test code based on Test Plans.

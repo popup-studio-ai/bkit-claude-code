@@ -2,7 +2,7 @@
 name: sprint-report-writer
 description: |
   Sprint completion report writer. Aggregates phaseHistory, iterateHistory,
-  featureMap, kpi, qualityGates, autoPause.pauseHistory into a final
+  featureMap, kpi, qualityGates, and autoPause.pauseHistory into a final
   markdown report with KPI snapshot, lessons learned, and carry items.
 
   Use proactively when sprint phase advances to report or when user invokes
@@ -10,15 +10,8 @@ description: |
 
   Triggers: sprint report, sprint completion, sprint kpi, sprint carry items,
   스프린트 보고서, 스프린트 완료, 스프린트 KPI, 인계 항목,
-  スプリントレポート, スプリント完了, スプリントKPI, 持ち越し項目,
-  冲刺报告, 冲刺完成, 冲刺KPI, 结转项,
-  reporte sprint, finalizacion sprint, KPI sprint, items pendientes,
-  rapport sprint, achevement sprint, KPI sprint, elements reportes,
-  Sprint-Bericht, Sprint-Abschluss, Sprint-KPI, Ubertragungselemente,
-  rapporto sprint, completamento sprint, KPI sprint, elementi riportati
-
-  Do NOT use for: PDCA single-feature report (use report-generator),
-  Starter level projects, or non-sprint reporting.
+  スプリントレポート, 冲刺报告, reporte sprint, rapport sprint,
+  Sprint-Bericht, rapporto sprint
 model: sonnet
 effort: medium
 maxTurns: 20
@@ -30,6 +23,11 @@ tools:
   - Write
   - Edit
 ---
+
+## When NOT to use this agent
+
+Do NOT use for: PDCA single-feature reports (use report-generator),
+Starter level projects, or non-sprint reporting.
 
 # Sprint Report Writer Agent
 

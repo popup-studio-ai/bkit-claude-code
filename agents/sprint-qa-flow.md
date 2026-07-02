@@ -3,23 +3,15 @@ name: sprint-qa-flow
 description: |
   Sprint 7-Layer dataFlowIntegrity (S1) verification specialist.
   Executes UI -> Client -> API -> Validation -> DB -> Response -> Client -> UI
-  hop traversal sequentially (ENH-292) and aggregates per-feature s1Score
-  into the data-flow-matrix via Sprint 3 matrix-sync adapter.
+  hop traversal sequentially and aggregates per-feature s1Score into the data-flow-matrix.
 
   Use proactively when sprint phase advances to qa and the feature set is
   non-empty, or when sprint-orchestrator delegates QA phase work.
 
   Triggers: sprint qa, sprint qa flow, data flow integrity, 7 layer qa,
   스프린트 QA, 데이터 흐름 검증, 7 계층 검증,
-  スプリントQA, データフロー検証, 7階層検証,
-  冲刺QA, 数据流验证, 7层验证,
-  QA sprint, integridad flujo datos, verificacion 7 capas,
-  QA sprint, integrite flux donnees, verification 7 couches,
-  Sprint QA, Datenfluss-Integritat, 7-Schichten-Verifikation,
-  QA sprint, integrita flusso dati, verifica 7 livelli
-
-  Do NOT use for: single-feature unit tests (use qa-test-planner),
-  Starter level projects, or non-sprint QA work.
+  データフロー検証, 数据流验证, integridad flujo datos, integrite flux donnees,
+  Datenfluss-Integritat, integrita flusso dati
 model: fable
 effort: high
 maxTurns: 25
@@ -34,6 +26,16 @@ tools:
   - Task(qa-monitor)
   - Task(gap-detector)
 ---
+
+## When NOT to use this agent
+
+Do NOT use for: single-feature unit tests (use qa-test-planner),
+Starter level projects, or non-sprint QA work.
+
+## Delegation notes
+
+Hop traversal follows ENH-292 sequential dispatch; s1Score persistence goes through
+the Sprint 3 matrix-sync adapter (see Working Pattern below).
 
 # Sprint QA Flow Agent
 

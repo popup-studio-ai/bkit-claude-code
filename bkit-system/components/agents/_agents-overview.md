@@ -2,7 +2,7 @@
 
 > List of 34 Agents defined in bkit and their roles (v2.1.13)
 >
-> **v2.1.25 (provisional)**: Claude 5 Model Alignment — 4-tier role-based model matrix: 9 fable (verification & orchestration core) / 7 opus (deep reasoning & security) / 16 sonnet (implementers) / 8 haiku (monitors + deprecated tombstones). 16 reassignments (9 opus→fable, 1 opus→sonnet sprint-report-writer, 6 sonnet→haiku pdca-eval-* tombstones). Model floor: `fable` requires CC ≥ v2.1.170 (SessionStart advisory ENH-368 below it). CC recommended: v2.1.198.
+> **v2.1.25**: Claude 5 Model Alignment + Issue Response — 4-tier role-based model matrix: 9 fable (verification & orchestration core) / 7 opus (deep reasoning & security) / 16 sonnet (implementers) / 2 haiku (monitors). 16 reassignments (9 opus→fable, 1 opus→sonnet sprint-report-writer, 6 sonnet→haiku pdca-eval-* — subsequently REMOVED from agents/ per #128/ADR 0014, deprecation registry at test/contract/deprecation-registry.json). Descriptions compacted −44% per #129 (compact 8-language triggers; "Do NOT use for" moved to body). Model floor: `fable` requires CC ≥ v2.1.170 (SessionStart advisory ENH-368 below it). CC recommended: v2.1.198.
 > **v2.1.24**: Skill namespace hardening (#125/#126) — agents unchanged (40 agent files: 34 active + 6 deprecated pdca-eval-* tombstones).
 > **v2.1.13**: Sprint Management agents — added 4 sprint agents (`sprint-orchestrator`, `sprint-master-planner`, `sprint-qa-flow`, `sprint-report-writer`). Removed 6 pdca-eval-* agents (Korean-only frontmatter + v1.6.1 stale baseline + 0 spawn sites). Total 36 → 34. cto-lead/pm-lead/qa-lead extended with sprint Task spawn patterns + body sections. pdca-iterator/product-manager/gap-detector/self-healing/pipeline-guide/qa-monitor descriptions extended for sprint awareness (관점 1-1).
 > **v2.1.11**: 4 Sprints × 20 FRs Integrated Enhancement — Agents unchanged (36); Sprint γ adds `lib/application/pdca-lifecycle/` pilot referenced by `pdca-iterator` and `gap-detector` workflows. CC recommended: v2.1.118+ (79 consecutive compatible releases).
@@ -71,9 +71,9 @@ Agents form bkit's **Behavioral Rules Layer**, designed according to [[../../phi
 | **fable** (9) | cto-lead, sprint-orchestrator, sprint-master-planner, pm-lead, qa-lead, gap-detector, design-validator, pdca-iterator, sprint-qa-flow | Verification & orchestration core (long-horizon leads + verifiers) — requires CC ≥ v2.1.170 |
 | **opus** (7) | security-architect, code-analyzer, self-healing, infra-architect, enterprise-expert, bkit-impact-analyst, cc-version-researcher | Deep reasoning & security (refusal-sensitive headless paths, deep single-shot analysis) |
 | **sonnet** (16) | bkend-expert, frontend-architect, pipeline-guide, pm-discovery, pm-lead-skill-patch, pm-prd, pm-research, pm-strategy, product-manager, qa-debug-analyst, qa-strategist, qa-test-generator, qa-test-planner, skill-needs-extractor, sprint-report-writer, starter-guide | Execution, guidance, iteration |
-| **haiku** (8) | qa-monitor, report-generator, + 6 deprecated pdca-eval-* tombstones | Fast monitoring, document generation, minimum-cost tombstones |
+| **haiku** (2) | qa-monitor, report-generator | Fast monitoring, document generation |
 
-**Distribution**: 40 total agents = 9 fable / 7 opus / 16 sonnet / 8 haiku (34 active excl. 6 deprecated tombstones = 9 fable / 7 opus / 16 sonnet / 2 haiku)
+**Distribution**: 34 total agents = 9 fable / 7 opus / 16 sonnet / 2 haiku (6 deprecated pdca-eval-* registry-tombstoned per ADR 0014 — no stub files remain in agents/)
 
 ## Full List
 
@@ -170,13 +170,12 @@ After PDCA cycle → "Generate completion report? (report-generator)"
 ---
 name: agent-name
 description: |
-  Agent description.
-
+  1-2 role sentences (distinctive capability words = CC semantic-delegation signal).
   Use proactively when user...
-
-  Triggers: keyword1, keyword2, 한글키워드, キーワード, 关键词
-
-  Do NOT use for: exclusion conditions
+  Triggers: full EN keyword list, full KO keyword list, then EXACTLY ONE anchor
+  keyword per other language in order JA, ZH, ES, FR, DE, IT (compact 8-language
+  encoding, issue #129 / v2.1.25 — budget: <= 700 bytes UTF-8, locked by
+  test/regression/issue-129-description-budget.test.js)
 allowed-tools:
   - Read
   - Write
@@ -187,6 +186,9 @@ allowed-tools:
   - Task
   - LSP
   - TodoWrite
+# NOTE (v2.1.25, #129): "Do NOT use for" exclusions and version/auto-invoke notes
+# live in the agent BODY ("## When NOT to use this agent" / "## Delegation notes"),
+# loaded only on invocation — never in the always-resident description.
 hooks:
   PreToolUse:
     - matcher: "Write"

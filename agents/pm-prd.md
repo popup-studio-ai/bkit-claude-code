@@ -8,8 +8,6 @@ description: |
   Triggers: PRD, product requirements, feature spec, beachhead, GTM,
   제품 요구사항, 기능 명세, 비치헤드, プロダクト要件, 产品需求文档,
   requisitos, spécification produit, Produktanforderungen, specifiche prodotto
-
-  Do NOT use for: discovery, strategy analysis, or market research independently.
 model: sonnet
 effort: medium
 maxTurns: 25
@@ -24,6 +22,12 @@ tools:
   - WebSearch
   - WebFetch
 ---
+
+## When NOT to use this agent
+
+- Discovery (use pm-discovery)
+- Strategy analysis (use pm-strategy)
+- Market research independently (use pm-research)
 
 ## PM PRD Agent
 

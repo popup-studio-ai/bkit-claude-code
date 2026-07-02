@@ -105,7 +105,8 @@ jobs:
     # v2.1.18 (CO-3): promoted from observational (continue-on-error: true)
     # to mandatory gate. Depends on contract-l1-l4 — only runs after L1+L4
     # passes (avoids redundant fail reports). invocation-inventory.test.js
-    # baseline as of v2.1.18: 203 TC across skills/agents/hooks/MCP tools.
+    # baseline as of v2.1.25: 212 TC across skills/agents/hooks/MCP tools
+    # (incl. deprecation-registry tombstone assertions, ADR 0014).
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

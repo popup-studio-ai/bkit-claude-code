@@ -215,11 +215,40 @@ PASS 확인 후 commit.
 
 ### 5.5 Tombstone Removal (장기 stub 정리)
 
+> **⚠️ Superseded (v2.1.25, ADR 0014)**: 본 절의 "LTS rollforward까지 stub 존속" 전제조건은 §5.6의 registry 경로로 대체되었습니다. LTS rollforward를 기다리지 않고도 stub을 제거할 수 있습니다.
+
 LTS baseline이 메이저 line 변경으로 rollforward되면, 기존 deprecation stub은 더 이상 필요 없을 수 있습니다. 다음 조건 모두 만족 시 stub 자체를 삭제:
 
 - 새 LTS baseline에도 해당 항목이 없음
 - Latest baseline에도 해당 항목이 없음 (stub 캡처 후 다음 minor에서 stub 제거 → 새 Latest 캡처)
 - 1 메이저 line 이상 stub 상태로 존속
+
+### 5.6 Registry 기반 Tombstone (v2.1.25, ADR 0014 — 권장 경로)
+
+live stub `.md` 파일은 공짜가 아닙니다 (issue #128): CC가 stub description을 매 세션 에이전트 인벤토리에 상주 로드하고, 에이전트별 비활성화 메커니즘이 없으며, `tools: []`가 목록에서 "(Tools: All tools)"로 렌더링됩니다. v2.1.25부터 **stub 파일 대신 registry tombstone**을 사용합니다:
+
+1. **Registry에 항목 추가**: `test/contract/deprecation-registry.json`의 해당 맵(`agents` / `skills` / `mcpTools`)에 항목 작성:
+
+   ```json
+   "agents": {
+     "<deprecated-agent>": {
+       "deprecatedIn": "vX.Y.Z",
+       "replacedBy": "<successor>",
+       "reason": "<one-line migration rationale>",
+       "deprecationCommit": "<short-sha>",
+       "stubRemovedIn": "vX.Y.Z",
+       "issue": "#<n>"
+     }
+   }
+   ```
+
+2. **stub 파일 삭제** (`git rm agents/<name>.md`). baseline JSON은 절대 수정하지 않음 — `contract-test-run.js`의 `loadDeprecationRegistry()`가 `deprecatedIn`을 가진 registry 항목을 live stub과 동등하게 인정하므로 L4가 계속 green.
+
+3. **SoT 동기화**: `lib/domain/rules/docs-code-invariants.js`의 `EXPECTED_DEPRECATED_AGENT_NAMES`는 registry agent 키의 미러 — `invocation-inventory.test.js`가 deep-equal로 검증하므로 두 곳을 함께 갱신.
+
+4. **검증**: §5.4와 동일 (`--compare <LTS>` 및 `--compare <Latest>` 모두 PASS) + `node test/contract/agent-deprecation.test.js` (registry-tombstone fixture 포함) + `node test/contract/invocation-inventory.test.js`.
+
+**7.1 사고의 교훈 적용**: §7.1 사고의 근본 원인은 "제거 사실이 어디에도 기계 판독 가능하게 선언되지 않은 것"이었습니다. registry는 그 교훈의 종착점입니다 — 무덤 선언이 (a) 프롬프트 표면 밖에 있고, (b) 구조화된 JSON으로 남으며, (c) stub 없는 제거는 여전히 L4 FAIL로 차단됩니다 (`missing-stub` fixture가 보증). 신규 deprecation은 §5.2 stub 방식 대신 본 절의 registry 방식을 사용하십시오.
 
 ---
 
@@ -266,6 +295,8 @@ LTS baseline이 메이저 line 변경으로 rollforward되면, 기존 deprecatio
 
 ## 8. 관련 문서
 
+- `docs/adr/0014-deprecation-registry.en.md` (+ `.ko.md`) — registry 기반 tombstone 결정 (§5.6)
+- `test/contract/deprecation-registry.json` — deprecation registry (v2.1.25~)
 - `.github/workflows/contract-check.yml` — 실제 CI gate 정의
 - `test/contract/scripts/contract-test-run.js` — runner 구현
 - `test/contract/scripts/contract-baseline-collect.js` — collector 구현
@@ -280,3 +311,4 @@ LTS baseline이 메이저 line 변경으로 rollforward되면, 기존 deprecatio
 | Version | Date | Changes | Author |
 |---------|------|---------|--------|
 | 0.1 | 2026-05-20 | Initial guide (v2.1.17 도입 시점) | kay |
+| 0.2 | 2026-07-02 | §5.6 registry 기반 tombstone 절차 추가, §5.5 superseded 표기 (v2.1.25, ADR 0014, issue #128) | kay |

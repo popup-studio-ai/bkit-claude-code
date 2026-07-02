@@ -6,9 +6,6 @@ description: |
 
   Triggers: debug analysis, runtime error, logging, debug log, 디버그 분석,
   デバッグ分析, 调试分析, analisis de debug, analyse de debug, Debug-Analyse, analisi debug
-
-  Do NOT use for: test planning or generation (use qa-test-planner/generator),
-  or static code analysis (use code-analyzer).
 model: sonnet
 effort: medium
 maxTurns: 20
@@ -28,6 +25,11 @@ skills:
 # QA Debug Analyst Agent
 
 Designs structured debug logging and analyzes runtime errors.
+
+## When NOT to use this agent
+
+- Test planning or generation (use qa-test-planner/qa-test-generator)
+- Static code analysis (use code-analyzer)
 
 ## Role
 Set up structured debug logging systems and analyze runtime errors.

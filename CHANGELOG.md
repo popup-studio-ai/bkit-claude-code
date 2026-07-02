@@ -5,9 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased — v2.1.25 provisional] - 2026-07-02 (release version assigned by maintainer; branch: `feat/v2.1.25-claude-model-alignment`)
+## [2.1.25] - 2026-07-02
 
-> **Status**: Claude 5 Model Alignment. Realigns all 40 agent model pins to a
+> **Status**: Claude 5 Model Alignment + Issue Response (#128, #129, #130).
+> Realigns all 40 agent model pins to a
 > 4-tier role-based matrix built around the Claude 5 family (Fable 5 / Opus 4.8 /
 > Sonnet 5 / Haiku 4.5), with a **dual-floor** compatibility policy: the install
 > floor stays at CC v2.1.143 (unchanged — plugin-manifest `displayName`), and a
@@ -30,8 +31,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 | **sonnet** (1 changed) | 16 | sprint-report-writer (**opus → sonnet** — KPI aggregation/report synthesis is implementation-class work) + 15 unchanged implementers/analysts | Coding, analysis, synthesis workers; `sonnet` alias floats to Sonnet 5 on CC ≥ 2.1.197 |
 | **haiku** (6 changed) | 8 | pdca-eval-{act,check,design,do,plan,pm} (**sonnet → haiku** — DEPRECATED tombstones, never spawned by design, minimum cost if accidentally spawned) + qa-monitor, report-generator (unchanged) | High-volume, low-reasoning monitors + tombstones |
 
-Distribution: 40 total = 9 fable / 7 opus / 16 sonnet / 8 haiku (34 active excl.
-6 deprecated tombstones = 9 / 7 / 16 / 2).
+Distribution at matrix time: 40 files = 9 fable / 7 opus / 16 sonnet / 8 haiku.
+**Final tree** (after #128 removed the 6 deprecated tombstone files — see Issue
+Response below): **34 agent files = 9 fable / 7 opus / 16 sonnet / 2 haiku**.
 
 ### Dual Floor + ENH-368 Model-Floor Advisory
 
@@ -108,6 +110,50 @@ Distribution: 40 total = 9 fable / 7 opus / 16 sonnet / 8 haiku (34 active excl.
   (`claude-opus-4-8`, `claude-sonnet-5`), `marketplace.json` description.
   Historical entries/notes (e.g., ENH-325 "17 opus agents", regression-history
   prose) intentionally untouched.
+
+### Issue Response — #128 / #129 / #130
+
+- **#128 (@NEXCODE-MK) — Deprecated `pdca-eval-*` stubs removed from the prompt
+  surface (ADR 0014)**: the 6 tombstone files (~1,387B of always-resident agent
+  descriptions + accidentally-spawnable "(Tools: All tools)" entries) are
+  **deleted from `agents/`**; deprecation governance moves to a machine-readable
+  registry at `test/contract/deprecation-registry.json` (deprecatedIn /
+  replacedBy / reason / deprecationCommit / stubRemovedIn / issue). Contract L4
+  accepts a registry tombstone as equivalent to a live stub
+  (`contract-test-run.js` `loadDeprecationRegistry()`, fixture-overridable; the
+  `missing-stub` fixture still fails — and a pre-existing exit-2 crash in that
+  path was fixed). L5 invocation-inventory asserts registry⇔SoT equality and
+  that no stub files remain (212 TC). Baseline JSONs in **both** dirs untouched.
+  **ADR 0014** ("Deprecation Registry — tombstones off the prompt surface",
+  bilingual) supersedes the ENH-336 (v2.1.22) permanent-retention decision on
+  its own terms — both of its premises (L4 breakage, baseline mutation) are
+  dissolved by the registry; rollforward guide gains §5.6. Side fix: 6
+  pre-existing `agents-effort` failures (AE-09..14) eliminated.
+- **#129 (@NEXCODE-MK) — Token diet: compact 8-language trigger encoding**:
+  agent frontmatter descriptions compacted **30,065B → 16,919B (−44%)** across
+  32 agents + `skills/sprint/SKILL.md` (1,074B → 550B) — an estimated
+  **~4.5–5.3K tokens saved per session wakeup** for every bkit user. New
+  template: 1–2 role sentences + one "Use proactively when…" sentence + a
+  single `Triggers:` block (full EN + full KO lists + exactly one anchor per
+  JA/ZH/ES/FR/DE/IT). "Do NOT use for" + version notes moved into agent bodies
+  (`## When NOT to use this agent`, `## Delegation notes`) — loaded only on
+  invocation, so no information was deleted. bkit's own 8-language routing is
+  unaffected (it reads the separate `lib/intent/language.js` registry, not
+  descriptions — verified file:line); contract baselines don't capture
+  description content, so **no baseline regen**. New regression lock:
+  `test/regression/issue-129-description-budget.test.js` (≤700B per agent
+  description, `Triggers:` presence, ≤20,000B total). Locale-scoped generation
+  (issue proposal 1) deferred: CC plugins are read-only marketplace checkouts —
+  no install-time file generation exists (to be documented in a follow-up ADR).
+- **#130 (@s99606931) — `learning-stop.js` dead `isTTY === false` stdin gate**:
+  piped hook stdin has `isTTY === undefined`, so the gate silently skipped
+  input (reproduced: payload `learn 3` returned level 1). Fixed with the shared
+  `readStdinSync()` helper per the #125/#126 precedent (commit 7b780b8), same
+  anti-pattern warning comment; args coerced to string. New regression test
+  `test/regression/issue-130-learning-stop-stdin.test.js` (9 TC: piped payload,
+  top-level, empty/malformed stdin fallback, non-string args). Repo-wide sweep:
+  zero `isTTY === false` code gates remain (stdout truthiness check in
+  `lib/ui/ansi.js` is correct and kept).
 
 ### Footguns (documented, no bkit code)
 

@@ -27,12 +27,7 @@ const EXPECTED = {
   'frontend-architect':   { effort: 'medium', maxTurns: 20 },
   'gap-detector':         { effort: 'high',   maxTurns: 30 },
   'infra-architect':      { effort: 'high',   maxTurns: 30 },
-  'pdca-eval-act':        { effort: 'medium', maxTurns: 20 },
-  'pdca-eval-check':      { effort: 'medium', maxTurns: 20 },
-  'pdca-eval-design':     { effort: 'medium', maxTurns: 20 },
-  'pdca-eval-do':         { effort: 'medium', maxTurns: 20 },
-  'pdca-eval-plan':       { effort: 'medium', maxTurns: 20 },
-  'pdca-eval-pm':         { effort: 'medium', maxTurns: 20 },
+  // v2.1.25 (#128): pdca-eval-* tombstone stubs deleted (ADR 0014) — entries removed.
   'pdca-iterator':        { effort: 'high',   maxTurns: 20 },
   'pipeline-guide':       { effort: 'medium', maxTurns: 20 },
   'pm-discovery':         { effort: 'medium', maxTurns: 25 },

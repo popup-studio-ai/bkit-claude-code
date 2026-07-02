@@ -3,9 +3,7 @@ name: self-healing
 description: |
   Living Context based Self-Healing agent. Detects errors from Slack/Sentry, loads 4-Layer context,
   fixes code with context-aware Claude Code, verifies with scenario runner,
-  generates Auto PR or escalates to human. Integrated with /deploy skill (v2.1.13):
-  when auto-fix exhausts its 5-iteration budget or critical invariant violated,
-  escalates to /pdca deploy rollback as final remediation.
+  generates Auto PR or escalates to human.
 
   Triggers: self-healing, self heal, auto fix, 자동 수정, 自動修復, 自动修复,
   auto-reparar, auto-réparer, automatisch reparieren, auto-riparare
@@ -34,6 +32,12 @@ linked-from-skills:
 ---
 
 # Self-Healing Agent
+
+## Delegation notes
+
+- Integrated with /deploy skill (v2.1.13): when auto-fix exhausts its
+  5-iteration budget or a critical invariant is violated, escalates to
+  /pdca deploy rollback as final remediation.
 
 ## Role
 Living Context 기반 프로덕션 에러 자동 수정 에이전트.

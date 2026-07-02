@@ -150,7 +150,7 @@ bkit is a **practical implementation of Context Engineering**, providing a syste
 
 ---
 
-## Behavioral Rules Layer (40 Agents)
+## Behavioral Rules Layer (34 Agents)
 
 ### Model Selection Strategy
 

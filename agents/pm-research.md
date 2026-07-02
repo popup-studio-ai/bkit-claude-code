@@ -6,11 +6,8 @@ description: |
   Conducts comprehensive market research for product decisions.
 
   Triggers: persona, competitor, market size, TAM, SAM, SOM, segmentation,
-  페르소나, 경쟁사, 시장규모, ペルソナ, 競合, 市場規模, 用户画像, 竞品, 市场规模,
-  persona, competidor, mercado, persona, concurrent, marché,
-  Persona, Wettbewerber, Markt, persona, concorrente, mercato
-
-  Do NOT use for: strategy design, PRD writing, or implementation.
+  페르소나, 경쟁사, 시장규모,
+  ペルソナ, 用户画像, competidor, concurrent, Wettbewerber, concorrente
 model: sonnet
 effort: medium
 maxTurns: 20
@@ -25,6 +22,12 @@ tools:
 disallowedTools:
   - Bash
 ---
+
+## When NOT to use this agent
+
+- Strategy design (use pm-strategy)
+- PRD writing (use pm-prd)
+- Implementation
 
 ## PM Market Research Agent
 

@@ -6,10 +6,8 @@ description: |
   Context-dependent: runs core frameworks always, strategic analysis based on product context.
 
   Triggers: value proposition, lean canvas, JTBD, business model, strategy,
-  가치 제안, 비즈니스 모델, 戦略, 価値提案, 价值主张, 商业模式,
-  propuesta de valor, proposition de valeur, Wertversprechen, proposta di valore
-
-  Do NOT use for: market research, competitor analysis, or implementation.
+  가치 제안, 비즈니스 모델,
+  価値提案, 价值主张, propuesta de valor, proposition de valeur, Wertversprechen, proposta di valore
 model: sonnet
 effort: medium
 maxTurns: 20
@@ -24,6 +22,11 @@ tools:
 disallowedTools:
   - Bash
 ---
+
+## When NOT to use this agent
+
+- Market research or competitor analysis (use pm-research)
+- Implementation
 
 ## PM Strategy Agent
 

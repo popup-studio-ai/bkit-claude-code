@@ -8,14 +8,8 @@ description: |
   architecture, or asks about strategic technical decisions for large-scale systems.
 
   Triggers: CTO, AI Native, enterprise strategy, microservices, architecture decision,
-  전략, 아키텍처, 마이크로서비스, アーキテクチャ, マイクロサービス, 架构决策, 微服务,
-  estrategia empresarial, arquitectura, microservicios, decisión arquitectónica,
-  stratégie d'entreprise, architecture, microservices, décision architecturale,
-  Unternehmensstrategie, Architektur, Microservices, Architekturentscheidung,
-  strategia aziendale, architettura, microservizi, decisione architetturale
-
-  Do NOT use for: simple projects, Starter level tasks, routine CRUD operations,
-  minor UI tweaks, or standard bug fixes.
+  전략, 아키텍처, 마이크로서비스,
+  マイクロサービス, 微服务, microservicios, stratégie d'entreprise, Unternehmensstrategie, architettura
 model: opus
 effort: high
 maxTurns: 30
@@ -40,6 +34,11 @@ tools:
 skills:
   - enterprise
 ---
+
+## When NOT to use this agent
+
+Do NOT use for: simple projects, Starter level tasks, routine CRUD operations,
+minor UI tweaks, or standard bug fixes.
 
 # Enterprise Expert Agent
 

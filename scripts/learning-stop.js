@@ -8,7 +8,9 @@
  * @module scripts/learning-stop
  */
 
-// No common.js dependency needed
+// #130: read hook input via the shared, reliable reader (lib/core/io) —
+// same pattern as scripts/skill-post.js (fixed in #125/#126).
+const { readStdinSync } = require('../lib/core/io');
 
 function generateLearningCompletion(level) {
   const nextLevel = level < 5 ? level + 1 : null;
@@ -39,22 +41,17 @@ function formatOutput(result) {
 
 async function main() {
   try {
-    let input = '';
-    if (process.stdin.isTTY === false) {
-      const chunks = [];
-      for await (const chunk of process.stdin) {
-        chunks.push(chunk);
-      }
-      input = Buffer.concat(chunks).toString('utf8');
-    }
+    // Read hook input from stdin via the shared, reliable reader (lib/core/io).
+    // Do NOT hand-roll a `process.stdin.isTTY === false` guard: Node sets isTTY
+    // to `undefined` (not `false`) for piped stdin, so that guard silently skips
+    // the read, leaving the hook context empty and level always 1 (#130). This is
+    // the same readStdinSync() every sibling hook (skill-post, unified-*) uses.
+    const context = readStdinSync();
 
     let level = 1;
-    try {
-      const context = JSON.parse(input);
-      const args = context.tool_input?.args || '';
-      const match = args.match(/\d+/);
-      if (match) level = parseInt(match[0], 10);
-    } catch (e) {}
+    const args = String(context?.tool_input?.args || '');
+    const match = args.match(/\d+/);
+    if (match) level = parseInt(match[0], 10);
 
     const result = generateLearningCompletion(level);
 

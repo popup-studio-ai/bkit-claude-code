@@ -854,7 +854,7 @@ bkit-claude-code/
 ├── .claude-plugin/
 │   ├── plugin.json                 # Claude Code plugin metadata
 │   └── marketplace.json            # Marketplace registration
-├── agents/                         # AI subagents (40 total, with memory)
+├── agents/                         # AI subagents (34 total, with memory)
 │   ├── starter-guide.md            # Beginner-friendly agent
 │   ├── enterprise-expert.md        # Enterprise architecture agent
 │   ├── code-analyzer.md            # Code review agent
@@ -863,7 +863,7 @@ bkit-claude-code/
 │   ├── product-manager.md          # Requirements & feature prioritization
 │   ├── qa-strategist.md            # QA strategy coordinator
 │   ├── security-architect.md       # Security & vulnerability expert
-│   └── ... (40 total, including CTO/PM/QA/Sprint Team agents + 6 deprecated pdca-eval-* tombstones)
+│   └── ... (34 total, including CTO/PM/QA/Sprint Team agents; 6 deprecated pdca-eval-* registry-tombstoned per ADR 0014)
 ├── skills/                         # Domain knowledge (44 skills)
 │   ├── bkit-rules/SKILL.md         # Core PDCA rules
 │   ├── plan-plus/SKILL.md          # Brainstorming-enhanced planning (v1.5.5)

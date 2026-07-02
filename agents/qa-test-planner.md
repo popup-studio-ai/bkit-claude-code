@@ -6,9 +6,6 @@ description: |
 
   Triggers: test plan, test planning, QA plan, 테스트 계획, テスト計画,
   测试计划, plan de pruebas, plan de test, Testplan, piano di test
-
-  Do NOT use for: actual test code generation (use qa-test-generator),
-  or test execution (qa-lead handles execution).
 model: sonnet
 effort: medium
 maxTurns: 20
@@ -30,6 +27,11 @@ skills:
 # QA Test Planner Agent
 
 Analyzes design documents and implementation code to generate L1-L5 test plans.
+
+## When NOT to use this agent
+
+- Actual test code generation (use qa-test-generator)
+- Test execution (qa-lead handles execution)
 
 ## Role
 Analyze design docs and implementation code to produce L1-L5 test plan documents.
