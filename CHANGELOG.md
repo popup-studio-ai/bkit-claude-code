@@ -5,6 +5,82 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.27] - 2026-07-02
+
+> **Status**: Issue #132 (@hslee-cmyk) — bkit's orchestrator side-effects
+> (next-skill/agent guidance, hook-level phase auto-advance, decision-trace
+> `phase_transition`, audit `skill_executed`) were wired ONLY to
+> `PostToolUse:Skill`, which never fires on native slash commands
+> (`/bkit:pdca ...`) — the ONLY invocation form bkit's docs teach. So for
+> essentially all real usage the advertised AI-transparency audit trail was
+> empty, decision-trace had no records, and no orchestrator guidance appeared.
+> Same root-cause family as #125/#126; #126 fixed the false warning but left
+> the functionality dead. Root cause confirmed 4 ways (code + headless repro +
+> reporter repro + `UserPromptExpansion` payload reproduction); basis in
+> `.bkit/research/issue-132-*.md`. No Guessing: the fix is grounded in an
+> empirical CC v2.1.198 reproduction of the `UserPromptExpansion` event.
+
+### Slash-Path Orchestration Restored (ENH-371)
+
+- **Root fix — dual-wire to `UserPromptExpansion`**: bkit's four orchestrator
+  side-effects are extracted into a source-agnostic shared module
+  `lib/orchestrator/skill-invocation-effects.js` and fired from BOTH the
+  existing `PostToolUse:Skill` path (model-invoked) AND a NEW
+  `UserPromptExpansion` hook (native slash path). `UserPromptExpansion` is
+  CC's purpose-built slash-command-expansion event — empirically confirmed
+  firing on CC v2.1.198 with `command_source:"plugin"`, namespaced
+  `command_name:"bkit:pdca"`, and `command_args` — and self-filters (fires
+  only for command expansions, never plain text). The handler filters to
+  `command_source==='plugin'` + a resolvable bkit skill, is **fail-open**
+  (any error → exit 0; never blocks the user's command), and injects
+  next-skill guidance via stdout (the `UserPromptExpansion` context contract).
+- **Audit semantics**: the slash/pre-execution path records a new
+  **`skill_invoked`** audit action (via the audit-logger pass-through path,
+  the same mechanism `skill_executed` already uses — `ACTION_TYPES` untouched);
+  the model-invoked `Skill`-tool path keeps `skill_executed`. A content-derived
+  dedup key (`session_id:skill:action:feature`, derivable from both payloads)
+  prevents any double-record; the two paths are normally mutually exclusive
+  per invocation.
+- **Hook inventory**: `hooks.json` gains the `UserPromptExpansion` event
+  (HPQ-quoted); the L5 invocation-inventory invariant moves **21→22 events /
+  24→25 blocks** in lockstep (`docs-code-invariants.js` SoT +
+  `EXPECTED_HOOK_EVENT_NAMES` + `invocation-inventory.test.js` +
+  `l2-smoke.test.js`). `PostToolUse` stays 3 / `PreToolUse` stays 2.
+- **Two latent defects repaid for free**:
+  - **IntentRouter was 100% dead code** — `user-prompt-handler.js` called
+    `route(prompt, { onboarding: onboardingContext })` with an undefined
+    `onboardingContext`, throwing a swallowed `ReferenceError` so structured
+    suggestions were always `[]`. Fixed; the intent-router slash regex is also
+    widened (`[\w-]` → `[\w:-]`) so bkit's own namespaced `/bkit:pdca` commands
+    are recognized.
+  - **Stop-handler dispatch was silently broken on the slash path** — the
+    active-skill marker was written only from `skill-post.js` (dead on slash),
+    so `unified-stop.js` `SKILL_HANDLERS` never dispatched for any non-sprint
+    slash-invoked skill. The shared module now writes the marker on both paths.
+- **Graceful degradation**: on CC versions without `UserPromptExpansion` the
+  new hook is simply inert (= current behavior) — no regression, no floor bump.
+  Reachability canary integrity preserved (the `skill_post` key is NOT stamped
+  from the new path, keeping the #57317/#126 monitor meaningful).
+- **Verification**: gap analysis + QA + a live `claude -p "/bkit:pdca status"
+  --plugin-dir .` probe confirming a real `skill_invoked` audit entry is
+  written on the native slash path; full CI-mirror suite green
+  (invocation-inventory 22/25, l2-smoke, HPQ, docs-code-sync, bkit-full-system,
+  validate-plugin --strict); contract baselines byte-identical (no agent/model
+  change). New tests: `skill-invocation-effects`, `user-prompt-expansion-handler`,
+  `issue-132-slash-reach`.
+- **Contract-runner alignment (no baseline edit)**: adding a hook event exposed
+  that `runL1Hooks()` was the *only* L1 surface using strict count-equality
+  against the frozen baselines — `runL1Skills/Agents/MCP` all guard by
+  per-identity existence and tolerate additions (proof: baseline v2.1.9 declares
+  39 skills / 36 agents while HEAD ships 44 / 34, yet L1 passes). Per the
+  rollforward guide §3.1 (the LTS baseline is edited only at a major LTS
+  transition, never for a routine surface addition), the fundamental fix is in
+  the *runner*, not the snapshots: the hook events/blocks count asserts move
+  `=== ` → `>=` (additions OK; the pre-existing per-event existence loop remains
+  the real removal guard; a net count *decrease* still fails). Both CI compares
+  (`--compare v2.1.9` and `--compare v2.1.16`, `--level L1,L4`) pass with the
+  frozen baselines untouched.
+
 ## [2.1.26] - 2026-07-02
 
 > **Status**: Issue Response + v2.1.25 follow-up closure. MAIN: the `/plugin`

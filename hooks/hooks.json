@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-hooks.json",
-  "description": "bkit Vibecoding Kit v2.1.26 - Claude Code",
+  "description": "bkit Vibecoding Kit v2.1.27 - Claude Code",
   "hooks": {
     "SessionStart": [
       {
@@ -102,6 +102,17 @@
           {
             "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/user-prompt-handler.js\"",
+            "timeout": 3000
+          }
+        ]
+      }
+    ],
+    "UserPromptExpansion": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/user-prompt-expansion-handler.js\"",
             "timeout": 3000
           }
         ]

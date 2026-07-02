@@ -112,8 +112,8 @@ for (const rel of handlers) {
 // ============================================================
 // hooks.json structure sanity
 // ============================================================
-test('hooks.json has 21 event keys', () => {
-  assert.strictEqual(Object.keys(hooksJson.hooks).length, 21);
+test('hooks.json has 22 event keys', () => {
+  assert.strictEqual(Object.keys(hooksJson.hooks).length, 22);
 });
 test('hooks.json PreToolUse has 2 matcher blocks', () => {
   assert.strictEqual(hooksJson.hooks.PreToolUse.length, 2);
@@ -121,10 +121,10 @@ test('hooks.json PreToolUse has 2 matcher blocks', () => {
 test('hooks.json PostToolUse has 3 matcher blocks', () => {
   assert.strictEqual(hooksJson.hooks.PostToolUse.length, 3);
 });
-test('hooks.json total matcher-blocks = 24', () => {
+test('hooks.json total matcher-blocks = 25', () => {
   let total = 0;
   for (const [, entries] of Object.entries(hooksJson.hooks)) total += entries.length;
-  assert.strictEqual(total, 24);
+  assert.strictEqual(total, 25);
 });
 
 // Every block has type:'command' handler

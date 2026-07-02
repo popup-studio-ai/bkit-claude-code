@@ -12,13 +12,12 @@
 const path = require('path');
 const { readStdinSync } = require('../lib/core/io');
 const { debugLog } = require('../lib/core/debug');
-// C2 fix (audit): write the active-skill marker to a file (atomic, TTL-bounded)
-// instead of an in-memory var. Each Claude Code hook is a separate node process,
-// so the in-memory setActiveSkill never crossed process boundaries — every
-// unified-* reader's getActiveSkill() returned null and every per-skill PostToolUse
-// branch was dead code. The file marker survives across processes.
-const { writeActiveSkill } = require('../lib/core/active-skill-marker');
-const { getPdcaStatusFull, updatePdcaStatus } = require('../lib/pdca/status');
+// #132: the orchestrator side-effects (active-skill marker, orchestration,
+// audit, decision trace, PDCA status update) are lifted VERBATIM into the
+// shared lib/orchestrator/skill-invocation-effects module so the native
+// slash-command path (UserPromptExpansion) fires the identical effects. This
+// hook now delegates to that module for the Skill-tool path.
+const { runSkillInvocationEffects } = require('../lib/orchestrator/skill-invocation-effects');
 // C7/C8 (audit): atomic+locked reachability ping via the shared state-store, and
 // a single BKIT_VERSION source so all three reachability writers stamp the same value.
 const { lockedUpdate } = require('../lib/core/state-store');
@@ -28,16 +27,6 @@ const { BKIT_VERSION } = require('../lib/core/version');
 // lookup, the CODE_GENERATION_SKILLS list, the active-skill marker, audit target
 // and PDCA status — sees the bare folder name.
 const { normalizeSkillName } = require('../lib/core/skill-name');
-
-// Lazy load modules
-let orchestrator = null;
-
-function getOrchestrator() {
-  if (!orchestrator) {
-    orchestrator = require('../lib/skill-orchestrator.js');
-  }
-  return orchestrator;
-}
 
 /**
  * Parse skill invocation from tool input
@@ -127,8 +116,6 @@ function generateJsonOutput(suggestions, skillName) {
  * Main execution
  */
 async function main() {
-  const orch = getOrchestrator();
-
   try {
     // Read hook input from stdin via the shared, reliable reader (lib/core/io).
     // Do NOT hand-roll a `process.stdin.isTTY === false` guard: Node sets isTTY
@@ -141,6 +128,9 @@ async function main() {
     // Extract skill info from tool_input
     const toolInput = hookContext.tool_input || {};
     const { skillName, args } = parseSkillInvocation(toolInput);
+    // #132: session_id is present in the PostToolUse payload; fall back to ''
+    // gracefully when absent so the dedupe key stays well-formed.
+    const sessionId = hookContext.session_id || '';
 
     // v2.1.14 Sub-Sprint 2: Reachability ping (MON-CC-NEW-PLUGIN-HOOK-DROP)
     // SessionStart compares the ts of each PostToolUse stamp to detect silent
@@ -170,64 +160,19 @@ async function main() {
 
     debugLog('SkillPost', 'Processing skill post-execution', { skillName, args });
 
-    // v1.4.4: Set active skill for unified hooks (GitHub #9354 workaround)
-    // C2 fix: write to the file marker so cross-process unified-* readers see it.
-    writeActiveSkill({ skill: skillName });
-    debugLog('SkillPost', 'Active skill marker written for unified hooks', { skillName });
-
-    // Get orchestration result
-    const result = await orch.orchestrateSkillPost(skillName, {}, { args });
-    const suggestions = result.suggestions || {};
+    // #132: run the shared orchestrator side-effects (active-skill marker,
+    // orchestration, audit, decision trace, PDCA status). source:'skill-tool'
+    // records the `skill_executed` audit action — behavior identical to the
+    // pre-#132 inline glue for the Skill-tool path.
+    const { suggestions } = await runSkillInvocationEffects(skillName, args, {
+      source: 'skill-tool',
+      dedupeKey: `${sessionId}:${skillName}:${args.action || ''}:${args.feature || ''}`,
+    });
 
     // Claude Code: JSON output
-    const output = generateJsonOutput(suggestions, skillName);
+    const output = generateJsonOutput(suggestions || {}, skillName);
     output.status = 'success';
     console.log(JSON.stringify(output, null, 2));
-
-    // v2.0.0: Audit logging for skill execution
-    try {
-      const audit = require('../lib/audit/audit-logger');
-      audit.writeAuditLog({
-        actor: 'system', actorId: 'skill-post',
-        action: 'skill_executed',
-        category: 'skill',
-        target: skillName, targetType: 'skill',
-        result: 'success', destructiveOperation: false
-      });
-    } catch (_) {}
-
-    // v2.0.0: Decision tracing when skills make PDCA phase decisions
-    try {
-      const skillCfg = orch.getSkillConfig(skillName);
-      if (skillCfg && skillCfg['pdca-phase']) {
-        const dt = require('../lib/audit/decision-tracer');
-        const feature = args.feature || getPdcaStatusFull()?.currentFeature || '';
-        dt.recordDecision({
-          feature,
-          phase: skillCfg['pdca-phase'],
-          decisionType: 'phase_transition',
-          question: `Skill ${skillName} completed - advance PDCA phase?`,
-          chosenOption: `Advance to ${skillCfg['pdca-phase']}`,
-          rationale: `Skill ${skillName} maps to pdca-phase ${skillCfg['pdca-phase']}`,
-          confidence: 0.9,
-          impact: 'medium',
-          affectedFiles: [],
-          reversible: true
-        });
-      }
-    } catch (_) {}
-
-    // Update PDCA status if skill has pdca-phase
-    const skillConfig = orch.getSkillConfig(skillName);
-    if (skillConfig && skillConfig['pdca-phase']) {
-      const phase = skillConfig['pdca-phase'];
-      const feature = args.feature || getPdcaStatusFull()?.currentFeature;
-
-      if (feature) {
-        updatePdcaStatus(feature, phase);
-        debugLog('SkillPost', 'PDCA status updated', { feature, phase });
-      }
-    }
 
   } catch (e) {
     debugLog('SkillPost', 'Error in post-execution', { error: e.message });

@@ -135,7 +135,7 @@ According to Addy Osmani's research on AI-Native engineers, effective practition
 Context Engineering is the **systematic design of information flow to LLMs**—going beyond simple prompt crafting to build entire systems that consistently guide AI behavior.
 
 **Key Practices**:
-- Design multi-layered context injection systems (21 hook events, 6 layers)
+- Design multi-layered context injection systems (22 hook events, 6 layers)
 - Build state management with declarative state machines (20 transitions, 9 guards)
 - Create adaptive triggers based on user intent (8-language, auto-detection)
 - Implement quality feedback loops with quality gates and metrics (M1-M10)
@@ -145,7 +145,7 @@ Context Engineering is the **systematic design of information flow to LLMs**—g
 Domain Knowledge (44 Skills) ────────┐
 Behavioral Rules (34 Agents) ────────┤
 State Management (190 modules / 22 subdirs, Clean Arch 4-Layer + Application pilot) ─┤
-3-Layer Orchestration ────┼─→ 21-Event Hook System (24 blocks, 61 scripts)
+3-Layer Orchestration ────┼─→ 22-Event Hook System (25 blocks, 61 scripts)
   ├─ intent-router (feature>skill>agent)                         │    ─→ Dynamic Context Injection
   ├─ next-action-engine (Stop-family)                           │
   ├─ team-protocol (PM/CTO/QA Lead)                             │
@@ -194,7 +194,7 @@ bkit implements **Context Engineering**—the systematic curation of context tok
 | **Convention Skill (Phase 2)** | Defines naming, structure, patterns |
 | **CLAUDE.md Files** | Project-specific AI instructions |
 | **Skill System (44 skills)** | Domain-specific knowledge (v2.1.11 added bkit-evals, bkit-explore, pdca-watch, pdca-fast-track) |
-| **21-Event Hook System** | Centralized context injection via hooks.json (21 events / 24 blocks, 61 scripts); 3 attribution sites (Stop/SessionEnd/SubagentStop) |
+| **22-Event Hook System** | Centralized context injection via hooks.json (22 events / 25 blocks, 61 scripts); 3 attribution sites (Stop/SessionEnd/SubagentStop) |
 | **lib/ (190 modules)** | 22 subdirectories Clean Architecture 4-Layer with 7 Port↔Adapter pairs: application (v2.1.11 γ2 pilot), audit, cc-regression, control, core, **dashboard** (v2.1.11 β4), **defense**, **discovery** (v2.1.11 β1), **domain**, **evals** (v2.1.11 β2), **i18n** (v2.1.11 β3/β6), **infra**, intent, **orchestrator**, pdca, qa, quality, **sprint** (v2.1.13), task, team, ui, **util** |
 
 **Context Engineering Architecture (v2.1.13)**:

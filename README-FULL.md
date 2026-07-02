@@ -67,7 +67,7 @@ The terms used in this file, explained for someone who is new to AI-coding.
 | **bkit** | The plugin you're reading about. It adds 3 commands (`/sprint`, `/pdca`, `/control`), 44 skills, 34 specialist agents, 11 quality checks. |
 | **Skill** | A bundle of instructions Claude Code reads to remember "how do I run a PDCA cycle?" or "how do I plan a sprint?" When you type `/pdca`, a skill activates. |
 | **Agent** | A specialist version of Claude Code that knows one job very well — e.g. `frontend-architect`, `qa-lead`, `gap-detector`. The agent's job is in its name. |
-| **Hook** | A piece of code that runs *around* AI actions. bkit's hooks intercept dangerous actions (deleting files, leaking secrets), log every step, and inject context. There are 21 hook events Claude Code fires. |
+| **Hook** | A piece of code that runs *around* AI actions. bkit's hooks intercept dangerous actions (deleting files, leaking secrets), log every step, and inject context. There are 22 hook events Claude Code fires. |
 | **Context** | Everything the AI knows at the moment it decides what to write — your prompt, the file it just read, the rules it was given, its memory. AI quality is mostly about getting the right context to the AI at the right moment. |
 | **Context Engineering** | A discipline that says: *don't try to write the perfect prompt — build a system that gives the AI the right context every time.* bkit is a Context Engineering system. |
 | **PDCA** | Plan → Do → Check → Act. A 70-year-old continuous improvement loop. bkit's 9-phase version is `pm → plan → design → do → check → act → qa → report → archive`. |
@@ -142,7 +142,7 @@ These come from [`AI-NATIVE-DEVELOPMENT.md`](AI-NATIVE-DEVELOPMENT.md). They are
 
 ## 2. The Three Commands
 
-Everything else in bkit — 44 skills, 34 agents, 21 hooks, 11 quality gates, 226+ contract assertions — exists to make these three commands work reliably.
+Everything else in bkit — 44 skills, 34 agents, 22 hooks, 11 quality gates, 226+ contract assertions — exists to make these three commands work reliably.
 
 | Command | One-line purpose | When you use it |
 |---|---|---|
@@ -231,7 +231,7 @@ Critically, **every transition is gated** (see §5). The workflow can't accident
 
 `/control level N` is **the** autonomy knob. The same setting governs both Sprint and PDCA — there's no second knob to forget. The dial maps to a `stopAfter` phase (see §6). Trust Score (0–100) can recommend a level from your track record, but you stay in charge: `autoEscalation` / `autoDowngrade` flags in `bkit.config.json` decide whether bkit may move the dial on its own.
 
-> **Hook-driven invisible execution**: while you read the master plan, Claude Code's 21 hook events are quietly firing — `PreToolUse` blocks unsafe operations, `PostToolUse` logs every action, `SessionStart` restores memory, `Stop` writes the closing audit entry. You never invoke a hook directly; bkit attaches them automatically through `hooks/hooks.json` (24 blocks across 21 events). See §4.3 for the lifecycle map.
+> **Hook-driven invisible execution**: while you read the master plan, Claude Code's 22 hook events are quietly firing — `PreToolUse` blocks unsafe operations, `PostToolUse` logs every action, `SessionStart` restores memory, `Stop` writes the closing audit entry. You never invoke a hook directly; bkit attaches them automatically through `hooks/hooks.json` (25 blocks across 22 events). See §4.3 for the lifecycle map.
 
 > **8-language auto-trigger**: skills and agents declare keywords in 8 languages (EN, KO, JA, ZH, ES, FR, DE, IT). If you type *"로그인 기능 만들어줘"*, *"作成一个登录功能"*, or *"build a login feature"* — bkit's intent-router maps to the same skill. You never need to know the English command name.
 
@@ -337,7 +337,7 @@ A realistic 60-minute run with one user input:
 
 ### 4.3 Claude Code hooks lifecycle — what runs around every AI action
 
-You don't invoke hooks. They run automatically because bkit attaches them via `hooks/hooks.json` (24 hook blocks across 21 hook events). Hooks are what make bkit's safety net invisible: you never have to remember to verify, log, or block — Claude Code fires the events, bkit responds.
+You don't invoke hooks. They run automatically because bkit attaches them via `hooks/hooks.json` (25 hook blocks across 22 hook events). Hooks are what make bkit's safety net invisible: you never have to remember to verify, log, or block — Claude Code fires the events, bkit responds.
 
 ```mermaid
 flowchart TD
@@ -652,7 +652,7 @@ flowchart LR
 ```mermaid
 flowchart TB
     subgraph Presentation
-        hooks["hooks/ (21 events / 24 blocks)"]
+        hooks["hooks/ (22 events / 25 blocks)"]
         scripts["scripts/ (51 Node.js)"]
         skills["skills/ (44)"]
         agents["agents/ (34)"]

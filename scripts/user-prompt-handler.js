@@ -290,6 +290,12 @@ debugLog('UserPrompt', 'Hook completed', {
 const sessionTitle = generateSessionTitle({ sessionId: input.session_id });
 
 // v2.1.10 Sprint 7c (G-J-09): structured suggestions via IntentRouter (priority-resolved)
+// #132 (free win A): `onboardingContext` was referenced but never defined —
+// a ReferenceError swallowed by the surrounding try/catch, so structured
+// suggestions were ALWAYS []. route()'s context is only forwarded to
+// calculateAmbiguityScore (no `onboarding` key consumed today), so an empty
+// string is the correct, side-effect-free value.
+let onboardingContext = '';
 let structuredSuggestions = [];
 try {
   const { route } = require('../lib/orchestrator/intent-router');
