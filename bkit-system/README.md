@@ -4,7 +4,7 @@
 >
 > **Version history is maintained in a single source of truth**: see [CHANGELOG.md](../CHANGELOG.md) for the full release history (v1.0.0 → v2.1.13).
 >
-> Post-v2.1.13 maintenance releases (v2.1.14 → v2.1.25, latest: v2.1.25 Claude 5 Model Alignment + Issue Response #128/#129/#130 — 9 fable / 7 opus / 16 sonnet / 2 haiku matrix, model floor CC ≥ v2.1.170, deprecation registry per ADR 0014, agent-description token diet −44%) are tracked in CHANGELOG.md; the component counts below reflect the current tree.
+> Post-v2.1.13 maintenance releases (v2.1.14 → v2.1.26, latest: v2.1.26 — MCP manifest relocation fixing the `/plugin` "MCP failed" defect [inline `mcpServers` in plugin.json, root `.mcp.json` deleted] + test-state isolation refactor + ADR 0015/eval SOP + Fable cost retune [high-frequency verifiers gap-detector/design-validator/pdca-iterator fable→opus → 6 fable / 10 opus / 16 sonnet / 2 haiku matrix]) are tracked in CHANGELOG.md; the component counts below reflect the current tree.
 >
 > Current release highlights (v2.1.13 over v2.1.12):
 > - **Sprint Management (NEW v2.1.13 GA)**: 8-phase meta-container (`prd → plan → design → do → iterate → qa → report → archived`) — 16 sub-actions, 4 Auto-Pause Triggers (QUALITY_GATE_FAIL/ITERATION_EXHAUSTED/BUDGET_EXCEEDED/PHASE_TIMEOUT), Trust Level scope L0-L4 via `SPRINT_AUTORUN_SCOPE`, 7-Layer S1 dataFlowIntegrity QA, 4 sprint agents, 1 skill, 7 templates, 13 application-layer modules, 9 infrastructure adapters, 3 MCP tools, 1 L3 contract test (8 SC-01~08), 2 Korean guides, 2 ADRs (0006 + 0007)
