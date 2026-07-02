@@ -2,7 +2,8 @@
  * Invocation Inventory Sanity Tests — file-level cross-check of Addendum counts.
  *
  * Design Ref: bkit-v2110-invocation-contract-addendum.plan.md §3
- * Plan SC: 43 skills / 36 agents / 16 MCP tools / 21 hook events / 24 blocks.
+ * Plan SC: 43 skills / 36 agents / 16 MCP tools / 22 hook events / 25 blocks
+ *          (v2.1.27 #132: 21→22 events, 24→25 blocks — UserPromptExpansion added).
  *
  * v2.1.11 update: 39 → 43 skills (Sprint β added bkit-evals, bkit-explore,
  * pdca-fast-track, pdca-watch).
@@ -105,19 +106,20 @@ EXPECTED_DEPRECATED_AGENT_NAMES.forEach((name) => {
 // v2.1.17 (CO-3.1): EXPECTED_HOOK_EVENT_NAMES imported from docs-code-invariants SoT.
 const hooksJson = JSON.parse(fs.readFileSync(hooksJsonPath, 'utf8'));
 const hookEventNames = Object.keys(hooksJson.hooks);
-test('Hooks count exactly 21 events', () => assert.strictEqual(hookEventNames.length, 21));
+test('Hooks count exactly 22 events', () => assert.strictEqual(hookEventNames.length, 22));
 test('Hooks count matches SoT', () => assert.strictEqual(hookEventNames.length, EXPECTED_HOOK_EVENT_NAMES.length));
 
 EXPECTED_HOOK_EVENT_NAMES.forEach((name) => {
   test(`Hook '${name}' registered`, () => assert.ok(hookEventNames.includes(name), `missing: ${name}`));
 });
 
-// 24 blocks = 1 SessionStart + 2 PreToolUse + 3 PostToolUse + 18 rest
+// v2.1.27 (#132): 25 blocks = 1 SessionStart + 2 PreToolUse + 3 PostToolUse + 19 rest
+// (UserPromptExpansion added as a single "rest" event block).
 let blockCount = 0;
 for (const [, entries] of Object.entries(hooksJson.hooks)) {
   blockCount += entries.length;
 }
-test('Hooks total blocks = 24', () => assert.strictEqual(blockCount, 24));
+test('Hooks total blocks = 25', () => assert.strictEqual(blockCount, 25));
 test('PreToolUse has 2 blocks', () => assert.strictEqual(hooksJson.hooks.PreToolUse.length, 2));
 test('PostToolUse has 3 blocks', () => assert.strictEqual(hooksJson.hooks.PostToolUse.length, 3));
 

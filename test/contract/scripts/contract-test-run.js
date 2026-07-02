@@ -165,13 +165,20 @@ function runL1MCP() {
 function runL1Hooks() {
   const current = collectHooks({ persist: false, projectRoot: PROJECT_ROOT });
   const baseline = loadBaselineManifest().hooks;
+  // Additions-tolerant counts (ENH-371): every other L1 surface (skills/agents/MCP)
+  // guards by per-identity existence and silently accepts additions — a NEW hook event
+  // must not break a frozen baseline compare any more than a new skill does. The
+  // per-event existence loop below is the real removal guard; the count checks only
+  // fail on a NET DECREASE. This also honors the LTS-frozen governance in
+  // docs/06-guide/contract-baseline-rollforward.guide.md §3.1 (LTS v2.1.9 is edited
+  // only at a major LTS transition, never for a routine hook addition).
   assert(
-    current.events === baseline.events,
-    `L1-HK FAIL hook events count changed (${current.events} !== ${baseline.events})`
+    current.events >= baseline.events,
+    `L1-HK FAIL hook events count decreased (${current.events} < ${baseline.events}) — additions OK, removals fail`
   );
   assert(
-    current.blocks === baseline.blocks,
-    `L1-HK WARN hook blocks count changed (${current.blocks} !== ${baseline.blocks}) — block additions OK, removals fail`
+    current.blocks >= baseline.blocks,
+    `L1-HK FAIL hook blocks count decreased (${current.blocks} < ${baseline.blocks}) — block additions OK, removals fail`
   );
   // Verify each baseline event still exists
   const baselineEventsFile = path.join(BASE_DIR, 'hook-events.json');

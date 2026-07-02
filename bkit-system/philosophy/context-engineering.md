@@ -16,7 +16,7 @@ Context Engineering:
    to provide LLMs with optimal context for inference"
 ```
 
-bkit is a **practical implementation of Context Engineering**, providing a systematic context management system for Claude Code with 43 skills, 36 agents, 21 hook events (24 blocks), 142 lib modules across 16 subdirs (Clean Architecture 4-Layer with 7 Port↔Adapter pairs), 49 scripts, and 2 MCP servers with 16 tools. See [CHANGELOG.md](../../CHANGELOG.md) for version history.
+bkit is a **practical implementation of Context Engineering**, providing a systematic context management system for Claude Code with 44 skills, 34 agents, 22 hook events (25 blocks), 194 lib modules across 22 subdirs (Clean Architecture 4-Layer with 8 Port↔Adapter pairs), 62 scripts, and 2 MCP servers with 19 tools. See [CHANGELOG.md](../../CHANGELOG.md) for version history.
 
 ---
 
@@ -35,7 +35,7 @@ bkit is a **practical implementation of Context Engineering**, providing a syste
 │                                     │                                        │
 │                                     ▼                                        │
 │  ┌────────────────────────────────────────────────────────────────────────┐  │
-│  │                  21-Event Hook System (6 Layers)                       │  │
+│  │                  22-Event Hook System (6 Layers)                       │  │
 │  │                                                                        │  │
 │  │  L1: hooks.json ─→ SessionStart, UserPromptSubmit, PreCompact,         │  │
 │  │                     PostCompact, Stop, StopFailure, TaskCompleted,     │  │

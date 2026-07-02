@@ -58,7 +58,7 @@ bkit is a practical implementation of **Context Engineering**. Context Engineeri
 │                                 ▼                               │
 │  ┌──────────────────────────────────────────────────────────┐  │
 │  │                Unified Hook System (v1.4.4)               │  │
-│  │  L1: hooks.json (21 events - all hooks centralized)      │  │
+│  │  L1: hooks.json (22 events - all hooks centralized)      │  │
 │  │  L2: Unified Scripts (stop, bash-pre, write-post, etc.)  │  │
 │  │  L3: Agent Frontmatter (constraints only)                │  │
 │  │  L4: Description Triggers (keyword matching)             │  │
@@ -190,7 +190,7 @@ lib/
 │         │                   │                   │               │
 │         ▼                   ▼                   ▼               │
 │  ┌──────────────────────────────────────────────────────┐      │
-│  │                    Hooks Layer (21 events)            │      │
+│  │                    Hooks Layer (22 events)            │      │
 │  │  SessionStart │ UserPromptSubmit │ PreToolUse │       │      │
 │  │  PostToolUse  │ PreCompact │ Stop │ SubagentStart │   │      │
 │  │  SubagentStop │ TaskCompleted │ TeammateIdle │        │      │
@@ -215,7 +215,7 @@ lib/
 | Skills | 43 | Domain knowledge + Slash commands (v2.1.11 added bkit-evals, bkit-explore, pdca-watch, pdca-fast-track) | [[components/skills/_skills-overview]] |
 | Agents | 34 | Specialized task execution (6 fable / 10 opus / 16 sonnet / 2 haiku; v2.1.26 verifier cost retune; 6 pdca-eval-* registry-tombstoned per ADR 0014) | [[components/agents/_agents-overview]] |
 | Commands | DEPRECATED | Migrated to Skills (v1.4.4) | - |
-| Hooks | 21 events (24 blocks) | Event-based triggers (unified) | [[components/hooks/_hooks-overview]] |
+| Hooks | 22 events (25 blocks) | Event-based triggers (unified) | [[components/hooks/_hooks-overview]] |
 | Scripts | 49 | Actual logic execution | [[components/scripts/_scripts-overview]] |
 | Lib | 22 subdirectories, 190 modules | Clean Architecture 4-Layer with 7 Port↔Adapter pairs (Domain / Application / Infrastructure / Presentation) | See [CHANGELOG](../CHANGELOG.md#architecture-snapshot) |
 | Evals | 28 | Skill evaluation definitions | Skill Creator + A/B Testing |
@@ -246,7 +246,7 @@ lib/
 bkit triggers occur across 6 layers:
 
 ```
-Layer 1: hooks.json (Global) → 21 events (24 blocks): SessionStart, UserPromptSubmit,
+Layer 1: hooks.json (Global) → 22 events (25 blocks): SessionStart, UserPromptSubmit,
                                 PreCompact, PostCompact, PreToolUse, PostToolUse,
                                 Stop, StopFailure, SessionEnd, SubagentStart, SubagentStop,
                                 TaskCompleted, TeammateIdle, Notification, ConfigChange,
@@ -377,7 +377,7 @@ bkit v1.6.0 integrates CC 2.1.0 Skills 2.0 features:
 | Agents | 34 (6 fable / 10 opus / 16 sonnet / 2 haiku; v2.1.26 verifier cost retune; 6 pdca-eval-* registry-tombstoned per ADR 0014) |
 | Lib Modules | 190 across 22 subdirectories |
 | Scripts | 49 |
-| Hook Events | 21 (24 blocks) |
+| Hook Events | 22 (25 blocks) |
 | Templates | 18 |
 | Output Styles | 4 |
 | MCP Servers | 2 (bkit-pdca, bkit-analysis; 16 tools registered via `lib/infra/mcp-port-registry.js`) |

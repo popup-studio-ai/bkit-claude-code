@@ -578,19 +578,21 @@ const LANG_REGEX = {
     assert.equal(out, '');
   });
 
-  test('INV-05: hooks/hooks.json 21 events 24 blocks invariant', () => {
+  test('INV-05: hooks/hooks.json 22 events 25 blocks invariant', () => {
     // v2.1.14 Sub-Sprint 6 Observation: the original Sprint 4 invariant
     // froze hooks.json against structural change. Version-string bumps
     // inside the `description` field are SSoT-driven (BKIT_VERSION sync)
     // and explicitly allowed — assert event/block counts directly rather
     // than relying on a clean `git diff --stat`.
+    // v2.1.27 (ENH-371): +UserPromptExpansion event/block for slash-command
+    // orchestrator reachability (issue #132) → 21→22 events, 24→25 blocks.
     const data = JSON.parse(require('fs').readFileSync(
       require('path').join(PLUGIN_ROOT, 'hooks/hooks.json'), 'utf8'));
     const events = Object.keys(data.hooks || {});
     let totalBlocks = 0;
     for (const ev of events) totalBlocks += (data.hooks[ev] || []).length;
-    assert.equal(events.length, 21, 'hooks.json must declare 21 events');
-    assert.equal(totalBlocks, 24, 'hooks.json must declare 24 total blocks');
+    assert.equal(events.length, 22, 'hooks.json must declare 22 events');
+    assert.equal(totalBlocks, 25, 'hooks.json must declare 25 total blocks');
   });
 
   // ─────────────────────────────────────────────────────────────────────────

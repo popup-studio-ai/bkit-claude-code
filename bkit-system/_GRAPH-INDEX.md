@@ -30,7 +30,7 @@ bkit is a practical implementation of **Context Engineering**:
 │  Domain Knowledge (44 Skills)  → Structured domain knowledge     │
 │  Behavioral Rules (34 Agents)  → Role-based behavioral rules     │
 │  State Management (lib/)       → 190 modules, 22 subdirectories  │
-│  6-Layer Hook System           → 21 events, 24 blocks            │
+│  6-Layer Hook System           → 22 events, 25 blocks            │
 │  Clean Architecture 4-Layer    → Domain / App / Infra / Pres     │
 │  Dynamic Injection             → Conditional context selection   │
 └─────────────────────────────────────────────────────────────────┘
@@ -171,7 +171,7 @@ The following skills were consolidated:
 - `/claude-code-learning` - Learning curriculum
 - `/code-review` - Code review and quality analysis
 
-## Hooks (21 events)
+## Hooks (22 events)
 
 ### Global Hooks (hooks/hooks.json)
 - [[components/hooks/_hooks-overview|SessionStart]] - Plugin initialization with AskUserQuestion guidance

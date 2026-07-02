@@ -198,7 +198,7 @@ Full M1–M10 + S1 catalog in [README-FULL.md §5](README-FULL.md#5-quality-gate
 
 ## Architecture at a glance
 
-44 skills · 34 agents · 21 hook events / 24 blocks · 2 MCP servers (19 tools) · 190 lib modules across 22 subdirs · 61 scripts · 40 templates · 118+ test files / 4,000+ test cases. Clean Architecture 4-Layer · Defense-in-Depth 4-Layer · Invocation Contract L1–L5 (226 CI-gated assertions).
+44 skills · 34 agents · 22 hook events / 25 blocks · 2 MCP servers (19 tools) · 190 lib modules across 22 subdirs · 61 scripts · 40 templates · 118+ test files / 4,000+ test cases. Clean Architecture 4-Layer · Defense-in-Depth 4-Layer · Invocation Contract L1–L5 (226 CI-gated assertions).
 
 Agents run on a 4-tier role-based model matrix: **fable** (long-horizon orchestration — leads), **opus** (deep reasoning, security & high-frequency PDCA verifiers), **sonnet** (implementers), **haiku** (monitors). The repeated Check/iterate verifiers (gap-detector, design-validator, pdca-iterator) run on Opus 4.8 — strong verification at half Fable's cost.
 
