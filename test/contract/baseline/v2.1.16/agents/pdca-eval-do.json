@@ -4,7 +4,7 @@
   "effort": "medium",
   "fileName": "pdca-eval-do",
   "hasTools": true,
-  "model": "sonnet",
+  "model": "haiku",
   "name": "pdca-eval-do",
   "replacedBy": "code-analyzer"
 }

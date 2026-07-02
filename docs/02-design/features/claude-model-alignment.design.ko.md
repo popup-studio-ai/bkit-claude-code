@@ -106,6 +106,8 @@ SessionStart → CC 버전 감지
 | 구현 | `sonnet` | Sonnet 5 (CC ≥ 2.1.197) | $3 / $15 (인트로 $2/$10) | 코딩, 분석, 합성 워커 |
 | 모니터 & 리포트 | `haiku` | Haiku 4.5 | 저비용 | 대량·저추론 + 폐기 tombstone |
 
+> **프로바이더 주석 (W-1)**: 위 별칭 해석은 **Anthropic API** 경로에 적용. Claude Platform on AWS에서는 `opus`→Opus 4.7 / `sonnet`→Sonnet 4.6; Bedrock/Vertex/Foundry에서는 `opus`→Opus 4.6 / `sonnet`→Sonnet 4.5이며, `fable`은 프로바이더별 전체 ID 필요. bkit은 보편적 "Sonnet 5" 약속을 하지 않음 (NFR-6); 릴리스 어드바이저리와 문서에 이 프로바이더 표를 포함해야 함.
+
 ### 3.2 40개 에이전트 전체 매트릭스
 
 **fable ×9** (opus에서 변경 ×9):
@@ -237,8 +239,11 @@ SessionStart → CC 버전 감지
 - [ ] README-FULL.md:595-598,610 mermaid pm-lead/cto-lead → (fable); :754,757 예시 ID → `claude-opus-4-8`, `--modelA claude-sonnet-5 --modelB claude-opus-4-8`
 - [ ] README.md:185 권장 → v2.1.198 + 모델 플로어 문장 (fable 에이전트는 CC ≥ 2.1.170 필요; 미만은 어드바이저리 + 우회로). 배지/요구사항 v2.1.143+ 무변경
 - [ ] .claude-plugin/marketplace.json 설명: Claude 5 모델 매트릭스 + 모델 플로어에 관한 문장 1개 추가 (키 무접촉 — ADR 0011 21-키 화이트리스트)
-- [ ] CHANGELOG.md: 신규 잠정 `[2.1.25]` 엔트리 (매트릭스, 이중 플로어, 가격 수정, footgun, 문서 버그 3건 수정)
+- [ ] CHANGELOG.md: 신규 잠정 `[2.1.25]` 엔트리 (매트릭스, 이중 플로어, 가격 수정, 프로바이더 별칭 표 포함 footgun, 문서 버그 3건 수정). 과거 엔트리(예: :183 ENH-325 "17 opus agents")는 수정하지 않음 — docs-code-sync/bkit-full-system 게이트가 과거 CHANGELOG 라인이 아니라 라이브 코드를 기준으로 하는지 검증
 - [ ] skills/pdca-watch/SKILL.md:61 가격 프로즈가 token-report와 일치 ($3/$15 sonnet — 검증)
+- [ ] CUSTOMIZATION-GUIDE.md:987,1635 예시 블록: 기존 예시에 `model: fable` 예시 포함/조정 (W-2)
+- [ ] lib/domain/ports/token-meter.port.js:17 JSDoc 모델 열거에 fable 추가 (`claude-opus/sonnet/haiku/fable`); 그 외 과거 프로즈 (token-meter.port.js:22 "Opus 4.7 1M", token-accountant.js:57,67, cc-regression/registry.js:20,61)는 **명시적으로 범위 밖** — 회귀 이력 노트는 그대로 유지 (W-3)
+- [ ] GitHub Release 노트 초안 (영어, 하이라이트 + UX 변화 + 프로바이더 표 + footgun)을 릴리스 단계 산출물로 준비 (SC-7) — PR 머지 전까지 `.bkit/research/v2125-release-notes-draft.md`에 보관
 
 ### 5.4 재현 / probe 증거 (QA)
 

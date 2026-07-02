@@ -50,7 +50,7 @@ A development approach where AI operates as **a controllable partner leading the
 | Role | As-Is (10-person) | To-Be (bkit v2.0.0) | bkit Agents | Change |
 |------|-------------------|----------------------|-------------|--------|
 | **PM** | 1 | 0.3 | pm-lead + 4 PM agents | AI-driven product discovery |
-| **Senior Dev** | 2 | 1 | cto-lead (opus) | AI orchestrates architecture |
+| **Senior Dev** | 2 | 1 | cto-lead (fable) | AI orchestrates architecture |
 | **Junior Dev** | 4 | 2 | bkend-expert, frontend-architect | 3x productivity with AI |
 | **QA** | 2 | 0.5 | qa-strategist, qa-monitor, gap-detector | Zero Script QA + quality gates |
 | **Security** | 1 | 0 | security-architect, destructive-detector | AI-automated review + safety |
@@ -129,13 +129,14 @@ To-Be: Configure quality gates + Monitor metrics dashboard
 
 | Model | Count | Roles |
 |-------|-------|-------|
-| **opus** | 10 | cto-lead, code-analyzer, design-validator, gap-detector, enterprise-expert, infra-architect, security-architect, pm-lead, bkit-impact-analyst, cc-version-researcher |
-| **sonnet** | 19 | bkend-expert, pdca-iterator, pipeline-guide, starter-guide, product-manager, frontend-architect, qa-strategist, pm-discovery, pm-strategy, pm-research, pm-prd, pm-lead-skill-patch, skill-needs-extractor, 6 pdca-eval agents |
-| **haiku** | 2 | qa-monitor, report-generator |
+| **fable** | 9 | cto-lead, sprint-orchestrator, sprint-master-planner, pm-lead, qa-lead, gap-detector, design-validator, pdca-iterator, sprint-qa-flow (verification & orchestration core — requires CC ≥ v2.1.170) |
+| **opus** | 7 | security-architect, code-analyzer, self-healing, infra-architect, enterprise-expert, bkit-impact-analyst, cc-version-researcher (deep reasoning & security) |
+| **sonnet** | 16 | bkend-expert, frontend-architect, pipeline-guide, pm-discovery, pm-lead-skill-patch, pm-prd, pm-research, pm-strategy, product-manager, qa-debug-analyst, qa-strategist, qa-test-generator, qa-test-planner, skill-needs-extractor, sprint-report-writer, starter-guide |
+| **haiku** | 8 | qa-monitor, report-generator, 6 pdca-eval-* deprecated tombstones |
 
 ### Agent Frontmatter (v2.0.0)
 
-All 36 agents support native frontmatter fields:
+All 40 agents support native frontmatter fields:
 - `effort`: min/max reasoning effort per agent role
 - `maxTurns`: execution budget control
 - `disallowedTools`: restrict dangerous tool access per agent

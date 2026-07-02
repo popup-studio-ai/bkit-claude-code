@@ -123,21 +123,23 @@ const ALL_AGENTS = [
 ];
 
 // --- Valid model values ---
-const VALID_MODELS = ['opus', 'sonnet', 'haiku'];
+// v2.1.25: 'fable' added (Claude 5 model alignment)
+const VALID_MODELS = ['opus', 'sonnet', 'haiku', 'fable'];
 
 // --- Expected model assignments ---
+// v2.1.25: synced to the claude-model-alignment matrix (fable/opus/sonnet/haiku)
 const EXPECTED_MODELS = {
-  'cto-lead': 'opus',
-  'pm-lead': 'opus',
+  'cto-lead': 'fable',
+  'pm-lead': 'fable',
   'enterprise-expert': 'opus',
   'infra-architect': 'opus',
   'code-analyzer': 'opus',
-  'design-validator': 'opus',
-  'gap-detector': 'opus',
+  'design-validator': 'fable',
+  'gap-detector': 'fable',
   'security-architect': 'opus',
   'bkend-expert': 'sonnet',
   'frontend-architect': 'sonnet',
-  'pdca-iterator': 'sonnet',
+  'pdca-iterator': 'fable',
   'pipeline-guide': 'sonnet',
   'pm-discovery': 'sonnet',
   'pm-prd': 'sonnet',
@@ -148,13 +150,13 @@ const EXPECTED_MODELS = {
   'starter-guide': 'sonnet',
   'qa-monitor': 'haiku',
   'report-generator': 'haiku',
-  // v1.6.2 additions
-  'pdca-eval-plan': 'sonnet',
-  'pdca-eval-design': 'sonnet',
-  'pdca-eval-do': 'sonnet',
-  'pdca-eval-check': 'sonnet',
-  'pdca-eval-act': 'sonnet',
-  'pdca-eval-pm': 'sonnet',
+  // v1.6.2 additions (pdca-eval-* are deprecated tombstones — haiku since v2.1.25)
+  'pdca-eval-plan': 'haiku',
+  'pdca-eval-design': 'haiku',
+  'pdca-eval-do': 'haiku',
+  'pdca-eval-check': 'haiku',
+  'pdca-eval-act': 'haiku',
+  'pdca-eval-pm': 'haiku',
   'skill-needs-extractor': 'sonnet',
   'pm-lead-skill-patch': 'sonnet',
 };

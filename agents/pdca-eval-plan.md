@@ -1,7 +1,7 @@
 ---
 name: pdca-eval-plan
 description: DEPRECATED in v2.1.13. PDCA Plan phase evaluation is now performed by product-manager with pm-lead orchestration for richer discovery analysis. This stub exists only to satisfy contract baseline v2.1.9 deprecation governance (L4).
-model: sonnet
+model: haiku
 effort: medium
 tools: []
 deprecatedIn: v2.1.13

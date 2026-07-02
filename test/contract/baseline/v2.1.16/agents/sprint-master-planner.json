@@ -4,7 +4,7 @@
   "effort": "high",
   "fileName": "sprint-master-planner",
   "hasTools": false,
-  "model": "opus",
+  "model": "fable",
   "name": "sprint-master-planner",
   "replacedBy": null
 }

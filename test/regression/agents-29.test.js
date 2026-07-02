@@ -18,7 +18,8 @@ const AGENTS_DIR = path.join(BASE_DIR, 'agents');
 console.log('\n=== agents-29.test.js (25 TC) ===\n');
 
 // --- Valid field values ---
-const VALID_MODELS = ['opus', 'sonnet', 'haiku'];
+// v2.1.25: 'fable' added (Claude 5 model alignment)
+const VALID_MODELS = ['opus', 'sonnet', 'haiku', 'fable'];
 const VALID_EFFORTS = ['high', 'medium', 'low'];
 
 /**
@@ -56,7 +57,9 @@ for (let i = 0; i < 10 && i < agentFiles.length; i++) {
 
   const hasModel = fm && VALID_MODELS.includes(fm.model);
   const hasEffort = fm && VALID_EFFORTS.includes(fm.effort);
-  const hasMaxTurns = fm && fm.maxTurns && parseInt(fm.maxTurns) > 0;
+  // v2.1.25: deprecation tombstones (deprecatedIn) carry minimal frontmatter
+  // per contract-baseline-rollforward SOP §5.3 (no maxTurns) — exempt them.
+  const hasMaxTurns = fm && ((fm.maxTurns && parseInt(fm.maxTurns) > 0) || fm.deprecatedIn);
 
   assert(`AG-${num}`, hasModel && hasEffort && hasMaxTurns,
     `${agentName}: model=${fm?.model || 'N/A'}, effort=${fm?.effort || 'N/A'}, maxTurns=${fm?.maxTurns || 'N/A'}`);
@@ -76,7 +79,8 @@ for (let i = 10; i < 20 && i < agentFiles.length; i++) {
 
   const hasModel = fm && VALID_MODELS.includes(fm.model);
   const hasEffort = fm && VALID_EFFORTS.includes(fm.effort);
-  const hasMaxTurns = fm && fm.maxTurns && parseInt(fm.maxTurns) > 0;
+  // v2.1.25: deprecation tombstones exempt from maxTurns (SOP §5.3)
+  const hasMaxTurns = fm && ((fm.maxTurns && parseInt(fm.maxTurns) > 0) || fm.deprecatedIn);
 
   assert(`AG-${num}`, hasModel && hasEffort && hasMaxTurns,
     `${agentName}: model=${fm?.model || 'N/A'}, effort=${fm?.effort || 'N/A'}, maxTurns=${fm?.maxTurns || 'N/A'}`);
@@ -124,7 +128,8 @@ let allMaxTurns = true;
 const noMaxTurns = [];
 for (const file of agentFiles) {
   const content = fs.readFileSync(path.join(AGENTS_DIR, file), 'utf-8');
-  if (!content.match(/^maxTurns:\s*\d+/m)) {
+  // v2.1.25: deprecation tombstones (deprecatedIn) are exempt — SOP §5.3 minimal frontmatter.
+  if (!content.match(/^maxTurns:\s*\d+/m) && !content.match(/^deprecatedIn:\s*\S+/m)) {
     allMaxTurns = false;
     noMaxTurns.push(file);
   }

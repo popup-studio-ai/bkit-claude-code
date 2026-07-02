@@ -4,7 +4,7 @@
   "effort": "high",
   "fileName": "sprint-qa-flow",
   "hasTools": false,
-  "model": "opus",
+  "model": "fable",
   "name": "sprint-qa-flow",
   "replacedBy": null
 }

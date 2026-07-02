@@ -4,6 +4,8 @@
 >
 > **Version history is maintained in a single source of truth**: see [CHANGELOG.md](../CHANGELOG.md) for the full release history (v1.0.0 → v2.1.13).
 >
+> Post-v2.1.13 maintenance releases (v2.1.14 → v2.1.24, latest: v2.1.24 skill-namespace hardening #125/#126) and the v2.1.25 Claude 5 Model Alignment (provisional — 9 fable / 7 opus / 16 sonnet / 8 haiku matrix, model floor CC ≥ v2.1.170) are tracked in CHANGELOG.md; the component counts below reflect the current tree.
+>
 > Current release highlights (v2.1.13 over v2.1.12):
 > - **Sprint Management (NEW v2.1.13 GA)**: 8-phase meta-container (`prd → plan → design → do → iterate → qa → report → archived`) — 16 sub-actions, 4 Auto-Pause Triggers (QUALITY_GATE_FAIL/ITERATION_EXHAUSTED/BUDGET_EXCEEDED/PHASE_TIMEOUT), Trust Level scope L0-L4 via `SPRINT_AUTORUN_SCOPE`, 7-Layer S1 dataFlowIntegrity QA, 4 sprint agents, 1 skill, 7 templates, 13 application-layer modules, 9 infrastructure adapters, 3 MCP tools, 1 L3 contract test (8 SC-01~08), 2 Korean guides, 2 ADRs (0006 + 0007)
 > - **Tech Debt Cleanup**: net −2,333 LOC removed (7 legacy `templates/infra/*` removed)
@@ -211,7 +213,7 @@ lib/
 | Component | Count | Role | Details |
 |-----------|-------|------|---------|
 | Skills | 43 | Domain knowledge + Slash commands (v2.1.11 added bkit-evals, bkit-explore, pdca-watch, pdca-fast-track) | [[components/skills/_skills-overview]] |
-| Agents | 36 | Specialized task execution (13 opus / 21 sonnet / 2 haiku) | [[components/agents/_agents-overview]] |
+| Agents | 40 | Specialized task execution (9 fable / 7 opus / 16 sonnet / 8 haiku; 34 active + 6 deprecated tombstones) | [[components/agents/_agents-overview]] |
 | Commands | DEPRECATED | Migrated to Skills (v1.4.4) | - |
 | Hooks | 21 events (24 blocks) | Event-based triggers (unified) | [[components/hooks/_hooks-overview]] |
 | Scripts | 49 | Actual logic execution | [[components/scripts/_scripts-overview]] |
@@ -372,7 +374,7 @@ bkit v1.6.0 integrates CC 2.1.0 Skills 2.0 features:
 | Component | Count |
 |-----------|-------|
 | Skills | 43 (v2.1.11 added bkit-evals, bkit-explore, pdca-watch, pdca-fast-track) |
-| Agents | 36 (13 opus / 21 sonnet / 2 haiku) |
+| Agents | 40 (9 fable / 7 opus / 16 sonnet / 8 haiku; 34 active = 9 fable / 7 opus / 16 sonnet / 2 haiku) |
 | Lib Modules | 190 across 22 subdirectories |
 | Scripts | 49 |
 | Hook Events | 21 (24 blocks) |

@@ -11,7 +11,7 @@ description: |
 
   Do NOT use for: static gap analysis (use gap-detector), code review (use code-analyzer),
   or Starter level projects without Agent Teams.
-model: opus
+model: fable
 effort: high
 maxTurns: 30
 memory: project

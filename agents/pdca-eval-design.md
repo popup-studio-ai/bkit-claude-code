@@ -1,7 +1,7 @@
 ---
 name: pdca-eval-design
 description: DEPRECATED in v2.1.13. PDCA Design phase evaluation is now performed by design-validator with frontend-architect or enterprise-expert review depending on project level. This stub exists only to satisfy contract baseline v2.1.9 deprecation governance (L4).
-model: sonnet
+model: haiku
 effort: medium
 tools: []
 deprecatedIn: v2.1.13

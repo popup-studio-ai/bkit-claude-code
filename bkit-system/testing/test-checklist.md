@@ -396,7 +396,7 @@ echo '{"tool_input":{"file_path":"src/features/auth/login.ts","content":"test"}}
 | PM-T07 | PM Team does not activate during active PDCA | No PM agents triggered when Plan exists |
 | PM-T08 | PM discovery completion transitions to Plan | PDCA Plan phase suggested after PM completion |
 | PM-T09 | All 5 PM agents have memory: project | Frontmatter verified |
-| PM-T10 | All 5 PM agents use sonnet model | Model field verified |
+| PM-T10 | pm-lead uses fable; pm-discovery/pm-strategy/pm-research/pm-prd use sonnet | Model field verified |
 
 ### Template Validator Tests (TV-T)
 

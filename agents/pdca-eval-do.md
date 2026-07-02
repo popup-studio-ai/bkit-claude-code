@@ -1,7 +1,7 @@
 ---
 name: pdca-eval-do
 description: DEPRECATED in v2.1.13. PDCA Do phase evaluation is now performed by code-analyzer with qa-monitor runtime verification when Docker logs are available. This stub exists only to satisfy contract baseline v2.1.9 deprecation governance (L4).
-model: sonnet
+model: haiku
 effort: medium
 tools: []
 deprecatedIn: v2.1.13

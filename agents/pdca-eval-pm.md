@@ -1,7 +1,7 @@
 ---
 name: pdca-eval-pm
 description: DEPRECATED in v2.1.13. PDCA PM phase evaluation is now performed by the PM Agent Team (pm-lead orchestrating pm-discovery, pm-strategy, pm-research, pm-prd). This stub exists only to satisfy contract baseline v2.1.9 deprecation governance (L4).
-model: sonnet
+model: haiku
 effort: medium
 tools: []
 deprecatedIn: v2.1.13

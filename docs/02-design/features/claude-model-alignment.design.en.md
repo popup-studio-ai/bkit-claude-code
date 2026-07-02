@@ -106,6 +106,8 @@ SessionStart → detect CC version
 | Implementation | `sonnet` | Sonnet 5 (CC ≥ 2.1.197) | $3 / $15 (intro $2/$10) | Coding, analysis, synthesis workers |
 | Monitor & Report | `haiku` | Haiku 4.5 | low | High-volume, low-reasoning + deprecated tombstones |
 
+> **Provider note (W-1)**: alias resolution above applies to the **Anthropic API** path. On Claude Platform on AWS, `opus`→Opus 4.7 / `sonnet`→Sonnet 4.6; on Bedrock/Vertex/Foundry, `opus`→Opus 4.6 / `sonnet`→Sonnet 4.5, and `fable` needs a provider-specific full ID. bkit makes NO universal "Sonnet 5" promise (NFR-6); the release advisory and docs must carry this provider table.
+
 ### 3.2 Full 40-Agent Matrix
 
 **fable ×9** (changed from opus ×9):
@@ -237,8 +239,11 @@ SessionStart → detect CC version
 - [ ] README-FULL.md:595-598,610 mermaid pm-lead/cto-lead → (fable); :754,757 example IDs → `claude-opus-4-8`, `--modelA claude-sonnet-5 --modelB claude-opus-4-8`
 - [ ] README.md:185 recommended → v2.1.198 + model-floor sentence (fable agents need CC ≥ 2.1.170; below that, advisory + workaround). Badge/requirement v2.1.143+ UNCHANGED
 - [ ] .claude-plugin/marketplace.json descriptions: one added sentence re Claude 5 model matrix + model floor (keys untouched — ADR 0011 21-key whitelist)
-- [ ] CHANGELOG.md: new provisional `[2.1.25]` entry (matrix, dual floor, pricing fix, footguns, 3 doc-bug fixes)
+- [ ] CHANGELOG.md: new provisional `[2.1.25]` entry (matrix, dual floor, pricing fix, footguns incl. provider-alias table, 3 doc-bug fixes). Historical entries (e.g., :183 ENH-325 "17 opus agents") are NOT edited — verify docs-code-sync/bkit-full-system gates key off live code, not historical CHANGELOG lines
 - [ ] skills/pdca-watch/SKILL.md:61 pricing prose consistent with token-report ($3/$15 sonnet — verify)
+- [ ] CUSTOMIZATION-GUIDE.md:987,1635 example blocks: include/adjust a `model: fable` example alongside existing examples (W-2)
+- [ ] lib/domain/ports/token-meter.port.js:17 JSDoc model enumeration gains fable (`claude-opus/sonnet/haiku/fable`); OTHER historical prose (token-meter.port.js:22 "Opus 4.7 1M", token-accountant.js:57,67, cc-regression/registry.js:20,61) is **explicitly OUT of scope** — regression-history notes stay as-is (W-3)
+- [ ] GitHub Release notes DRAFT (English, highlights + UX changes + provider table + footguns) prepared as release-phase artifact (SC-7) — stored at `.bkit/research/v2125-release-notes-draft.md` until PR merge
 
 ### 5.4 Reproduction / probe evidence (QA)
 

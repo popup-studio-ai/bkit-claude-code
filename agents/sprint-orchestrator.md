@@ -20,7 +20,7 @@ description: |
 
   Do NOT use for: single-feature PDCA (use bkit:pdca + cto-lead),
   Starter level projects, or when Sprint Management is not activated.
-model: opus
+model: fable
 effort: high
 maxTurns: 40
 memory: project

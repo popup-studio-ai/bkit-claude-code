@@ -4,7 +4,7 @@
   "effort": "high",
   "fileName": "qa-lead",
   "hasTools": true,
-  "model": "opus",
+  "model": "fable",
   "name": "qa-lead",
   "replacedBy": null
 }

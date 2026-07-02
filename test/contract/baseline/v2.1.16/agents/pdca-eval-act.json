@@ -4,7 +4,7 @@
   "effort": "medium",
   "fileName": "pdca-eval-act",
   "hasTools": true,
-  "model": "sonnet",
+  "model": "haiku",
   "name": "pdca-eval-act",
   "replacedBy": "report-generator"
 }

@@ -11,7 +11,7 @@ description: |
 
   Do NOT use for: implementation, code review, PDCA Do/Check/Act phases,
   or Starter level projects without Agent Teams.
-model: opus
+model: fable
 effort: high
 maxTurns: 30
 # permissionMode: plan  # CC ignores for plugin agents

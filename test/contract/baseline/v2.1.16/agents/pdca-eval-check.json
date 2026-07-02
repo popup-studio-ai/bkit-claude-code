@@ -4,7 +4,7 @@
   "effort": "medium",
   "fileName": "pdca-eval-check",
   "hasTools": true,
-  "model": "sonnet",
+  "model": "haiku",
   "name": "pdca-eval-check",
   "replacedBy": "gap-detector"
 }

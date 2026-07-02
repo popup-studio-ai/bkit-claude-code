@@ -2,6 +2,8 @@
 
 > List of 34 Agents defined in bkit and their roles (v2.1.13)
 >
+> **v2.1.25 (provisional)**: Claude 5 Model Alignment — 4-tier role-based model matrix: 9 fable (verification & orchestration core) / 7 opus (deep reasoning & security) / 16 sonnet (implementers) / 8 haiku (monitors + deprecated tombstones). 16 reassignments (9 opus→fable, 1 opus→sonnet sprint-report-writer, 6 sonnet→haiku pdca-eval-* tombstones). Model floor: `fable` requires CC ≥ v2.1.170 (SessionStart advisory ENH-368 below it). CC recommended: v2.1.198.
+> **v2.1.24**: Skill namespace hardening (#125/#126) — agents unchanged (40 agent files: 34 active + 6 deprecated pdca-eval-* tombstones).
 > **v2.1.13**: Sprint Management agents — added 4 sprint agents (`sprint-orchestrator`, `sprint-master-planner`, `sprint-qa-flow`, `sprint-report-writer`). Removed 6 pdca-eval-* agents (Korean-only frontmatter + v1.6.1 stale baseline + 0 spawn sites). Total 36 → 34. cto-lead/pm-lead/qa-lead extended with sprint Task spawn patterns + body sections. pdca-iterator/product-manager/gap-detector/self-healing/pipeline-guide/qa-monitor descriptions extended for sprint awareness (관점 1-1).
 > **v2.1.11**: 4 Sprints × 20 FRs Integrated Enhancement — Agents unchanged (36); Sprint γ adds `lib/application/pdca-lifecycle/` pilot referenced by `pdca-iterator` and `gap-detector` workflows. CC recommended: v2.1.118+ (79 consecutive compatible releases).
 > **v2.1.10**: Sprint 5a~7 complete — `cto-lead` body expanded (5 Task spawn blocks + `Task(pm-lead)` / `Task(qa-lead)` / `Task(pdca-iterator)` added to frontmatter, G-T-01/02). Enterprise teammates 5→6 (G-T-03). Bulk `@version 2.0.0 → 2.1.10` refresh across 79 files (66 lib + 13 scripts). CC recommended: v2.1.117+ (75 consecutive compatible releases).
@@ -52,7 +54,9 @@ Agents form bkit's **Behavioral Rules Layer**, designed according to [[../../phi
 │  ┌──────────────────────────────────────────────────────────┐   │
 │  │              Model Selection Strategy                     │   │
 │  │                                                          │   │
-│  │  opus   → Complex analysis, strategic decisions          │   │
+│  │  fable  → Verification & orchestration core              │   │
+│  │           (long-horizon leads + verifiers)                │   │
+│  │  opus   → Deep reasoning & security                      │   │
 │  │  sonnet → Execution, guidance, iterative tasks           │   │
 │  │  haiku  → Fast monitoring, document generation           │   │
 │  └──────────────────────────────────────────────────────────┘   │
@@ -64,11 +68,12 @@ Agents form bkit's **Behavioral Rules Layer**, designed according to [[../../phi
 
 | Model | Agents | Characteristics |
 |-------|--------|-----------------|
-| **opus** (10) | cto-lead, code-analyzer, design-validator, gap-detector, enterprise-expert, infra-architect, security-architect, cc-version-researcher, bkit-impact-analyst, + 1 more | Complex analysis, strategic decisions |
-| **sonnet** (19) | bkend-expert, pdca-iterator, pipeline-guide, starter-guide, product-manager, frontend-architect, qa-strategist, pm-lead, pm-discovery, pm-strategy, pm-research, pm-prd, + 7 more | Execution, guidance, iteration |
-| **haiku** (2) | qa-monitor, report-generator | Fast monitoring, document generation |
+| **fable** (9) | cto-lead, sprint-orchestrator, sprint-master-planner, pm-lead, qa-lead, gap-detector, design-validator, pdca-iterator, sprint-qa-flow | Verification & orchestration core (long-horizon leads + verifiers) — requires CC ≥ v2.1.170 |
+| **opus** (7) | security-architect, code-analyzer, self-healing, infra-architect, enterprise-expert, bkit-impact-analyst, cc-version-researcher | Deep reasoning & security (refusal-sensitive headless paths, deep single-shot analysis) |
+| **sonnet** (16) | bkend-expert, frontend-architect, pipeline-guide, pm-discovery, pm-lead-skill-patch, pm-prd, pm-research, pm-strategy, product-manager, qa-debug-analyst, qa-strategist, qa-test-generator, qa-test-planner, skill-needs-extractor, sprint-report-writer, starter-guide | Execution, guidance, iteration |
+| **haiku** (8) | qa-monitor, report-generator, + 6 deprecated pdca-eval-* tombstones | Fast monitoring, document generation, minimum-cost tombstones |
 
-**Distribution**: 36 total agents
+**Distribution**: 40 total agents = 9 fable / 7 opus / 16 sonnet / 8 haiku (34 active excl. 6 deprecated tombstones = 9 fable / 7 opus / 16 sonnet / 2 haiku)
 
 ## Full List
 
@@ -89,7 +94,7 @@ Agents for CTO-Led Agent Teams orchestration:
 
 | Agent | Model | Permission Mode | Role | Hooks |
 |-------|-------|-----------------|------|-------|
-| [[../../../agents/cto-lead|cto-lead]] | opus | acceptEdits | CTO Team orchestration, PDCA coordination | - |
+| [[../../../agents/cto-lead|cto-lead]] | fable | acceptEdits | CTO Team orchestration, PDCA coordination | - |
 | [[../../../agents/frontend-architect|frontend-architect]] | sonnet | plan | UI/UX design, frontend architecture | - |
 | [[../../../agents/product-manager|product-manager]] | sonnet | plan | Requirements analysis, scope management | - |
 | [[../../../agents/qa-strategist|qa-strategist]] | sonnet | plan | Test strategy, quality planning | - |
@@ -115,7 +120,7 @@ Agents for pre-Plan product discovery:
 
 | Agent | Model | Permission Mode | Role | Hooks |
 |-------|-------|-----------------|------|-------|
-| [[../../../agents/pm-lead|pm-lead]] | sonnet | plan | PM Team orchestrator, discovery workflow coordination | - |
+| [[../../../agents/pm-lead|pm-lead]] | fable | plan | PM Team orchestrator, discovery workflow coordination | - |
 | [[../../../agents/pm-discovery|pm-discovery]] | sonnet | plan | Market research, user interviews, pain point analysis | - |
 | [[../../../agents/pm-strategy|pm-strategy]] | sonnet | plan | Product positioning, go-to-market strategy | - |
 | [[../../../agents/pm-research|pm-research]] | sonnet | plan | Competitive analysis, trend research, data gathering | - |

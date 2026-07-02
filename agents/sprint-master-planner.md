@@ -19,7 +19,7 @@ description: |
 
   Do NOT use for: single-feature PDCA planning (use product-manager + frontend-architect),
   Starter level projects, or when Sprint Management is not activated.
-model: opus
+model: fable
 effort: high
 maxTurns: 25
 memory: project

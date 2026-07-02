@@ -19,7 +19,7 @@ description: |
 
   Do NOT use for: simple single-file changes, Starter level projects,
   pure research tasks, or when Agent Teams is not available.
-model: opus
+model: fable
 effort: high
 maxTurns: 50
 # permissionMode: acceptEdits  # CC ignores for plugin agents

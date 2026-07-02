@@ -16,7 +16,7 @@ description: |
 
   Do NOT use for: implementation code review, gap analysis (use gap-detector instead),
   or initial planning phase.
-model: opus
+model: fable
 effort: high
 maxTurns: 30
 linked-from-skills:

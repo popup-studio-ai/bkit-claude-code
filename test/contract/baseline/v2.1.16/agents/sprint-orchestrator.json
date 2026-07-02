@@ -4,7 +4,7 @@
   "effort": "high",
   "fileName": "sprint-orchestrator",
   "hasTools": false,
-  "model": "opus",
+  "model": "fable",
   "name": "sprint-orchestrator",
   "replacedBy": null
 }

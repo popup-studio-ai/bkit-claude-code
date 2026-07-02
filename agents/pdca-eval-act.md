@@ -1,7 +1,7 @@
 ---
 name: pdca-eval-act
 description: DEPRECATED in v2.1.13. PDCA Act phase evaluation is now performed by report-generator with pdca-iterator feedback loop. This stub exists only to satisfy contract baseline v2.1.9 deprecation governance (L4).
-model: sonnet
+model: haiku
 effort: medium
 tools: []
 deprecatedIn: v2.1.13

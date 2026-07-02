@@ -19,7 +19,7 @@ description: |
 
   Do NOT use for: PDCA single-feature report (use report-generator),
   Starter level projects, or non-sprint reporting.
-model: opus
+model: sonnet
 effort: medium
 maxTurns: 20
 memory: project

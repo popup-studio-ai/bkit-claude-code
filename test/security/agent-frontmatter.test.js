@@ -218,10 +218,10 @@ test('SEC-AF-029', 'Tier 2 agents have exactly 3 disallowedTools entries', () =>
   }
 });
 
-// SEC-AF-030: cto-lead uses opus model (highest capability for orchestration)
-test('SEC-AF-030', 'cto-lead uses opus model', () => {
+// SEC-AF-030: cto-lead uses fable model (highest capability for orchestration)
+test('SEC-AF-030', 'cto-lead uses fable model', () => {
   const fm = parseFrontmatter('cto-lead');
-  assert.strictEqual(fm.model, 'opus');
+  assert.strictEqual(fm.model, 'fable');
 });
 
 // ============================================================
@@ -309,10 +309,13 @@ test('SEC-AF-036', 'All agents have valid effort field (low/medium/high)', () =>
 });
 
 // SEC-AF-037: All agents have maxTurns in valid range
+// v2.1.25: deprecation tombstones (deprecatedIn) carry minimal frontmatter per
+// contract-baseline-rollforward SOP §5.3 (no maxTurns) — skip them here.
 test('SEC-AF-037', 'All agents have maxTurns in valid range (10-100)', () => {
   const allAgentFiles = fs.readdirSync(AGENTS_DIR).filter(f => f.endsWith('.md'));
   for (const file of allAgentFiles) {
     const content = fs.readFileSync(path.join(AGENTS_DIR, file), 'utf8');
+    if (/^deprecatedIn:\s*\S+/m.test(content)) continue;
     const turnsMatch = content.match(/^maxTurns:\s*(\d+)/m);
     assert.ok(turnsMatch, `${file} has maxTurns field`);
     const turns = parseInt(turnsMatch[1]);
@@ -321,16 +324,19 @@ test('SEC-AF-037', 'All agents have maxTurns in valid range (10-100)', () => {
   }
 });
 
-// SEC-AF-038: Tier 1 non-opus agents do not use high effort (opus agents need high for deep analysis)
-test('SEC-AF-038', 'Tier 1 non-opus agents do not use high effort', () => {
-  const OPUS_TIER1 = ['security-architect', 'design-validator']; // opus agents in Tier 1 are allowed high effort
+// SEC-AF-038: Tier 1 non-premium agents do not use high effort (premium agents need high for deep analysis)
+// v2.1.25: PREMIUM tier = opus | fable (Claude 5 model alignment); was OPUS_TIER1.
+test('SEC-AF-038', 'Tier 1 non-premium agents do not use high effort', () => {
+  // premium-model (opus/fable) agents in Tier 1 are allowed high effort:
+  // security-architect (opus), design-validator (fable), gap-detector (fable — read-only by tools, not in TIER1 list)
+  const PREMIUM_TIER1 = ['security-architect', 'design-validator', 'gap-detector'];
   for (const agent of TIER1_AGENTS) {
     const content = fs.readFileSync(path.join(AGENTS_DIR, `${agent}.md`), 'utf8');
     const effortMatch = content.match(/^effort:\s*(\S+)/m);
     assert.ok(effortMatch, `${agent} has effort field`);
-    if (!OPUS_TIER1.includes(agent)) {
+    if (!PREMIUM_TIER1.includes(agent)) {
       assert.ok(effortMatch[1] !== 'high',
-        `${agent} effort="${effortMatch[1]}" should not be high (non-opus read-only agent)`);
+        `${agent} effort="${effortMatch[1]}" should not be high (non-premium read-only agent)`);
     }
   }
 });
@@ -467,7 +473,7 @@ test('SEC-AF-050', 'Tier 2 disallowedTools are exact pattern matches (no typos)'
 
 // --- AF-051 ~ AF-055: All agents have valid model/effort/maxTurns ---
 
-const VALID_MODELS = ['opus', 'sonnet', 'haiku'];
+const VALID_MODELS = ['opus', 'sonnet', 'haiku', 'fable'];
 
 test('SEC-AF-051', 'All agents have a valid model field', () => {
   const allAgentFiles = fs.readdirSync(AGENTS_DIR).filter(f => f.endsWith('.md'));
@@ -480,13 +486,17 @@ test('SEC-AF-051', 'All agents have a valid model field', () => {
   }
 });
 
-test('SEC-AF-052', 'Tier 1 read-only agents do not use opus (cost guard)', () => {
-  const ALLOWED_OPUS_TIER1 = ['security-architect', 'design-validator'];
+// v2.1.25: PREMIUM = opus | fable. Approved read-only premium exceptions per the
+// claude-model-alignment matrix: security-architect (opus), design-validator (fable),
+// gap-detector (fable — read-only by tools, not in TIER1 list).
+test('SEC-AF-052', 'Tier 1 read-only agents do not use premium models (cost guard)', () => {
+  const PREMIUM_MODELS = ['opus', 'fable'];
+  const ALLOWED_PREMIUM_TIER1 = ['security-architect', 'design-validator', 'gap-detector'];
   for (const agent of TIER1_AGENTS) {
-    if (ALLOWED_OPUS_TIER1.includes(agent)) continue;
+    if (ALLOWED_PREMIUM_TIER1.includes(agent)) continue;
     const fm = parseFrontmatter(agent);
-    assert.ok(fm.model !== 'opus',
-      `Read-only agent ${agent} should not use opus model (got ${fm.model})`);
+    assert.ok(!PREMIUM_MODELS.includes(fm.model),
+      `Read-only agent ${agent} should not use a premium model (got ${fm.model})`);
   }
 });
 

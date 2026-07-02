@@ -24,7 +24,7 @@ description: |
 
   Do NOT use for: initial development, research tasks, design document creation,
   or when user explicitly wants manual control.
-model: opus
+model: fable
 effort: high
 maxTurns: 20
 linked-from-skills:

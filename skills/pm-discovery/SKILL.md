@@ -43,7 +43,7 @@ you're building the right thing.
 /pdca pm {feature}
      |
      v
-PM Lead (opus) - orchestrates
+PM Lead (fable) - orchestrates
      |
      +-- pm-discovery  --> Opportunity Solution Tree
      +-- pm-strategy   --> Value Proposition + Lean Canvas     [parallel]

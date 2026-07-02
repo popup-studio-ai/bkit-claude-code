@@ -344,7 +344,7 @@ When invoked with CTO Team (`/pdca team`):
 
 | Role | Agent | Model | Task |
 |------|-------|-------|------|
-| Lead | cto-lead | opus | Overall orchestration |
+| Lead | cto-lead | fable | Overall orchestration |
 | Researcher | cc-version-researcher | opus | Phase 1: CC research |
 | Analyst | bkit-impact-analyst | opus | Phase 2: bkit analysis |
 | Reporter | report-generator | haiku | Phase 4: Report writing |

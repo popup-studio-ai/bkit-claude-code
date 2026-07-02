@@ -152,7 +152,7 @@ try {
           feature: '',
           pdcaPhase: 'idle',
           orchestrationPattern: 'leader',
-          ctoAgent: agentState.ctoAgent || 'opus',
+          ctoAgent: agentState.ctoAgent || 'fable',
           startedAt: null,
           lastUpdated: new Date().toISOString(),
           teammates: [],

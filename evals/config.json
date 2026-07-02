@@ -2,7 +2,7 @@
   "version": "2.0.4",
   "defaultTimeout": 60000,
   "maxRetries": 2,
-  "benchmarkModel": "claude-sonnet-4-6",
+  "benchmarkModel": "claude-sonnet-5",
   "parityThreshold": 0.85,
   "classifications": {
     "workflow": { "evalType": "process_compliance", "parityTest": false },

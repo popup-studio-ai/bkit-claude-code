@@ -66,7 +66,7 @@ function main() {
   const modelRaw = hookContext.model
     || hookContext.tool_input?.model
     || 'sonnet';
-  const model = ['opus', 'sonnet', 'haiku'].includes(modelRaw)
+  const model = ['opus', 'sonnet', 'haiku', 'fable'].includes(modelRaw)
     ? modelRaw
     : 'sonnet';
 
@@ -80,7 +80,7 @@ function main() {
     stateWriter.initAgentState(teamName, feature, {
       pdcaPhase: featureData?.phase || 'plan',
       orchestrationPattern: 'leader',
-      ctoAgent: 'opus',
+      ctoAgent: 'fable',
       sessionId,
     });
   }

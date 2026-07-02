@@ -24,8 +24,8 @@ function loadConfig() {
 /**
  * Run A/B test comparing skill performance between two models
  * @param {string} skillName - Skill to test
- * @param {string} modelA - First model ID (e.g., 'claude-sonnet-4-6')
- * @param {string} modelB - Second model ID (e.g., 'claude-opus-4-6')
+ * @param {string} modelA - First model ID (e.g., 'claude-sonnet-5')
+ * @param {string} modelB - Second model ID (e.g., 'claude-opus-4-8')
  * @returns {Promise<Object>} A/B test results
  */
 async function runABTest(skillName, modelA, modelB) {

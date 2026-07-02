@@ -20,7 +20,7 @@ description: |
 
   Do NOT use for: single-feature unit tests (use qa-test-planner),
   Starter level projects, or non-sprint QA work.
-model: opus
+model: fable
 effort: high
 maxTurns: 25
 memory: project

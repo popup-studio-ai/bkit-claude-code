@@ -182,7 +182,7 @@ export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
 /sprint start my-release-s1
 ```
 
-Recommended Claude Code runtime: **v2.1.150** (conservative, stable) or **v2.1.159** (balanced, 112 consecutive compatible). Minimum **v2.1.78**.
+Recommended Claude Code runtime: **v2.1.198** (Claude 5 alias resolution — `sonnet` → Sonnet 5 needs ≥ v2.1.197). Model floor: **v2.1.170+** required by the 9 Fable-pinned agents (below it they fail to spawn; bkit shows a SessionStart advisory with a workaround). Install minimum **v2.1.143**; runtime minimum **v2.1.78**.
 
 ## Quality gates — the safety net explained
 
@@ -200,6 +200,8 @@ Full M1–M10 + S1 catalog in [README-FULL.md §5](README-FULL.md#5-quality-gate
 
 44 skills · 34 agents · 21 hook events / 24 blocks · 2 MCP servers (19 tools) · 190 lib modules across 22 subdirs · 61 scripts · 40 templates · 118+ test files / 4,000+ test cases. Clean Architecture 4-Layer · Defense-in-Depth 4-Layer · Invocation Contract L1–L5 (226 CI-gated assertions).
 
+Agents run on a 4-tier role-based model matrix: **fable** (verification & orchestration core — leads and verifiers), **opus** (deep reasoning & security), **sonnet** (implementers), **haiku** (monitors).
+
 Full architecture deep-dive: [README-FULL.md §9](README-FULL.md#9-architecture).
 
 ## Documentation
@@ -207,7 +209,7 @@ Full architecture deep-dive: [README-FULL.md §9](README-FULL.md#9-architecture)
 | Path | What's there |
 |---|---|
 | [README-FULL.md](README-FULL.md) | Full command reference, deep workflow internals, agent teams, architecture, Skill Evals |
-| [CHANGELOG.md](CHANGELOG.md) | Release history (single source of truth) |
+| [CHANGELOG.md](CHANGELOG.md) | Release history (single source of truth — latest release: v2.1.24) |
 | [CUSTOMIZATION-GUIDE.md](CUSTOMIZATION-GUIDE.md) | Override any bkit component in your `.claude/` directory |
 | [AI-NATIVE-DEVELOPMENT.md](AI-NATIVE-DEVELOPMENT.md) | The 6 AI-Native principles and how bkit implements them |
 | [`bkit-system/philosophy/`](bkit-system/philosophy/) | Core mission, Context Engineering, PDCA methodology, AI-Native principles |

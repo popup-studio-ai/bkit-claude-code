@@ -4,7 +4,7 @@
   "effort": "high",
   "fileName": "pdca-iterator",
   "hasTools": true,
-  "model": "opus",
+  "model": "fable",
   "name": "pdca-iterator",
   "replacedBy": null
 }
