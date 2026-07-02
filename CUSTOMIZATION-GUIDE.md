@@ -896,6 +896,8 @@ bkit-claude-code/
 
 > **v1.5.3**: All plugin components (skills, agents, scripts, lib, templates, output-styles) work exclusively with Claude Code.
 
+> **Note — `/plugin` Skills count**: Claude Code's `/plugin` details pane counts Skills as `skills/` + `commands/` entries (same-name entries dedup). bkit ships 44 skills + `commands/output-style-setup.md` → the pane displays **45** — expected, not a drift.
+
 ---
 
 ## 8. Customizing Agents

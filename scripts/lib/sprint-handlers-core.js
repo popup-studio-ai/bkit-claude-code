@@ -76,7 +76,7 @@ async function handleInit(args, infra) {
         },
         result: 'success',
         destructiveOperation: false,
-      });
+      }, { projectRoot: infra && infra.injectedProjectRoot }); // v2.1.26 I-12: honor injected root
     } catch (_) { /* audit log failures must NOT block init */ }
   }
   // v2.1.19 S3 F3-2 (closes #104): context auto-import fallback chain.
@@ -112,7 +112,7 @@ async function handleInit(args, infra) {
             },
             result: 'success',
             destructiveOperation: false,
-          });
+          }, { projectRoot: infra && infra.injectedProjectRoot }); // v2.1.26 I-12
         } catch (_) { /* audit failure non-blocking */ }
       }
     } catch (_) {
@@ -259,7 +259,7 @@ async function handlePhase(args, infra, deps) {
         details: result.approvalRecord,
         result: 'success',
         reason: result.approvalRecord.reason || 'user-approved scope boundary',
-      });
+      }, { projectRoot: infra && infra.injectedProjectRoot }); // v2.1.26 I-12
     } catch (_e) { /* audit best-effort */ }
   }
   // v2.1.16 (Issue #93, F4): persist lastGateFailure even on gate_fail so the
@@ -300,7 +300,7 @@ async function handlePhase(args, infra, deps) {
         },
         result: 'failure',
         reason: 'Quality gate(s) failed at ' + sprint.phase + ' exit',
-      });
+      }, { projectRoot: infra && infra.injectedProjectRoot }); // v2.1.26 I-12
     } catch (_e) { /* audit best-effort */ }
   }
   return result;

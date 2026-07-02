@@ -568,11 +568,17 @@ function baseSprint(over) {
     assert.ok(Object.keys(infra).length >= 13);
   });
 
-  test('B-02: createSprintInfra returns 4 adapters', () => {
+  test('B-02: createSprintInfra returns 4 adapters (+ projectRoot metadata, v2.1.26 I-11)', () => {
     const root = makeTempRoot();
     try {
       const i = createSprintInfra({ projectRoot: root });
-      assert.deepEqual(Object.keys(i).sort(), ['docScanner', 'eventEmitter', 'matrixSync', 'stateStore']);
+      // v2.1.26 (design I-11, test-isolation guard): the infra bag additionally
+      // exposes `projectRoot` + `injectedProjectRoot` so downstream audit/registry
+      // writers can honor an explicitly injected root. The 4 adapters are unchanged.
+      assert.deepEqual(
+        Object.keys(i).sort(),
+        ['docScanner', 'eventEmitter', 'injectedProjectRoot', 'matrixSync', 'projectRoot', 'stateStore']
+      );
     } finally { cleanup(root); }
   });
 

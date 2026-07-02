@@ -16,5 +16,17 @@
     "multilingual", "enterprise", "code-quality", "design-sync",
     "controllable-ai", "audit-logging", "mcp-server"
   ],
-  "outputStyles": "./output-styles/"
+  "outputStyles": "./output-styles/",
+  "mcpServers": {
+    "bkit-pdca": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/servers/bkit-pdca-server/index.js"],
+      "env": {}
+    },
+    "bkit-analysis": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/servers/bkit-analysis-server/index.js"],
+      "env": {}
+    }
+  }
 }

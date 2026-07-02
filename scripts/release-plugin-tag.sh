@@ -2,18 +2,19 @@
 #
 # release-plugin-tag.sh — bkit GA release automation (FR-δ6, ENH-279)
 #
-# Wraps `claude plugin tag v<version>` (CC v2.1.118 F9) with:
+# Release tag automation:
 #   1. BKIT_VERSION SoT alignment verification (5 locations)
 #   2. Pre-flight clean working tree check
 #   3. CI invariants (check-trust-score-reconcile + check-quality-gates)
-#   4. Tag creation via `claude plugin tag`
+#   4. Tag creation via `git tag -a` (preceded by an informational
+#      `claude plugin tag . --dry-run` consistency check — never gates)
 #   5. Optional GitHub release notes draft from CHANGELOG.md
 #
 # Exit codes:
 #   0 — release tag created
 #   1 — preflight invariant failed (no tag created)
 #   2 — version mismatch among the 5 SoT locations
-#   3 — `claude plugin tag` itself failed
+#   3 — tag creation (`git tag -a`) failed
 #
 # Usage:
 #   bash scripts/release-plugin-tag.sh [--dry-run] [--no-gh-notes]
@@ -119,19 +120,31 @@ fi
 echo "[release]  OK  — tag ${TAG} is free"
 
 # ── 6. Issue the tag ─────────────────────────────────────────────────────
-if [[ "$DRY_RUN" -eq 1 ]]; then
-  echo "[release] DRY RUN — would invoke: claude plugin tag ${TAG}"
-  echo "[release] DRY RUN — would invoke: git tag -a ${TAG}"
+# CC (~v2.1.110) changed `claude plugin tag` to derive a `{name}--v{version}`
+# tag from plugin.json (the positional version argument was removed, so the
+# old `claude plugin tag v<version>` form fails with "Path not found").
+# The derived `bkit--v<version>` format would also break this repo's
+# `v<version>` tag continuity, so the release tag is ALWAYS created via
+# `git tag -a` directly.
+#
+# `claude plugin tag . --dry-run` is retained as an INFORMATIONAL consistency
+# check only: it validates plugin.json <-> marketplace version agreement and
+# prints the derived {name}--v{version} WITHOUT creating it. It never gates
+# the release (`|| true` — safe under `set -euo pipefail`).
+if command -v claude >/dev/null 2>&1; then
+  echo "[release] info: consistency check — claude plugin tag . --dry-run (informational only, never gates)"
+  claude plugin tag . --dry-run 2>&1 | sed 's/^/[release][info] /' || true
 else
-  if command -v claude >/dev/null 2>&1; then
-    echo "[release] invoking: claude plugin tag ${TAG}"
-    if ! claude plugin tag "${TAG}"; then
-      echo "[release] FAIL — claude plugin tag ${TAG} returned non-zero" >&2
-      exit 3
-    fi
-  else
-    echo "[release] WARN — 'claude' CLI not on PATH; falling back to git tag only"
-    git tag -a "${TAG}" -m "bkit ${TAG} release"
+  echo "[release][info] 'claude' CLI not on PATH; skipping plugin tag consistency check"
+fi
+
+if [[ "$DRY_RUN" -eq 1 ]]; then
+  echo "[release] DRY RUN — would invoke: git tag -a ${TAG} -m \"bkit ${TAG} release\""
+else
+  echo "[release] invoking: git tag -a ${TAG}"
+  if ! git tag -a "${TAG}" -m "bkit ${TAG} release"; then
+    echo "[release] FAIL — git tag -a ${TAG} returned non-zero" >&2
+    exit 3
   fi
 fi
 

@@ -2,6 +2,8 @@
 
 > 44 Skills defined in bkit (v2.1.13)
 >
+> **Counting note**: CC's `/plugin` Skills count = `skills/` + `commands/` entries (same-name dedup); bkit's 44 skills + `commands/output-style-setup.md` display as **45** — expected, not a drift.
+>
 > **v2.1.25 (provisional)**: Claude 5 Model Alignment — skills unchanged (44); model references in `pdca`, `pm-discovery`, `cc-version-analysis` SKILL.md synced to the 4-tier matrix (cto-lead/pm-lead → fable). CC recommended: v2.1.198.
 > **v2.1.24**: Skill namespace hardening (#125/#126) — skills unchanged (44); namespaced invocation (`bkit:pdca`) now resolves next-skill / pdca-phase guidance and Stop-handler dispatch correctly.
 > **v2.1.13**: Sprint Management — added `sprint` skill with 16 sub-actions (init, start, status, pause, resume, phase, feature, fork, list, archive, qa, report, iterate, watch, help, master-plan). Total 43 → 44. Added sprint cross-references to `bkit`, `pdca`, `control`, `plan-plus`, `audit`, `qa-phase`, `pm-discovery`, `pdca-batch`, `bkit-rules`, `bkit-templates`, `enterprise`, `development-pipeline`, `rollback`, `deploy` (관점 1-1 sprint integration sweep).

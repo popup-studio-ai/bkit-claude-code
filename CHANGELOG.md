@@ -5,6 +5,99 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased — v2.1.26 provisional] - 2026-07-02 (release version assigned by maintainer; branch: `feat/v2.1.26-issue-response`)
+
+> **Status**: Issue Response + v2.1.25 follow-up closure. MAIN: the `/plugin`
+> "Needs attention: bkit-pdca / bkit-analysis MCP ✗ failed" defect is fixed at
+> its structural root. Empirical reproduction (R1,
+> `.bkit/research/v2126-reproduction-log.md`): the repo-root `.mcp.json` was
+> loaded TWICE by Claude Code — as the plugin's MCP manifest
+> (`${CLAUDE_PLUGIN_ROOT}` expands, `plugin:bkit:*` ✔ Connected) AND as
+> project-scope shared config whenever the bkit checkout is the working
+> directory, where the variable is undefined → CC diagnostics "Missing
+> environment variables: CLAUDE_PLUGIN_ROOT" → bare entries pending/failed.
+> Marketplace end-users are unaffected; developers and cloners get a clean
+> `/plugin` panel and `claude mcp list`.
+
+### MAIN — MCP manifest relocation (ENH-369)
+
+- **`mcpServers` is now declared INLINE in `.claude-plugin/plugin.json`**
+  (official manifest key, documented alternative to root `.mcp.json`; values
+  byte-equal — same 2 servers, same `${CLAUDE_PLUGIN_ROOT}` args). The root
+  `.mcp.json` file is **deleted**: only that literal filename at the project
+  root is auto-loaded as project config, so the dual-load collision is
+  structurally impossible now.
+- Regression locks: `test/integration/mcp-server.test.js` re-pointed at the
+  manifest (MS-011~015) + NEW args-hardening assertion
+  (`${CLAUDE_PLUGIN_ROOT}/servers/` must appear — previously unasserted) +
+  NEW **MS-016**: the repo root must never contain `.mcp.json` again.
+- Live acceptance evidence: repo-cwd `claude mcp list` shows zero bare
+  bkit entries + zero MCP diagnostics; fresh `--plugin-dir .` session loads
+  the inline manifest and `bkit_pdca_status` returns valid JSON;
+  `claude plugin validate . --strict` 0 errors / 0 warnings. Rejected
+  alternatives (documented): `${VAR:-default}` (silences the parse error but
+  still registers a broken/duplicate server) and relative `./servers/...`
+  args (breaks every marketplace install — plugin docs mandate
+  `${CLAUDE_PLUGIN_ROOT}`).
+
+### Release tooling — `claude plugin tag` drift (F1)
+
+- `scripts/release-plugin-tag.sh` step 6: CC (~v2.1.110) changed
+  `plugin tag` to derive `{name}--v{version}` from plugin.json (positional
+  version argument removed → the old `claude plugin tag vX.Y.Z` call failed
+  with "Path not found"; the derived `bkit--vX.Y.Z` format would also break
+  this repo's `vX.Y.Z` tag continuity). The release tag is now ALWAYS created
+  via `git tag -a`; `claude plugin tag . --dry-run` is retained as an
+  INFORMATIONAL consistency check only (plugin.json↔marketplace agreement;
+  never gates, `|| true` pipefail-safe). Verified end-to-end on a clean
+  clone: full `--dry-run` EXIT=0. `lib/infra/cc-version-checker.js`
+  `pluginTagCommand` comment records the transition (value stays 2.1.118 —
+  the map documents the minimum CC where the invoked command exists).
+
+### Test-state isolation — tests no longer write the real `.bkit` (F4)
+
+- Root causes found by call-chain tracing (No Guessing): the sprint dispatcher
+  built infra from `args` while tests injected `projectRoot` via `deps`
+  (`scripts/sprint-handler.js`), `active-skill-marker` hardcoded the real
+  root, and the telemetry adapter + 9 direct `writeAuditLog` sites discarded
+  the injected root before reaching `lib/audit/audit-logger.js`.
+- ADDITIVE injection (defaults byte-for-byte preserved): `projectRoot` now
+  threads through `lib/pdca/batch-orchestrator.js` (was hardcoded),
+  `scripts/sprint-handler.js` → `lib/infra/sprint/*` → sprint state/registry,
+  `lib/audit/audit-logger.js`, and `lib/core/active-skill-marker.js`.
+- 5 leaking suites converted to tmp-root isolation (sprint-handler
+  default-level-warning + annotate-action, config-sync, module-chain,
+  batch-orchestrator) — all assertions preserved. NEW guard:
+  `test/regression/bkit-state-isolation.test.js` (22 TC) proves injected
+  writes land only under tmp AND the real `.bkit` hash is byte-identical
+  across the 5 suites. Additional real-`.bkit`-writing suites are inventoried
+  in the Do report as follow-up candidates (l2-smoke by design, e2e suites).
+- Local `.bkit` fixture pollution (sc05-test, test-f1-*, test-feature-*,
+  batch fixtures — accumulated by the pre-fix leaks) cleaned locally;
+  procedure: remove fixture features via `deleteFeatureFromStatus`, delete
+  fixture sprint/registry/batch files, verify `/pdca status` + MCP healthy.
+
+### Governance & docs (F2, F3, ADR 0011, 45-skills)
+
+- **ADR 0015** (bilingual): locale-scoped trigger generation (#129 proposal 1)
+  formally DEFERRED — CC plugins are immutable versioned marketplace
+  checkouts with no install-time generation hook; bkit's 8-language routing
+  lives in `lib/intent/language.js`, not descriptions. Revisit if CC gains
+  install/setup hooks.
+- **ADR 0011 Amendment 1**: official manifest schema has grown past the
+  21-key v2.1.143 snapshot (mcpServers — now used by bkit — lspServers,
+  channels, userConfig, defaultEnabled). Policy recorded verbatim:
+  `EXPECTED_PLUGIN_JSON_KEYS` is **subset enforcement — the keys bkit ships —
+  NOT a mirror of the full official schema** (only absent official key:
+  `defaultEnabled`, which bkit does not ship). Zero code change.
+- **Eval re-baseline SOP** (bilingual, `docs/06-guide/eval-rebaseline.guide.*`):
+  `model_baseline` is capture-time metadata (the eval runner performs ZERO
+  LLM calls); re-baseline on rubric changes, not model releases; the current
+  32 `claude-sonnet-4-6` values remain frozen per the v2.1.25 decision.
+- **45-skills counting note** (CUSTOMIZATION-GUIDE + skills overview): CC's
+  `/plugin` Skills count = `skills/` + `commands/` entries (same-name dedup);
+  bkit = 44 skills + `commands/output-style-setup.md` → displays 45. Not a bug.
+
 ## [2.1.25] - 2026-07-02
 
 > **Status**: Claude 5 Model Alignment + Issue Response (#128, #129, #130).

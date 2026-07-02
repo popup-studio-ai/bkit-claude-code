@@ -341,7 +341,7 @@ async function persistAndAudit(agg, infra, sprintId) {
           targetType: 'feature',
           details: r.auditRecord,
           result: r.auditRecord.passed === false ? 'failure' : 'success',
-        });
+        }, { projectRoot: infra && infra.injectedProjectRoot }); // v2.1.26 I-12
       }
     }
   } catch (_e) { /* audit best-effort */ }

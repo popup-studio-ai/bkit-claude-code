@@ -4,8 +4,10 @@
  * @module test/integration/mcp-server
  * @version 2.0.0
  *
- * Verifies MCP server modules load without error and .mcp.json structure.
- * 15 TC: MS-001 ~ MS-015
+ * Verifies MCP server modules load without error and the inline
+ * mcpServers manifest in .claude-plugin/plugin.json (relocated from
+ * root .mcp.json per design v2126-issue-response I-1..I-3).
+ * 16 TC: MS-001 ~ MS-016
  */
 
 const fs = require('fs');
@@ -107,44 +109,73 @@ assert('MS-010',
 );
 
 // ============================================================
-// Section 3: .mcp.json valid JSON with correct structure (MS-011~015)
+// Section 3: plugin.json inline mcpServers manifest (MS-011~016)
+// Relocated from root .mcp.json per design v2126-issue-response
+// (docs/02-design/features/v2126-issue-response.design.en.md §3, I-1..I-3).
 // ============================================================
 
-const mcpJsonPath = path.join(PROJECT_ROOT, '.mcp.json');
+const pluginJsonPath = path.join(PROJECT_ROOT, '.claude-plugin', 'plugin.json');
 
-// MS-011: .mcp.json exists
+// MS-011: plugin.json manifest exists
 assert('MS-011',
-  fs.existsSync(mcpJsonPath),
-  '.mcp.json exists at project root'
+  fs.existsSync(pluginJsonPath),
+  '.claude-plugin/plugin.json exists'
 );
 
-// MS-012: .mcp.json is valid JSON
-let mcpConfig = null;
+// MS-012: plugin.json is valid JSON
+let pluginManifest = null;
 try {
-  mcpConfig = JSON.parse(fs.readFileSync(mcpJsonPath, 'utf8'));
-  assert('MS-012', mcpConfig !== null, '.mcp.json parses as valid JSON');
+  pluginManifest = JSON.parse(fs.readFileSync(pluginJsonPath, 'utf8'));
+  assert('MS-012', pluginManifest !== null, 'plugin.json parses as valid JSON');
 } catch (e) {
-  assert('MS-012', false, `.mcp.json parse failed: ${e.message}`);
+  assert('MS-012', false, `plugin.json parse failed: ${e.message}`);
 }
 
-// MS-013: .mcp.json has mcpServers key
+const mcpServers = pluginManifest !== null ? pluginManifest.mcpServers : null;
+
+// MS-013: plugin.json has inline mcpServers key
 assert('MS-013',
-  mcpConfig !== null && mcpConfig.mcpServers !== null && typeof mcpConfig.mcpServers === 'object',
-  '.mcp.json has mcpServers object'
+  mcpServers !== null && typeof mcpServers === 'object',
+  'plugin.json has inline mcpServers object'
 );
 
-// MS-014: .mcp.json has bkit-pdca server entry
+// Helper for the NEW args hardening assertion (v2126 I-3): current MS-014/015
+// previously did NOT assert args — this locks the exact `${CLAUDE_PLUGIN_ROOT}`
+// variable the dual-load bug hinged on.
+function hasPluginRootArgs(entry) {
+  return entry != null && Array.isArray(entry.args) &&
+    typeof entry.args[0] === 'string' &&
+    entry.args[0].includes('${CLAUDE_PLUGIN_ROOT}/servers/');
+}
+
+// MS-014: plugin.json mcpServers has bkit-pdca entry with command=node
+// and (NEW hardening, v2126 I-3) args[0] under ${CLAUDE_PLUGIN_ROOT}/servers/
 assert('MS-014',
-  mcpConfig !== null && mcpConfig.mcpServers['bkit-pdca'] != null &&
-  mcpConfig.mcpServers['bkit-pdca'].command === 'node',
-  '.mcp.json has bkit-pdca server with command=node'
+  mcpServers !== null && mcpServers['bkit-pdca'] != null &&
+  mcpServers['bkit-pdca'].command === 'node' &&
+  hasPluginRootArgs(mcpServers['bkit-pdca']),
+  'plugin.json mcpServers has bkit-pdca with command=node and ${CLAUDE_PLUGIN_ROOT}/servers/ args'
 );
 
-// MS-015: .mcp.json has bkit-analysis server entry
+// MS-015: plugin.json mcpServers has bkit-analysis entry with command=node
+// and (NEW hardening, v2126 I-3) args[0] under ${CLAUDE_PLUGIN_ROOT}/servers/
 assert('MS-015',
-  mcpConfig !== null && mcpConfig.mcpServers['bkit-analysis'] != null &&
-  mcpConfig.mcpServers['bkit-analysis'].command === 'node',
-  '.mcp.json has bkit-analysis server with command=node'
+  mcpServers !== null && mcpServers['bkit-analysis'] != null &&
+  mcpServers['bkit-analysis'].command === 'node' &&
+  hasPluginRootArgs(mcpServers['bkit-analysis']),
+  'plugin.json mcpServers has bkit-analysis with command=node and ${CLAUDE_PLUGIN_ROOT}/servers/ args'
+);
+
+// MS-016 (NEW, regression lock — design v2126-issue-response I-3, reproduction R1):
+// The root .mcp.json must NOT exist. When the repo is opened as cwd, CC auto-loads
+// <cwd>/.mcp.json as PROJECT config where ${CLAUDE_PLUGIN_ROOT} is undefined —
+// the same file was dual-loaded (plugin context OK, project context broken),
+// greeting developers/cloners with failed MCP servers. The manifest now lives
+// ONLY in .claude-plugin/plugin.json (inline mcpServers), which the plugin
+// loader alone reads. This lock prevents the root file from ever returning.
+assert('MS-016',
+  !fs.existsSync(path.join(PROJECT_ROOT, '.mcp.json')),
+  'root .mcp.json does not exist (dual-load regression lock, v2126 I-3/R1)'
 );
 
 // ============================================================

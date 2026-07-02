@@ -106,7 +106,7 @@ async function handleTrust(args, infra, deps) {
           actor,
           timestamp: now,
         },
-      });
+      }, { projectRoot: infra && infra.injectedProjectRoot }); // v2.1.26 I-12
     } catch (_) { /* audit failure is non-fatal for no-op path */ }
     return {
       ok: true,
@@ -167,7 +167,7 @@ async function handleTrust(args, infra, deps) {
         actor,
         timestamp: now,
       },
-    });
+    }, { projectRoot: infra && infra.injectedProjectRoot }); // v2.1.26 I-12
     auditEntryId = (entry && entry.id) || null;
   } catch (_) { /* audit failure does not roll back mutation (decision: persistence priority) */ }
 
@@ -271,7 +271,7 @@ async function handleDogfood(args, infra, deps) {
       },
       result: 'success',
       destructiveOperation: false,
-    });
+    }, { projectRoot: infra && infra.injectedProjectRoot }); // v2.1.26 I-12
   } catch (_) { /* audit failures must NOT block dogfood init */ }
 
   return { ok: true, sprintId, releaseVersion, releaseTag };
@@ -330,7 +330,7 @@ async function handleAnnotate(args, infra) {
       },
       result: 'success',
       destructiveOperation: false,
-    });
+    }, { projectRoot: infra && infra.injectedProjectRoot }); // v2.1.26 I-12
   } catch (_) { /* audit failures must NOT block annotate */ }
 
   return {
@@ -528,11 +528,32 @@ async function handleMasterPlan(args, infra, deps) {
   };
   const lifecycle = require('../../lib/application/sprint-lifecycle');
   const d = deps || {};
+  // v2.1.26 (I-12, test isolation): when a project root was explicitly
+  // injected (args.projectRoot or infra.injectedProjectRoot) and no custom
+  // auditLogger was supplied, bind the default audit-logger to that root so
+  // master_plan_created never lands in the developer's real .bkit/audit.
+  // No injection → auditLogger stays undefined → use case falls back to the
+  // default module (current runtime behavior, unchanged).
+  let boundAuditLogger = d.auditLogger;
+  if (!boundAuditLogger) {
+    const injectedRoot = (infra && infra.injectedProjectRoot) ||
+      ((typeof args.projectRoot === 'string' && args.projectRoot.length > 0) ? args.projectRoot : null);
+    if (injectedRoot) {
+      try {
+        const audit = require('../../lib/audit/audit-logger');
+        boundAuditLogger = {
+          writeAuditLog: function (entry) {
+            return audit.writeAuditLog(entry, { projectRoot: injectedRoot });
+          },
+        };
+      } catch (_e) { boundAuditLogger = d.auditLogger; }
+    }
+  }
   const usecaseDeps = {
     agentSpawner: d.agentSpawner,
     fileWriter: d.fileWriter,
     fileDeleter: d.fileDeleter,
-    auditLogger: d.auditLogger,
+    auditLogger: boundAuditLogger,
     taskCreator: d.taskCreator,
   };
   return lifecycle.generateMasterPlan(input, usecaseDeps);

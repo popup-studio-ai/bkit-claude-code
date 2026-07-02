@@ -2,17 +2,34 @@
 /**
  * L1 Unit Tests — sprint-handler.js handleInit default L2 + L1 warning (F1-4)
  *
+ * v2.1.26 (I-13, test isolation): every CLI invocation now runs against a
+ * throwaway mkdtemp project root (cwd + CLAUDE_PROJECT_DIR both pointed at
+ * it), so sprint state and audit writes NEVER touch the repo's real .bkit.
+ * Pattern follows tests/contract/v2113-sprint-contracts.test.js SC-05.
+ *
  * @module test/unit/sprint-handler/default-level-warning.test
  */
 'use strict';
 
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
+const os = require('node:os');
 const path = require('node:path');
 const { execSync } = require('node:child_process');
 
 const PROJECT_ROOT = path.resolve(__dirname, '..', '..', '..');
 const HANDLER = path.join(PROJECT_ROOT, 'scripts/sprint-handler.js');
+
+// I-13: isolated tmp project root — all .bkit writes land here, never in the repo.
+const TMP_ROOT = fs.mkdtempSync(path.join(os.tmpdir(), 'bkit-f1-4-'));
+const CHILD_OPTS = {
+  encoding: 'utf8',
+  cwd: TMP_ROOT,
+  env: Object.assign({}, process.env, { CLAUDE_PROJECT_DIR: TMP_ROOT }),
+};
+process.on('exit', () => {
+  try { fs.rmSync(TMP_ROOT, { recursive: true, force: true }); } catch (_e) { /* best-effort */ }
+});
 
 let passed = 0, failed = 0;
 const failures = [];
@@ -23,7 +40,7 @@ function test(name, fn) {
 }
 
 function cleanupSprint(id) {
-  const f = path.join(PROJECT_ROOT, '.bkit/state/sprints', id + '.json');
+  const f = path.join(TMP_ROOT, '.bkit/state/sprints', id + '.json');
   if (fs.existsSync(f)) fs.unlinkSync(f);
 }
 
@@ -35,10 +52,10 @@ test('TC-F1-4-U1: handleInit without --trust → trustLevelAtStart=L2', () => {
   cleanupSprint('test-f1-4-default');
   execSync(
     `node "${HANDLER}" init test-f1-4-default --name "DefaultTest"`,
-    { encoding: 'utf8', cwd: PROJECT_ROOT }
+    CHILD_OPTS
   );
   const state = JSON.parse(fs.readFileSync(
-    path.join(PROJECT_ROOT, '.bkit/state/sprints/test-f1-4-default.json'),
+    path.join(TMP_ROOT, '.bkit/state/sprints/test-f1-4-default.json'),
     'utf8'
   ));
   assert.equal(state.autoRun.trustLevelAtStart, 'L2');
@@ -49,10 +66,10 @@ test('TC-F1-4-U2: handleInit --trust L1 → trustLevelAtStart=L1', () => {
   cleanupSprint('test-f1-4-l1');
   execSync(
     `node "${HANDLER}" init test-f1-4-l1 --name "L1Test" --trust L1`,
-    { encoding: 'utf8', cwd: PROJECT_ROOT, stdio: ['ignore', 'pipe', 'pipe'] }
+    Object.assign({}, CHILD_OPTS, { stdio: ['ignore', 'pipe', 'pipe'] })
   );
   const state = JSON.parse(fs.readFileSync(
-    path.join(PROJECT_ROOT, '.bkit/state/sprints/test-f1-4-l1.json'),
+    path.join(TMP_ROOT, '.bkit/state/sprints/test-f1-4-l1.json'),
     'utf8'
   ));
   assert.equal(state.autoRun.trustLevelAtStart, 'L1');
@@ -65,7 +82,7 @@ test('TC-F1-4-U3: handleInit --trust L1 → stderr warning emitted', () => {
   try {
     execSync(
       `node "${HANDLER}" init test-f1-4-warn --name "WarnTest" --trust L1 2>&1 1>/dev/null`,
-      { encoding: 'utf8', cwd: PROJECT_ROOT, shell: '/bin/sh' }
+      Object.assign({}, CHILD_OPTS, { shell: '/bin/sh' })
     );
   } catch (_) { /* may fail if shell mode differs */ }
   // Alternative: capture both stdout and stderr separately
@@ -73,7 +90,7 @@ test('TC-F1-4-U3: handleInit --trust L1 → stderr warning emitted', () => {
     const proc = require('child_process').spawnSync(
       'node',
       [HANDLER, 'init', 'test-f1-4-warn2', '--name', 'Warn', '--trust', 'L1'],
-      { encoding: 'utf8', cwd: PROJECT_ROOT }
+      CHILD_OPTS
     );
     stderr = proc.stderr || '';
   } catch (_) {}
@@ -86,10 +103,10 @@ test('TC-F1-4-U4: handleInit --trust L1 → audit sprint_trust_warning emit', ()
   cleanupSprint('test-f1-4-audit');
   execSync(
     `node "${HANDLER}" init test-f1-4-audit --name "AuditTest" --trust L1`,
-    { encoding: 'utf8', cwd: PROJECT_ROOT, stdio: ['ignore', 'pipe', 'pipe'] }
+    Object.assign({}, CHILD_OPTS, { stdio: ['ignore', 'pipe', 'pipe'] })
   );
   const today = new Date().toISOString().split('T')[0];
-  const auditPath = path.join(PROJECT_ROOT, `.bkit/audit/${today}.jsonl`);
+  const auditPath = path.join(TMP_ROOT, `.bkit/audit/${today}.jsonl`);
   const lines = fs.readFileSync(auditPath, 'utf8').trim().split('\n');
   const events = lines
     .map(l => { try { return JSON.parse(l); } catch (_) { return null; } })
