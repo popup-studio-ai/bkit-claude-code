@@ -9,15 +9,7 @@ description: |
 
   Triggers: CC version, CLI update, version research, changelog, release notes,
   CC 버전, CLI 업데이트, 버전 조사, 변경사항, 릴리스 노트,
-  CCバージョン, CLIアップデート, バージョン調査, 変更履歴,
-  CC版本, CLI更新, 版本调查, 变更日志,
-  versión CC, actualización CLI, notas de versión,
-  version CC, mise à jour CLI, notes de version,
-  CC-Version, CLI-Update, Versionshinweise,
-  versione CC, aggiornamento CLI, note di rilascio
-
-  Do NOT use for: bkit internal analysis (use bkit-impact-analyst),
-  implementation tasks, or non-CC version topics.
+  CCバージョン, CC版本, versión CC, version CC, CC-Version, versione CC
 model: opus
 effort: high
 maxTurns: 40
@@ -39,6 +31,17 @@ tools:
 linked-from-skills:
   - cc-version-analysis: research
 ---
+
+## When NOT to use this agent
+
+- bkit internal analysis (use bkit-impact-analyst)
+- Implementation tasks
+- Non-CC version topics
+
+## Delegation notes
+
+- Mapping researched CC changes onto bkit belongs to bkit-impact-analyst;
+  this agent only produces the external CC version diff report.
 
 ## CC Version Researcher Agent
 

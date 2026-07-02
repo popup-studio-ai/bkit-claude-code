@@ -1,25 +1,17 @@
 ---
 name: pipeline-guide
 description: |
-  Agent that guides users through 9-phase Development Pipeline.
+  Agent that guides users through the 9-phase Development Pipeline.
   Provides step-by-step guidance based on project level (Starter/Dynamic/Enterprise).
-  When the project involves multiple cohesive features sharing scope/budget/timeline,
-  also surface the option to wrap them in a /sprint master plan (v2.1.13) for
-  unified 8-phase orchestration with 4 auto-pause triggers.
 
-  Use proactively when user asks about development order, mentions "where to start",
-  "what should I do first", or starts a new project without clear direction.
+  Use proactively when user asks about development order, mentions "where to start"
+  or "what should I do first", or starts a new project without clear direction.
 
   Triggers: development pipeline, phase, development order, where to start, what to do first,
-  how to begin, new project, project setup, 개발 파이프라인, 뭐부터, 어디서부터, 순서, 시작,
-  開発パイプライン, 何から, どこから, 开发流程, 从哪里开始,
-  pipeline de desarrollo, fase, orden de desarrollo, por dónde empezar, qué hacer primero,
-  pipeline de développement, phase, ordre de développement, par où commencer, que faire en premier,
-  Entwicklungs-Pipeline, Phase, Entwicklungsreihenfolge, wo anfangen, was zuerst tun,
-  pipeline di sviluppo, fase, ordine di sviluppo, da dove iniziare, cosa fare prima
-
-  Do NOT use for: ongoing implementation work, existing feature modifications, bug fixes,
-  or when experienced developers want to proceed freely.
+  how to begin, new project, project setup,
+  개발 파이프라인, 뭐부터, 어디서부터, 순서, 시작,
+  開発パイプライン, 开发流程, pipeline de desarrollo, pipeline de développement,
+  Entwicklungs-Pipeline, pipeline di sviluppo
 model: sonnet
 effort: medium
 maxTurns: 20
@@ -43,6 +35,17 @@ color: cyan
 skills:
   - development-pipeline
 ---
+
+## When NOT to use this agent
+
+Do NOT use for: ongoing implementation work, existing feature modifications, bug fixes,
+or when experienced developers want to proceed freely.
+
+## Delegation notes
+
+When the project involves multiple cohesive features sharing scope/budget/timeline,
+also surface the option to wrap them in a /sprint master plan (v2.1.13) for
+unified 8-phase orchestration with 4 auto-pause triggers.
 
 # Pipeline Guide Agent
 

@@ -99,9 +99,9 @@ const RENDER_THRESHOLD = 10;
     if (typeof ui.renderAgentPanel === 'function') {
       ui.renderAgentPanel({
         agents: [
-          { name: 'cto-lead', model: 'opus', status: 'running', turns: 5 },
+          { name: 'cto-lead', model: 'fable', status: 'running', turns: 5 },
           { name: 'code-analyzer', model: 'opus', status: 'idle', turns: 0 },
-          { name: 'pm-lead', model: 'opus', status: 'completed', turns: 12 },
+          { name: 'pm-lead', model: 'fable', status: 'completed', turns: 12 },
         ],
       });
     }

@@ -9,15 +9,7 @@ description: |
 
   Triggers: security, authentication, vulnerability, OWASP, CSRF, XSS, injection,
   보안, 인증, 취약점, 보안 검토, 인가, 보안 아키텍처,
-  セキュリティ, 認証, 脆弱性, セキュリティレビュー, セキュリティ設計,
-  安全, 认证, 漏洞, 安全审查, 安全架构,
-  seguridad, autenticación, vulnerabilidad, revisión de seguridad,
-  sécurité, authentification, vulnérabilité, revue de sécurité,
-  Sicherheit, Authentifizierung, Schwachstelle, Sicherheitsüberprüfung,
-  sicurezza, autenticazione, vulnerabilità, revisione sicurezza
-
-  Do NOT use for: general code review (use code-analyzer),
-  infrastructure setup (use infra-architect), or Starter level projects.
+  セキュリティ, 安全, seguridad, sécurité, Sicherheit, sicurezza
 model: opus
 effort: high
 maxTurns: 30
@@ -36,6 +28,11 @@ skills:
   - phase-7-seo-security
   - code-review
 ---
+
+## When NOT to use this agent
+
+Do NOT use for: general code review (use code-analyzer),
+infrastructure setup (use infra-architect), or Starter level projects.
 
 ## Security Architect Agent
 

@@ -60,12 +60,30 @@ test('aggregate: Sonnet pricing $3 in / $15 out per Mtok', () => {
   });
 });
 
-test('aggregate: Opus pricing $15 in / $75 out per Mtok', () => {
+test('aggregate: Opus pricing $5 in / $25 out per Mtok', () => {
   withFakeLedger([
-    { inputTokens: 1_000_000, outputTokens: 1_000_000, model: 'claude-opus-4-7' },
+    { inputTokens: 1_000_000, outputTokens: 1_000_000, model: 'claude-opus-4-8' },
   ], (ledger) => {
     const r = tr.aggregate({ ledgerPath: ledger });
-    assert.ok(Math.abs(r.summary.totalCost - 90.0) < 0.01);
+    assert.ok(Math.abs(r.summary.totalCost - 30.0) < 0.01);
+  });
+});
+
+test('aggregate: Haiku pricing $1 in / $5 out per Mtok', () => {
+  withFakeLedger([
+    { inputTokens: 1_000_000, outputTokens: 1_000_000, model: 'claude-haiku-4-5' },
+  ], (ledger) => {
+    const r = tr.aggregate({ ledgerPath: ledger });
+    assert.ok(Math.abs(r.summary.totalCost - 6.0) < 0.01);
+  });
+});
+
+test('aggregate: Fable pricing $10 in / $50 out per Mtok', () => {
+  withFakeLedger([
+    { inputTokens: 1_000_000, outputTokens: 1_000_000, model: 'claude-fable-5' },
+  ], (ledger) => {
+    const r = tr.aggregate({ ledgerPath: ledger });
+    assert.ok(Math.abs(r.summary.totalCost - 60.0) < 0.01);
   });
 });
 
@@ -104,6 +122,19 @@ test('aggregate: groups by model class (sonnet / opus / haiku / unknown)', () =>
     assert.equal(r.byModel.opus.tokensIn, 200);
     assert.equal(r.byModel.haiku.tokensIn, 30);
     assert.equal(r.byModel.unknown.tokensIn, 15);
+  });
+});
+
+test('aggregate: Claude 5 family IDs class correctly (fable / sonnet / opus)', () => {
+  withFakeLedger([
+    { inputTokens: 100, outputTokens: 50, model: 'claude-fable-5' },
+    { inputTokens: 200, outputTokens: 80, model: 'claude-sonnet-5' },
+    { inputTokens: 30, outputTokens: 10, model: 'claude-opus-4-8' },
+  ], (ledger) => {
+    const r = tr.aggregate({ ledgerPath: ledger });
+    assert.equal(r.byModel.fable.tokensIn, 100);
+    assert.equal(r.byModel.sonnet.tokensIn, 200);
+    assert.equal(r.byModel.opus.tokensIn, 30);
   });
 });
 

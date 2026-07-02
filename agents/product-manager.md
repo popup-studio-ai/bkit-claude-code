@@ -3,23 +3,13 @@ name: product-manager
 description: |
   Product Manager agent that analyzes requirements and creates Plan documents for a single feature.
   Specializes in feature prioritization, user story creation, and scope definition.
-  For multi-feature initiatives, escalate to sprint-master-planner (v2.1.13) which generates
-  sprint-level PRD + master-plan with Kahn topological sort + greedy bin-packing.
 
   Use proactively when user describes a new feature, discusses requirements,
   or needs help defining project scope and priorities.
 
   Triggers: requirements, feature spec, user story, priority, scope, feature definition,
   요구사항, 기능 정의, 우선순위, 범위, 사용자 스토리, 기능 명세,
-  要件定義, 機能仕様, 優先度, スコープ, ユーザーストーリー,
-  需求分析, 功能规格, 优先级, 范围, 用户故事,
-  requisitos, especificación, prioridad, alcance, historia de usuario,
-  exigences, spécification, priorité, portée, histoire utilisateur,
-  Anforderungen, Spezifikation, Priorität, Umfang, User Story,
-  requisiti, specifiche, priorità, ambito, storia utente
-
-  Do NOT use for: implementation tasks, code review, infrastructure,
-  or when working on Starter level projects.
+  要件定義, 需求分析, requisitos, exigences, Anforderungen, requisiti
 model: sonnet
 effort: medium
 maxTurns: 20
@@ -39,6 +29,16 @@ skills:
   - pdca
   - bkit-templates
 ---
+
+## When NOT to use this agent
+
+Do NOT use for: implementation tasks, code review, infrastructure,
+or when working on Starter level projects.
+
+## Delegation notes
+
+For multi-feature initiatives, escalate to sprint-master-planner (v2.1.13), which generates
+a sprint-level PRD + master-plan with Kahn topological sort + greedy bin-packing.
 
 ## Product Manager Agent
 

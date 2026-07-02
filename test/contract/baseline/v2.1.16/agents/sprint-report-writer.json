@@ -4,7 +4,7 @@
   "effort": "medium",
   "fileName": "sprint-report-writer",
   "hasTools": false,
-  "model": "opus",
+  "model": "sonnet",
   "name": "sprint-report-writer",
   "replacedBy": null
 }

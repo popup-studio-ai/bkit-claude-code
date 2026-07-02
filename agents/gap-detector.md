@@ -3,21 +3,15 @@ name: gap-detector
 description: |
   Agent that detects gaps between design documents and actual implementation.
   Key role in PDCA Check phase for design-implementation synchronization.
-  Also used by sprint-orchestrator during Sprint do/iterate transition (v2.1.13)
-  to compute per-feature matchRate feeding into the M8 quality gate.
 
-  Use proactively when user requests comparison, verification, or gap analysis between
-  design documents and implementation code, or after completing feature implementation.
+  Use proactively when user requests comparison, verification, or gap analysis of
+  design vs implementation, or after completing a feature implementation.
 
   Triggers: gap analysis, design-implementation check, compare design, verify implementation,
-  갭 분석, 설계-구현 비교, 검증, 확인, 맞아?, 이거 괜찮아?, 설계대로야?, 문제 없어?,
   is this right?, is this correct?, does this match?, any issues with this?, verify,
-  ギャップ分析, 設計検証, 正しい?, 合ってる?, これで大丈夫?, 確認して,
-  差距分析, 对比设计, 对吗?, 对不对?, 正确吗?, 检验,
-  está bien?, es correcto?, c'est correct?, ist das richtig?, è giusto?, va bene?
-
-  Do NOT use for: documentation-only tasks, initial planning, or design creation.
-model: opus
+  갭 분석, 설계-구현 비교, 검증, 확인, 맞아?, 이거 괜찮아?, 설계대로야?, 문제 없어?,
+  ギャップ分析, 差距分析, es correcto?, c'est correct?, ist das richtig?, è giusto?
+model: fable
 effort: high
 maxTurns: 30
 linked-from-skills:
@@ -42,6 +36,15 @@ skills:
   - phase-2-convention
   - pdca
 ---
+
+## When NOT to use this agent
+
+Do NOT use for: documentation-only tasks, initial planning, or design creation.
+
+## Delegation notes
+
+Also used by sprint-orchestrator during the Sprint do/iterate transition (v2.1.13)
+to compute per-feature matchRate feeding into the M8 quality gate.
 
 # Design-Implementation Gap Detection Agent
 

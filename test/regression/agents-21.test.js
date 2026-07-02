@@ -111,33 +111,30 @@ const ALL_AGENTS = [
   'report-generator',
   'security-architect',
   'starter-guide',
-  // v1.6.2 additions (8 agents)
-  'pdca-eval-plan',
-  'pdca-eval-design',
-  'pdca-eval-do',
-  'pdca-eval-check',
-  'pdca-eval-act',
-  'pdca-eval-pm',
+  // v1.6.2 additions (pdca-eval-* stubs removed in v2.1.25 — see
+  // test/contract/deprecation-registry.json + ADR 0014)
   'skill-needs-extractor',
   'pm-lead-skill-patch',
 ];
 
 // --- Valid model values ---
-const VALID_MODELS = ['opus', 'sonnet', 'haiku'];
+// v2.1.25: 'fable' added (Claude 5 model alignment)
+const VALID_MODELS = ['opus', 'sonnet', 'haiku', 'fable'];
 
 // --- Expected model assignments ---
+// v2.1.25: synced to the claude-model-alignment matrix (fable/opus/sonnet/haiku)
 const EXPECTED_MODELS = {
-  'cto-lead': 'opus',
-  'pm-lead': 'opus',
+  'cto-lead': 'fable',
+  'pm-lead': 'fable',
   'enterprise-expert': 'opus',
   'infra-architect': 'opus',
   'code-analyzer': 'opus',
-  'design-validator': 'opus',
-  'gap-detector': 'opus',
+  'design-validator': 'fable',
+  'gap-detector': 'fable',
   'security-architect': 'opus',
   'bkend-expert': 'sonnet',
   'frontend-architect': 'sonnet',
-  'pdca-iterator': 'sonnet',
+  'pdca-iterator': 'fable',
   'pipeline-guide': 'sonnet',
   'pm-discovery': 'sonnet',
   'pm-prd': 'sonnet',
@@ -148,13 +145,7 @@ const EXPECTED_MODELS = {
   'starter-guide': 'sonnet',
   'qa-monitor': 'haiku',
   'report-generator': 'haiku',
-  // v1.6.2 additions
-  'pdca-eval-plan': 'sonnet',
-  'pdca-eval-design': 'sonnet',
-  'pdca-eval-do': 'sonnet',
-  'pdca-eval-check': 'sonnet',
-  'pdca-eval-act': 'sonnet',
-  'pdca-eval-pm': 'sonnet',
+  // v1.6.2 additions (pdca-eval-* tombstones deleted in v2.1.25 — ADR 0014)
   'skill-needs-extractor': 'sonnet',
   'pm-lead-skill-patch': 'sonnet',
 };
@@ -182,10 +173,7 @@ ALL_AGENTS.forEach((agent, index) => {
     `${agent}: frontmatter parseable with name="${frontmatter?.name || 'N/A'}"`);
 
   // TC2: Trigger keywords exist in description (internal-only agents exempt)
-  const INTERNAL_AGENTS = [
-    'pdca-eval-plan', 'pdca-eval-design', 'pdca-eval-do', 'pdca-eval-check',
-    'pdca-eval-act', 'pdca-eval-pm', 'skill-needs-extractor', 'pm-lead-skill-patch'
-  ];
+  const INTERNAL_AGENTS = ['skill-needs-extractor', 'pm-lead-skill-patch'];
   if (INTERNAL_AGENTS.includes(agent)) {
     skip(`AG-${num}-TRIG`, `${agent}: internal-only agent, trigger keywords not required`);
   } else {

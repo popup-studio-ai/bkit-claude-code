@@ -9,15 +9,7 @@ description: |
 
   Triggers: test strategy, QA plan, quality metrics, test plan, verification strategy,
   테스트 전략, QA 계획, 품질 기준, 검증 전략, 테스트 계획,
-  テスト戦略, QA計画, 品質基準, 検証戦略, テスト計画,
-  测试策略, QA计划, 质量标准, 验证策略, 测试计划,
-  estrategia de pruebas, plan QA, métricas de calidad, plan de pruebas,
-  stratégie de test, plan QA, métriques de qualité, plan de test,
-  Teststrategie, QA-Plan, Qualitätsmetriken, Testplan,
-  strategia di test, piano QA, metriche di qualità, piano di test
-
-  Do NOT use for: actual code implementation, infrastructure tasks,
-  or simple single-file verification (use gap-detector directly).
+  テスト戦略, 测试策略, estrategia de pruebas, stratégie de test, Teststrategie, strategia di test
 model: sonnet
 effort: medium
 maxTurns: 20
@@ -40,6 +32,11 @@ skills:
   - zero-script-qa
   - phase-8-review
 ---
+
+## When NOT to use this agent
+
+Do NOT use for: actual code implementation, infrastructure tasks,
+or simple single-file verification (use gap-detector directly).
 
 ## QA Strategist Agent
 

@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "agents": {
+    "pdca-eval-act": {
+      "deprecatedIn": "v2.1.13",
+      "replacedBy": "report-generator",
+      "reason": "superseded by report-generator (final synthesis) + pdca-iterator feedback loop",
+      "deprecationCommit": "967cd8f",
+      "stubRemovedIn": "v2.1.25",
+      "issue": "#128"
+    },
+    "pdca-eval-check": {
+      "deprecatedIn": "v2.1.13",
+      "replacedBy": "gap-detector",
+      "reason": "superseded by gap-detector + code-analyzer pipeline invoked by qa-lead",
+      "deprecationCommit": "967cd8f",
+      "stubRemovedIn": "v2.1.25",
+      "issue": "#128"
+    },
+    "pdca-eval-design": {
+      "deprecatedIn": "v2.1.13",
+      "replacedBy": "design-validator",
+      "reason": "superseded by design-validator with frontend-architect or enterprise-expert review depending on project level",
+      "deprecationCommit": "967cd8f",
+      "stubRemovedIn": "v2.1.25",
+      "issue": "#128"
+    },
+    "pdca-eval-do": {
+      "deprecatedIn": "v2.1.13",
+      "replacedBy": "code-analyzer",
+      "reason": "superseded by code-analyzer (+ qa-monitor runtime verification when Docker logs are available)",
+      "deprecationCommit": "967cd8f",
+      "stubRemovedIn": "v2.1.25",
+      "issue": "#128"
+    },
+    "pdca-eval-plan": {
+      "deprecatedIn": "v2.1.13",
+      "replacedBy": "product-manager",
+      "reason": "superseded by product-manager (+ pm-lead orchestration for richer discovery analysis)",
+      "deprecationCommit": "967cd8f",
+      "stubRemovedIn": "v2.1.25",
+      "issue": "#128"
+    },
+    "pdca-eval-pm": {
+      "deprecatedIn": "v2.1.13",
+      "replacedBy": "pm-lead",
+      "reason": "superseded by the PM Agent Team (pm-lead + pm-discovery/strategy/research/prd)",
+      "deprecationCommit": "967cd8f",
+      "stubRemovedIn": "v2.1.25",
+      "issue": "#128"
+    }
+  },
+  "skills": {},
+  "mcpTools": {}
+}

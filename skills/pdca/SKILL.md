@@ -339,7 +339,7 @@ Start PDCA Team Mode using Claude Code Agent Teams (requires `CLAUDE_CODE_EXPERI
 4. Generate team strategy via `generateTeamStrategy(level)`:
    - Dynamic: 3 teammates (developer, frontend, qa) — CTO Lead orchestrates
    - Enterprise: 5 teammates (architect, developer, qa, reviewer, security) — CTO Lead orchestrates
-5. CTO Lead (cto-lead agent, opus) automatically:
+5. CTO Lead (cto-lead agent, fable) automatically:
    - Sets technical direction and selects orchestration pattern
    - Distributes tasks to teammates based on PDCA phase
    - Enforces quality gates (90% Match Rate threshold)
@@ -380,8 +380,8 @@ Feature: user-auth
 | Level | Available | Teammates | CTO Lead |
 |-------|:---------:|:---------:|:--------:|
 | Starter | No | - | - |
-| Dynamic | Yes | 3 | cto-lead (opus) |
-| Enterprise | Yes | 6 | cto-lead (opus) |
+| Dynamic | Yes | 3 | cto-lead (fable) |
+| Enterprise | Yes | 6 | cto-lead (fable) |
 
 ### archive (Archive Phase)
 

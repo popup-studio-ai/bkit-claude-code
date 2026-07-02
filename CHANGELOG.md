@@ -5,6 +5,176 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.25] - 2026-07-02
+
+> **Status**: Claude 5 Model Alignment + Issue Response (#128, #129, #130).
+> Realigns all 40 agent model pins to a
+> 4-tier role-based matrix built around the Claude 5 family (Fable 5 / Opus 4.8 /
+> Sonnet 5 / Haiku 4.5), with a **dual-floor** compatibility policy: the install
+> floor stays at CC v2.1.143 (unchanged — plugin-manifest `displayName`), and a
+> new **model floor** (CC v2.1.170, where the `fable` alias was introduced) is
+> surfaced as a SessionStart advisory (**ENH-368**) instead of a hard requirement.
+> Every dependent surface moved in lockstep: frontmatter, runtime whitelist,
+> pricing, contract baselines, security assertions, and docs. Design doc:
+> `docs/02-design/features/claude-model-alignment.design.en.md`. Basis: two
+> empirical reproductions — **R1** (alias resolution per CC version/provider) and
+> **R2** (`model: fable` is a HARD agent-spawn error on CC < 2.1.170) — logged in
+> `.bkit/research/v2125-reproduction-log.md`. No Guessing: every tier assignment
+> argued per-agent; pricing verified against published Claude API list prices.
+
+### 4-Tier Model Matrix (16 reassignments across 40 agents)
+
+| Tier | Count | Agents | Rationale |
+|------|:-----:|--------|-----------|
+| **fable** (was opus ×9) | 9 | cto-lead, sprint-orchestrator, sprint-master-planner, pm-lead, qa-lead, gap-detector, design-validator, pdca-iterator, sprint-qa-flow | Verification & orchestration core — long-horizon leads + design/gap verifiers, Fable's exact positioning (honesty/verification edge, long-horizon self-checking) |
+| **opus** (unchanged ×7) | 7 | security-architect, code-analyzer, self-healing, infra-architect, enterprise-expert, bkit-impact-analyst, cc-version-researcher | Opus 4.8 strongest on cybersecurity; refusal-sensitive headless paths (self-healing is Sentry/Slack-triggered; Fable's safety classifier reroutes/refuses security-adjacent + non-interactive work); deep single-shot analysis at half Fable cost |
+| **sonnet** (1 changed) | 16 | sprint-report-writer (**opus → sonnet** — KPI aggregation/report synthesis is implementation-class work) + 15 unchanged implementers/analysts | Coding, analysis, synthesis workers; `sonnet` alias floats to Sonnet 5 on CC ≥ 2.1.197 |
+| **haiku** (6 changed) | 8 | pdca-eval-{act,check,design,do,plan,pm} (**sonnet → haiku** — DEPRECATED tombstones, never spawned by design, minimum cost if accidentally spawned) + qa-monitor, report-generator (unchanged) | High-volume, low-reasoning monitors + tombstones |
+
+Distribution at matrix time: 40 files = 9 fable / 7 opus / 16 sonnet / 8 haiku.
+**Final tree** (after #128 removed the 6 deprecated tombstone files — see Issue
+Response below): **34 agent files = 9 fable / 7 opus / 16 sonnet / 2 haiku**.
+
+### Dual Floor + ENH-368 Model-Floor Advisory
+
+- **Install floor UNCHANGED**: CC v2.1.143 (`CC_MIN_VERSION` — plugin-manifest
+  `displayName`, unrelated to model capability). Runtime minimum unchanged
+  (`MIN_VERSION` 2.1.78).
+- **NEW — model floor constant**: `FABLE_MODEL_FLOOR = '2.1.170'` exported from
+  `lib/infra/cc-version-checker.js` (single constant, infra layer).
+- **NEW — ENH-368 SessionStart advisory** (`hooks/startup/session-context.js`):
+  when `2.1.143 ≤ CC < 2.1.170`, names the 9 fable-pinned agents (they hard-fail
+  at spawn on those binaries, per R2), the required CC version, the fix
+  (`npm install -g @anthropic-ai/claude-code@latest`), and the temporary
+  workaround `export CLAUDE_CODE_SUBAGENT_MODEL=sonnet` (forces ALL subagents to
+  sonnet). At most one advisory is emitted (install-floor advisory takes
+  precedence); reuses the single `detectCCVersion()` result — no second process
+  spawn. Fail-open: never blocks SessionStart.
+- `RECOMMENDED_VERSION` **2.1.150 → 2.1.198** (Claude 5 alias resolution —
+  `sonnet` resolves to Sonnet 5 only on CC ≥ 2.1.197); stale SessionStart
+  recommendation prose (`v2.1.123+/v2.1.140/v2.1.34~141`) replaced with the
+  current dual-floor recommendation.
+
+### Pricing & Model-Classing Sync (`lib/pdca/token-report.js` — pricing SoT)
+
+- **FIX — opus pricing was 3x stale**: `PRICING_PER_MTOK.opus` 15/75 → **$5/$25**
+  per MTok (Opus 4.8 published list price) — cost dashboards previously
+  overstated opus spend 3x.
+- **FIX — haiku pricing**: 0.25/1.25 → **$1/$5** (Haiku 4.5 published list price).
+- **NEW — fable pricing**: **$10/$50** added; `_modelClass()` gains an
+  `includes('fable') → 'fable'` branch. `sonnet` 3/15 and `unknown` 3/15
+  fallback unchanged.
+- `test/unit/token-report.test.js`: opus assertion corrected to 5/25; NEW fable
+  pricing test + classing tests (`claude-fable-5`→fable, `claude-sonnet-5`→sonnet,
+  `claude-opus-4-8`→opus); unknown-fallback test still passes.
+
+### Whitelists, Baselines & Security Assertions (lockstep)
+
+- `test/security/agent-frontmatter.test.js` `VALID_MODELS` += `'fable'`
+  (typo'd models still fail the strict whitelist).
+- `scripts/subagent-start-handler.js` runtime coercion whitelist += `'fable'`;
+  team default ctoAgent `'opus'` → `'fable'` (also `lib/team/state-writer.js`,
+  `hooks/session-start.js` — follows cto-lead frontmatter; teammate default
+  stays `sonnet`).
+- Contract baselines regenerated via `contract-baseline-collect.js` for both
+  dirs (`test/contract/baseline/v2.1.9/` + `v2.1.16/`) — **28 baseline JSONs**,
+  `model` field only (L1-AG lockstep, no other field churn).
+- Security assertions updated: SEC-AF-030 (`cto-lead` opus → fable), SEC-AF-038
+  (OPUS_TIER1 generalized to PREMIUM tier = opus|fable: security-architect,
+  design-validator, gap-detector), SEC-AF-037 (deprecation tombstones with
+  minimal frontmatter skipped), read-only premium exceptions per matrix.
+- `evals/config.json` `benchmarkModel`: `claude-sonnet-4-6` → `claude-sonnet-5`.
+  Note: `evals/*/eval.yaml` `model_baseline` values are **historical capture
+  records** — intentionally unchanged.
+- `lib/domain/guards/enh-264-token-threshold.js`: `KNOWN_REGRESSION_MODELS` kept
+  at sonnet-4.x only + explicit comment — the ENH-264 regression was
+  sonnet-4.x-specific; Sonnet 5 excluded until observed evidence (No Guessing).
+
+### Docs=Code — 3 Pre-existing Drift Bugs Fixed
+
+- **FIX — `commands/bkit.md` agent header said "36 total — 13 opus / 21 sonnet /
+  2 haiku"**: actual tree has 40 agent files; now "40 total — 9 fable / 7 opus /
+  16 sonnet / 8 haiku" with every per-agent model row verified against frontmatter.
+- **FIX — pm-lead listed as `sonnet`** in `commands/bkit.md` +
+  `bkit-system/components/agents/_agents-overview.md`: pm-lead was opus before
+  this release (drift predating the matrix) and is now `fable`.
+- **FIX — test-checklist PM-T10** claimed "All 5 PM agents use sonnet": now
+  "pm-lead uses fable; pm-discovery/pm-strategy/pm-research/pm-prd use sonnet".
+- All other normative model surfaces synced: `bkit-system/README.md` counts,
+  `_agents-overview.md` 4-tier legend + tables, `philosophy/context-engineering.md`
+  + `ai-native-principles.md` model tables, `scenario-new-feature.md`,
+  `skills/{pdca,pm-discovery,cc-version-analysis}/SKILL.md`,
+  `CUSTOMIZATION-GUIDE.md` (fable allowed value + CC ≥ v2.1.170 note + `model:
+  fable` example + model-selection footguns), `README.md` runtime recommendation
+  + 4-tier matrix line, `README-FULL.md` mermaid diagrams + example model IDs
+  (`claude-opus-4-8`, `claude-sonnet-5`), `marketplace.json` description.
+  Historical entries/notes (e.g., ENH-325 "17 opus agents", regression-history
+  prose) intentionally untouched.
+
+### Issue Response — #128 / #129 / #130
+
+- **#128 (@NEXCODE-MK) — Deprecated `pdca-eval-*` stubs removed from the prompt
+  surface (ADR 0014)**: the 6 tombstone files (~1,387B of always-resident agent
+  descriptions + accidentally-spawnable "(Tools: All tools)" entries) are
+  **deleted from `agents/`**; deprecation governance moves to a machine-readable
+  registry at `test/contract/deprecation-registry.json` (deprecatedIn /
+  replacedBy / reason / deprecationCommit / stubRemovedIn / issue). Contract L4
+  accepts a registry tombstone as equivalent to a live stub
+  (`contract-test-run.js` `loadDeprecationRegistry()`, fixture-overridable; the
+  `missing-stub` fixture still fails — and a pre-existing exit-2 crash in that
+  path was fixed). L5 invocation-inventory asserts registry⇔SoT equality and
+  that no stub files remain (212 TC). Baseline JSONs in **both** dirs untouched.
+  **ADR 0014** ("Deprecation Registry — tombstones off the prompt surface",
+  bilingual) supersedes the ENH-336 (v2.1.22) permanent-retention decision on
+  its own terms — both of its premises (L4 breakage, baseline mutation) are
+  dissolved by the registry; rollforward guide gains §5.6. Side fix: 6
+  pre-existing `agents-effort` failures (AE-09..14) eliminated.
+- **#129 (@NEXCODE-MK) — Token diet: compact 8-language trigger encoding**:
+  agent frontmatter descriptions compacted **30,065B → 16,919B (−44%)** across
+  32 agents + `skills/sprint/SKILL.md` (1,074B → 550B) — an estimated
+  **~4.5–5.3K tokens saved per session wakeup** for every bkit user. New
+  template: 1–2 role sentences + one "Use proactively when…" sentence + a
+  single `Triggers:` block (full EN + full KO lists + exactly one anchor per
+  JA/ZH/ES/FR/DE/IT). "Do NOT use for" + version notes moved into agent bodies
+  (`## When NOT to use this agent`, `## Delegation notes`) — loaded only on
+  invocation, so no information was deleted. bkit's own 8-language routing is
+  unaffected (it reads the separate `lib/intent/language.js` registry, not
+  descriptions — verified file:line); contract baselines don't capture
+  description content, so **no baseline regen**. New regression lock:
+  `test/regression/issue-129-description-budget.test.js` (≤700B per agent
+  description, `Triggers:` presence, ≤20,000B total). Locale-scoped generation
+  (issue proposal 1) deferred: CC plugins are read-only marketplace checkouts —
+  no install-time file generation exists (to be documented in a follow-up ADR).
+- **#130 (@s99606931) — `learning-stop.js` dead `isTTY === false` stdin gate**:
+  piped hook stdin has `isTTY === undefined`, so the gate silently skipped
+  input (reproduced: payload `learn 3` returned level 1). Fixed with the shared
+  `readStdinSync()` helper per the #125/#126 precedent (commit 7b780b8), same
+  anti-pattern warning comment; args coerced to string. New regression test
+  `test/regression/issue-130-learning-stop-stdin.test.js` (9 TC: piped payload,
+  top-level, empty/malformed stdin fallback, non-string args). Repo-wide sweep:
+  zero `isTTY === false` code gates remain (stdout truthiness check in
+  `lib/ui/ansi.js` is correct and kept).
+
+### Footguns (documented, no bkit code)
+
+- **`CLAUDE_CODE_SUBAGENT_MODEL` overrides ALL frontmatter model pins** — while
+  set, every subagent (including the 9 fable pins) runs on that model. It is the
+  documented below-floor workaround; unset it after upgrading CC.
+- **Enterprise `availableModels` exclusions fall back silently**: an excluded
+  model does not error — the agent inherits the main conversation model.
+- **Fable safety-classifier headless refusals**: Fable may reroute/refuse
+  security-adjacent or non-interactive (`claude -p`) work — the reason
+  security-architect / code-analyzer / self-healing stay opus, and QA probes use
+  innocuous prompts.
+- **Provider alias table (R1)** — bkit makes NO universal "Sonnet 5" promise;
+  AWS/Bedrock/Vertex aliases resolve to older models:
+
+  | Provider path | `fable` | `opus` | `sonnet` |
+  |---|---|---|---|
+  | Anthropic API (CC ≥ 2.1.197) | Fable 5 (CC ≥ 2.1.170) | Opus 4.8 | Sonnet 5 |
+  | Claude Platform on AWS | provider-specific full ID required | Opus 4.7 | Sonnet 4.6 |
+  | Bedrock / Vertex / Foundry | provider-specific full ID required | Opus 4.6 | Sonnet 4.5 |
+
 ## [2.1.24] - 2026-07-01 (branch: `fix/skill-namespace-hook-reachability-125-126`)
 
 > **Status**: Skill-orchestration namespace hardening. Fixes two related

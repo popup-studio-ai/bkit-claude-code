@@ -6,23 +6,12 @@ deprecation-risk: none
 effort: medium
 description: |
   Sprint Management — generic sprint capability for ANY bkit user.
-  16 sub-actions: init, start, status, watch, phase, iterate, qa, report, archive, list, feature, pause, resume, fork, help, master-plan.
+  16 sub-actions: init, start, status, watch, phase, iterate, qa, report,
+  archive, list, feature, pause, resume, fork, help, master-plan.
   Triggers: sprint, sprint start, sprint init, sprint status, sprint list,
-  스프린트, 스프린트 시작, 스프린트 상태,
-  スプリント, スプリント開始, スプリント状態,
-  冲刺, 冲刺开始, 冲刺状态,
-  sprint, iniciar sprint, estado sprint,
-  sprint, demarrer sprint, statut sprint,
-  Sprint, Sprint starten, Sprint Status,
-  sprint, avviare sprint, stato sprint,
   master plan, multi-sprint plan, sprint master plan,
-  마스터 플랜, 멀티 스프린트 계획, 스프린트 마스터 플랜,
-  マスタープラン, マルチスプリント計画, スプリントマスタープラン,
-  主计划, 多冲刺计划, 冲刺主计划,
-  plan maestro, plan multi-sprint, plan maestro sprint,
-  plan maître, plan multi-sprint, plan maître sprint,
-  Masterplan, Multi-Sprint-Plan, Sprint-Masterplan,
-  piano principale, piano multi-sprint, piano principale sprint.
+  스프린트, 스프린트 시작, 스프린트 상태, 마스터 플랜, 멀티 스프린트 계획, 스프린트 마스터 플랜,
+  スプリント, 冲刺, iniciar sprint, demarrer sprint, Sprint starten, avviare sprint.
 argument-hint: "[action] [name] [--trust L0-L4] [--from <phase>]"
 user-invocable: true
 allowed-tools:
@@ -146,6 +135,19 @@ See:
 - Single-feature PDCA work — use `bkit:pdca` instead
 - Starter level projects — sprint overhead exceeds value
 - One-off bug fixes that do not warrant a master plan
+
+## Delegation notes
+
+Extended trigger keywords, moved here from the frontmatter description
+(issue #129 token diet) — one anchor per language stays in the description;
+the full multilingual list is preserved below:
+
+- JA: スプリント開始, スプリント状態, マスタープラン, マルチスプリント計画, スプリントマスタープラン
+- ZH: 冲刺开始, 冲刺状态, 主计划, 多冲刺计划, 冲刺主计划
+- ES: iniciar sprint, estado sprint, plan maestro, plan multi-sprint, plan maestro sprint
+- FR: demarrer sprint, statut sprint, plan maître, plan multi-sprint, plan maître sprint
+- DE: Sprint starten, Sprint Status, Masterplan, Multi-Sprint-Plan, Sprint-Masterplan
+- IT: avviare sprint, stato sprint, piano principale, piano multi-sprint, piano principale sprint
 
 ## Related Skills and Agents
 

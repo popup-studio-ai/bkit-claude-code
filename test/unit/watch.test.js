@@ -141,7 +141,7 @@ test('estimateCostUsd: default Sonnet pricing', () => {
   assert.ok(Math.abs(cost - 18.0) < 0.01, `expected ~$18, got $${cost}`);
 });
 
-test('estimateCostUsd: custom pricing (Opus)', () => {
+test('estimateCostUsd: custom pricing override honored', () => {
   const cost = watch.estimateCostUsd(
     { inputTokens: 1_000_000, outputTokens: 1_000_000 },
     { inputPricePerMtok: 15, outputPricePerMtok: 75 },

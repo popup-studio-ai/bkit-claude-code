@@ -24,27 +24,27 @@ const SPRINT_AGENTS = [
     name: 'sprint-orchestrator',
     requiredTasks: ['gap-detector', 'code-analyzer', 'sprint-qa-flow', 'sprint-report-writer', 'qa-monitor', 'pdca-iterator', 'Explore'],
     requiredBase: ['Read', 'Write', 'Edit', 'Glob', 'Grep', 'Bash'],
-    expectedModel: 'opus',
+    expectedModel: 'fable',
   },
   {
     name: 'sprint-master-planner',
     // F4 v2.1.18 (user-requested) — PM/CTO/QA 3 leads + 3 specialists + Explore
     requiredTasks: ['pm-lead', 'cto-lead', 'qa-lead', 'product-manager', 'frontend-architect', 'enterprise-expert', 'Explore'],
     requiredBase: ['Read', 'Write', 'Edit', 'Glob', 'Grep', 'Bash'],
-    expectedModel: 'opus',
+    expectedModel: 'fable',
   },
   {
     name: 'sprint-qa-flow',
     requiredTasks: ['qa-monitor', 'gap-detector'],
     requiredBase: ['Read', 'Write', 'Edit', 'Glob', 'Grep', 'Bash'],
-    expectedModel: 'opus',
+    expectedModel: 'fable',
   },
   {
     name: 'sprint-report-writer',
     // No Task — report aggregation only (v2.1.18 design decision)
     requiredTasks: [],
     requiredBase: ['Read', 'Write', 'Glob', 'Grep', 'Edit'],
-    expectedModel: 'opus',
+    expectedModel: 'sonnet',
   },
 ];
 
@@ -140,7 +140,7 @@ test('TC-F1-1-C4: sprint-report-writer tools (5 base, no Task — report aggrega
   verifyAgent(SPRINT_AGENTS[3]);
 });
 
-test('TC-F1-1-C5: all 4 sprint-* agents declare model: opus', () => {
+test('TC-F1-1-C5: all 4 sprint-* agents declare matrix model (fable x3, sonnet x1)', () => {
   for (const agent of SPRINT_AGENTS) {
     const content = fs.readFileSync(path.join(AGENTS_DIR, agent.name + '.md'), 'utf8');
     const fm = parseFrontmatter(content);

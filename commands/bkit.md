@@ -142,7 +142,7 @@ Output Styles (v1.5.3)
 | `/phase-8-review` | Code review and gap analysis |
 | `/phase-9-deployment` | Production deployment (CI/CD, K8s) |
 
-### Agents (36 total, auto-triggered by keywords — 13 opus / 21 sonnet / 2 haiku)
+### Agents (34 total, auto-triggered by keywords — 9 fable / 7 opus / 16 sonnet / 2 haiku)
 
 > Full agent list at [bkit-system/components/agents/_agents-overview.md](../bkit-system/components/agents/_agents-overview.md). Models and constraints enforced by v2.1.10 3-Tier Agent Security Model + Sprint 7 `cto-lead` body (5 Task spawn examples + `Task(pm-lead)`/`Task(qa-lead)`/`Task(pdca-iterator)` frontmatter).
 
@@ -150,14 +150,14 @@ Output Styles (v1.5.3)
 
 | Agent | Trigger Keywords | Model |
 |-------|-----------------|-------|
-| gap-detector | verify, check, gap | opus |
-| pdca-iterator | improve, iterate, fix | sonnet |
+| gap-detector | verify, check, gap | fable |
+| pdca-iterator | improve, iterate, fix | fable |
 | code-analyzer | analyze, quality, review | opus |
 | report-generator | report, summary, complete | haiku |
 | starter-guide | beginner, help, learn | sonnet |
 | bkend-expert | login, auth, database | sonnet |
 | enterprise-expert | microservices, k8s, architecture | opus |
-| design-validator | validate design, spec check | opus |
+| design-validator | validate design, spec check | fable |
 | qa-monitor | QA, docker logs, testing | haiku |
 | pipeline-guide | where to start, what first | sonnet |
 | infra-architect | AWS, terraform, infrastructure | opus |
@@ -166,7 +166,7 @@ Output Styles (v1.5.3)
 
 | Agent | Trigger Keywords | Model | Role |
 |-------|-----------------|-------|------|
-| cto-lead | team, project lead, CTO | opus | Team orchestration, PDCA workflow management |
+| cto-lead | team, project lead, CTO | fable | Team orchestration, PDCA workflow management |
 | frontend-architect | frontend, UI architecture, component | sonnet | UI/UX design, component structure, Design System |
 | product-manager | requirements, feature spec, priority | sonnet | Requirements analysis, feature prioritization |
 | qa-strategist | test strategy, QA plan, quality metrics | sonnet | Test strategy, quality metrics coordination |
@@ -176,7 +176,7 @@ Output Styles (v1.5.3)
 
 | Agent | Trigger Keywords | Model | Frameworks |
 |-------|-----------------|-------|------------|
-| pm-lead | pm team, product discovery, PM analysis | sonnet | Team orchestration, 4-phase workflow |
+| pm-lead | pm team, product discovery, PM analysis | fable | Team orchestration, 4-phase workflow |
 | pm-discovery | market research, user research | sonnet | OST, Brainstorm, Assumption Risk Assessment |
 | pm-strategy | product strategy, positioning | sonnet | JTBD, Lean Canvas, SWOT, PESTLE, Porter's, Growth Loops |
 | pm-research | competitive analysis, trend research | sonnet | Personas, Competitors, TAM/SAM/SOM, Customer Journey, ICP |

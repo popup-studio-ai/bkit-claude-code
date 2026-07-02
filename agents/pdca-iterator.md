@@ -2,29 +2,15 @@
 name: pdca-iterator
 description: |
   Evaluator-Optimizer pattern agent for automatic iteration cycles.
-  Orchestrates Generator-Evaluator loop until quality criteria are met.
-  Core role in PDCA Check-Act phase for continuous improvement. Also invoked by sprint-orchestrator during Sprint iterate phase (v2.1.13) to drive iterateHistory until matchRate >= 90 or the ITERATION_EXHAUSTED auto-pause trigger fires.
+  Orchestrates the Generator-Evaluator loop in the PDCA Check-Act phase until quality criteria are met.
 
-  ## Auto-Invoke Conditions (v1.3.0)
-  - After gap-detector completes with Match Rate < 90%
-  - User requests "자동 수정", "반복 개선", "iterate", "auto-fix"
-  - /pdca-iterate command executed
-
-  ## Iteration Rules
-  - Maximum 5 iterations per session
-  - Re-run gap-detector after each fix cycle
-  - Stop when Match Rate >= 90% or max iterations reached
-  - Report to report-generator when complete
+  Use proactively when gap analysis reports Match Rate below 90%, /pdca-iterate is executed,
+  or user requests automatic fixing or iterative improvement.
 
   Triggers: iterate, optimize, auto-fix, improve, fix this, make it better, automatically fix,
   반복 개선, 자동 수정, 고쳐줘, 개선해줘, 고쳐, 더 좋게, 문제 해결해줘,
-  イテレーション, 自動修正, 改善して, 直して, もっと良く,
-  迭代优化, 自动修复, 改进, 修复, 改善,
-  mejorar, arreglar, améliorer, corriger, verbessern, reparieren, migliorare, correggere
-
-  Do NOT use for: initial development, research tasks, design document creation,
-  or when user explicitly wants manual control.
-model: opus
+  自動修正, 迭代优化, mejorar, améliorer, verbessern, migliorare
+model: fable
 effort: high
 maxTurns: 20
 linked-from-skills:
@@ -45,6 +31,19 @@ tools:
   - Task(gap-detector)
   - LSP
 ---
+
+## When NOT to use this agent
+
+Do NOT use for: initial development, research tasks, design document creation,
+or when user explicitly wants manual control.
+
+## Delegation notes
+
+Also invoked by sprint-orchestrator during the Sprint iterate phase (v2.1.13) to drive
+iterateHistory until matchRate >= 90 or the ITERATION_EXHAUSTED auto-pause trigger fires.
+Iteration rules (v1.3.0): maximum 5 iterations per session; re-run gap-detector after each
+fix cycle; stop when Match Rate >= 90% or max iterations reached; report to report-generator
+when complete (see Auto-Invoke Conditions and Iteration Control below).
 
 # PDCA Iterator Agent
 
@@ -235,6 +234,9 @@ PARTIAL:
   - Improvement made but threshold not reached
 ```
 
+After each fix cycle, re-run gap-detector; when the loop completes,
+report results to report-generator.
+
 ## Usage Examples
 
 ### Basic Iteration
@@ -325,8 +327,8 @@ Automatically invoked when:
 
 ```
 1. /pdca-iterate command is executed
-2. User requests "자동 수정", "반복 개선", "iterate until fixed"
-3. After gap-detector finds issues with match rate < 70%
+2. User requests "자동 수정", "반복 개선", "iterate until fixed", "auto-fix"
+3. After gap-detector completes with Match Rate < 90%
 4. When code-analyzer finds critical issues
 ```
 

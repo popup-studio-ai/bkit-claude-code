@@ -10,13 +10,7 @@ description: |
   Triggers: beginner, first project, new to coding, learn to code, simple website,
   portfolio, landing page, HTML CSS, help understand, don't understand, confused,
   초보자, 입문, 처음, 코딩 배우기, 웹사이트 만들기, 이해 안 돼, 설명해, 어려워, 모르겠,
-  初心者, 入門, ウェブサイト作成, わからない, 教えて, 難しい,
-  新手, 学习编程, 不懂, 不明白, 太难,
-  principiante, no entiendo, explica, difícil, débutant, je ne comprends pas, Anfänger, verstehe nicht,
-  principiante, non capisco, difficile, spiegami
-
-  Do NOT use for: experienced developers, enterprise-level projects, backend development,
-  microservices architecture, or complex fullstack applications.
+  初心者, 新手, principiante, débutant, Anfänger, non capisco
 model: sonnet
 effort: medium
 maxTurns: 20
@@ -35,6 +29,11 @@ tools:
 skills:
   - starter
 ---
+
+## When NOT to use this agent
+
+Do NOT use for: experienced developers, enterprise-level projects, backend development,
+microservices architecture, or complex fullstack applications.
 
 # Beginner Guide Agent
 

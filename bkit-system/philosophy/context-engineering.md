@@ -150,22 +150,23 @@ bkit is a **practical implementation of Context Engineering**, providing a syste
 
 ---
 
-## Behavioral Rules Layer (36 Agents)
+## Behavioral Rules Layer (34 Agents)
 
 ### Model Selection Strategy
 
 | Model | Count | Agents | Characteristics |
 |-------|:-----:|--------|-----------------|
-| **opus** | 11 | cto-lead, code-analyzer, design-validator, gap-detector, enterprise-expert, infra-architect, security-architect, pm-lead, bkit-impact-analyst, cc-version-researcher, self-healing | Strategic leadership, complex analysis, 1M context |
-| **sonnet** | 19 | bkend-expert, pdca-iterator, pipeline-guide, starter-guide, product-manager, frontend-architect, qa-strategist, pm-discovery, pm-strategy, pm-research, pm-prd, pm-lead-skill-patch, skill-needs-extractor, 6 pdca-eval-* agents | Execution, guidance, iteration |
-| **haiku** | 2 | qa-monitor, report-generator | Fast monitoring, document generation |
+| **fable** | 9 | cto-lead, sprint-orchestrator, sprint-master-planner, pm-lead, qa-lead, gap-detector, design-validator, pdca-iterator, sprint-qa-flow | Verification & orchestration core (long-horizon leads + verifiers) — requires CC ≥ v2.1.170 |
+| **opus** | 7 | security-architect, code-analyzer, self-healing, infra-architect, enterprise-expert, bkit-impact-analyst, cc-version-researcher | Deep reasoning & security (refusal-sensitive headless paths) |
+| **sonnet** | 16 | bkend-expert, frontend-architect, pipeline-guide, pm-discovery, pm-lead-skill-patch, pm-prd, pm-research, pm-strategy, product-manager, qa-debug-analyst, qa-strategist, qa-test-generator, qa-test-planner, skill-needs-extractor, sprint-report-writer, starter-guide | Execution, guidance, iteration |
+| **haiku** | 8 | qa-monitor, report-generator, 6 pdca-eval-* deprecated tombstones | Fast monitoring, document generation, minimum-cost tombstones |
 
 ### Agent Frontmatter (v2.0.0 native)
 
 ```yaml
 ---
 name: gap-detector
-model: opus
+model: fable
 effort: high          # reasoning effort
 maxTurns: 20          # execution budget
 memory: project       # cross-session persistence

@@ -2,22 +2,14 @@
 name: qa-monitor
 description: |
   Agent that monitors Docker logs in real-time to detect and document issues.
-  Core executor for Zero Script QA methodology. Complements sprint-qa-flow (v2.1.13)
-  which runs 7-Layer dataFlowIntegrity at the sprint level — qa-monitor focuses on
-  per-feature runtime log evidence, sprint-qa-flow on cross-feature hop traversal.
+  Core executor for the Zero Script QA methodology.
 
-  Use proactively when user requests testing, QA, log analysis, or mentions Docker logs.
-  Especially useful after API implementation (Phase 4) or UI integration (Phase 6).
+  Use proactively when user requests testing, QA, log analysis, or mentions Docker logs,
+  especially after API implementation (Phase 4) or UI integration (Phase 6).
 
   Triggers: zero script qa, log-based testing, docker logs, QA, testing, log analysis,
-  제로 스크립트 QA, 테스트, 로그 분석, ゼロスクリプトQA, ログ分析, 零脚本QA, 日志分析,
-  QA sin scripts, pruebas basadas en logs, registros de docker, pruebas, análisis de logs,
-  QA sans script, tests basés sur les logs, logs docker, tests, analyse de logs,
-  Script-freies QA, Log-basiertes Testen, Docker-Logs, Tests, Log-Analyse,
-  QA senza script, test basati su log, log docker, test, analisi dei log
-
-  Do NOT use for: unit testing with test scripts, frontend-only testing without Docker,
-  or design document validation.
+  제로 스크립트 QA, 테스트, 로그 분석,
+  ゼロスクリプトQA, 零脚本QA, QA sin scripts, QA sans script, Script-freies QA, QA senza script
 model: haiku
 effort: low
 maxTurns: 15
@@ -35,6 +27,17 @@ tools:
 skills:
   - zero-script-qa
 ---
+
+## When NOT to use this agent
+
+Do NOT use for: unit testing with test scripts, frontend-only testing without Docker,
+or design document validation.
+
+## Delegation notes
+
+Complements sprint-qa-flow (v2.1.13), which runs 7-Layer dataFlowIntegrity at the sprint
+level — qa-monitor focuses on per-feature runtime log evidence, sprint-qa-flow on
+cross-feature hop traversal.
 
 # QA Monitoring Agent
 

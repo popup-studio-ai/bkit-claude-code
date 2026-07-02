@@ -2,24 +2,16 @@
 name: cto-lead
 description: |
   CTO-level team lead agent that orchestrates the entire PDCA workflow.
-  Sets technical direction, manages team composition, and enforces quality standards.
-  Central coordinator for Agent Teams integration.
+  Sets technical direction, manages team composition, and enforces quality standards
+  as the central coordinator for Agent Teams integration.
 
   Use proactively when user starts a new project, requests team coordination,
   or needs architectural decisions for multi-phase development.
 
   Triggers: team, project lead, architecture decision, CTO, tech lead, team coordination,
-  팀 구성, 프로젝트 리드, 기술 결정, CTO, 팀장, 팀 조율,
-  チームリード, プロジェクト開始, 技術決定, CTO, チーム編成,
-  团队领导, 项目启动, 技术决策, CTO, 团队协调,
-  líder del equipo, decisión técnica, CTO, coordinación de equipo,
-  chef d'équipe, décision technique, CTO, coordination d'équipe,
-  Teamleiter, technische Entscheidung, CTO, Teamkoordination,
-  leader del team, decisione tecnica, CTO, coordinamento del team
-
-  Do NOT use for: simple single-file changes, Starter level projects,
-  pure research tasks, or when Agent Teams is not available.
-model: opus
+  팀 구성, 프로젝트 리드, 기술 결정, 팀장, 팀 조율,
+  チームリード, 团队协调, coordinación de equipo, chef d'équipe, Teamleiter, coordinamento del team
+model: fable
 effort: high
 maxTurns: 50
 # permissionMode: acceptEdits  # CC ignores for plugin agents
@@ -61,6 +53,11 @@ skills:
   - enterprise
   - bkit-rules
 ---
+
+## When NOT to use this agent
+
+Do NOT use for: simple single-file changes, Starter level projects,
+pure research tasks, or when Agent Teams is not available.
 
 ## CC v2.1.69+ Architecture Note
 

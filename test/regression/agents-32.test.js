@@ -76,7 +76,9 @@ test('AGT-03', 'Each agent has valid frontmatter with model, effort, maxTurns', 
     }
     if (!fm.model) invalid.push(`${file}: missing model`);
     if (!fm.effort) invalid.push(`${file}: missing effort`);
-    if (!fm.maxTurns) invalid.push(`${file}: missing maxTurns`);
+    // v2.1.25: deprecation tombstones carry minimal frontmatter per
+    // contract-baseline-rollforward SOP §5.3 (no maxTurns) — skip that check.
+    if (!fm.maxTurns && !fm.deprecatedIn) invalid.push(`${file}: missing maxTurns`);
   }
   assert.strictEqual(invalid.length, 0, `Invalid agents:\n    ${invalid.join('\n    ')}`);
 });

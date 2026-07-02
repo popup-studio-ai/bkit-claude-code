@@ -112,6 +112,14 @@ test('Runner does not mutate baseline JSON files (persist=false guarantee)', () 
   assert.equal(before, after, 'baseline JSON was mutated by runner');
 });
 
+// === Scenario 6: registry-tombstone — baseline agent removed, NO stub file,
+// but test/contract/deprecation-registry.json carries a deprecatedIn entry.
+// v2.1.25 (#128, ADR 0014): registry tombstone is equivalent to a live stub.
+test('L4 passes when removed agent has a deprecation-registry tombstone (no stub)', () => {
+  const r = runRunner('registry-tombstone', 'L4');
+  assert.equal(r.code, 0, `expected exit 0, got ${r.code}\nstdout: ${r.stdout}\nstderr: ${r.stderr}`);
+});
+
 // === Summary ===
 // eslint-disable-next-line no-console
 console.log(`\nagent-deprecation.test.js: ${pass}/${pass + fail} PASS, ${fail} FAIL, 0 SKIP`);

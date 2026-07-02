@@ -10,6 +10,10 @@
  * (1회/session cap, .bkit/runtime/cc-version.json cache 1h TTL, opt-out via
  * BKIT_DISABLE_CC_VERSION_DETECTION=1, OTEL emit via gen_ai.cc_version_detection_ms).
  * Trigger: 외부 dogfooder 정병진 (@bj) 2026-05-26 install incident. See ADR 0011.
+ *
+ * ENH-368 (v2.1.25): adds a model-floor advisory — when 2.1.143 ≤ CC < 2.1.170,
+ * the 9 Fable-pinned agents hard-fail at spawn (`fable` alias introduced in
+ * CC v2.1.170). Reuses the same detection plumbing (no second process spawn).
  */
 
 const fs = require('fs');
@@ -24,6 +28,8 @@ const { applyBudget } = require('../../lib/core/context-budget');
 const { BKIT_VERSION } = require('../../lib/core/version');
 // v2.1.11 (FR-α2-c): One-Liner SSoT — surfaces bkit identity in SessionStart intro
 const { ONE_LINER_EN } = require('../../lib/infra/branding');
+// ENH-368 (v2.1.25): model-floor advisory — single floor constant lives in infra layer
+const { FABLE_MODEL_FLOOR } = require('../../lib/infra/cc-version-checker');
 
 // ─────────────────────────────────────────────────────────────────────────────
 // v2.1.20 (F10 + ENH-323): Claude Code version detection at SessionStart
@@ -205,8 +211,39 @@ function buildCCAdvisoryText(version) {
 }
 
 /**
+ * ENH-368 (v2.1.25): model-floor advisory — build the advisory text shown
+ * when 2.1.143 ≤ installed CC < 2.1.170. The `fable` model alias only exists
+ * from CC v2.1.170; below it, `model: fable` agents hard-fail at spawn
+ * (empirically reproduced 2026-07-02).
+ *
+ * @param {string} version detected CC version (within the advisory band)
+ * @returns {string}
+ */
+function buildModelFloorAdvisoryText(version) {
+  return [
+    `## ⚠️ bkit Model-Floor Notice — Claude Code v${version} detected (< v${FABLE_MODEL_FLOOR})`,
+    '',
+    `bkit v${BKIT_VERSION} pins 9 agents to Claude Fable 5 (\`model: fable\`), which`,
+    `requires **Claude Code v${FABLE_MODEL_FLOOR} or later**: cto-lead, sprint-orchestrator,`,
+    'sprint-master-planner, pm-lead, qa-lead, gap-detector, design-validator,',
+    'pdca-iterator, sprint-qa-flow. On this Claude Code version those agents fail to spawn.',
+    '',
+    'Fix: `npm install -g @anthropic-ai/claude-code@latest`',
+    'Temporary workaround: `export CLAUDE_CODE_SUBAGENT_MODEL=sonnet` (forces ALL subagents to sonnet).',
+    '',
+  ].join('\n');
+}
+
+/**
  * Build the SessionStart CC version advisory context section.
- * Returns an empty string if CC ≥ v2.1.143 or detection was skipped/failed.
+ *
+ * Precedence (at most ONE advisory is emitted):
+ *   1. CC < 2.1.143             → install-floor advisory (displayName schema)
+ *   2. 2.1.143 ≤ CC < 2.1.170   → model-floor advisory (ENH-368, fable agents)
+ *   3. CC ≥ 2.1.170 / unknown   → empty string
+ *
+ * Reuses the single detectCCVersion() result — no second version-detection
+ * process is spawned for the model-floor check.
  *
  * @returns {string}
  */
@@ -215,6 +252,10 @@ function buildCCVersionAdvisoryContext() {
     const result = detectCCVersion();
     if (result.isOldVersion && result.advisory) {
       return result.advisory + '\n';
+    }
+    // ENH-368 (v2.1.25): model-floor advisory (install floor met, model floor not)
+    if (result.version && !result.isOldVersion && ccVersionLt(result.version, FABLE_MODEL_FLOOR)) {
+      return buildModelFloorAdvisoryText(result.version) + '\n';
     }
   } catch (_e) {
     // fail-open: never block SessionStart on advisory failure
@@ -268,7 +309,7 @@ function buildAgentTeamsContext(detectedLevel) {
     if (isTeamModeAvailable()) {
       const teamConfig = getTeamConfig();
       ctx += `## CTO-Led Agent Teams (Active)\n`;
-      ctx += `- CTO Lead: cto-lead (opus) orchestrates PDCA workflow\n`;
+      ctx += `- CTO Lead: cto-lead (fable) orchestrates PDCA workflow\n`;
       ctx += `- Start: \`/pdca team {feature}\`\n`;
       ctx += `- Display mode: ${teamConfig.displayMode}\n`;
       if (detectedLevel === 'Enterprise') {
@@ -286,7 +327,7 @@ function buildAgentTeamsContext(detectedLevel) {
     } else if (detectedLevel !== 'Starter') {
       ctx += `## CTO-Led Agent Teams (Not Enabled)\n`;
       ctx += `- Your ${detectedLevel} project supports CTO-Led Agent Teams\n`;
-      ctx += `- CTO Lead (opus) orchestrates specialized teammates for parallel PDCA\n`;
+      ctx += `- CTO Lead (fable) orchestrates specialized teammates for parallel PDCA\n`;
       ctx += `- To enable: set \`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1\` environment variable\n`;
       ctx += `- Then use: \`/pdca team {feature}\`\n\n`;
     }
@@ -440,7 +481,7 @@ function buildVersionEnhancementsContext(detectedLevel) {
   // v2.1.1: Consolidated version summary (reduced from 4 blocks to 1)
   // v2.1.10 (ENH-167): removed hard-coded strings, uses BKIT_VERSION
   ctx += `\n## bkit v${BKIT_VERSION} (Current)\n`;
-  ctx += `- CC recommended: v2.1.123+ (conservative) | v2.1.140 (balanced) | 96+ consecutive compatible releases (v2.1.34~v2.1.141, R-2 v2.1.134/135 skip excluded)\n`;
+  ctx += `- CC recommended: v2.1.198 (Claude 5 alias resolution) | model floor: v2.1.170+ for Fable-pinned agents | install floor: v2.1.143 (displayName schema)\n`;
   ctx += `- Architecture: 44 Skills, 34 Agents, 21 Hook Events (24 blocks), 174 Lib Modules (20 subdirs, 8 Port↔Adapter pairs), 2 MCP Servers (19 tools), Sprint Management (v2.1.13 GA)\n`;
   ctx += `- v2.1.14 differentiations: #1 Memory Enforcer + #2 Layer 6 Defense + #3 Sequential Dispatch + #4 Effort-aware + #5 PostToolUse continueOnBlock + #6 Heredoc-bypass\n`;
   // ENH-265: ENABLE_PROMPT_CACHING_1H hint (CC v2.1.108+, 30-40% token savings on long sessions)
@@ -644,4 +685,6 @@ module.exports = {
   CC_MIN_VERSION,
   CC_VERSION_CACHE_TTL_MS,
   CC_VERSION_DETECT_TIMEOUT_MS,
+  // ENH-368 (v2.1.25): re-exported for model-floor advisory boundary tests.
+  FABLE_MODEL_FLOOR,
 };

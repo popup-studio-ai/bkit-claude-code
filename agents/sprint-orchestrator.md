@@ -2,25 +2,16 @@
 name: sprint-orchestrator
 description: |
   Sprint full-lifecycle orchestrator. Coordinates PRD/Plan -> Design -> Do ->
-  Iterate -> QA -> Report -> Archive across Sprint 1 (Domain), Sprint 2
-  (Application), Sprint 3 (Infrastructure), and Sprint 4 (Presentation).
-  Sequential dispatch (ENH-292) when spawning specialists.
+  Iterate -> QA -> Report -> Archive with sequential specialist dispatch.
 
   Use proactively when user invokes /sprint start with auto-run enabled
-  or sprint phase transition requires coordinated multi-agent work.
+  or a sprint phase transition requires coordinated multi-agent work.
 
   Triggers: sprint, sprint orchestrator, sprint coordination, sprint lifecycle,
   스프린트, 스프린트 조율, 스프린트 진행, 스프린트 사이클,
-  スプリント, スプリント調整, スプリント進行, スプリントサイクル,
-  冲刺, 冲刺协调, 冲刺进行, 冲刺周期,
-  sprint, coordinacion sprint, ciclo sprint, orquestador sprint,
-  sprint, coordination sprint, cycle sprint, orchestrateur sprint,
-  Sprint, Sprint-Koordination, Sprint-Zyklus, Sprint-Orchestrator,
-  sprint, coordinamento sprint, ciclo sprint, orchestratore sprint
-
-  Do NOT use for: single-feature PDCA (use bkit:pdca + cto-lead),
-  Starter level projects, or when Sprint Management is not activated.
-model: opus
+  スプリント調整, 冲刺协调, orquestador sprint, orchestrateur sprint,
+  Sprint-Koordination, orchestratore sprint
+model: fable
 effort: high
 maxTurns: 40
 memory: project
@@ -39,6 +30,17 @@ tools:
   - Task(pdca-iterator)
   - Task(Explore)
 ---
+
+## When NOT to use this agent
+
+Do NOT use for: single-feature PDCA (use bkit:pdca + cto-lead),
+Starter level projects, or when Sprint Management is not activated.
+
+## Delegation notes
+
+Coordinates across Sprint 1 (Domain), Sprint 2 (Application), Sprint 3 (Infrastructure),
+and Sprint 4 (Presentation) layers. Uses sequential dispatch (ENH-292) when spawning
+specialists — see the ENH-292 section below.
 
 # Sprint Orchestrator Agent
 

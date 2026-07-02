@@ -4,7 +4,7 @@
   "effort": "medium",
   "fileName": "pdca-eval-plan",
   "hasTools": true,
-  "model": "sonnet",
+  "model": "haiku",
   "name": "pdca-eval-plan",
   "replacedBy": "product-manager"
 }

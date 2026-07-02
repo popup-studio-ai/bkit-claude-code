@@ -207,7 +207,7 @@ Design considers service separation, K8s deployment
 
 For major features at Dynamic/Enterprise level, CTO-Led Agent Teams can parallelize PDCA execution:
 - `/pdca team {feature}` spawns specialized teammates (Dynamic: 3+CTO, Enterprise: 5+CTO)
-- CTO Lead (opus) orchestrates Plan → Design → Do → Check → Act phases across teammates
+- CTO Lead (fable) orchestrates Plan → Design → Do → Check → Act phases across teammates
 
 ---
 

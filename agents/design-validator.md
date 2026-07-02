@@ -8,15 +8,10 @@ description: |
   or requests validation of specifications before implementation.
 
   Triggers: design validation, document review, spec check, validate design, review spec,
-  설계 검증, 문서 검토, 스펙 확인, 設計検証, 仕様チェック, 设计验证, 规格检查,
-  validación de diseño, revisión de documentos, verificación de especificaciones,
-  validation de conception, revue de documents, vérification des spécifications,
-  Design-Validierung, Dokumentenprüfung, Spezifikationsprüfung,
-  validazione del design, revisione documenti, verifica delle specifiche
-
-  Do NOT use for: implementation code review, gap analysis (use gap-detector instead),
-  or initial planning phase.
-model: opus
+  설계 검증, 문서 검토, 스펙 확인,
+  設計検証, 设计验证, validación de diseño, validation de conception,
+  Design-Validierung, validazione del design
+model: fable
 effort: high
 maxTurns: 30
 linked-from-skills:
@@ -40,6 +35,11 @@ skills:
   - bkit-templates
   - phase-8-review
 ---
+
+## When NOT to use this agent
+
+Do NOT use for: implementation code review, gap analysis (use gap-detector instead),
+or initial planning phase.
 
 # Design Validation Agent
 

@@ -592,7 +592,7 @@ Runs **before** the Plan phase to produce a comprehensive PRD via automated prod
 
 ```mermaid
 flowchart LR
-    PM["pm-lead (opus)"] --> D["pm-discovery (sonnet)"]
+    PM["pm-lead (fable)"] --> D["pm-discovery (sonnet)"]
     PM --> S["pm-strategy (sonnet)"]
     PM --> R["pm-research (sonnet)"]
     D --> PRD["pm-prd (sonnet)"]
@@ -607,7 +607,7 @@ Parallel implementation with multiple specialists.
 
 ```mermaid
 flowchart TB
-    CTO["cto-lead (opus)"]
+    CTO["cto-lead (fable)"]
     CTO --> FE["frontend-architect"]
     CTO --> BE["bkend-expert / enterprise-expert"]
     CTO --> QA["qa-strategist"]
@@ -751,10 +751,10 @@ When a model upgrade makes a Capability skill redundant, the Model Parity Test d
 
 ```bash
 # Does the model produce equivalent results without this skill?
-node evals/ab-tester.js --parity phase-3-mockup --model claude-opus-4-7
+node evals/ab-tester.js --parity phase-3-mockup --model claude-opus-4-8
 
 # Compare skill performance between two models
-node evals/ab-tester.js --skill pdca --modelA claude-sonnet-4-6 --modelB claude-opus-4-7
+node evals/ab-tester.js --skill pdca --modelA claude-sonnet-5 --modelB claude-opus-4-8
 
 # Run all 29 skill evaluations
 node evals/runner.js --benchmark

@@ -9,15 +9,7 @@ description: |
 
   Triggers: frontend, UI architecture, component, React, Next.js, design system,
   프론트엔드, UI 아키텍처, 컴포넌트, 디자인 시스템, 리액트,
-  フロントエンド, UIアーキテクチャ, コンポーネント, デザインシステム,
-  前端架构, UI架构, 组件, 设计系统,
-  frontend, arquitectura UI, componente, sistema de diseño,
-  frontend, architecture UI, composant, système de design,
-  Frontend, UI-Architektur, Komponente, Design-System,
-  frontend, architettura UI, componente, sistema di design
-
-  Do NOT use for: backend-only tasks, infrastructure, database design,
-  or Starter level HTML/CSS projects (use starter-guide instead).
+  フロントエンド, 前端架构, sistema de diseño, système de design, UI-Architektur, architettura UI
 model: sonnet
 effort: medium
 maxTurns: 20
@@ -41,6 +33,11 @@ skills:
   - phase-5-design-system
   - phase-6-ui-integration
 ---
+
+## When NOT to use this agent
+
+Do NOT use for: backend-only tasks, infrastructure, database design,
+or Starter level HTML/CSS projects (use starter-guide instead).
 
 ## Frontend Architect Agent
 

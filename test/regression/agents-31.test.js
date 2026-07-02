@@ -34,16 +34,18 @@ function assert(id, condition, message) {
 console.log('\n=== agents-31.test.js (35 TC) ===\n');
 
 // --- Valid field values ---
-const VALID_MODELS = ['opus', 'sonnet', 'haiku'];
+// v2.1.25: 'fable' added (Claude 5 model alignment)
+const VALID_MODELS = ['opus', 'sonnet', 'haiku', 'fable'];
 const VALID_MEMORY = ['user', 'project', 'local', 'none'];
 
-// --- All 31 agents ---
+// --- All agents ---
+// v2.1.25 (#128): 6 pdca-eval-* tombstone stubs deleted (ADR 0014 —
+// governance moved to test/contract/deprecation-registry.json).
 const ALL_AGENTS = [
   'bkend-expert', 'bkit-impact-analyst', 'cc-version-researcher',
   'code-analyzer', 'cto-lead', 'design-validator', 'enterprise-expert',
   'frontend-architect', 'gap-detector', 'infra-architect',
-  'pdca-eval-act', 'pdca-eval-check', 'pdca-eval-design', 'pdca-eval-do',
-  'pdca-eval-plan', 'pdca-eval-pm', 'pdca-iterator', 'pipeline-guide',
+  'pdca-iterator', 'pipeline-guide',
   'pm-discovery', 'pm-lead', 'pm-lead-skill-patch', 'pm-prd',
   'pm-research', 'pm-strategy', 'product-manager', 'qa-monitor',
   'qa-strategist', 'report-generator', 'security-architect',
@@ -98,7 +100,10 @@ for (let i = 0; i < ALL_AGENTS.length; i++) {
     const fm = parseFrontmatter(content);
     if (fm) {
       hasModel = VALID_MODELS.includes(fm.model);
-      hasMemory = content.match(/^memory:\s*\S+/m) !== null;
+      // v2.1.25: deprecation tombstones carry minimal frontmatter per
+      // contract-baseline-rollforward SOP §5.3 (no memory field) — exempt them.
+      hasMemory = content.match(/^memory:\s*\S+/m) !== null
+        || content.match(/^deprecatedIn:\s*\S+/m) !== null;
       hasTools = content.match(/^(allowedTools|disallowedTools|tools)\s*:/m) !== null
         || content.includes('tools:')
         || content.includes('allowedTools:')
@@ -138,7 +143,8 @@ for (const agent of ALL_AGENTS) {
   const agentPath = path.join(AGENTS_DIR, `${agent}.md`);
   if (fs.existsSync(agentPath)) {
     const content = fs.readFileSync(agentPath, 'utf-8');
-    if (!content.match(/^memory:\s*\S+/m)) {
+    // v2.1.25: deprecation tombstones (deprecatedIn) are exempt — SOP §5.3 minimal frontmatter.
+    if (!content.match(/^memory:\s*\S+/m) && !content.match(/^deprecatedIn:\s*\S+/m)) {
       noMemory.push(agent);
     }
   } else {
@@ -149,19 +155,19 @@ assert('AG31-034', noMemory.length === 0,
   `All agents have memory field${noMemory.length ? ' MISSING: ' + noMemory.join(', ') : ''}`);
 
 // ============================================================
-// AG31-035: CTO-lead uses opus model
+// AG31-035: CTO-lead uses fable model (v2.1.25 Claude 5 model alignment)
 // ============================================================
 console.log('\n--- AG31-035: CTO-lead Model ---');
 
 const ctoPath = path.join(AGENTS_DIR, 'cto-lead.md');
-let ctoUsesOpus = false;
+let ctoUsesFable = false;
 if (fs.existsSync(ctoPath)) {
   const content = fs.readFileSync(ctoPath, 'utf-8');
   const fm = parseFrontmatter(content);
-  ctoUsesOpus = fm && fm.model === 'opus';
+  ctoUsesFable = fm && fm.model === 'fable';
 }
-assert('AG31-035', ctoUsesOpus,
-  `cto-lead uses opus model`);
+assert('AG31-035', ctoUsesFable,
+  `cto-lead uses fable model`);
 
 // ============================================================
 // Summary

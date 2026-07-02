@@ -59,6 +59,14 @@ function makeShim(prefix, versionOrBehavior) {
     fs.rmdirSync(binDir);
   } else {
     fs.writeFileSync(shimPath, `#!/usr/bin/env bash\necho "${versionOrBehavior}"\n`, { mode: 0o755 });
+    // Test-reliability only (CO-2 family, observed 2026-07-02): on macOS the
+    // FIRST execution of a freshly written script file can exceed the 200ms
+    // production timeout (per-file validation cost) even when interpreters
+    // are warm. Warm each shim once with a generous timeout so scenarios
+    // measure steady-state latency. Production spec (200ms) is NOT changed.
+    try {
+      require('child_process').execSync(`'${shimPath}' --version`, { timeout: 2000, stdio: 'ignore' });
+    } catch (_e) { /* noop — warmup failure should not block the scenario */ }
   }
 
   return tmpDir;
@@ -151,17 +159,65 @@ test('TC-F13-1 v2.1.142 mock → isOldVersion=true + advisory present + env set'
   });
 });
 
-// TC-F13-2: mock CC v2.1.143 → no advisory + env unset
-test('TC-F13-2 v2.1.143 mock → isOldVersion=false + advisory null', () => {
+// TC-F13-2: mock CC v2.1.143 → no install-floor advisory + env unset.
+// ENH-368 (v2.1.25): v2.1.143 now falls in the model-floor advisory band
+// (2.1.143 ≤ CC < 2.1.170), so buildCCVersionAdvisoryContext emits the
+// model-floor notice instead of an empty string.
+test('TC-F13-2 v2.1.143 mock → isOldVersion=false + model-floor advisory (ENH-368)', () => {
   withMockedCC('v143', '2.1.143', /* optOut */ false, (mod) => {
     const result = mod.detectCCVersion();
     assert.equal(result.version, '2.1.143', `expected detected version '2.1.143', got '${result.version}'`);
     assert.equal(result.isOldVersion, false, 'isOldVersion should be false for v2.1.143');
-    assert.equal(result.advisory, null, 'advisory should be null');
+    assert.equal(result.advisory, null, 'install-floor advisory should be null');
     assert.notEqual(process.env.BKIT_CC_VERSION_ADVISORY, '1', 'BKIT_CC_VERSION_ADVISORY should NOT be set');
 
     const ctx = mod.buildCCVersionAdvisoryContext();
-    assert.equal(ctx, '', 'buildCCVersionAdvisoryContext should return empty string');
+    assert.ok(ctx.includes('Model-Floor Notice'), 'context should include model-floor notice');
+    assert.ok(!ctx.includes('bkit Compatibility Notice'), 'install-floor advisory must NOT co-emit');
+  });
+});
+
+// ─── ENH-368 (v2.1.25): model-floor advisory boundary scenarios ─────────────
+
+// TC-ENH368-1: mock CC v2.1.150 (install floor met, model floor not) → model-floor advisory
+test('TC-ENH368-1 v2.1.150 mock → model-floor advisory (fable agents + workaround)', () => {
+  withMockedCC('v150', '2.1.150', /* optOut */ false, (mod) => {
+    const result = mod.detectCCVersion();
+    assert.equal(result.version, '2.1.150', `expected detected version '2.1.150', got '${result.version}'`);
+    assert.equal(result.isOldVersion, false, 'isOldVersion should be false for v2.1.150');
+
+    const ctx = mod.buildCCVersionAdvisoryContext();
+    assert.ok(ctx.includes('Model-Floor Notice'), 'context should include model-floor notice');
+    assert.ok(ctx.includes('2.1.170'), 'advisory should mention required model floor');
+    assert.ok(ctx.includes('fable'), 'advisory should mention the fable model');
+    assert.ok(ctx.includes('gap-detector'), 'advisory should name the fable-pinned agents');
+    assert.ok(ctx.includes('CLAUDE_CODE_SUBAGENT_MODEL=sonnet'), 'advisory should include workaround');
+    assert.ok(!ctx.includes('bkit Compatibility Notice'), 'install-floor advisory must NOT co-emit');
+  });
+});
+
+// TC-ENH368-2: mock CC v2.1.170 (exact model floor) → no advisory
+test('TC-ENH368-2 v2.1.170 mock → no advisory', () => {
+  withMockedCC('v170', '2.1.170', /* optOut */ false, (mod) => {
+    const ctx = mod.buildCCVersionAdvisoryContext();
+    assert.equal(ctx, '', 'buildCCVersionAdvisoryContext should return empty at model floor');
+  });
+});
+
+// TC-ENH368-3: mock CC v2.1.198 (recommended) → no advisory
+test('TC-ENH368-3 v2.1.198 mock → no advisory', () => {
+  withMockedCC('v198', '2.1.198', /* optOut */ false, (mod) => {
+    const ctx = mod.buildCCVersionAdvisoryContext();
+    assert.equal(ctx, '', 'buildCCVersionAdvisoryContext should return empty above model floor');
+  });
+});
+
+// TC-ENH368-4: mock CC v2.1.142 → install-floor advisory ONLY (precedence over model floor)
+test('TC-ENH368-4 v2.1.142 mock → install-floor advisory only (precedence)', () => {
+  withMockedCC('v142p', '2.1.142', /* optOut */ false, (mod) => {
+    const ctx = mod.buildCCVersionAdvisoryContext();
+    assert.ok(ctx.includes('bkit Compatibility Notice'), 'install-floor advisory should emit');
+    assert.ok(!ctx.includes('Model-Floor Notice'), 'model-floor advisory must NOT co-emit below install floor');
   });
 });
 

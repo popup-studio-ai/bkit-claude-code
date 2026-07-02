@@ -64,6 +64,15 @@ function loadBaselineManifest() {
   return JSON.parse(fs.readFileSync(p, 'utf8'));
 }
 
+// v2.1.25 (#128, ADR 0014): machine-readable deprecation registry replaces
+// live stub .md tombstones. Rooted at PROJECT_ROOT so --project-root fixtures
+// get their own registry (or none — absent file means no tombstones).
+function loadDeprecationRegistry() {
+  const p = path.join(PROJECT_ROOT, 'test', 'contract', 'deprecation-registry.json');
+  if (!fs.existsSync(p)) return {};
+  return JSON.parse(fs.readFileSync(p, 'utf8'));
+}
+
 function runL1Skills() {
   const skillsDir = path.join(PROJECT_ROOT, 'skills');
   const baselineSkillsDir = path.join(BASE_DIR, 'skills');
@@ -201,9 +210,15 @@ function runL4Deprecation() {
     }
   }
   // Agents — Skills 패턴과 동일하게 deprecatedIn frontmatter 우회 지원 (v2.1.17)
+  // v2.1.25 (#128, ADR 0014): a deprecation-registry tombstone with deprecatedIn
+  // is equivalent to a live stub — stubs were removed off the prompt surface.
+  const registry = loadDeprecationRegistry();
   const currentAgents = collectAgents({ persist: false, projectRoot: PROJECT_ROOT });
+  // collectAgents returns { count: 0 } (no names) when agents/ is absent —
+  // e.g. fixture repos; treat as "no current agents" instead of crashing.
+  const currentAgentNames = currentAgents.names || [];
   for (const agentName of manifest.agents.names) {
-    if (!currentAgents.names.includes(agentName)) {
+    if (!currentAgentNames.includes(agentName)) {
       const baselineFile = path.join(BASE_DIR, 'agents', `${agentName}.json`);
       const baselineMeta = fs.existsSync(baselineFile)
         ? JSON.parse(fs.readFileSync(baselineFile, 'utf8'))
@@ -217,6 +232,10 @@ function runL4Deprecation() {
       if (fs.existsSync(agentMd)) {
         const fm = parseFrontmatter(fs.readFileSync(agentMd, 'utf8'));
         deprecated = !!fm.deprecatedIn;
+      }
+      if (!deprecated) {
+        const tombstone = (registry.agents || {})[agentName];
+        deprecated = !!(tombstone && tombstone.deprecatedIn);
       }
       assert(
         deprecated,
@@ -288,4 +307,4 @@ function main() {
 
 if (require.main === module) main();
 
-module.exports = { runL1Skills, runL1Agents, runL1MCP, runL1Hooks, runL4Deprecation };
+module.exports = { runL1Skills, runL1Agents, runL1MCP, runL1Hooks, runL4Deprecation, loadDeprecationRegistry };

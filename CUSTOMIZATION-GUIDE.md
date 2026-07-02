@@ -854,7 +854,7 @@ bkit-claude-code/
 ├── .claude-plugin/
 │   ├── plugin.json                 # Claude Code plugin metadata
 │   └── marketplace.json            # Marketplace registration
-├── agents/                         # AI subagents (36 total, with memory)
+├── agents/                         # AI subagents (34 total, with memory)
 │   ├── starter-guide.md            # Beginner-friendly agent
 │   ├── enterprise-expert.md        # Enterprise architecture agent
 │   ├── code-analyzer.md            # Code review agent
@@ -863,7 +863,7 @@ bkit-claude-code/
 │   ├── product-manager.md          # Requirements & feature prioritization
 │   ├── qa-strategist.md            # QA strategy coordinator
 │   ├── security-architect.md       # Security & vulnerability expert
-│   └── ... (36 total, including 8 CTO/PM Team + 8 PDCA Eval agents)
+│   └── ... (34 total, including CTO/PM/QA/Sprint Team agents; 6 deprecated pdca-eval-* registry-tombstoned per ADR 0014)
 ├── skills/                         # Domain knowledge (44 skills)
 │   ├── bkit-rules/SKILL.md         # Core PDCA rules
 │   ├── plan-plus/SKILL.md          # Brainstorming-enhanced planning (v1.5.5)
@@ -918,7 +918,7 @@ description: |
 
   Do NOT use for: [exclusion conditions]
 permissionMode: acceptEdits  # or bypassPermissions, default
-model: sonnet                # or opus, haiku
+model: sonnet                # or opus, haiku, fable
 tools:
   - Read
   - Write
@@ -953,9 +953,13 @@ Provide specific instructions for handling tasks.
 | `name` | Unique identifier (kebab-case) |
 | `description` | Multi-line description with triggers and exclusions |
 | `permissionMode` | `default`, `acceptEdits`, `bypassPermissions` |
-| `model` | `sonnet` (default), `opus`, `haiku` |
+| `model` | `sonnet` (default), `opus`, `haiku`, `fable` (requires Claude Code ≥ v2.1.170) |
 | `tools` | List of allowed tools |
 | `skills` | List of skills the agent can reference |
+
+> **Model selection footguns**:
+> - The `CLAUDE_CODE_SUBAGENT_MODEL` environment variable overrides ALL frontmatter `model:` pins — every subagent runs on that model while it is set.
+> - Enterprise `availableModels` policy exclusions do not error: an excluded model silently falls back to inherit (the agent runs on the main conversation model).
 
 ### Customization Example: Creating an Organization-Specific Agent
 
@@ -1632,7 +1636,7 @@ description: |
   Senior developer guidance for architecture decisions.
   Use when discussing system design, code reviews, or mentoring.
 permissionMode: acceptEdits
-model: opus
+model: fable  # verification/orchestration tier — requires Claude Code >= v2.1.170
 tools: [Read, Grep, Glob, WebSearch]
 ---
 

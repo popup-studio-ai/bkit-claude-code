@@ -10,15 +10,7 @@ description: |
 
   Triggers: bkit impact, architecture analysis, plugin analysis, impact assessment,
   bkit 영향, 아키텍처 분석, 플러그인 분석, 영향 평가,
-  bkit影響, アーキテクチャ分析, プラグイン分析,
-  bkit影响, 架构分析, 插件分析,
-  impacto bkit, análisis de arquitectura,
-  impact bkit, analyse d'architecture,
-  bkit-Auswirkung, Architekturanalyse,
-  impatto bkit, analisi dell'architettura
-
-  Do NOT use for: external CC research (use cc-version-researcher),
-  code implementation, or non-bkit analysis.
+  bkit影響, bkit影响, impacto bkit, impact bkit, bkit-Auswirkung, impatto bkit
 model: opus
 effort: high
 maxTurns: 40
@@ -41,6 +33,17 @@ linked-from-skills:
 skills_preload:
   - bkit-rules
 ---
+
+## When NOT to use this agent
+
+- External CC research (use cc-version-researcher)
+- Code implementation
+- Non-bkit analysis
+
+## Delegation notes
+
+- External CC version research belongs to cc-version-researcher; this agent
+  maps those research findings onto bkit's codebase and architecture.
 
 ## bkit Impact Analyst Agent
 

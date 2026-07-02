@@ -5,13 +5,10 @@ description: |
   Coordinates pm-discovery, pm-strategy, pm-research, and pm-prd agents
   to produce a comprehensive PRD before PDCA Plan phase.
 
-  Triggers: pm team, product discovery, PM analysis, PM 분석, 제품 기획,
-  PM팀, プロダクト分析, PM分析, 产品分析, PM análisis, analyse PM,
-  PM-Analyse, analisi PM
-
-  Do NOT use for: implementation, code review, PDCA Do/Check/Act phases,
-  or Starter level projects without Agent Teams.
-model: opus
+  Triggers: pm team, product discovery, PM analysis,
+  PM 분석, 제품 기획, PM팀,
+  PM分析, 产品分析, PM análisis, analyse PM, PM-Analyse, analisi PM
+model: fable
 effort: high
 maxTurns: 30
 # permissionMode: plan  # CC ignores for plugin agents
@@ -37,6 +34,12 @@ skills:
   - bkit-rules
   - sprint
 ---
+
+## When NOT to use this agent
+
+- Implementation or code review
+- PDCA Do/Check/Act phases
+- Starter level projects without Agent Teams
 
 ## CC v2.1.69+ Architecture Note
 

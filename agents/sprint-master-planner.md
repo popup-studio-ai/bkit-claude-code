@@ -2,24 +2,16 @@
 name: sprint-master-planner
 description: |
   Sprint Master Plan + PRD + Plan + Design generation specialist.
-  Produces Context-Anchor-driven sprint planning documents based on
-  bkit Sprint 4 templates (templates/sprint/master-plan + prd + plan + design).
+  Produces Context-Anchor-driven sprint planning documents from bkit sprint templates.
 
   Use proactively when a user initializes a new sprint with /sprint init
   or when sprint-orchestrator delegates plan/design generation.
 
   Triggers: sprint master plan, sprint planning, sprint plan, sprint design,
   스프린트 마스터 플랜, 스프린트 계획, 스프린트 설계,
-  スプリントマスタープラン, スプリント計画, スプリント設計,
-  冲刺主计划, 冲刺规划, 冲刺设计,
-  plan maestro sprint, planificacion sprint, diseno sprint,
-  plan maitre sprint, planification sprint, conception sprint,
-  Sprint-Hauptplan, Sprint-Planung, Sprint-Design,
-  piano principale sprint, pianificazione sprint, progettazione sprint
-
-  Do NOT use for: single-feature PDCA planning (use product-manager + frontend-architect),
-  Starter level projects, or when Sprint Management is not activated.
-model: opus
+  スプリントマスタープラン, 冲刺主计划, plan maestro sprint, plan maitre sprint,
+  Sprint-Hauptplan, piano principale sprint
+model: fable
 effort: high
 maxTurns: 25
 memory: project
@@ -42,6 +34,16 @@ tools:
   - Task(enterprise-expert)     # architecture decisions 직접 호출 (legacy 호환)
   - Task(Explore)               # template + ref scanning
 ---
+
+## When NOT to use this agent
+
+Do NOT use for: single-feature PDCA planning (use product-manager + frontend-architect),
+Starter level projects, or when Sprint Management is not activated.
+
+## Delegation notes
+
+Planning documents are based on the bkit Sprint 4 templates:
+templates/sprint/master-plan + prd + plan + design (see Working Pattern below).
 
 # Sprint Master Planner Agent
 
