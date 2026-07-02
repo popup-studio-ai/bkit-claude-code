@@ -181,6 +181,32 @@ ADR 0003 Phase 1.5 (3-source 가설 검증) 적용 결과: cc-version-researcher
 | (TBD) | v2.1.21+ F6 `continue-on-error: false` 강제 전환 | CHANGELOG `[2.1.21]` |
 | (TBD) | 3-month F8 R3-321 + F10 ENH-323 telemetry 분석 | v2.1.21+ 분석 |
 | (Future) | Anthropic 정책 변경 시 ADR 0011 § Decision amend | TBD |
+| 2026-07-02 | **Amendment 1 (v2.1.26 provisional)** — 공식 schema 21-key snapshot 초과 성장 확인 + `EXPECTED_PLUGIN_JSON_KEYS` subset-enforcement 정책 명문화 (본 문서 § Amendment 1) | `.bkit/research/v2126-web-research.md` Q1 + `docs/02-design/features/v2126-issue-response.design.en.md` I-7 |
+
+---
+
+## Amendment 1 — 2026-07-02 (v2.1.26 provisional): 공식 schema 성장 + subset-enforcement 정책 명문화
+
+### 배경
+
+CC v2.1.198 기준 공식 plugin manifest schema 는 본 ADR 채택 시점의 **21-key v2.1.143 snapshot 을 넘어 성장**했다 (출처: `.bkit/research/v2126-web-research.md` Q1, cc-version-researcher). 현 시점 공식 schema 는 다음을 포함한다:
+
+- **`mcpServers`** — **v2.1.26 부터 bkit 이 실사용하는 key**. `.claude-plugin/plugin.json` 내 inline MCP declaration 이 root `.mcp.json` 을 대체하여, 동일 파일이 plugin MCP manifest 와 project-scope MCP config 로 이중 로드되던 dual-load `/plugin` 실패 (`Missing environment variables: CLAUDE_PLUGIN_ROOT`) 를 해결한다.
+- `lspServers`, `channels`, `userConfig` — 21-key whitelist 에 이미 포함되어 있던 key.
+- **`defaultEnabled`** (v2.1.154+) — 21-key whitelist 에 **없는 유일한 공식 key**.
+- `$schema`, `homepage` — 기존 인지 key (whitelist 포함).
+
+### 정책 (verbatim)
+
+> **"EXPECTED_PLUGIN_JSON_KEYS is subset enforcement — the keys bkit ships — NOT a mirror of the full official schema"**
+
+`lib/domain/rules/docs-code-invariants.js` 의 `EXPECTED_PLUGIN_JSON_KEYS` 는 bkit 이 ship 하는 key 집합에 대한 **subset 강제 장치**이지, Anthropic 공식 schema 전체의 미러가 아니다. 공식 schema 에 새 key 가 추가되어도 bkit 이 해당 key 를 ship 하지 않는 한 whitelist 를 확장할 의무가 없다.
+
+이에 따라 Plan FR-04 ("add newer official keys") 는 **satisfied-by-design** 으로 판정한다: whitelist 에 부재한 유일한 공식 key 는 `defaultEnabled` (v2.1.154+) 이며, bkit 은 이 key 를 ship 하지 않는다.
+
+### Code impact
+
+**코드 변경 0.** `mcpServers` 는 이미 whitelist 에 존재한다 (`lib/domain/rules/docs-code-invariants.js:153`) — v2.1.26 의 inline `mcpServers` 채택은 whitelist 변경 없이 통과한다. `EXPECTED_PLUGIN_JSON_KEYS` 는 21 keys 그대로 유지 (`Object.freeze`).
 
 ---
 

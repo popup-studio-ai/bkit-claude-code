@@ -156,17 +156,17 @@ bkit is a **practical implementation of Context Engineering**, providing a syste
 
 | Model | Count | Agents | Characteristics |
 |-------|:-----:|--------|-----------------|
-| **fable** | 9 | cto-lead, sprint-orchestrator, sprint-master-planner, pm-lead, qa-lead, gap-detector, design-validator, pdca-iterator, sprint-qa-flow | Verification & orchestration core (long-horizon leads + verifiers) — requires CC ≥ v2.1.170 |
-| **opus** | 7 | security-architect, code-analyzer, self-healing, infra-architect, enterprise-expert, bkit-impact-analyst, cc-version-researcher | Deep reasoning & security (refusal-sensitive headless paths) |
+| **fable** | 6 | cto-lead, sprint-orchestrator, sprint-master-planner, pm-lead, qa-lead, sprint-qa-flow | Long-horizon orchestration (leads) + sprint dataFlow verifier — requires CC ≥ v2.1.170 |
+| **opus** | 10 | security-architect, code-analyzer, self-healing, infra-architect, enterprise-expert, bkit-impact-analyst, cc-version-researcher, gap-detector, design-validator, pdca-iterator | Deep reasoning & security + high-frequency PDCA verifiers (v2.1.26 cost retune fable→opus) |
 | **sonnet** | 16 | bkend-expert, frontend-architect, pipeline-guide, pm-discovery, pm-lead-skill-patch, pm-prd, pm-research, pm-strategy, product-manager, qa-debug-analyst, qa-strategist, qa-test-generator, qa-test-planner, skill-needs-extractor, sprint-report-writer, starter-guide | Execution, guidance, iteration |
-| **haiku** | 8 | qa-monitor, report-generator, 6 pdca-eval-* deprecated tombstones | Fast monitoring, document generation, minimum-cost tombstones |
+| **haiku** | 2 | qa-monitor, report-generator | Fast monitoring, document generation (6 pdca-eval-* tombstones removed per ADR 0014) |
 
 ### Agent Frontmatter (v2.0.0 native)
 
 ```yaml
 ---
 name: gap-detector
-model: fable
+model: opus
 effort: high          # reasoning effort
 maxTurns: 20          # execution budget
 memory: project       # cross-session persistence

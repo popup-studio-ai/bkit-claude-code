@@ -142,7 +142,7 @@ Output Styles (v1.5.3)
 | `/phase-8-review` | Code review and gap analysis |
 | `/phase-9-deployment` | Production deployment (CI/CD, K8s) |
 
-### Agents (34 total, auto-triggered by keywords — 9 fable / 7 opus / 16 sonnet / 2 haiku)
+### Agents (34 total, auto-triggered by keywords — 6 fable / 10 opus / 16 sonnet / 2 haiku)
 
 > Full agent list at [bkit-system/components/agents/_agents-overview.md](../bkit-system/components/agents/_agents-overview.md). Models and constraints enforced by v2.1.10 3-Tier Agent Security Model + Sprint 7 `cto-lead` body (5 Task spawn examples + `Task(pm-lead)`/`Task(qa-lead)`/`Task(pdca-iterator)` frontmatter).
 
@@ -150,14 +150,14 @@ Output Styles (v1.5.3)
 
 | Agent | Trigger Keywords | Model |
 |-------|-----------------|-------|
-| gap-detector | verify, check, gap | fable |
-| pdca-iterator | improve, iterate, fix | fable |
+| gap-detector | verify, check, gap | opus |
+| pdca-iterator | improve, iterate, fix | opus |
 | code-analyzer | analyze, quality, review | opus |
 | report-generator | report, summary, complete | haiku |
 | starter-guide | beginner, help, learn | sonnet |
 | bkend-expert | login, auth, database | sonnet |
 | enterprise-expert | microservices, k8s, architecture | opus |
-| design-validator | validate design, spec check | fable |
+| design-validator | validate design, spec check | opus |
 | qa-monitor | QA, docker logs, testing | haiku |
 | pipeline-guide | where to start, what first | sonnet |
 | infra-architect | AWS, terraform, infrastructure | opus |

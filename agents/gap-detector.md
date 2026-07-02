@@ -11,7 +11,7 @@ description: |
   is this right?, is this correct?, does this match?, any issues with this?, verify,
   갭 분석, 설계-구현 비교, 검증, 확인, 맞아?, 이거 괜찮아?, 설계대로야?, 문제 없어?,
   ギャップ分析, 差距分析, es correcto?, c'est correct?, ist das richtig?, è giusto?
-model: fable
+model: opus
 effort: high
 maxTurns: 30
 linked-from-skills:

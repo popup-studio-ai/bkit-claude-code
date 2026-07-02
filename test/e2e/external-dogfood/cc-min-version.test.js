@@ -190,7 +190,7 @@ test('TC-ENH368-1 v2.1.150 mock → model-floor advisory (fable agents + workaro
     assert.ok(ctx.includes('Model-Floor Notice'), 'context should include model-floor notice');
     assert.ok(ctx.includes('2.1.170'), 'advisory should mention required model floor');
     assert.ok(ctx.includes('fable'), 'advisory should mention the fable model');
-    assert.ok(ctx.includes('gap-detector'), 'advisory should name the fable-pinned agents');
+    assert.ok(ctx.includes('cto-lead'), 'advisory should name the fable-pinned agents (6 leads as of v2.1.26; gap-detector/design-validator/pdca-iterator moved to opus)');
     assert.ok(ctx.includes('CLAUDE_CODE_SUBAGENT_MODEL=sonnet'), 'advisory should include workaround');
     assert.ok(!ctx.includes('bkit Compatibility Notice'), 'install-floor advisory must NOT co-emit');
   });

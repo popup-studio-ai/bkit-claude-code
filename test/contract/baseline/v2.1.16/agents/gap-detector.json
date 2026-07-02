@@ -4,7 +4,7 @@
   "effort": "high",
   "fileName": "gap-detector",
   "hasTools": true,
-  "model": "fable",
+  "model": "opus",
   "name": "gap-detector",
   "replacedBy": null
 }

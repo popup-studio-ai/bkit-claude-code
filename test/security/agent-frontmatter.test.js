@@ -328,7 +328,8 @@ test('SEC-AF-037', 'All agents have maxTurns in valid range (10-100)', () => {
 // v2.1.25: PREMIUM tier = opus | fable (Claude 5 model alignment); was OPUS_TIER1.
 test('SEC-AF-038', 'Tier 1 non-premium agents do not use high effort', () => {
   // premium-model (opus/fable) agents in Tier 1 are allowed high effort:
-  // security-architect (opus), design-validator (fable), gap-detector (fable — read-only by tools, not in TIER1 list)
+  // security-architect (opus), design-validator (opus — v2.1.26 cost retune fable→opus),
+  // gap-detector (opus — v2.1.26; read-only by tools, not in TIER1 list)
   const PREMIUM_TIER1 = ['security-architect', 'design-validator', 'gap-detector'];
   for (const agent of TIER1_AGENTS) {
     const content = fs.readFileSync(path.join(AGENTS_DIR, `${agent}.md`), 'utf8');
@@ -487,8 +488,9 @@ test('SEC-AF-051', 'All agents have a valid model field', () => {
 });
 
 // v2.1.25: PREMIUM = opus | fable. Approved read-only premium exceptions per the
-// claude-model-alignment matrix: security-architect (opus), design-validator (fable),
-// gap-detector (fable — read-only by tools, not in TIER1 list).
+// claude-model-alignment matrix, retuned in v2.1.26 (high-frequency verifiers
+// fable→opus for cost): security-architect (opus), design-validator (opus),
+// gap-detector (opus — read-only by tools, not in TIER1 list).
 test('SEC-AF-052', 'Tier 1 read-only agents do not use premium models (cost guard)', () => {
   const PREMIUM_MODELS = ['opus', 'fable'];
   const ALLOWED_PREMIUM_TIER1 = ['security-architect', 'design-validator', 'gap-detector'];

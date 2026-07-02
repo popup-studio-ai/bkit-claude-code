@@ -9,6 +9,26 @@
  */
 
 const path = require('path');
+const fs = require('fs');
+const os = require('os');
+
+// ============================================================
+// v2.1.26 (I-13, test isolation): batch state + pdca-status writes must land
+// in a throwaway tmp root — never in the repo's real .bkit.
+// Two layers:
+//   1. CLAUDE_PROJECT_DIR=TMP_ROOT before any lib/ require (covers the
+//      updatePdcaStatus side-effect inside executeBatchPlan — lib/core/platform
+//      captures the env at first import).
+//   2. Explicit { projectRoot: TMP_ROOT } injection on every batch API call
+//      (exercises the I-10 injectable-root contract directly).
+// ============================================================
+const TMP_ROOT = fs.mkdtempSync(path.join(os.tmpdir(), 'bkit-batch-orch-'));
+process.env.CLAUDE_PROJECT_DIR = TMP_ROOT;
+const INJECT = { projectRoot: TMP_ROOT };
+process.on('exit', () => {
+  try { fs.rmSync(TMP_ROOT, { recursive: true, force: true }); } catch (_e) { /* best-effort */ }
+});
+
 const { assert, skip, summary, reset } = require('../helpers/assert');
 reset();
 
@@ -40,7 +60,7 @@ console.log('\n--- Section 1: createBatchPlan ---');
   if (moduleLoaded) {
     let result = null;
     try {
-      result = bo.createBatchPlan(['nonexistent-feature-bo002']);
+      result = bo.createBatchPlan(['nonexistent-feature-bo002'], INJECT);
     } catch (e) { result = null; }
     assert('BO-002',
       result && result.plan && Array.isArray(result.warnings),
@@ -55,7 +75,7 @@ console.log('\n--- Section 1: createBatchPlan ---');
   if (moduleLoaded) {
     let result = null;
     try {
-      result = bo.createBatchPlan(['no-docs-feature-bo003']);
+      result = bo.createBatchPlan(['no-docs-feature-bo003'], INJECT);
     } catch (e) { result = null; }
     assert('BO-003',
       result && result.warnings.length > 0 && result.warnings[0].includes('no-docs-feature-bo003'),
@@ -70,7 +90,7 @@ console.log('\n--- Section 1: createBatchPlan ---');
   if (moduleLoaded) {
     let result = null;
     try {
-      result = bo.createBatchPlan(['feat-bo004']);
+      result = bo.createBatchPlan(['feat-bo004'], INJECT);
     } catch (e) { result = null; }
     assert('BO-004',
       result && result.plan && typeof result.plan.batchId === 'string' && result.plan.batchId.startsWith('batch-'),
@@ -96,7 +116,7 @@ console.log('\n--- Section 2: executeBatchPlan ---');
   if (moduleLoaded) {
     let result = null;
     try {
-      result = bo.executeBatchPlan(null);
+      result = bo.executeBatchPlan(null, INJECT);
     } catch (e) { result = null; }
     assert('BO-006',
       result && result.results.length === 0 && result.summary === 'No groups to execute',
@@ -111,7 +131,7 @@ console.log('\n--- Section 2: executeBatchPlan ---');
   if (moduleLoaded) {
     let result = null;
     try {
-      result = bo.executeBatchPlan({ batchId: 'test-bo007', groups: [], features: [] });
+      result = bo.executeBatchPlan({ batchId: 'test-bo007', groups: [], features: [] }, INJECT);
     } catch (e) { result = null; }
     assert('BO-007',
       result && result.results.length === 0,
@@ -135,7 +155,7 @@ console.log('\n--- Section 2: executeBatchPlan ---');
         features: ['feat-bo008'],
         status: 'pending',
       };
-      result = bo.executeBatchPlan(plan);
+      result = bo.executeBatchPlan(plan, INJECT);
     } catch (e) { result = null; }
     assert('BO-008',
       result && Array.isArray(result.results) && typeof result.summary === 'string',
@@ -159,7 +179,7 @@ console.log('\n--- Section 3: getBatchStatus ---');
 // BO-010: getBatchStatus returns null for non-existent batch
 {
   if (moduleLoaded) {
-    const result = bo.getBatchStatus('nonexistent-batch-bo010');
+    const result = bo.getBatchStatus('nonexistent-batch-bo010', INJECT);
     assert('BO-010', result === null,
       'getBatchStatus returns null for non-existent batch');
   } else {
@@ -173,8 +193,8 @@ console.log('\n--- Section 3: getBatchStatus ---');
     // Create a batch to test status
     let status = null;
     try {
-      const { plan } = bo.createBatchPlan(['feat-bo011']);
-      status = bo.getBatchStatus(plan.batchId);
+      const { plan } = bo.createBatchPlan(['feat-bo011'], INJECT);
+      status = bo.getBatchStatus(plan.batchId, INJECT);
     } catch (e) { status = null; }
     assert('BO-011',
       status === null || (status && typeof status.progress === 'number'),
@@ -198,7 +218,7 @@ console.log('\n--- Section 4: cancelBatch & resumeBatch ---');
 // BO-013: cancelBatch returns not found for nonexistent batch
 {
   if (moduleLoaded) {
-    const result = bo.cancelBatch('nonexistent-batch-bo013');
+    const result = bo.cancelBatch('nonexistent-batch-bo013', INJECT);
     assert('BO-013',
       result && result.cancelled === false && result.reason.includes('not found'),
       'cancelBatch returns cancelled=false for nonexistent batch');
@@ -216,7 +236,7 @@ console.log('\n--- Section 4: cancelBatch & resumeBatch ---');
 // BO-015: resumeBatch returns not found for nonexistent batch
 {
   if (moduleLoaded) {
-    const result = bo.resumeBatch('nonexistent-batch-bo015');
+    const result = bo.resumeBatch('nonexistent-batch-bo015', INJECT);
     assert('BO-015',
       result && result.resumed === false && result.reason.includes('not found'),
       'resumeBatch returns resumed=false for nonexistent batch');

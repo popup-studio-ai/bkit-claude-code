@@ -103,8 +103,17 @@ function getInfra(opts) {
   } catch (_) {
     otelEndpoint = otelEndpoint || process.env.OTEL_ENDPOINT;
   }
+  // v2.1.26 (I-11/I-12, test isolation): distinguish an EXPLICITLY injected
+  // projectRoot from the process.cwd() fallback. Only an explicit injection
+  // redirects audit/marker writes (via injectedProjectRoot); the default path
+  // preserves current runtime behavior exactly (audit-logger keeps resolving
+  // getPlatform().PROJECT_DIR on its own).
+  const injectedProjectRoot = (typeof o.projectRoot === 'string' && o.projectRoot.length > 0)
+    ? o.projectRoot
+    : null;
   return createSprintInfra({
-    projectRoot: o.projectRoot || process.cwd(),
+    projectRoot: injectedProjectRoot || process.cwd(),
+    injectedProjectRoot,
     otelEndpoint,
     otelServiceName: o.otelServiceName || process.env.OTEL_SERVICE_NAME,
     agentId: o.agentId || process.env.CLAUDE_AGENT_ID,
@@ -201,21 +210,33 @@ async function handleSprintAction(action, args, deps) {
     return { ok: false, error: 'Unknown action: ' + action, validActions: [...VALID_ACTIONS] };
   }
   const a = args || {};
+  // v2.1.26 (I-11, test isolation): a projectRoot injected via `deps` (the
+  // pattern used by tests/contract/v2113-sprint-contracts.test.js SC-05) was
+  // previously DROPPED here — `getInfra(a)` only consulted `args`, so state,
+  // registry, and audit writes leaked into the real .bkit. Resolve the
+  // injected root from deps first, then args; default (no injection) is
+  // unchanged.
+  const injectedRoot =
+    (deps && typeof deps.projectRoot === 'string' && deps.projectRoot.length > 0)
+      ? deps.projectRoot
+      : ((typeof a.projectRoot === 'string' && a.projectRoot.length > 0) ? a.projectRoot : null);
   // v2.1.21 (Issue #113): write a cross-process active-skill marker so the
   // end-of-turn Stop hook (unified-stop) can dispatch sprint-skill-stop even
   // when CC omits skill_name from the Stop payload and skill_post is dropped
   // (#57317). The sprint skill ALWAYS routes through this handler, so this is a
   // reliable write point. Best-effort — never blocks the action.
+  // v2.1.26 (I-11): thread the injected root so the marker never lands in the
+  // real .bkit when a test injects a tmp root.
   try {
     require('../lib/core/active-skill-marker').writeActiveSkill({
       skill: 'sprint',
       action,
       id: a.id || a.newId || null,
       phase: a.to || null,
-    });
+    }, injectedRoot ? { projectRoot: injectedRoot } : undefined);
   } catch (_e) { /* non-critical */ }
   const d = wireAgentAdapters(deps || {});
-  const infra = d.infra || getInfra(a);
+  const infra = d.infra || getInfra(injectedRoot ? Object.assign({}, a, { projectRoot: injectedRoot }) : a);
   let result;
   try {
     switch (action) {

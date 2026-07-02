@@ -3,6 +3,6 @@
   "effort": "high",
   "fileName": "pdca-iterator",
   "hasTools": true,
-  "model": "fable",
+  "model": "opus",
   "name": "pdca-iterator"
 }

@@ -10,9 +10,26 @@
 
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 
 const PROJECT_ROOT = path.resolve(__dirname, '..', '..');
 const CONFIG_PATH = path.join(PROJECT_ROOT, 'bkit.config.json');
+
+// ============================================================
+// v2.1.26 (I-13, test isolation): all PROJECT_DIR-anchored writes
+// (pdca-status.json via createPdcaTaskChain, audit, state) must land in a
+// throwaway tmp root — never in the repo's real .bkit. CLAUDE_PROJECT_DIR
+// is captured by lib/core/platform at FIRST import, so this block must run
+// BEFORE any lib/ module is required. bkit.config.json is copied into the
+// tmp root so lib/core/config + lib/core/version resolve the exact same
+// values the repo-content assertions below check.
+// ============================================================
+const TMP_ROOT = fs.mkdtempSync(path.join(os.tmpdir(), 'bkit-config-sync-'));
+fs.copyFileSync(CONFIG_PATH, path.join(TMP_ROOT, 'bkit.config.json'));
+process.env.CLAUDE_PROJECT_DIR = TMP_ROOT;
+process.on('exit', () => {
+  try { fs.rmSync(TMP_ROOT, { recursive: true, force: true }); } catch (_e) { /* best-effort */ }
+});
 
 let passed = 0;
 let failed = 0;
