@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased — v2.1.27 provisional] - 2026-07-02 (release version assigned by maintainer; branch: `feat/v2.1.27-issue-132`)
+## [2.1.27] - 2026-07-02
 
 > **Status**: Issue #132 (@hslee-cmyk) — bkit's orchestrator side-effects
 > (next-skill/agent guidance, hook-level phase auto-advance, decision-trace

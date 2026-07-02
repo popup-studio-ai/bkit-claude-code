@@ -1,5 +1,5 @@
 /**
- * bkit Vibecoding Kit - SessionStart: Session Context Builder Module (v2.1.26)
+ * bkit Vibecoding Kit - SessionStart: Session Context Builder Module (v2.1.27)
  *
  * Builds the additionalContext string for the SessionStart hook response.
  * Includes PDCA status injection, Feature Usage rules, Executive Summary rules,
@@ -482,7 +482,7 @@ function buildVersionEnhancementsContext(detectedLevel) {
   // v2.1.10 (ENH-167): removed hard-coded strings, uses BKIT_VERSION
   ctx += `\n## bkit v${BKIT_VERSION} (Current)\n`;
   ctx += `- CC recommended: v2.1.198 (Claude 5 alias resolution) | model floor: v2.1.170+ for Fable-pinned agents | install floor: v2.1.143 (displayName schema)\n`;
-  ctx += `- Architecture: 44 Skills, 34 Agents, 21 Hook Events (24 blocks), 174 Lib Modules (20 subdirs, 8 Port↔Adapter pairs), 2 MCP Servers (19 tools), Sprint Management (v2.1.13 GA)\n`;
+  ctx += `- Architecture: 44 Skills, 34 Agents, 22 Hook Events (25 blocks), 194 Lib Modules (22 subdirs, 8 Port↔Adapter pairs), 2 MCP Servers (19 tools), Sprint Management (v2.1.13 GA)\n`;
   ctx += `- v2.1.14 differentiations: #1 Memory Enforcer + #2 Layer 6 Defense + #3 Sequential Dispatch + #4 Effort-aware + #5 PostToolUse continueOnBlock + #6 Heredoc-bypass\n`;
   // ENH-265: ENABLE_PROMPT_CACHING_1H hint (CC v2.1.108+, 30-40% token savings on long sessions)
   const _caching1h = process.env.ENABLE_PROMPT_CACHING_1H === '1' || process.env.ENABLE_PROMPT_CACHING_1H === 'true';
