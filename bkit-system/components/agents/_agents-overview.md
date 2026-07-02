@@ -2,6 +2,7 @@
 
 > List of 34 Agents defined in bkit and their roles (v2.1.13)
 >
+> **v2.1.26**: Fable cost retune — the 3 high-frequency PDCA verifiers (gap-detector, design-validator, pdca-iterator) move fable→opus (they run in the repeated Check/iterate loop; Opus 4.8 is strong at verification at half Fable's $10/$50 cost). Matrix now: 6 fable (leads + sprint verifier) / 10 opus / 16 sonnet / 2 haiku. Fable stays on the long-horizon orchestrators where its planning/delegation edge compounds.
 > **v2.1.25**: Claude 5 Model Alignment + Issue Response — 4-tier role-based model matrix: 9 fable (verification & orchestration core) / 7 opus (deep reasoning & security) / 16 sonnet (implementers) / 2 haiku (monitors). 16 reassignments (9 opus→fable, 1 opus→sonnet sprint-report-writer, 6 sonnet→haiku pdca-eval-* — subsequently REMOVED from agents/ per #128/ADR 0014, deprecation registry at test/contract/deprecation-registry.json). Descriptions compacted −44% per #129 (compact 8-language triggers; "Do NOT use for" moved to body). Model floor: `fable` requires CC ≥ v2.1.170 (SessionStart advisory ENH-368 below it). CC recommended: v2.1.198.
 > **v2.1.24**: Skill namespace hardening (#125/#126) — agents unchanged (40 agent files: 34 active + 6 deprecated pdca-eval-* tombstones).
 > **v2.1.13**: Sprint Management agents — added 4 sprint agents (`sprint-orchestrator`, `sprint-master-planner`, `sprint-qa-flow`, `sprint-report-writer`). Removed 6 pdca-eval-* agents (Korean-only frontmatter + v1.6.1 stale baseline + 0 spawn sites). Total 36 → 34. cto-lead/pm-lead/qa-lead extended with sprint Task spawn patterns + body sections. pdca-iterator/product-manager/gap-detector/self-healing/pipeline-guide/qa-monitor descriptions extended for sprint awareness (관점 1-1).
@@ -68,12 +69,12 @@ Agents form bkit's **Behavioral Rules Layer**, designed according to [[../../phi
 
 | Model | Agents | Characteristics |
 |-------|--------|-----------------|
-| **fable** (9) | cto-lead, sprint-orchestrator, sprint-master-planner, pm-lead, qa-lead, gap-detector, design-validator, pdca-iterator, sprint-qa-flow | Verification & orchestration core (long-horizon leads + verifiers) — requires CC ≥ v2.1.170 |
-| **opus** (7) | security-architect, code-analyzer, self-healing, infra-architect, enterprise-expert, bkit-impact-analyst, cc-version-researcher | Deep reasoning & security (refusal-sensitive headless paths, deep single-shot analysis) |
+| **fable** (6) | cto-lead, sprint-orchestrator, sprint-master-planner, pm-lead, qa-lead, sprint-qa-flow | Long-horizon orchestration (leads) + sprint dataFlow verifier — requires CC ≥ v2.1.170 |
+| **opus** (10) | security-architect, code-analyzer, self-healing, infra-architect, enterprise-expert, bkit-impact-analyst, cc-version-researcher, gap-detector, design-validator, pdca-iterator | Deep reasoning & security + high-frequency PDCA verifiers (v2.1.26 cost retune: gap-detector/design-validator/pdca-iterator fable→opus — half the cost per run, strong verification) |
 | **sonnet** (16) | bkend-expert, frontend-architect, pipeline-guide, pm-discovery, pm-lead-skill-patch, pm-prd, pm-research, pm-strategy, product-manager, qa-debug-analyst, qa-strategist, qa-test-generator, qa-test-planner, skill-needs-extractor, sprint-report-writer, starter-guide | Execution, guidance, iteration |
 | **haiku** (2) | qa-monitor, report-generator | Fast monitoring, document generation |
 
-**Distribution**: 34 total agents = 9 fable / 7 opus / 16 sonnet / 2 haiku (6 deprecated pdca-eval-* registry-tombstoned per ADR 0014 — no stub files remain in agents/)
+**Distribution**: 34 total agents = 6 fable / 10 opus / 16 sonnet / 2 haiku (v2.1.26: high-frequency verifiers gap-detector/design-validator/pdca-iterator retuned fable→opus for cost; 6 deprecated pdca-eval-* registry-tombstoned per ADR 0014 — no stub files remain in agents/)
 
 ## Full List
 

@@ -12,7 +12,7 @@
  * Trigger: 외부 dogfooder 정병진 (@bj) 2026-05-26 install incident. See ADR 0011.
  *
  * ENH-368 (v2.1.25): adds a model-floor advisory — when 2.1.143 ≤ CC < 2.1.170,
- * the 9 Fable-pinned agents hard-fail at spawn (`fable` alias introduced in
+ * the 6 Fable-pinned agents hard-fail at spawn (`fable` alias introduced in
  * CC v2.1.170). Reuses the same detection plumbing (no second process spawn).
  */
 
@@ -223,10 +223,10 @@ function buildModelFloorAdvisoryText(version) {
   return [
     `## ⚠️ bkit Model-Floor Notice — Claude Code v${version} detected (< v${FABLE_MODEL_FLOOR})`,
     '',
-    `bkit v${BKIT_VERSION} pins 9 agents to Claude Fable 5 (\`model: fable\`), which`,
+    `bkit v${BKIT_VERSION} pins 6 agents to Claude Fable 5 (\`model: fable\`), which`,
     `requires **Claude Code v${FABLE_MODEL_FLOOR} or later**: cto-lead, sprint-orchestrator,`,
-    'sprint-master-planner, pm-lead, qa-lead, gap-detector, design-validator,',
-    'pdca-iterator, sprint-qa-flow. On this Claude Code version those agents fail to spawn.',
+    'sprint-master-planner, pm-lead, qa-lead, sprint-qa-flow.',
+    'On this Claude Code version those agents fail to spawn.',
     '',
     'Fix: `npm install -g @anthropic-ai/claude-code@latest`',
     'Temporary workaround: `export CLAUDE_CODE_SUBAGENT_MODEL=sonnet` (forces ALL subagents to sonnet).',

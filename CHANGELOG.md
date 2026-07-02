@@ -19,6 +19,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 > Marketplace end-users are unaffected; developers and cloners get a clean
 > `/plugin` panel and `claude mcp list`.
 
+### Fable Cost Retune — high-frequency verifiers fable→opus (ENH-370)
+
+- **Problem**: v2.1.25 pinned all 9 verification/orchestration agents to Claude
+  Fable 5 ($10/$50 per MTok). But the two verifiers that run MOST often —
+  `gap-detector` (every `/pdca analyze` **and** re-run inside every iterate
+  cycle) and `pdca-iterator` (up to 5 cycles per feature) — form a repeated
+  Check→iterate loop: a single feature can invoke `gap-detector` up to 6× and
+  `pdca-iterator` up to 5×, all on the most expensive model. Continuous use
+  drove token cost up sharply (user-reported).
+- **Change**: the 3 high-frequency PDCA verifiers **`gap-detector`,
+  `design-validator`, `pdca-iterator` move `fable` → `opus`** (Opus 4.8 —
+  $5/$25, **half Fable's cost**, and strong at verification; it was their model
+  before v2.1.25). Fable stays on the 6 long-horizon agents where its
+  planning/delegation/self-checking edge compounds and invocation is
+  user-initiated + infrequent: `cto-lead`, `sprint-orchestrator`,
+  `sprint-master-planner`, `pm-lead`, `qa-lead`, `sprint-qa-flow`.
+- **Matrix**: fable 9→**6** / opus 7→**10** / sonnet 16 / haiku 2 (34 agents).
+  Lockstep: `agents/{gap-detector,design-validator,pdca-iterator}.md` +
+  contract baselines both dirs (model field only, 6 JSONs) + SEC-AF-038/052
+  comments (lists unchanged — opus stays a premium model, so the read-only
+  premium exceptions remain valid) + docs (commands/bkit.md, bkit-system
+  overview/README/philosophy tables, README architecture line). Pricing table
+  and `token-report` unchanged (both models already priced). Also fixed a stale
+  `context-engineering.md` haiku row (8 → 2; the 6 pdca-eval-* tombstones were
+  removed in v2.1.25 per ADR 0014).
+
 ### MAIN — MCP manifest relocation (ENH-369)
 
 - **`mcpServers` is now declared INLINE in `.claude-plugin/plugin.json`**

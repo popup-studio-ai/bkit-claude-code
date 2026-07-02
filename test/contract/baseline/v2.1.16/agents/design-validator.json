@@ -4,7 +4,7 @@
   "effort": "high",
   "fileName": "design-validator",
   "hasTools": true,
-  "model": "fable",
+  "model": "opus",
   "name": "design-validator",
   "replacedBy": null
 }

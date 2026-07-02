@@ -129,8 +129,8 @@ To-Be: Configure quality gates + Monitor metrics dashboard
 
 | Model | Count | Roles |
 |-------|-------|-------|
-| **fable** | 9 | cto-lead, sprint-orchestrator, sprint-master-planner, pm-lead, qa-lead, gap-detector, design-validator, pdca-iterator, sprint-qa-flow (verification & orchestration core — requires CC ≥ v2.1.170) |
-| **opus** | 7 | security-architect, code-analyzer, self-healing, infra-architect, enterprise-expert, bkit-impact-analyst, cc-version-researcher (deep reasoning & security) |
+| **fable** | 6 | cto-lead, sprint-orchestrator, sprint-master-planner, pm-lead, qa-lead, sprint-qa-flow (long-horizon orchestration + sprint verifier — requires CC ≥ v2.1.170) |
+| **opus** | 10 | security-architect, code-analyzer, self-healing, infra-architect, enterprise-expert, bkit-impact-analyst, cc-version-researcher, gap-detector, design-validator, pdca-iterator (deep reasoning & security + high-frequency PDCA verifiers, v2.1.26 cost retune) |
 | **sonnet** | 16 | bkend-expert, frontend-architect, pipeline-guide, pm-discovery, pm-lead-skill-patch, pm-prd, pm-research, pm-strategy, product-manager, qa-debug-analyst, qa-strategist, qa-test-generator, qa-test-planner, skill-needs-extractor, sprint-report-writer, starter-guide |
 | **haiku** | 8 | qa-monitor, report-generator, 6 pdca-eval-* deprecated tombstones |
 

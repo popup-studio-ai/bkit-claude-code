@@ -213,7 +213,7 @@ lib/
 | Component | Count | Role | Details |
 |-----------|-------|------|---------|
 | Skills | 43 | Domain knowledge + Slash commands (v2.1.11 added bkit-evals, bkit-explore, pdca-watch, pdca-fast-track) | [[components/skills/_skills-overview]] |
-| Agents | 34 | Specialized task execution (9 fable / 7 opus / 16 sonnet / 2 haiku; 6 pdca-eval-* registry-tombstoned per ADR 0014) | [[components/agents/_agents-overview]] |
+| Agents | 34 | Specialized task execution (6 fable / 10 opus / 16 sonnet / 2 haiku; v2.1.26 verifier cost retune; 6 pdca-eval-* registry-tombstoned per ADR 0014) | [[components/agents/_agents-overview]] |
 | Commands | DEPRECATED | Migrated to Skills (v1.4.4) | - |
 | Hooks | 21 events (24 blocks) | Event-based triggers (unified) | [[components/hooks/_hooks-overview]] |
 | Scripts | 49 | Actual logic execution | [[components/scripts/_scripts-overview]] |
@@ -374,7 +374,7 @@ bkit v1.6.0 integrates CC 2.1.0 Skills 2.0 features:
 | Component | Count |
 |-----------|-------|
 | Skills | 43 (v2.1.11 added bkit-evals, bkit-explore, pdca-watch, pdca-fast-track) |
-| Agents | 34 (9 fable / 7 opus / 16 sonnet / 2 haiku; 6 pdca-eval-* registry-tombstoned per ADR 0014) |
+| Agents | 34 (6 fable / 10 opus / 16 sonnet / 2 haiku; v2.1.26 verifier cost retune; 6 pdca-eval-* registry-tombstoned per ADR 0014) |
 | Lib Modules | 190 across 22 subdirectories |
 | Scripts | 49 |
 | Hook Events | 21 (24 blocks) |

@@ -11,7 +11,7 @@ description: |
   설계 검증, 문서 검토, 스펙 확인,
   設計検証, 设计验证, validación de diseño, validation de conception,
   Design-Validierung, validazione del design
-model: fable
+model: opus
 effort: high
 maxTurns: 30
 linked-from-skills:
