@@ -187,7 +187,7 @@ bkit is not just a collection of prompts—it's a **production-grade plugin arch
 | **Scripts** | 61 | Hook execution scripts (v2.1.13 added `sprint-handler.js` 660 LOC + `sprint-memory-writer.js` 138 LOC; v2.1.11 adds check-trust-score-reconcile, check-quality-gates-m1-m10, release-plugin-tag.sh) |
 | **Templates** | 40 | Document templates (PDCA + 9 phases + shared + **7 sprint templates** v2.1.13: master-plan/prd/plan/design/iterate/qa/report) |
 | **Hooks** | 22 events / 25 blocks | Event-driven automation (centralized in hooks.json, invariant maintained, 3 attribution sites: Stop/SessionEnd/SubagentStop) |
-| **lib/** | 190 modules across 22 subdirs | **Clean Architecture 4-Layer with 7 Port↔Adapter pairs**: Domain (ports 7 + guards 4 + rules) / Application (cc-regression + pdca + pdca-lifecycle + **sprint-lifecycle** v2.1.13 + team) / Infrastructure (cc-bridge + telemetry + docs-code-scanner + mcp-port-registry + mcp-test-harness + cc-version-checker + branding + **sprint** v2.1.13 with 9 adapters) / Presentation (hooks + scripts). Subdirs: application, audit, cc-regression, control, core, dashboard, defense, discovery, domain, evals, i18n, infra, intent, orchestrator, pdca, qa, quality, sprint, task, team, ui, util. |
+| **lib/** | 195 modules across 22 subdirs | **Clean Architecture 4-Layer with 7 Port↔Adapter pairs**: Domain (ports 7 + guards 4 + rules) / Application (cc-regression + pdca + pdca-lifecycle + **sprint-lifecycle** v2.1.13 + team) / Infrastructure (cc-bridge + telemetry + docs-code-scanner + mcp-port-registry + mcp-test-harness + cc-version-checker + branding + **sprint** v2.1.13 with 9 adapters) / Presentation (hooks + scripts). Subdirs: application, audit, cc-regression, control, core, dashboard, defense, discovery, domain, evals, i18n, infra, intent, orchestrator, pdca, qa, quality, sprint, task, team, ui, util. |
 | **Output Styles** | 4 | Level-based response formatting (bkit-learning, bkit-pdca-guide, bkit-enterprise, bkit-pdca-enterprise) |
 | **MCP Servers** | 2 | `bkit-pdca-server` (13 tools — v2.1.13 added `bkit_sprint_list` · `bkit_sprint_status` · `bkit_master_plan_read`), `bkit-analysis-server` (6 tools). **19 tools total**, registered via `lib/infra/mcp-port-registry.js` per FR-δ1. |
 | **ACTION_TYPES** | 20 | v2.1.13 added `sprint_paused` + `sprint_resumed` + `master_plan_created` + `task_created`. Categories also expanded 10→11 (`sprint` added). |
@@ -392,7 +392,7 @@ For detailed Context Engineering documentation, see [bkit-system/philosophy/cont
 │  ─────────────────────────────────────────────────────────────  │
 │  Template Layer     │ Templates (18)   │ Document standards     │
 │  ─────────────────────────────────────────────────────────────  │
-│  Shared Library     │ lib/ (190 modules, 22 subdirs) │ Clean Architecture 4-Layer + 7 Port↔Adapter pairs │
+│  Shared Library     │ lib/ (195 modules, 22 subdirs) │ Clean Architecture 4-Layer + 7 Port↔Adapter pairs │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```

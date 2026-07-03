@@ -96,7 +96,7 @@ The software industry refined how *humans* write code over decades — version c
 |---|---|---|
 | **Process** | Output | One feature through proper planning + design + implementation + verification beats ten hacked-together features. The PDCA cycle *is* the product. |
 | **Verification** | Trust | AI generates plausible code. Plausible is not correct. Every implementation goes through gap analysis. Below 90 % match, the system iterates. We do not ship hope. |
-| **Context** | Prompts | A clever prompt helps once. A systematic context system helps every time. 44 skills + 34 agents + 190 lib modules exist so the AI receives the right context at the right moment. |
+| **Context** | Prompts | A clever prompt helps once. A systematic context system helps every time. 44 skills + 34 agents + 195 lib modules exist so the AI receives the right context at the right moment. |
 | **Constraints** | Features | Three project levels, not infinite configuration. Fixed 9-phase PDCA and 8-phase Sprint, not a customizable workflow builder. Opinionated defaults eliminate decision fatigue. |
 
 > *"We do not offer a hundred features. We engineer each one through proper design and verification. That is the difference between a tool and a discipline."*

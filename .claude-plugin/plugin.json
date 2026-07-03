@@ -1,6 +1,6 @@
 {
   "name": "bkit",
-  "version": "2.1.27",
+  "version": "2.1.28",
   "displayName": "bkit — AI Native Development OS",
   "description": "The only Claude Code plugin that verifies AI-generated code against its own design specs.",
   "author": {
