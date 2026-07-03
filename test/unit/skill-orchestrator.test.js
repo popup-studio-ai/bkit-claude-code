@@ -194,35 +194,39 @@ test('SO-022', 'parseClassification: partial fields', () => {
 
 // ── getNextStepMessage ──
 
+// #135 (v2.1.28): getNextStepMessage is now language-aware (EN default / KO via
+// persisted locale). With no persisted language the resolved locale is EN, so
+// these assert the English guidance strings. KO-locale parity is covered in
+// test/regression/issue-135-multiaction-guidance.test.js.
 test('SO-023', 'getNextStepMessage: known skill returns specific message', () => {
   const msg = getNextStepMessage('phase-1-schema');
-  assert.ok(msg.includes('스키마'));
+  assert.ok(msg.includes('schema'));
 });
 
 test('SO-024', 'getNextStepMessage: phase-8-review returns review message', () => {
   const msg = getNextStepMessage('phase-8-review');
-  assert.ok(msg.includes('리뷰'));
+  assert.ok(msg.includes('review'));
 });
 
 test('SO-025', 'getNextStepMessage: phase-9-deployment returns deploy message', () => {
   const msg = getNextStepMessage('phase-9-deployment');
-  assert.ok(msg.includes('배포'));
+  assert.ok(msg.includes('deployment'));
 });
 
 test('SO-026', 'getNextStepMessage: unknown skill returns fallback message', () => {
   const msg = getNextStepMessage('unknown-skill');
-  assert.ok(msg.includes('다음 단계'));
+  assert.ok(msg.includes('Next step'));
   assert.ok(msg.includes('unknown-skill'));
 });
 
 test('SO-027', 'getNextStepMessage: phase-2-convention returns convention message', () => {
   const msg = getNextStepMessage('phase-2-convention');
-  assert.ok(msg.includes('컨벤션'));
+  assert.ok(msg.includes('convention'));
 });
 
 test('SO-028', 'getNextStepMessage: phase-3-mockup returns mockup message', () => {
   const msg = getNextStepMessage('phase-3-mockup');
-  assert.ok(msg.includes('목업'));
+  assert.ok(msg.includes('mockup'));
 });
 
 // ── clearCache / getCacheStats ──

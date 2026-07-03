@@ -5,6 +5,70 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.28] - 2026-07-03
+
+> **Status**: Issue #135 (@hslee-cmyk) — the direct, narrower follow-up to #132.
+> #132 (v2.1.27) made the audit / task-tagging half of the `UserPromptExpansion`
+> mechanism reachable for native slash commands. #135 is the remaining gap: the
+> **next-step guidance-text half** of that same mechanism never fired for
+> multi-action router skills, because `orchestrateSkillPost()` derived
+> `suggestions` ONLY from two STATIC SKILL.md frontmatter fields (`next-skill:`,
+> `pdca-phase:`), and bkit's flagship routers `pdca` and `sprint` (plus 9 utility
+> routers) declare both `null` by design — their effective phase depends on the
+> runtime `action` argument, not the skill name. Result: `suggestions = {}`,
+> `formatGuidance()` returned `''`, and the two most-used skills silently emitted
+> no "what should I run next" guidance. No Guessing: root cause confirmed at code
+> + runtime level (`orchestrateSkillPost('pdca', …)` → `{}`) and against a
+> main-baseline regression diff (0 regressions).
+
+### Runtime-Phase-Aware Skill Guidance (Issue #135)
+
+- **Root fix — runtime phase resolution, SSoT-unified**: a new source-agnostic
+  module `lib/orchestrator/runtime-guidance.js` resolves the effective phase at
+  CALL TIME from the invocation `action` cross-referenced with live PDCA/Sprint
+  state, then reuses the SAME source-of-truth the MANUAL `/pdca next` &
+  `/sprint phase` paths use — closing the issue's deeper complaint that the
+  passive-guidance path and the manual path were two disconnected systems. No
+  phase-transition table is duplicated:
+  - **PDCA** → `lib/pdca/automation.getNextPdcaActionAfterCompletion` (already
+    live-status aware: `check → qa|act` by matchRate, `qa → report|act` by
+    qaPassRate).
+  - **Sprint** → `lib/sprint/executive-summary.buildNextActions` (phase → next
+    `/sprint` command), phase read from the sprint index SSoT.
+- **Wired at the shared chokepoint**: `runSkillInvocationEffects`
+  (`skill-invocation-effects.js`) enriches the empty `suggestions` from
+  `orchestrateSkillPost` — so BOTH the `PostToolUse:Skill` (model) and
+  `UserPromptExpansion` (slash) paths surface the guidance from one change.
+  `orchestrateSkillPost` stays a pure frontmatter resolver (no layering
+  inversion). Guarded (runs only when frontmatter produced nothing AND the skill
+  is guidance-eligible) and **fail-open** (any error → `{}`, never blocks a
+  command).
+- **Judicious scope**: only the two flagship orchestrators (`pdca`, `sprint`)
+  are guidance-eligible. The 9 pure-utility routers (`audit`, `control`,
+  `rollback`, `bkit-evals`, `bkit-explore`, `claude-code-learning`, `pdca-batch`,
+  `pdca-fast-track`, `pdca-watch`) have no linear "next PDCA step" — their
+  silence is correct behavior, now explicit rather than accidental.
+- **suggestedAgent coverage** extended as a superset of the existing hardcoded
+  pair (`do → gap-detector`, `check → pdca-iterator` preserved verbatim) with
+  additive `design → design-validator`, `qa → qa-lead`.
+- **i18n cleanup (related area)**: guidance strings that were previously
+  hardcoded in Korean (`getNextStepMessage`, the `do`/`check` `suggestedMessage`)
+  are now **English-default with a KO sibling**, resolved via the existing i18n
+  detector (`lib/i18n/detector.readLanguage`). New code is English per project
+  convention; KO users keep parity. The error-focused `assets/error-dict.*.json`
+  is untouched.
+- **Tests**: new `test/regression/issue-135-multiaction-guidance.test.js`
+  (23 TC — root-cause guard, pdca/sprint resolution, utility silence, ineligible
+  skip, fail-open, SSoT-reuse guard, EN/KO parity, e2e on both paths);
+  `test/unit/skill-orchestrator.test.js` SO-023..028 migrated KO→EN (46/46).
+  Non-regression: `issue-132-slash-reach` 7/7, `skill-invocation-effects` 5/5.
+  Real production-entrypoint QA (`--plugin-dir .`) confirms guidance now appears
+  for `/bkit:pdca` and `/bkit:sprint` on both invocation paths. Main-baseline
+  regression diff: **0 regressions** (2003 PASS / 40 pre-existing FAIL unchanged).
+- **Architecture**: 195 Lib Modules (194 + `runtime-guidance.js`). No version
+  floor bump; no gated-count change (skills 44 / agents 34 / hookEvents 22 /
+  hookBlocks 25 unchanged).
+
 ## [2.1.27] - 2026-07-02
 
 > **Status**: Issue #132 (@hslee-cmyk) — bkit's orchestrator side-effects
