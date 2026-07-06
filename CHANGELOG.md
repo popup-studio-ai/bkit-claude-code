@@ -5,6 +5,58 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.29] - 2026-07-06
+
+> **Status**: Issue #137 (@hslee-cmyk) — a low-priority, cosmetic follow-up in the
+> same task-lifecycle area as #132/#135, reported with a full reproduction. The
+> `pdca` skill chains phase Tasks with `blockedBy` (`[Plan]→[Design]→[Do]→[Check]→…`),
+> but `skills/pdca/SKILL.md` documented Task *creation* only — no step ever told the
+> model to mark the *predecessor* phase Task `completed` when advancing, and no
+> hook/orchestrator did it either. A predecessor left `in_progress` (e.g. `[Design]`
+> during the whole `Do` phase) leaked a stale phase into Claude Code's ambient
+> prompt context on every turn, disagreeing with `.bkit/state/pdca-status.json`'s
+> `phase` field — the phase source of truth, which was correct throughout. No
+> Guessing: reproduced in-source (grep confirms zero predecessor-completion
+> instructions) and the fix strategy was decided against CC's documented hook
+> constraints, not assumptions.
+
+### PDCA Predecessor-Task Completion Chain (Issue #137)
+
+- **Root cause**: `## Task Integration` and each per-action step block in
+  `skills/pdca/SKILL.md` describe creating `[Phase] {feature}` Tasks with a
+  `blockedBy` reference to the prior phase, but never instruct completing that prior
+  Task. For a `blockedBy` chain to be semantically correct — and, more visibly, to
+  keep Claude Code's native task list (surfaced into prompt context each turn)
+  consistent with `pdca-status.json` — the predecessor must be `completed` by the
+  time the successor is created.
+- **Why the issue's Option 2 (hook auto-complete) was rejected as infeasible**:
+  per the official Claude Code hooks guide, command hooks communicate only through
+  stdout / stderr / exit codes / `additionalContext` and **cannot call `TaskUpdate`
+  or any tool — only the model can**. `TaskCreated`/`TaskCompleted` are real firing
+  events, but a handler for them could at most emit a reminder, which *still* relies
+  on the model performing the completion — no more deterministic than an explicit
+  skill step, and noisier. Option 2 is therefore strictly worse than Option 1.
+- **Fix (Option 1 — deterministic, model-executed)**: each advancing `pdca` phase
+  action (`design`, `do`, `analyze`, `iterate`, `qa`, `report`) now embeds a
+  **"Complete predecessor Task first"** step immediately before its Create-Task
+  step, and `archive` completes the terminal `[Report]` Task. A general
+  **Phase Transition Rule** in `## Task Integration` states the rule ("mark every
+  prior `[Phase] {feature}` Task still `in_progress` as `completed`") and its
+  two-sources-of-truth rationale; the wording is branch-safe for the `qa`/`act`
+  parts of the 9-phase lifecycle. Uses the `TaskList`/`TaskUpdate` tools the skill
+  already grants — no new runtime surface, no hook change.
+- **Scope**: `skills/pdca/SKILL.md` only. Related skills carry no multi-phase
+  `blockedBy` chain — `plan-plus` creates a single `[Plan]` Task (completed by
+  `pdca design`'s new step), `cc-version-analysis` uses a single Task with subtask
+  tracking, and `sprint` uses per-feature Tasks — so none required changes.
+- **Regression guard**: new `test/regression/issue-137-predecessor-task-completion.test.js`
+  (25 assertions) asserts the Phase Transition Rule and each per-transition
+  completion instruction are present; it fails if any is removed.
+- **No architecture-count or runtime-behavior change**: 44 Skills / 34 Agents /
+  22 Hook Events (25 blocks) / 195 Lib Modules unchanged; `TaskCreated`/`TaskCompleted`
+  audit + auto-advance handlers unchanged. Zero new regressions vs the `main`
+  baseline (identical failing-file set).
+
 ## [2.1.28] - 2026-07-03
 
 > **Status**: Issue #135 (@hslee-cmyk) — the direct, narrower follow-up to #132.
