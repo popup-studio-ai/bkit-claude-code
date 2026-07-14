@@ -4,6 +4,7 @@
 >
 > **Counting note**: CC's `/plugin` Skills count = `skills/` + `commands/` entries (same-name dedup); bkit's 44 skills + `commands/output-style-setup.md` display as **45** — expected, not a drift.
 >
+> **v2.1.30**: Stop-hook stdin-block hardening (#139) — skills unchanged (44); a runtime-reliability fix in `lib/core/io.js` / `scripts/unified-stop.js` (bounded stdin read so the Stop hook cannot stall on a held-open pipe). No SKILL.md or count change.
 > **v2.1.26**: MCP manifest relocation + Fable cost retune — skills unchanged (44; CC `/plugin` displays 45 = 44 skills + `commands/output-style-setup.md`, per the counting note below). Skill prose model references unchanged (cto-lead/pm-lead stay fable); the retuned verifiers (gap-detector/design-validator/pdca-iterator → opus) are agents, not skills. CC recommended: v2.1.198.
 > **v2.1.25**: Claude 5 Model Alignment — skills unchanged (44); model references in `pdca`, `pm-discovery`, `cc-version-analysis` SKILL.md synced to the 4-tier matrix (cto-lead/pm-lead → fable). CC recommended: v2.1.198.
 > **v2.1.24**: Skill namespace hardening (#125/#126) — skills unchanged (44); namespaced invocation (`bkit:pdca`) now resolves next-skill / pdca-phase guidance and Stop-handler dispatch correctly.

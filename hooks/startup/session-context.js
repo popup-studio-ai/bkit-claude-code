@@ -1,5 +1,5 @@
 /**
- * bkit Vibecoding Kit - SessionStart: Session Context Builder Module (v2.1.29)
+ * bkit Vibecoding Kit - SessionStart: Session Context Builder Module (v2.1.30)
  *
  * Builds the additionalContext string for the SessionStart hook response.
  * Includes PDCA status injection, Feature Usage rules, Executive Summary rules,

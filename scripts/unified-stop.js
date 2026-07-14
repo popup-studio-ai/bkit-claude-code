@@ -11,7 +11,8 @@
  */
 
 const path = require('path');
-const { readStdinSync, outputAllow } = require('../lib/core/io');
+const { readStdinBounded, outputAllow } = require('../lib/core/io');
+const { STDIN_READ_TIMEOUT_MS } = require('../lib/core/constants');
 const { debugLog } = require('../lib/core/debug');
 const { getPdcaStatusFull } = require('../lib/pdca/status');
 const { getActiveSkill, getActiveAgent, clearActiveContext } = require('../lib/task/context');
@@ -196,13 +197,21 @@ function executeHandler(handlerPath, context) {
 // Main Execution
 // ============================================================
 
+// Issue #139: the Stop hook gates turn completion, so it must never block on
+// stdin. readStdinBounded reads the payload with parse-early + a hard timeout
+// (STDIN_READ_TIMEOUT_MS) and destroys stdin on resolve, so this hook can never
+// exceed that wall-clock budget even if Claude Code holds the stdin write-end
+// open. The whole body runs inside an async IIFE so the event loop stays free
+// for the timeout to fire while the payload is being read (the read is the very
+// first operation; everything after it remains synchronous).
+(async () => {
 debugLog('UnifiedStop', 'Hook started');
 
-// Read hook context
+// Read hook context (bounded — see Issue #139 note above)
 let hookContext = {};
 try {
-  const input = readStdinSync();
-  hookContext = typeof input === 'string' ? JSON.parse(input) : input;
+  const input = await readStdinBounded(STDIN_READ_TIMEOUT_MS);
+  hookContext = (input && typeof input === 'object') ? input : {};
 } catch (e) {
   debugLog('UnifiedStop', 'Failed to parse context', { error: e.message });
 }
@@ -696,4 +705,8 @@ debugLog('UnifiedStop', 'Hook completed', {
   handled,
   activeSkill,
   activeAgent
+});
+})().catch((e) => {
+  // Last-resort guard: the Stop hook must never throw out of the async body.
+  try { debugLog('UnifiedStop', 'Unhandled error in async body', { error: e && e.message }); } catch (_) { /* ignore */ }
 });

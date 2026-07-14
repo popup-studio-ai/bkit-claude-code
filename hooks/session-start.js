@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * bkit Vibecoding Kit - SessionStart Hook (v2.1.29, uses BKIT_VERSION from lib/core/version)
+ * bkit Vibecoding Kit - SessionStart Hook (v2.1.30, uses BKIT_VERSION from lib/core/version)
  *
  * Thin orchestrator that delegates to startup modules:
  *   1. migration   - Legacy path migration (docs/ -> .bkit/)
