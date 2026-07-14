@@ -5,6 +5,76 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.30] - 2026-07-14
+
+> **Status**: Issue #139 (@thenopen, surfaced via Claude Code's `/doctor`
+> health-check) — a real reliability defect. The `Stop` event hook
+> (`scripts/unified-stop.js`, `timeout: 10000` in `hooks/hooks.json`) occasionally
+> stalled far past its own 10 s timeout: across ~50 sessions / 5 days the reporter
+> measured a healthy ~0.8 s average but a **928,551 ms (~15.5 min) maximum**, with
+> 14 timeout-cancellations. Because `Stop` hooks gate turn completion, every stall
+> blocked the end of a turn for its full duration. No Guessing: the root cause was
+> reproduced end-to-end (not inferred from the subsystem list in the report).
+
+### Stop-Hook stdin-Block Hardening (Issue #139)
+
+- **Root cause (reproduced, not speculated)**: every bkit hook reads its payload
+  through `lib/core/io.js` `readStdinSync()`, which used
+  `fs.readFileSync(0, 'utf8')` — a blocking read on stdin (fd 0) with **no
+  timeout**. It returns only when stdin reaches EOF, i.e. when Claude Code closes
+  the hook's stdin write-end. If CC keeps that write-end open (busy, backpressure,
+  delayed close), the hook blocks for exactly that long. Reproduction against the
+  real hook: stdin closed immediately → 0.19 s; writer holding the stdin pipe open
+  4 s → **4.07 s**, with `user` CPU flat at 0.19 s — the process is *blocked on
+  I/O*, not burning CPU, matching the issue's profile (healthy average, extreme
+  tail, low CPU).
+- **Blast radius**: `readStdinSync()` is called by **36 files** — effectively every
+  bkit hook script. The issue was filed against `unified-stop.js`, but the defect
+  lives in the shared function, so the fix is central and protects **all** hook
+  events (PreToolUse, PostToolUse, Stop, SessionEnd, …), not just Stop.
+- **Fix 1 — central bounded parse-early read (`lib/core/io.js`)**: `readStdinSync()`
+  now reads fd 0 incrementally with `fs.readSync` and returns **the instant the
+  accumulated buffer holds a complete JSON value** — it never waits for EOF, which
+  was the entire source of the stall. The raw-fd path creates no libuv stream
+  handle, so the process still exits promptly. The return contract is unchanged
+  (empty → `{}`, malformed → `{}` unless `BKIT_STRICT_STDIN=1` rethrows). Reproduced
+  case: **15.5 min → ~1 ms**.
+- **Fix 2 — hard-bounded async read for the turn-gating Stop hook
+  (`scripts/unified-stop.js`)**: a new `readStdinBounded(timeoutMs)` export reads
+  stdin event-based with parse-early **and** a hard `setTimeout` budget, and
+  **destroys `process.stdin` on resolve** (without that, the open stdin handle keeps
+  the event loop alive until EOF and the process lingers even after the payload is
+  parsed — a subtle trap that would reintroduce the stall). `unified-stop.js` awaits
+  it inside an async IIFE, so the Stop hook can never exceed
+  `STDIN_READ_TIMEOUT_MS` even for the pathological no-data / truncated + held-open
+  pipe that the sync reader cannot hard-bound.
+- **Fix 3 — non-CPU lock backoff (`lib/core/state-store.js`)**: `lock()` previously
+  backed off with a CPU-burning busy-wait spin (`while (Date.now() < waitUntil) {}`)
+  that pinned a core for the retry interval. Replaced with a synchronous
+  `Atomics.wait` sleep (portable, no native deps, no CPU burn), addressing the
+  issue's "lock-wait / retry-without-backoff" note for the ~4 `lockedUpdate` calls
+  in the Stop chain.
+- **New constant**: `STDIN_READ_TIMEOUT_MS` (default 2000 ms, env override
+  `BKIT_STDIN_TIMEOUT_MS`) — ~2.5× the observed healthy average, well under bkit's
+  `HOOK_TIMEOUT_MS` (5000) and CC's Stop-hook timeout (10000), so bkit bounds the
+  read before either outer timeout can fire.
+- **Out of scope (justified)**: `scripts/lint-skill-md.js` uses `fs.readFileSync(0)`
+  to read a markdown file via stdin redirect (a CI/dev tool, not a runtime hook, not
+  a held-open pipe) — not vulnerable, left unchanged. Making the Stop sub-handlers
+  fire-and-forget was unnecessary: the confirmed cause is stdin blocking, not
+  sub-handler cost (normal run 0.19 s).
+- **Verification**: new 16-TC regression test
+  `test/regression/issue-139-stdin-bounded.test.js` (parse-early return, contract
+  preservation, hard-timeout bounding, prompt process exit, source guards);
+  end-to-end proof against real subprocesses with a held-open pipe (Stop hook
+  ~374 ms vs an 8 s held pipe; no-data hard cap ~2.4 s); live `claude -p
+  --plugin-dir .` on CC v2.1.208; full CI gate suite green (contract L1/L4 222+243,
+  l2-smoke 105, l2-hook-attribution 13, l3-mcp 92+48, integration-runtime 23,
+  invocation-inventory 213, hooks-22 25, bkit-full-system 36, deadcode 0-new,
+  validate-plugin 0-err); **0 new regressions** vs the `main` baseline.
+- **Architecture counts invariant**: 44 Skills · 34 Agents · 22 Hook Events / 25
+  blocks · 195 Lib Modules — unchanged (internal changes to existing modules).
+
 ## [2.1.29] - 2026-07-06
 
 > **Status**: Issue #137 (@hslee-cmyk) — a low-priority, cosmetic follow-up in the
