@@ -1,6 +1,7 @@
 ---
 name: phase-8-review
 context: fork
+background: false
 classification: workflow
 classification-reason: Process automation persists regardless of model advancement
 deprecation-risk: none

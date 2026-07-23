@@ -1,6 +1,7 @@
 ---
 name: phase-1-schema
 context: fork
+background: false
 classification: capability
 classification-reason: Pattern guidance may overlap with model's built-in knowledge as it improves
 deprecation-risk: medium

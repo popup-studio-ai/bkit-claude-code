@@ -6,7 +6,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-v2.1.143+-purple.svg)](https://code.claude.com)
-[![Version](https://img.shields.io/badge/Version-2.1.30-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-2.1.31-green.svg)](CHANGELOG.md)
 [![Author](https://img.shields.io/badge/Author-POPUP%20STUDIO-orange.svg)](https://popupstudio.ai)
 
 > **Requirement**: bkit requires Claude Code **v2.1.143 or later** (the strict plugin-manifest path recognizes the official `displayName` field only from v2.1.143). On older Claude Code you will see `Validation errors: Unrecognized key: "displayName"` during `claude plugin install`. Run `npm install -g @anthropic-ai/claude-code@latest` to upgrade, or see [`docs/06-guide/cc-compatibility.guide.md`](docs/06-guide/cc-compatibility.guide.md).
@@ -182,7 +182,7 @@ export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
 /sprint start my-release-s1
 ```
 
-Recommended Claude Code runtime: **v2.1.198** (Claude 5 alias resolution — `sonnet` → Sonnet 5 needs ≥ v2.1.197). Model floor: **v2.1.170+** required by the 6 Fable-pinned agents (below it they fail to spawn; bkit shows a SessionStart advisory with a workaround). Install minimum **v2.1.143**; runtime minimum **v2.1.78**.
+Recommended Claude Code runtime: **v2.1.218** (bkit explicitly handles v2.1.218's `context: fork` background-by-default change; Claude 5 alias resolution — `sonnet` → Sonnet 5 needs ≥ v2.1.197). Model floor: **v2.1.170+** required by the 6 Fable-pinned agents (below it they fail to spawn; bkit shows a SessionStart advisory with a workaround). Install minimum **v2.1.143**; runtime minimum **v2.1.78**.
 
 ## Quality gates — the safety net explained
 
@@ -209,7 +209,7 @@ Full architecture deep-dive: [README-FULL.md §9](README-FULL.md#9-architecture)
 | Path | What's there |
 |---|---|
 | [README-FULL.md](README-FULL.md) | Full command reference, deep workflow internals, agent teams, architecture, Skill Evals |
-| [CHANGELOG.md](CHANGELOG.md) | Release history (single source of truth — latest release: v2.1.30) |
+| [CHANGELOG.md](CHANGELOG.md) | Release history (single source of truth — latest release: v2.1.31) |
 | [CUSTOMIZATION-GUIDE.md](CUSTOMIZATION-GUIDE.md) | Override any bkit component in your `.claude/` directory |
 | [AI-NATIVE-DEVELOPMENT.md](AI-NATIVE-DEVELOPMENT.md) | The 6 AI-Native principles and how bkit implements them |
 | [`bkit-system/philosophy/`](bkit-system/philosophy/) | Core mission, Context Engineering, PDCA methodology, AI-Native principles |

@@ -1,6 +1,5 @@
 ---
 name: qa-phase
-context: fork
 classification: workflow
 classification-reason: QA phase automation within PDCA cycle
 deprecation-risk: none
@@ -63,7 +62,12 @@ Before running L1 tests, execute the automated quality scanners to catch structu
 3. **If CRITICAL issues found**:
    - Report all CRITICAL issues with file paths and suggested fixes
    - Recommend fixing CRITICAL issues before proceeding with L1-L5 tests
-   - Ask user whether to continue or abort QA phase
+   - Use **AskUserQuestion** to ask whether to continue or abort the QA phase
+     (e.g. options: "Fix CRITICAL first" / "Continue anyway" / "Abort QA").
+     This gate is issued directly here, in the main session context — qa-phase
+     is deliberately **not** `context: fork`. AskUserQuestion is stripped at the
+     fork sub-agent boundary (CC #34592 / #54892), so it must run in the main
+     context and must not be delegated to a sub-agent (qa-lead, etc.).
 4. **If only WARNING/INFO issues (no CRITICAL)**:
    - Include scanner results in the QA report under "Pre-Release Scan" section
    - Continue to L1 test planning

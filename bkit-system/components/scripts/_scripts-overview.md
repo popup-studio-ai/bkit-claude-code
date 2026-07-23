@@ -2,6 +2,7 @@
 
 > 51 Node.js Scripts used by bkit hooks (v2.1.13)
 >
+> **v2.1.31**: CC v2.1.218 fork background-default compat — scripts count unchanged. The contract runner `test/contract/scripts/contract-test-run.js` gained a `contextChanges` allowance (deprecation-registry.json, ADR 0014 pattern) so the intentional qa-phase context removal passes L1-SK against both baselines without rewriting baseline JSON. CC recommended: v2.1.218.
 > **v2.1.30**: Stop-hook stdin-block hardening (#139) — scripts count unchanged; `scripts/unified-stop.js` now reads its payload via the new async `readStdinBounded` (parse-early + hard timeout) inside an async IIFE so the turn-gating Stop hook can never stall on a held-open stdin pipe (root cause: `lib/core/io.js` `readStdinSync` used the unbounded `fs.readFileSync(0)`; fixed centrally for all 36 hook scripts).
 > **v2.1.26**: MCP manifest relocation + release tooling — scripts count unchanged; `scripts/release-plugin-tag.sh` step 6 rewritten to tag via `git tag -a` (CC ~v2.1.110 changed `plugin tag` to derive `{name}--v{version}`); `scripts/subagent-start-handler.js` team default follows the retuned matrix. Fable cost retune (ENH-370): high-frequency verifiers gap-detector/design-validator/pdca-iterator fable→opus (6 fable / 10 opus / 16 sonnet / 2 haiku).
 > **v2.1.25**: Claude 5 Model Alignment — scripts count unchanged; `scripts/subagent-start-handler.js` runtime model whitelist extended with `fable` and team default ctoAgent `opus` → `fable`. CC recommended: v2.1.198 (model floor v2.1.170 for fable-pinned agents).

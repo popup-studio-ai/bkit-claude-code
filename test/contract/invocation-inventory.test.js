@@ -179,13 +179,17 @@ test('.prettierrc exists', () => assert.ok(fs.existsSync(path.join(ROOT, '.prett
 // ==================== Frontmatter cross-check: v2.1.10 ENH-202 — context:fork expanded ====================
 // v2.1.9: only zero-script-qa had context:fork (1/39)
 // v2.1.10 Sprint 6 NEW 6-1 (ENH-202): expanded to 9 skills (zero-script-qa retained + 8 new).
+// v2.1.31 (CC v2.1.218 compat): qa-phase removed from the fork set → 8 skills.
+//   context:fork strips AskUserQuestion at the sub-agent boundary (CC #34592 /
+//   #54892), so qa-phase now runs in the main context. The intentional context
+//   change is declared in test/contract/deprecation-registry.json contextChanges.
 // The EXPECTED set below must be kept in sync with Design §3.4.1 and the
 // `context-fork-l1.test.js` acceptance list. When extending further, update both.
 test('zero-script-qa has context:fork (v2.1.9 baseline preserved)', () => {
   const md = fs.readFileSync(path.join(skillsDir, 'zero-script-qa', 'SKILL.md'), 'utf8');
   assert.ok(/context:\s*fork/m.test(md));
 });
-test('v2.1.10 ENH-202: context:fork skill set matches expected 9 (readonly-safe skills only)', () => {
+test('v2.1.31: context:fork skill set matches expected 8 (readonly-safe producers; qa-phase excluded)', () => {
   const EXPECTED_FORK_SKILLS = [
     'phase-1-schema',
     'phase-2-convention',
@@ -193,7 +197,6 @@ test('v2.1.10 ENH-202: context:fork skill set matches expected 9 (readonly-safe 
     'phase-4-api',
     'phase-5-design-system',
     'phase-8-review',
-    'qa-phase',
     'skill-status',
     'zero-script-qa',
   ].sort();
@@ -201,10 +204,35 @@ test('v2.1.10 ENH-202: context:fork skill set matches expected 9 (readonly-safe 
   for (const name of skillDirs) {
     const md = path.join(skillsDir, name, 'SKILL.md');
     if (!fs.existsSync(md)) continue;
-    if (/context:\s*fork/m.test(fs.readFileSync(md, 'utf8'))) forkSkills.push(name);
+    // v2.1.31: scope the fork check to the frontmatter block. `context: fork`
+    // is a frontmatter field; scanning the whole file would false-match skills
+    // that merely mention the string in prose (e.g. qa-phase's gate rationale).
+    const content = fs.readFileSync(md, 'utf8');
+    const fmEnd = content.indexOf('\n---', 4);
+    const fm = fmEnd > 0 ? content.slice(0, fmEnd) : content;
+    if (/^context:\s*fork/m.test(fm)) forkSkills.push(name);
   }
   forkSkills.sort();
   assert.deepStrictEqual(forkSkills, EXPECTED_FORK_SKILLS);
+});
+test('v2.1.31: qa-phase is NOT context:fork and retains AskUserQuestion (main-context interactive gate)', () => {
+  const md = fs.readFileSync(path.join(skillsDir, 'qa-phase', 'SKILL.md'), 'utf8');
+  const fmEnd = md.indexOf('\n---', 4);
+  const fm = md.slice(0, fmEnd);
+  // Must NOT be forked — AskUserQuestion is stripped at the fork boundary (CC #34592/#54892).
+  assert.ok(!/^context:\s*fork/m.test(fm), 'qa-phase must not declare context: fork');
+  // Must retain AskUserQuestion so the PRE-SCAN continue/abort gate works in the main context.
+  assert.ok(/^\s*-\s*AskUserQuestion\s*$/m.test(fm), 'qa-phase must retain AskUserQuestion in allowed-tools');
+});
+test('v2.1.31: the 8 producer fork skills each declare background:false (CC v2.1.218 opt-out)', () => {
+  const EXPECTED = ['phase-1-schema','phase-2-convention','phase-3-mockup','phase-4-api',
+    'phase-5-design-system','phase-8-review','skill-status','zero-script-qa'];
+  for (const name of EXPECTED) {
+    const md = fs.readFileSync(path.join(skillsDir, name, 'SKILL.md'), 'utf8');
+    const fmEnd = md.indexOf('\n---', 4);
+    const fm = md.slice(0, fmEnd);
+    assert.ok(/^background:\s*false\b/m.test(fm), `${name} must declare background: false`);
+  }
 });
 
 // ==================== CLAUDE.md rules ====================
