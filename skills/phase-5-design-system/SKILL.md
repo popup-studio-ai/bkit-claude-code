@@ -1,6 +1,7 @@
 ---
 name: phase-5-design-system
 context: fork
+background: false
 classification: capability
 classification-reason: Pattern guidance may overlap with model's built-in knowledge as it improves
 deprecation-risk: medium

@@ -54,10 +54,18 @@ for (const skill of skillDirs) {
 
 console.log(`\n  context: fork skills (${forkSkills.length}): ${forkSkills.join(', ')}`);
 
+// v2.1.31 (CC v2.1.218 compat): qa-phase removed from the fork set (8 producers).
+// context:fork strips AskUserQuestion at the sub-agent boundary (CC #34592/#54892),
+// so qa-phase now runs in the main context. Each producer also declares
+// `background: false` to opt out of CC v2.1.218's fork background-by-default.
 assert(forkSkills.length >= 8, `≥ 8 skills use context: fork (actual ${forkSkills.length})`);
 assert(forkSkills.includes('zero-script-qa'), 'zero-script-qa retained context: fork');
-assert(forkSkills.includes('qa-phase'), 'qa-phase added context: fork');
-assert(forkSkills.includes('skill-status'), 'skill-status added context: fork');
+assert(!forkSkills.includes('qa-phase'), 'qa-phase is no longer context: fork (main-context interactive gate)');
+assert(forkSkills.includes('skill-status'), 'skill-status retained context: fork');
+for (const s of forkSkills) {
+  const fm = parseFrontmatter(path.join(SKILLS_DIR, s, 'SKILL.md'));
+  assert(/^background:\s*false\b/m.test(fm), `${s}: declares background: false (CC v2.1.218 opt-out)`);
+}
 
 const total = pass + fail;
 console.log(`\nTests: ${pass}/${total} PASSED, ${fail} FAILED, 0 SKIPPED`);

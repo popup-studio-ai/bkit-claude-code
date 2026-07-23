@@ -77,6 +77,9 @@ function runL1Skills() {
   const skillsDir = path.join(PROJECT_ROOT, 'skills');
   const baselineSkillsDir = path.join(BASE_DIR, 'skills');
   if (!fs.existsSync(baselineSkillsDir)) return;
+  // v2.1.31: intentional context-field changes are declared machine-readably
+  // in deprecation-registry.json (contextChanges), mirroring ADR 0014.
+  const registry = loadDeprecationRegistry();
   const baselineFiles = fs.readdirSync(baselineSkillsDir).filter((f) => f.endsWith('.json'));
   for (const bf of baselineFiles) {
     const baseline = JSON.parse(fs.readFileSync(path.join(baselineSkillsDir, bf), 'utf8'));
@@ -92,12 +95,24 @@ function runL1Skills() {
       (fm.name || baseline.dirName) === baseline.name,
       `L1-SK FAIL skills/${skillName}: name changed ('${fm.name}' !== '${baseline.name}')`
     );
-    // L1-SK: context value unchanged (critical for zero-script-qa)
+    // L1-SK: context value unchanged (critical for zero-script-qa).
+    // v2.1.31: a declared intentional change (contextChanges[skill].from ===
+    // baseline.context) is exempt from the equality assert; instead the current
+    // value must match the declared target (`to`). Baseline JSON stays immutable.
     if (baseline.context) {
-      assert(
-        fm.context === baseline.context,
-        `L1-SK FAIL skills/${skillName}: context changed ('${fm.context}' !== '${baseline.context}')`
-      );
+      const ctxChange = (registry.contextChanges || {})[skillName];
+      if (ctxChange && ctxChange.from === baseline.context) {
+        const currentCtx = fm.context === undefined ? null : fm.context;
+        assert(
+          currentCtx === ctxChange.to,
+          `L1-SK FAIL skills/${skillName}: declared context target '${ctxChange.to}' !== current '${currentCtx}' (deprecation-registry.contextChanges)`
+        );
+      } else {
+        assert(
+          fm.context === baseline.context,
+          `L1-SK FAIL skills/${skillName}: context changed ('${fm.context}' !== '${baseline.context}')`
+        );
+      }
     }
     // L1-SK: description length within CC cap (1536 as of v2.1.105)
     if (typeof fm.description === 'string') {

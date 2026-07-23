@@ -5,6 +5,69 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.31] - 2026-07-23
+
+> **Status**: Claude Code v2.1.218 compatibility response (proactive, from the
+> `/bkit:cc-version-analysis` cycle #29). CC v2.1.218 changed skills with
+> `context: fork` to run in the **background by default** (opt out with
+> `background: false`). bkit ships 9 fork skills — all silently affected on
+> CC ≥ 2.1.218. **No Guessing**: the fix was grounded against the CC CHANGELOG
+> and four verified GitHub issues, not inferred. The key finding reshaped the
+> fix: `background: false` restores foreground *scheduling* but does **not**
+> restore `AskUserQuestion` — that tool is stripped at the **fork sub-agent
+> boundary** regardless of foreground/background (CC #34592, #46654, #54892),
+> so a genuinely interactive fork skill must leave `context: fork` entirely.
+
+### CC v2.1.218 Fork Background-Default Compatibility
+
+- **Root cause (grounded, not speculated)**: `context: fork` runs a skill as a
+  *foreground sub-agent*. CC v2.1.218 flips such skills to background by default.
+  Separately and pre-existing, `AskUserQuestion` (+ `EnterPlanMode`, deferred
+  tools) is unavailable in *any* sub-agent context — the CC sub-agents doc
+  promises foreground pass-through, but issues #34592/#46654/#54892 (the last a
+  reopened regression with a repro) show it is stripped at the fork boundary.
+  Verified directly via `gh`; qa-phase was the only bkit fork skill declaring
+  `AskUserQuestion`, and it invoked it 0 times in-body (a latent, degraded gate).
+- **Fix 1 — 8 producer skills opt out of background-by-default**: `phase-1-schema`,
+  `phase-2-convention`, `phase-3-mockup`, `phase-4-api`, `phase-5-design-system`,
+  `phase-8-review`, `zero-script-qa`, `skill-status` each add `background: false`
+  to their frontmatter, pinning pre-218 foreground execution (No Guessing: the
+  execution mode is now explicit, not inherited from a changed CC default).
+  Backward-safe — CC < 2.1.218 ignores the unknown key; 2.1.218's boolean parser
+  accepts it.
+- **Fix 2 — qa-phase leaves the fork set (main-context interactive gate)**:
+  `qa-phase` drops `context: fork` so it runs in the main session context, where
+  `AskUserQuestion` works. Its PRE-SCAN CRITICAL "continue/abort" gate is upgraded
+  from a degraded plain-text fallback to a real `AskUserQuestion` call, issued
+  directly in the main context (never delegated to a sub-agent, which would strip
+  it again). This is the only way to make the gate genuinely interactive.
+- **Invocation Contract — `contextChanges` allowance (ADR 0014 pattern)**: removing
+  `context: fork` from qa-phase collides with the dual-baseline drift gate (both
+  the v2.1.9 LTS and v2.1.16 Latest baselines record `context: fork`, and the SOP
+  keeps LTS immutable). Rather than rewrite historical baseline JSON, a new
+  `contextChanges` section in `test/contract/deprecation-registry.json` declares
+  the intentional change machine-readably, and `contract-test-run.js` L1-SK
+  consults it — mirroring ADR 0014's deprecation-registry philosophy. Both
+  baselines stay green with baseline JSON untouched; no Latest rollforward needed
+  (the baseline schema does not capture the new `background` key either).
+- **MF-2 — recommended CC bumped**: `lib/infra/cc-version-checker.js`
+  `RECOMMENDED_VERSION` 2.1.198 → 2.1.218 (was 20 releases stale). README,
+  SessionStart advisory, and marketplace narrative synced. Install floor
+  (v2.1.143), model floor (v2.1.170), and runtime minimum (v2.1.78) unchanged.
+- **Hygiene**: `lib/cc-regression/registry.js` MON-CC-06-51165 note corrected
+  ("sole fork user" → 8 producer fork skills + qa-phase exit). The
+  `invocation-inventory.test.js` fork detection is now frontmatter-scoped (it
+  previously false-matched skills that merely mention `context: fork` in prose).
+- **Tests**: fork set expectation 9 → 8; new regressions assert each producer
+  declares `background: false`, that qa-phase is not forked yet retains
+  `AskUserQuestion`, and the `contextChanges` allowance. All contract tests green
+  vs both baselines (v2.1.9: 222, v2.1.16: 243 assertions), context-fork-l1 64/64,
+  invocation-inventory 215/215, integration-runtime 23/23; docs=code 0 drift.
+- **Scope note**: the deeper "interactivity inside a forked skill" architecture
+  (options B/C beyond qa-phase) is intentionally out of scope — it is not a
+  regression introduced by v2.1.218. Architecture counts invariant
+  (44 skills · 34 agents · 22 hook events).
+
 ## [2.1.30] - 2026-07-14
 
 > **Status**: Issue #139 (@thenopen, surfaced via Claude Code's `/doctor`

@@ -51,5 +51,14 @@
     }
   },
   "skills": {},
-  "mcpTools": {}
+  "mcpTools": {},
+  "contextChanges": {
+    "qa-phase": {
+      "from": "fork",
+      "to": null,
+      "changedIn": "v2.1.31",
+      "reason": "Removed context:fork so qa-phase runs in the main session context. AskUserQuestion is stripped at the fork sub-agent boundary (CC #34592 / #54892) and cannot work in a forked skill; the PRE-SCAN continue/abort gate requires it.",
+      "issue": "CC#34592, CC#54892"
+    }
+  }
 }

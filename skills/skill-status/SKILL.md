@@ -1,6 +1,7 @@
 ---
 name: skill-status
 context: fork
+background: false
 classification: workflow
 classification-reason: "Reports loaded skill inventory across core and project layers. Read-only status check workflow."
 deprecation-risk: none
